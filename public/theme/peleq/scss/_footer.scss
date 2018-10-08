@@ -1,0 +1,206 @@
+$col-footer-width-down-sm: 300px;
+
+#footer {
+    margin-left: 0;
+    margin-top: 0;
+    background-color: theme-color('tertiary');
+
+    .top {
+        display: flex;
+        padding: 0 3rem 1rem 3rem;
+        justify-content: space-around;
+
+        .footer-title {
+            font-variant: small-caps;
+            font-weight: bolder;
+            font-size: 1.3em;
+            margin: 2rem 0 0.5rem 0;
+        }
+
+        a {
+            white-space: nowrap;
+
+            i.fa-caret-right {
+                color: theme-color('tertiary-xdark');
+                padding-right: 0.5rem;
+                padding-left: 2px;
+            }
+
+            i.fa-user-lock {
+                padding-left: 0.2rem;
+            }
+
+            &:hover {
+                color: theme-color('tertiary-xdark');
+            }
+        }
+
+        .col-footer {
+            padding: 0 0.5rem 1rem 0;
+            position: relative;
+        }
+
+        address span {
+            white-space: nowrap;
+        }
+
+        .embed-icon {
+            border-radius: 15px;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 2px;
+            color: transparent;
+            height: 33px;
+
+            &.ballejaune {
+                background-color: theme-color('primary');
+                background-image: url("../images/dark-ballejaune.png");
+                background-size: 150px 30px;
+                width: 172px;
+            }
+
+            &.facebook {
+                background-image: url("../images/facebook-circle.png");
+                background-size: 33px 33px;
+                width: 33px;
+            }
+        }
+    }
+
+    .bottom {
+        background-color: theme-color('tertiary-dark');
+        padding: 1rem;
+        justify-content: space-between;
+        font-size: 0.9em;
+
+        p {
+            margin-bottom: 0;
+        }
+
+        .copyright {
+            text-align: center;
+
+            a {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .tribute {
+        text-align: center;
+
+        a {
+            display: inline-block;
+
+            span {
+                visibility: hidden;
+                display: block;
+            }
+            &:hover span {
+                visibility: visible;
+            }
+        }
+    }
+
+    .private-access {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        opacity: 0.5;
+    }
+}
+
+// Écrans < 1200px
+@include media-breakpoint-down(lg) {
+    #footer .top {
+        padding: 0 0 1rem 12%;
+
+        .col-footer {
+            flex: 1;
+
+            &.col-footer-book-join {
+                order: -1;
+                flex: unset;
+                width: 100%;
+                display: flex;
+
+                .sub-col {
+                    flex: 1;
+                }
+            }
+        }
+    }
+}
+
+// Écrans < 992px
+@include media-breakpoint-down(md) {
+    #footer {
+        .top {
+            padding: 0 0 1rem 8%;
+        }
+
+        .bottom {
+            font-size: 0.8rem;
+            .copyright {
+                text-align: right;
+            }
+
+            .empty {
+                display: none;
+            }
+        }
+
+        .tribute {
+            a span {
+                display: none;
+            }
+        }
+    }
+}
+
+// Écrans < 576px
+@include media-breakpoint-down(xs) {
+    #footer {
+        .top {
+            p {
+                margin-bottom: 0.3rem;
+            }
+
+            .col-footer {
+                width: $col-footer-width-down-sm;
+                flex: unset;
+                margin: auto;
+
+                &.col-footer-book-join {
+                    display: block;
+                    width: $col-footer-width-down-sm;
+
+                    .sub-col {
+                        width: 100%;
+                        flex: unset;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Écrans > 800px
+@include media-breakpoint-up(md) {
+    #footer {
+        margin-left: $navbar-width;
+    }
+}
+
+// Écrans > 1200px
+@include media-breakpoint-up(xl) {
+    #footer {
+        margin-left: $navbar-width-up-xl;
+
+        .private-access {
+            display: block;
+        }
+    }
+}

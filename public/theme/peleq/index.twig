@@ -1,0 +1,101 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col p-3">
+                    {% setcontent homepage = "homepage" limit 1 returnsingle %}
+                    {% if homepage %}
+                        <div class="content">
+                            <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
+                            <div class="teaser">{{ homepage.teaser }}</div>
+                            {{ homepage.content }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Pages section #}
+
+    {#<section class="section section-pages hero is-success is-bold">#}
+    {#<div class="container">#}
+    {#<h2 class="title">Pages</h2>#}
+    {#<div class="row">#}
+    {#{% setcontent pages = 'pages/latest/3' %}#}
+    {#{% for page in pages %}#}
+    {#<div class="col">#}
+    {#<div class="card p-3">#}
+    {#<div class="card-content content">#}
+    {#<h3><a href="{{ page.link() }}">{{ page.title }}</a></h3>#}
+    {#<p>{{ page.excerpt }}</p>#}
+    {#<a class="button is-primary" href="{{ page.link() }}">#}
+    {#{{ __('general.phrase.read-more') }}#}
+    {#</a>#}
+    {#</div>#}
+    {#</div>#}
+    {#</div>#}
+    {#{% else %}#}
+    {#<div class="column">#}
+    {#<p>{{ __("general.phrase.no-content-found") }}</p>#}
+    {#</div>#}
+    {#{% endfor %}#}
+    {#</div>#}
+    {#</div>#}
+    {#</section>#}
+
+    {# Latest articles #}
+
+    {#<section class="section section-latest-articles">#}
+    {#<div class="container">#}
+    {#<h2 class="title">Latest Articles</h2>#}
+    {#{% setcontent articles = 'articles/latest/3' %}#}
+    {#{% for article in articles %}#}
+    {#<article role="article" class="media columns">#}
+    {#<div class="media-content column is-7">#}
+    {#<div class="content">#}
+    {#<h3><a href="{{ article.link }}">{{ article.title }}</a></h3>#}
+    {#{{ article.teaser }}#}
+
+    {#{% include 'partials/_record_meta.twig' with {'extended': true, 'record': article} %}#}
+    {#</div>#}
+    {#</div>#}
+    {#<div class="media-right column">#}
+    {#<figure class="image">#}
+    {#{{ popup(article.values.image, 480, 320) }}#}
+    {#</figure>#}
+    {#</div>#}
+    {#</article>#}
+    {#{% else %}#}
+    {#<p>{{ __("general.phrase.no-content-found") }}</p>#}
+    {#{% endfor %}#}
+    {#<div class="buttons has-addons is-right">#}
+    {#<a class="button is-primary" href="{{ path('contentlisting', {'contenttypeslug': 'articles'}) }}">Read#}
+    {#more <span class="is-hidden"> articles</span></a>#}
+    {#</div>#}
+    {#</div>#}
+    {#</section>#}
+
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col p-3">
+                    <p>
+                        Dum haec in oriente aguntur, Arelate hiemem agens Constantius post theatralis ludos atque
+                        circenses
+                        ambitioso editos apparatu diem sextum idus Octobres, qui imperii eius annum tricensimum
+                        terminabat,
+                        insolentiae pondera gravius librans, siquid dubium deferebatur aut falsum, pro liquido accipiens
+                        et
+                        conperto, inter alia excarnificatum Gerontium Magnentianae comitem partis exulari maerore
+                        multavit.</p>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock main %}

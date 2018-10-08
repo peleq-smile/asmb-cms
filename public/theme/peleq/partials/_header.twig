@@ -1,0 +1,49 @@
+<!-- Header bar -->
+{# the values in the 'config' object are taken directly from the file app/config/config.yml #}
+{% setcontent homepage = 'accueil/accueil' %}
+
+<header id="header">
+    <nav class="navbar justify-content-around">
+        <button id="openSidebar" class="navbar-toggler navbar-light" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-brand flex-grow-1">
+            <span class="header-title">{{ homepage.header_title }}</span>
+
+            {% if homepage.header_baselines is not empty %}
+                <ul class="header-baseline list-inline">
+                    {% for baseline in homepage.header_baselines %}
+                        <li class="list-inline-item">{{ baseline.item }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        {% spaceless %}
+            <!-- TODO: ajouter title etc. -->
+            <ul class="navbar-nav nav-shortlinks">
+                <li class="nav-item">
+                    <a href="https://ballejaune.com/club/asmb" target="_blank" class="nav-link text-white">
+                        <i class="custom-bj"></i><span>Réservation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link text-white">
+                        <i class="fas fa-map-marker-alt"></i><span>Plan d'accès</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link text-white">
+                        <i class="fas fa-envelope"></i><span>Contacts</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="http://www.facebook.com/groups/AS.Mangin.Beaulieu/" target="_blank"
+                       class="nav-link text-white">
+                        <i class="fab fa-facebook-f"></i><span>Groupe ASMB</span>
+                    </a>
+                </li>
+            </ul>
+        {% endspaceless %}
+    </nav>
+</header>

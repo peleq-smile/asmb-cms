@@ -1,0 +1,24 @@
+#main {
+    margin-left: 0;
+    margin-top: 0;
+    padding: 2rem 2rem 4rem 2rem;
+    min-height: 22rem;
+
+    &.under-sticky {
+        padding-top: 10rem;
+    }
+}
+
+// Écrans > 800px
+@include media-breakpoint-up(md) {
+    #main {
+        margin-left: $navbar-width;
+    }
+}
+
+// Écrans > 1200px
+@include media-breakpoint-up(xl) {
+    #main {
+        margin-left: $navbar-width-up-xl;
+    }
+}

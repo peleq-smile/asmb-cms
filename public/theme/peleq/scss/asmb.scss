@@ -1,0 +1,53 @@
+/*
+ * Pour compiler les CSS :
+ * cd /var/www/html/asmb-cms/public/theme/peleq; compass watch --sass-dir=scss --css-dir=css
+ */
+
+//--- BASE
+// Variables Bootstrap surchargées
+$font-family-sans-serif: -apple-system, BlinkMacSystemFont, Lato, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+
+@import "../lib/bootstrap-4.1.3/scss/bootstrap";
+
+//--- ASMB
+// Variables personnalisées pour l'ASMB
+$font-family-cursive: 'Mali', cursive;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 800px,
+  lg: 992px,
+  xl: 1200px
+);
+
+$theme-colors: (
+    "primary": #361f2c,
+    "primary-light": #452b3a,
+    "primary-xlight": #543649,
+    "primary-xxlight": #87617c,
+    "primary-hover": #32405a,
+    //"secondary": #db9874,
+    "secondary": #7295d2,
+    //"secondary": #3177b5,
+    "secondary-light": #97bcff,
+    //"secondary-dark": #ab785c,
+    "secondary-dark": #006bc2,
+    "tertiary": #dac692,
+    "tertiary-dark": #bfa971,
+    "tertiary-xdark": #ab785c
+);
+
+$navbar-width: 15rem;
+$navbar-width-up-xl: 20%;
+$navbar-width-down-sm: 20rem;
+
+$footer-height: 10rem;
+$link-color: theme-color('primary-light');
+$link-color-hover: theme-color('primary-xxlight');
+
+@import "_master.scss";
+@import "_header.scss";
+@import "_sidebar.scss";
+@import "_main.scss";
+@import "_footer.scss";
