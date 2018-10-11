@@ -74,25 +74,27 @@ main:
         path: page/agenda
         label: Agenda
     -
+        path: page/le-jeu-de-paume
+        label: 'Historique du tennis'
+        submenu:
+            -
+                path: page/le-jeu-de-paume
+                label: 'Le jeu de Paume'
+            -
+                path: page/invention-du-lawn-tennis
+                label: 'Invention du Lawn-Tennis'
+            -
+                path: page/conquete-du-lawn-tennis
+                label: 'Conquête du Lawn-Tennis'
+            -
+                path: page/tennis-moderne
+                label: 'Tennis Moderne'
+    -
         path: page/guides-pratiques
         label: 'Guides pratiques'
     -
         path: page/galerie-photos
         label: 'Galerie photos'
-
-footer_contact:
-    -
-        label: 'Coordonnées'
-        submenu:
-            -
-                label: '<address><span>Complexe Sportif </span><span>Mangin Beaulieu</span><br><span>2 rue des Boires, </span><span>44200 Nantes</span></address>'
-                class: address
-            -
-                label: 'Nous localiser sur un plan'
-                link: https://www.openstreetmap.org/?mlat=47.2050&mlon=-1.5431#map=14/47.2050/-1.5431
-            -
-                label: 'Nous contacter'
-                path: page/contacts
 
 footer_external_links:
     -

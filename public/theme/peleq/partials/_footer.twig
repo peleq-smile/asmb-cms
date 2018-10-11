@@ -1,38 +1,19 @@
-<!-- Footer -->
+{# Récupération de certains éléments du pied de page contribués dans le contenu "Accueil" #}
+{% setcontent homepage = 'accueil/accueil' %}
+
 <footer id="footer">
     <div class="top row align-items-stretch">
+        {# SECTION: CONTACT #}
         <div class="col-footer col-footer-contact">
-            {{ menu(identifier = 'footer_contact', template = 'partials/_sub_menu_footer.twig') }}
-
-            <div class="item private-access">
-                <a href=""><i class="fas fa-caret-right"></i>Accès réservé Bureau<i class="fas fa-user-lock"></i></a>
-            </div>
+            {{ include('partials/footer/_footer_contact.twig', { 'homepage' : homepage} ) }}
         </div>
 
+        {# SECTION: RÉSERVATION / REJOINDRE LE CLUB #}
         <div class="col-footer col-footer-book-join">
-            <div class="sub-col">
-                <p class="footer-title liens-utiles">Réservez un créneau</p>
-                <div class="item">
-                    <a href="https://ballejaune.com/reservation" target="_blank" title="">
-                        <i class="fas fa-caret-right"></i>Sur le site <span
-                                class="ballejaune embed-icon">balle jaune</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="sub-col">
-                <p class="footer-title liens-utiles">Rejoignez-nous</p>
-                <div class="item"><a href="" title=""><i class="fas fa-caret-right"></i>S'inscrire au club</a></div>
-                <div class="item">
-                    <a href="http://www.facebook.com/groups/AS.Mangin.Beaulieu/" target="_blank" title="">
-                        {#<i class="fas fa-caret-right"></i>Suivre l'ASMB sur <span class="facebook embed-icon">facebook</span></a>#}
-                        <i class="fas fa-caret-right"></i>Suivre l'ASMB sur <span
-                                class="facebook embed-icon">facebook</span></a>
-                    {#<i class="fas fa-caret-right"></i>Suivre l'ASMB sur facebook</a>#}
-                </div>
-            </div>
+            {{ include('partials/footer/_footer_book_join.twig', { 'homepage' : homepage} ) }}
         </div>
 
+        {# SECTION: LIENS EXTERNES #}
         <div class="col-footer col-footer-external-links">
             {{ menu(identifier = 'footer_external_links', template = 'partials/_sub_menu_footer.twig') }}
         </div>
@@ -48,7 +29,7 @@
     </div>
 
     <div class="bottom d-flex">
-        <p class="visitors">VISITEURS<br>1</p>
+        {{ widgets('footer') }}
         <p class="copyright">
             Copyright © 2018 ASMB Tennis Nantes | <a href="">Mentions légales</a><br>
             <span class="font-italic">{{ __("This website is <a href='%url%' target='_blank' title='Sophisticated, lightweight & simple CMS'>Built with Bolt</a>.",{'%url%':'http://bolt.cm'}) }}</span>

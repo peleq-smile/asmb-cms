@@ -8,56 +8,132 @@ homepage:
     name: "Accueil"
     singular_name: "Accueil"
     fields:
-        # Paramètres de l'en-tête du site
-        header_title:
-            label: Titre
-            type: text
-            group: en-tête du site
-            required: true
-
-#        header_baseline:
-#            label: Sous-titre
-#            type: text
-
-        header_baselines:
-            label: Sous-titre
-            type: repeater
-            fields:
-                item:
-                    label: Élément du sous-titre
-                    type: text
-
+        # Onglet Contenu
         title:
+            group: contenu
             label: Titre
             type: text
             class: large
-            group: contenu
-            postfix: |
-                The 'Homepage' can contain basic information about the website. This title will be
-                shown on the homepage of the website, as the name implies. To change the
-                <em><strong>name</strong></em> of the site, as is shown in the header, and the tab
-                in the webbrowser, edit <code>sitename:</code> in the configuration file.
-        image:
-            type: image
-            placeholder: https://source.unsplash.com/1920x640/?cityscape,landscape,nature/__random__
+
         teaser:
             label: Accroche
             type: html
             height: 150px
-        content:
-            label: Contenu
-            type: html
-            height: 300px
-        contentlink:
-            type: text
-            label: Link
-            placeholder: 'contenttype/slug or http://example.org/'
-            postfix: "Use this to add a link for this Homepage. This could either be an 'internal' link like <tt>page//about</tt>, if you use a contenttype/slug combination. Otherwise use a proper URL, like `http://example.org`."
+            postfix: |
+                Si ce champ est renseigné, son contenu s'affiche <b>avant</b> les blocs de l'accueil.
 
+        # Onglet Propriétés
         slug:
+            group: meta
             type: slug
             uses: title
-            group: meta
+
+        # Onglet En-tête du site : personnalisation de certains éléments de l'en-tête
+        header_title:
+            group: en-tête du site
+            label: Titre
+            type: text
+            required: true
+            postfix: |
+                Peut contenir des balises HTML. Les lettres mises entre les balises &lt;strong&gt;&lt;/strong&gt; sont
+                mises en avant (taille plus grande + autre couleur).
+
+        header_baselines:
+            label: Sous-titre
+            type: repeater
+            limit: 4
+            initial: 4
+            fields:
+                item:
+                    label: Élément de sous-titre
+                    type: text
+
+        header_shortlinks:
+            label: Liens rapides
+            type: repeater
+            limit: 4
+            initial: 4
+            fields:
+                text:
+                    label: Libellé
+                    type: text
+
+                url:
+                    label: Url / chemin relatif
+                    type: text
+                    postfix: |
+                        Exemple d'URL: http://www.fft.fr/<br>Exemple de chemin relatif: /page/editorial
+
+                target_blank:
+                    label: Ouvrir dans un nouvel onglet
+                    type: checkbox
+                    postfix: |
+                        L'usage est d'ouvrir les liens externes dans un nouvel onglet, tandis que les liens internes
+                        s'ouvrent dans le même onglet.
+
+                icon:
+                    label: Classe de l'icône à utiliser
+                    type: text
+                    postfix: |
+                        Pour le lien de réservation sur ballejaune.com, utiliser spécifiquement <mark>custom-bj</mark>.
+                        Pour les autres liens, choisir parmi https://fontawesome.com/icons?d=gallery&m=free
+
+                link_title:
+                    label: Attribut "title" du lien
+                    type: text
+                    postfix: |
+                        Il s'agit de donner plus de précision sur l'objet du lien.
+
+        # Onglet Pied de page du site : personnalisation de certains éléments du pied de page
+        footer_contact_address_text:
+            group: pied de page du site
+            label: Adresse du club
+            type: textarea
+            required: true
+            height: 100px
+            postfix: |
+                Peut contenir des balises HTML.
+
+        footer_contact_location_link_text:
+            label: Libellé du lien vers le plan d'accès au club
+            type: text
+            required: true
+
+        footer_contact_location_link_url:
+            label: URL du lien vers le plan d'accès au club
+            type: text
+            required: true
+
+        footer_contact_link_text:
+            label: Libellé du lien vers la page de contact
+            type: text
+            required: true
+
+        footer_contact_link_url:
+            label: URL du lien vers la page de contact
+            type: text
+            required: true
+
+        footer_book_slot_url:
+            label: URL du lien de réservation d'un créneau
+            type: text
+            required: true
+
+        footer_membership_link_text:
+            label: Libellé du lien vers la page d'inscription
+            type: text
+            required: true
+
+        footer_membership_url:
+            label: URL du lien vers la page d'inscription
+            type: text
+            required: true
+
+        footer_facebook_link_url:
+            label: URL du lien vers la page Facebook
+            type: text
+            required: true
+
     viewless: true
     singleton: true
     default_status: published

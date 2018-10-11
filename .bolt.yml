@@ -1,2 +1,2 @@
 extensions:
-    - Bundle\Site\CustomisationExtension
+    - Bundle\Asmb\Visitors\VisitorsExtension

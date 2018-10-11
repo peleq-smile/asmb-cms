@@ -10396,7 +10396,7 @@ a[data-toggle="collapse"] {
   padding: 0;
   color: #fff;
   min-height: 10rem;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.5s ease-in-out;
 }
 /* line 14, ../scss/_header.scss */
 #header .navbar {
@@ -10474,7 +10474,7 @@ a[data-toggle="collapse"] {
 /* line 90, ../scss/_header.scss */
 #header .nav-shortlinks li .nav-link i.custom-bj {
   display: inline-block;
-  vertical-align: sub;
+  vertical-align: bottom;
   height: 30px;
   background-image: url("../images/bj-icon.png");
   background-repeat: no-repeat;
@@ -10522,31 +10522,31 @@ a[data-toggle="collapse"] {
 /* line 144, ../scss/_header.scss */
 #header.sticky .nav-shortlinks {
   position: absolute;
-  top: 0;
+  top: 0.5rem;
   right: 0.5rem;
   flex-direction: row;
-  line-height: 3.2rem;
 }
-/* line 152, ../scss/_header.scss */
+/* line 151, ../scss/_header.scss */
 #header.sticky .nav-shortlinks .nav-item .nav-link {
   padding: 0.3rem 1rem 0.3rem 0;
 }
-/* line 155, ../scss/_header.scss */
+/* line 154, ../scss/_header.scss */
 #header.sticky .nav-shortlinks .nav-item .nav-link i.fa-map-marker-alt {
   width: 20px;
 }
-/* line 159, ../scss/_header.scss */
+/* line 158, ../scss/_header.scss */
 #header.sticky .nav-shortlinks .nav-item .nav-link i.fa-facebook-f {
   width: 14px;
 }
 
 @media (max-width: 799.98px) {
-  /* line 170, ../scss/_header.scss */
+  /* line 169, ../scss/_header.scss */
   #header {
     position: static;
     width: 100%;
     left: 0;
     margin: 0;
+    min-height: 20rem;
   }
   /* line 176, ../scss/_header.scss */
   #header .navbar-brand {
@@ -10572,61 +10572,60 @@ a[data-toggle="collapse"] {
   /* line 197, ../scss/_header.scss */
   #header .nav-shortlinks {
     position: absolute;
-    top: 0;
+    top: 0.3rem !important;
     right: 0.5rem;
-    line-height: 3.2rem;
   }
-  /* line 204, ../scss/_header.scss */
+  /* line 203, ../scss/_header.scss */
   #header .nav-shortlinks .nav-item .nav-link {
     padding: 0.3rem 0.7rem !important;
   }
-  /* line 207, ../scss/_header.scss */
+  /* line 206, ../scss/_header.scss */
   #header .nav-shortlinks .nav-item .nav-link i.fa-map-marker-alt {
     width: 20px;
   }
-  /* line 211, ../scss/_header.scss */
+  /* line 210, ../scss/_header.scss */
   #header .nav-shortlinks .nav-item .nav-link i.fa-facebook-f {
     width: 14px;
   }
-  /* line 215, ../scss/_header.scss */
+  /* line 214, ../scss/_header.scss */
   #header .nav-shortlinks .nav-item .nav-link span {
     display: none;
   }
-  /* line 222, ../scss/_header.scss */
+  /* line 221, ../scss/_header.scss */
   #header .navbar-toggler {
     display: block;
   }
-  /* line 226, ../scss/_header.scss */
+  /* line 225, ../scss/_header.scss */
   #header.sticky {
     position: fixed;
-    height: 3rem;
-    min-height: 3rem;
+    height: 3.2rem;
+    min-height: 3.2rem;
   }
 }
 @media (min-width: 1200px) {
-  /* line 236, ../scss/_header.scss */
+  /* line 235, ../scss/_header.scss */
   #header {
     margin-left: 20%;
   }
-  /* line 239, ../scss/_header.scss */
+  /* line 238, ../scss/_header.scss */
   #header .navbar-brand {
     max-width: 80%;
   }
-  /* line 244, ../scss/_header.scss */
+  /* line 243, ../scss/_header.scss */
   #header .nav-shortlinks .nav-link {
     padding: 0.3rem 1rem;
   }
-  /* line 247, ../scss/_header.scss */
+  /* line 246, ../scss/_header.scss */
   #header .nav-shortlinks .nav-link i {
     text-align: center;
   }
 }
 @media (max-width: 1199.98px) {
-  /* line 258, ../scss/_header.scss */
+  /* line 257, ../scss/_header.scss */
   #header .nav-shortlinks {
     flex-direction: row;
   }
-  /* line 262, ../scss/_header.scss */
+  /* line 261, ../scss/_header.scss */
   #header .nav-shortlinks .nav-link i {
     text-align: right;
   }
@@ -10928,84 +10927,89 @@ a[data-toggle="collapse"] {
   bottom: 0;
   opacity: 0.5;
 }
+/* line 114, ../scss/_footer.scss */
+#footer .widget-getvisitors {
+  font-style: italic;
+  white-space: nowrap;
+}
 
 @media (max-width: 1199.98px) {
-  /* line 117, ../scss/_footer.scss */
+  /* line 122, ../scss/_footer.scss */
   #footer .top {
     padding: 0 0 1rem 12%;
   }
-  /* line 120, ../scss/_footer.scss */
+  /* line 125, ../scss/_footer.scss */
   #footer .top .col-footer {
     flex: 1;
   }
-  /* line 123, ../scss/_footer.scss */
+  /* line 128, ../scss/_footer.scss */
   #footer .top .col-footer.col-footer-book-join {
     order: -1;
     flex: unset;
     width: 100%;
     display: flex;
   }
-  /* line 129, ../scss/_footer.scss */
+  /* line 134, ../scss/_footer.scss */
   #footer .top .col-footer.col-footer-book-join .sub-col {
     flex: 1;
   }
 }
 @media (max-width: 991.98px) {
-  /* line 140, ../scss/_footer.scss */
+  /* line 145, ../scss/_footer.scss */
   #footer .top {
     padding: 0 0 1rem 8%;
   }
-  /* line 144, ../scss/_footer.scss */
+  /* line 149, ../scss/_footer.scss */
   #footer .bottom {
     font-size: 0.8rem;
   }
-  /* line 146, ../scss/_footer.scss */
+  /* line 151, ../scss/_footer.scss */
   #footer .bottom .copyright {
     text-align: right;
   }
-  /* line 150, ../scss/_footer.scss */
+  /* line 155, ../scss/_footer.scss */
   #footer .bottom .empty {
     display: none;
   }
-  /* line 156, ../scss/_footer.scss */
+  /* line 161, ../scss/_footer.scss */
   #footer .tribute a span {
     display: none;
   }
 }
 @media (max-width: 575.98px) {
-  /* line 167, ../scss/_footer.scss */
+  /* line 172, ../scss/_footer.scss */
   #footer .top p {
     margin-bottom: 0.3rem;
   }
-  /* line 171, ../scss/_footer.scss */
+  /* line 176, ../scss/_footer.scss */
   #footer .top .col-footer {
     width: 300px;
     flex: unset;
     margin: auto;
   }
-  /* line 176, ../scss/_footer.scss */
+  /* line 181, ../scss/_footer.scss */
   #footer .top .col-footer.col-footer-book-join {
     display: block;
     width: 300px;
   }
-  /* line 180, ../scss/_footer.scss */
+  /* line 185, ../scss/_footer.scss */
   #footer .top .col-footer.col-footer-book-join .sub-col {
     width: 100%;
     flex: unset;
   }
 }
 @media (min-width: 800px) {
-  /* line 192, ../scss/_footer.scss */
+  /* line 197, ../scss/_footer.scss */
   #footer {
     margin-left: 15rem;
   }
 }
 @media (min-width: 1200px) {
-  /* line 199, ../scss/_footer.scss */
+  /* line 204, ../scss/_footer.scss */
   #footer {
     margin-left: 20%;
   }
-  /* line 202, ../scss/_footer.scss */
+  /* line 207, ../scss/_footer.scss */
   #footer .private-access {
     display: block;
   }

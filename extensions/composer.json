@@ -18,7 +18,7 @@
     "name": "bolt/extensions",
     "prefer-stable": true,
     "provide": {
-        "bolt/bolt": "3.5.7"
+        "bolt/bolt": "3.6.0"
     },
     "repositories": {
         "packagist": false,
@@ -26,6 +26,9 @@
             "type": "composer",
             "url": "https://market.bolt.cm/satis/"
         }
+    },
+    "require": {
+        "bolt/boltforms": "^4.2"
     },
     "scripts": {
         "post-autoload-dump": "Bolt\\Composer\\EventListener\\PackageEventListener::dump",
