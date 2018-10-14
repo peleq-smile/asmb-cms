@@ -1,7 +1,7 @@
 $header-icon-size: 28px;
 
 #header {
-    background-color: theme-color("secondary");
+    background-color: theme-color("primary");
     margin-left: $navbar-width;
     position: relative;
     z-index: 999;
@@ -48,8 +48,8 @@ $header-icon-size: 28px;
             strong {
                 font-weight: bold;
                 font-size: 1.3em;
-                color: theme-color('primary-light');
-                text-shadow: 1px 1px theme-color('primary-xxlight');
+                color: theme-color('secondary-light');
+                text-shadow: 1px 1px theme-color('secondary-xxlight');
             }
         }
 
@@ -58,7 +58,7 @@ $header-icon-size: 28px;
             font-style: italic;
             font-size: 0.8em;
             margin: 2rem auto 0 auto;
-            color: theme-color('primary-light');
+            color: theme-color('primary-xlight');
             line-height: 1.2em;
             letter-spacing: -0.05em;
 
@@ -109,7 +109,7 @@ $header-icon-size: 28px;
 
                 &:hover {
                     i, span {
-                        color: theme-color('primary');
+                        color: theme-color('secondary');
                     }
 
                     .custom-bj {

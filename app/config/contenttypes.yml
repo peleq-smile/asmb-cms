@@ -95,45 +95,44 @@ homepage:
                 Peut contenir des balises HTML.
 
         footer_contact_location_link_text:
-            label: Libellé du lien vers le plan d'accès au club
+            label: Plan d'accès au club - Libellé du lien
             type: text
             required: true
 
         footer_contact_location_link_url:
-            label: URL du lien vers le plan d'accès au club
+            label: Plan d'accès au club - URL du lien
             type: text
             required: true
 
         footer_contact_link_text:
-            label: Libellé du lien vers la page de contact
+            label: Page de contact - Libellé du lien
             type: text
             required: true
 
         footer_contact_link_url:
-            label: URL du lien vers la page de contact
+            label: Page de contact - URL du lien
             type: text
             required: true
 
         footer_book_slot_url:
-            label: URL du lien de réservation d'un créneau
+            label: Réservation d'un créneau - URL du lien
             type: text
             required: true
 
         footer_membership_link_text:
-            label: Libellé du lien vers la page d'inscription
+            label: Page d'inscription: Libellé du lien
             type: text
             required: true
 
         footer_membership_url:
-            label: URL du lien vers la page d'inscription
+            label: Page d'inscription: URL du lien
             type: text
             required: true
 
         footer_facebook_link_url:
-            label: URL du lien vers la page Facebook
+            label: Page Facebook: URL du lien
             type: text
             required: true
-
     viewless: true
     singleton: true
     default_status: published
@@ -173,7 +172,6 @@ pages:
         template:
             type: templateselect
             filter: '*.twig'
-    taxonomy: [ groups ]
     recordsperpage: 20
 
 
@@ -188,41 +186,40 @@ pages:
 # The 'sort' is set to '-datepublish', which means that newer entries will be
 # shown above older entries.
 
-articles:
-    name: Articles
-    singular_name: Article
-    fields:
-        title:
-            type: text
-            class: large
-            group: content
-        slug:
-            type: slug
-            uses: title
-        teaser:
-            type: html
-            height: 150px
-        body:
-            type: html
-            height: 300px
-        image:
-            type: image
-            group: media
-            placeholder: https://source.unsplash.com/1280x768/?business,workspace,interior/__random__
-        video:
-            type: video
-    relations:
-        pages:
-          multiple: false
-          order: title
-          label: Select a page
-    taxonomy: [ categories, tags ]
-    record_template: entry.twig
-    listing_template: listing.twig
-    listing_records: 10
-    default_status: published
-    sort: -datepublish
-    recordsperpage: 20
+#articles:
+#    name: Articles
+#    singular_name: Article
+#    fields:
+#        title:
+#            type: text
+#            class: large
+#            group: content
+#        slug:
+#            type: slug
+#            uses: title
+#        teaser:
+#            type: html
+#            height: 150px
+#        body:
+#            type: html
+#            height: 300px
+#        image:
+#            type: image
+#            group: media
+#            placeholder: https://source.unsplash.com/1280x768/?business,workspace,interior/__random__
+#        video:
+#            type: video
+#    relations:
+#        pages:
+#          multiple: false
+#          order: title
+#          label: Select a page
+#    record_template: entry.twig
+#    listing_template: listing.twig
+#    listing_records: 10
+#    default_status: published
+#    sort: -datepublish
+#    recordsperpage: 20
 
 
 # The 'Showcases' is not particularly useful in most cases, but it does a good
@@ -346,14 +343,17 @@ articles:
 blocks:
     name: Blocs
     singular_name: Bloc
+    singular_slug: block
     fields:
         title:
             type: text
             class: large
-            group: "Block"
-        slug:
-            type: slug
-            uses: [ title ]
+            group: "Contenu"
+        background_image:
+            type: image
+            label: Image de fond du bloc
+            attrib: title
+            extensions: [ gif, jpg, png ]
         content:
             type: html
             height: 150px
@@ -362,14 +362,14 @@ blocks:
             label: Link
             placeholder: 'contenttype/slug or http://example.org/'
             postfix: "Use this to add a link for this Block. This could either be an 'internal' link like <tt>page/about</tt>, if you use a contenttype/slug combination. Otherwise use a proper URL, like `http://example.org`."
-        image:
-            type: image
-            attrib: title
-            extensions: [ gif, jpg, png ]
+        slug:
+            type: slug
+            uses: [ title ]
     show_on_dashboard: true
     viewless: true
     default_status: published
     searchable: false
+    taxonomy: [ etiquettes ]
     icon_many: "fa:cubes"
     icon_one: "fa:cube"
 

@@ -7,6 +7,75 @@
     &.under-sticky {
         padding-top: 10rem;
     }
+
+    .container {
+        .flex-column {
+            margin: 0 1rem;
+            min-width: 50%;
+        }
+        .block {
+            padding: 2rem;
+            // TODO variabiliser
+            background-color: #e6e3c0;
+            margin-bottom: 1rem;
+
+            h2 {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: theme-color('secondary');
+                margin-bottom: 2rem;
+            }
+
+            h3 {
+                color: #633d3d;
+                font-size: 1.4em;
+                margin-bottom: 1rem;
+                font-weight: bold;
+            }
+
+            a {
+                color: theme-color('primary-dark');
+
+                &:hover {
+                    color: theme-color('secondary');
+                }
+            }
+
+            p {
+                white-space: normal;
+            }
+
+            table {
+                width: 100%;
+
+                td {
+                    padding-right: 1rem;
+                }
+            }
+
+            &.block-with-bg {
+                color: $white;
+
+                h2, h3, h4, h5 h6 {
+                    color: $white;
+                }
+
+                a {
+                    color: $white;
+
+                    &:hover {
+                        color: theme-color('secondary');
+                    }
+                }
+            }
+
+            .bottom-link {
+                margin-top: 1rem;
+                text-align: right;
+                font-size: 1.2em;
+            }
+        }
+    }
 }
 
 // Écrans > 800px
@@ -20,5 +89,9 @@
 @include media-breakpoint-up(xl) {
     #main {
         margin-left: $navbar-width-up-xl;
+
+        &.under-sticky {
+            padding-top: 6rem;
+        }
     }
 }

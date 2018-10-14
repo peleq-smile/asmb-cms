@@ -1,101 +1,153 @@
 {% extends 'partials/_master.twig' %}
 
 {% block main %}
+    {% setcontent homepage = "homepage" limit 1 returnsingle %}
+    {% set linearGradientColor = "rgba(86, 71, 28, 0.9)" %}
 
-    <section class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col p-3">
-                    {% setcontent homepage = "homepage" limit 1 returnsingle %}
-                    {% if homepage %}
-                        <div class="content">
-                            <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
-                            <div class="teaser">{{ homepage.teaser }}</div>
-                            {{ homepage.content }}
-                        </div>
+    {% if homepage %}
+
+        {% setcontent homepageBlocks = 'block' where { etiquettes: 'accueil' } %}
+
+        {% if homepageBlocks is not empty %}
+            <div class="container d-flex flex-row align-items-stretch justify-content-center">
+            {% for block in homepageBlocks %}
+                <div class="flex-column flex-fill">
+
+                    <section
+                    {% if block.background_image  %}
+                        class="block block-with-bg" style="background: linear-gradient({{ linearGradientColor }}, {{ linearGradientColor }}), url('{{ asset(block.background_image, 'files') }}')"
+                    {% else %}
+                        class="block"
                     {% endif %}
-                </div>
-            </div>
-        </div>
-    </section>
+                    >
+                        {% if block.contentlink  %}
+                        <h2><a href="{{ block.contentlink }}">{{ block.title }}</a></h2>
+                        {% else %}
+                            <h2>{{ block.title }}</h2>
+                        {% endif %}
 
-    {# Pages section #}
-
-    {#<section class="section section-pages hero is-success is-bold">#}
-    {#<div class="container">#}
-    {#<h2 class="title">Pages</h2>#}
-    {#<div class="row">#}
-    {#{% setcontent pages = 'pages/latest/3' %}#}
-    {#{% for page in pages %}#}
-    {#<div class="col">#}
-    {#<div class="card p-3">#}
-    {#<div class="card-content content">#}
-    {#<h3><a href="{{ page.link() }}">{{ page.title }}</a></h3>#}
-    {#<p>{{ page.excerpt }}</p>#}
-    {#<a class="button is-primary" href="{{ page.link() }}">#}
-    {#{{ __('general.phrase.read-more') }}#}
-    {#</a>#}
-    {#</div>#}
-    {#</div>#}
-    {#</div>#}
-    {#{% else %}#}
-    {#<div class="column">#}
-    {#<p>{{ __("general.phrase.no-content-found") }}</p>#}
-    {#</div>#}
-    {#{% endfor %}#}
-    {#</div>#}
-    {#</div>#}
-    {#</section>#}
-
-    {# Latest articles #}
-
-    {#<section class="section section-latest-articles">#}
-    {#<div class="container">#}
-    {#<h2 class="title">Latest Articles</h2>#}
-    {#{% setcontent articles = 'articles/latest/3' %}#}
-    {#{% for article in articles %}#}
-    {#<article role="article" class="media columns">#}
-    {#<div class="media-content column is-7">#}
-    {#<div class="content">#}
-    {#<h3><a href="{{ article.link }}">{{ article.title }}</a></h3>#}
-    {#{{ article.teaser }}#}
-
-    {#{% include 'partials/_record_meta.twig' with {'extended': true, 'record': article} %}#}
-    {#</div>#}
-    {#</div>#}
-    {#<div class="media-right column">#}
-    {#<figure class="image">#}
-    {#{{ popup(article.values.image, 480, 320) }}#}
-    {#</figure>#}
-    {#</div>#}
-    {#</article>#}
-    {#{% else %}#}
-    {#<p>{{ __("general.phrase.no-content-found") }}</p>#}
-    {#{% endfor %}#}
-    {#<div class="buttons has-addons is-right">#}
-    {#<a class="button is-primary" href="{{ path('contentlisting', {'contenttypeslug': 'articles'}) }}">Read#}
-    {#more <span class="is-hidden"> articles</span></a>#}
-    {#</div>#}
-    {#</div>#}
-    {#</section>#}
-
-    <section class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col p-3">
-                    <p>
-                        Dum haec in oriente aguntur, Arelate hiemem agens Constantius post theatralis ludos atque
-                        circenses
-                        ambitioso editos apparatu diem sextum idus Octobres, qui imperii eius annum tricensimum
-                        terminabat,
-                        insolentiae pondera gravius librans, siquid dubium deferebatur aut falsum, pro liquido accipiens
-                        et
-                        conperto, inter alia excarnificatum Gerontium Magnentianae comitem partis exulari maerore
-                        multavit.</p>
+                        {{ block.content }}
+                    </section>
 
                 </div>
+            {%  endfor %}
             </div>
-        </div>
-    </section>
+
+        {% endif %}
+    {% endif %}
+
+    {#<div class="container d-flex flex-row align-items-stretch justify-content-center">#}
+        {#<div class="flex-column flex-fill">#}
+            {#<div class="block block-with-bg">#}
+                {#<p class="block-title">#}
+                    {#<a href="#">#}
+                        {#Trophée Philippe LE GOUIC 2018<br>#}
+                    {#</a>#}
+                {#</p>#}
+
+                {#<p class="block-title">#}
+                    {#Tournoi interne 2018<br>#}
+                    {#du lundi 22 octobre au dimanche 4 novembre#}
+                {#</p>#}
+
+                {#<p>#}
+                    {#Seniors messieurs et dames : open<br>#}
+                    {#Jeunes garçons et filles : 11-12, 13-14, 15-16 et 17-18 ans#}
+                {#</p>#}
+
+                {#<p>#}
+                    {#Ce tournoi compte pour votre classement mensuel !#}
+                {#</p>#}
+
+                {#<br>#}
+                {#<div class="font-italic d-flex">#}
+                    {#<div class="flex-shrink-1 mr-4">#}
+                        {#<div class="font-weight-bold text-nowrap">Lieu de compétition :</div>#}
+                        {#En salle et sur les courts extérieurs<br>#}
+                        {#Complexe Mangin Beaulieu<br>#}
+                        {#2 Rue des Boires à Nantes<br>#}
+                    {#</div>#}
+                    {#<div class="flex-shrink-1">#}
+                        {#<div class="font-weight-bold text-nowrap">Horaire des matchs :</div>#}
+                        {#Du lundi au vendredi à partir de 17h30<br>#}
+                        {#Le week-end et le jeudi 1er novembre de 9h à 22h<br>#}
+                    {#</div>#}
+                {#</div>#}
+                {#<div class="bottom-link">#}
+                    {#<a href="">#}
+                        {#<i class="fas fa-caret-right"></i>#}
+                        {#<span>Inscriptions</span>#}
+                    {#</a>#}
+                {#</div>#}
+            {#</div>#}
+            {#<div class="block">#}
+                {#<p class="block-title"><a href="#">Inscriptions 2018-2019</a></p>#}
+            {#</div>#}
+        {#</div>#}
+        {#<div class="flex-column flex-fill">#}
+            {#<div class="block">#}
+                {#<p class="block-title"><a href="#">Carte Loisir ASMB</a></p>#}
+                {#<p class="block-title">#}
+                    {#OPTEZ POUR LA CARTE LOISIR ASMB<br>#}
+                    {#<em>pour 95 €</em><br>#}
+                {#</p>#}
+                {#<div>Valable jusqu'au 31/08/19</div>#}
+
+                {#<br>#}
+                {#<p>OU</p>#}
+
+                {#<p class="block-title">#}
+                    {#CARTE LOISIR DÉCOUVERTE#}
+                    {#<em>pour 45 €</em><br>#}
+                {#</p>#}
+                {#<div>#}
+                    {#Réservée aux personnes de + 15 ans n'ayant pas été licenciées à la FFT depuis au moins 3 ans.#}
+
+                    {#Valable 3 mois à partir de l'inscription, certificat médical non nécessaire, ne donne pas accès à la#}
+                    {#compétition.#}
+                {#</div>#}
+
+                {#<br>#}
+                {#<p class="font-weight-bold text-nowrap">Ses avantages :</p>#}
+                {#<div>#}
+                    {#<ul>#}
+                        {#<li>Licence incluse pour bénéficier de l’assurance FFT</li>#}
+                        {#<li>Remise sur les cartes loisirs supplémentaires</li>#}
+                        {#<li>Réservation de créneaux d’1h le matin et d’1h30 en salle à partir de 13h sur les plages#}
+                            {#horaires#}
+                            {#du club#}
+                        {#</li>#}
+                        {#<li>Réservation de créneaux sur les courts extérieurs : aucune attente avant de jouer</li>#}
+                        {#<li>Pratique du tennis en semaine, le soir, sur les courts extérieurs, même lorsqu’il fait nuit,#}
+                            {#grâce à l’éclairage#}
+                        {#</li>#}
+                        {#<li>Mise en relation avec des joueurs de votre niveau grâce à notre système de réservation en#}
+                            {#ligne#}
+                        {#</li>#}
+                        {#<li>Possibilité de participer aux tournois et aux championnats par équipes (hors carte#}
+                            {#découverte)#}
+                        {#</li>#}
+                        {#<li>Possibilité de participer aux animations du club</li>#}
+                        {#<li>Priorité l'année suivante pour se réinscrire en mai et ainsi obtenir une place en cours#}
+                            {#collectif#}
+                        {#</li>#}
+                    {#</ul>#}
+                {#</div>#}
+
+                {#<p>Plus d'informations en écrivant à <a href="mailto:fredviotte@hotmail.com">fredviotte@hotmail.com</a></p>#}
+
+                {#<p><b>Inscription en ligne possible sur</b> <a href="https://ballejaune.com/club/asmb">https://ballejaune.com/club/asmb</a></p>#}
+            {#</div>#}
+        {#</div>#}
+    {#</div>#}
+
+    {#<div class="container d-flex flex-row">#}
+    {#<div class="block">#}
+    {#Dernières infos#}
+    {#</div>#}
+    {#<div class="block">#}
+    {#Rencontres du week-end#}
+    {#</div>#}
+    {#</div>#}
 
 {% endblock main %}

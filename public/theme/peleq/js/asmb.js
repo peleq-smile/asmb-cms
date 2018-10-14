@@ -20,7 +20,7 @@ $(window).on('load', function () {
                 $('body').removeClass('overflow-hidden');
             };
 
-        $('#sidebar').css('visibility', 'visible')
+        $sidebar.css('visibility', 'visible')
         $('#openSidebar').on('click', openSideBar);
         $('#closeSidebar').on('click', closeSidebar);
 
@@ -28,10 +28,6 @@ $(window).on('load', function () {
         if (isTouchScreenDevice) {
             $sidebar.swipe({
                 swipeLeft: function (event, direction, distance, duration, fingerCount) {
-                    // if (phase == "move" && direction == "right") {
-                    //     openSideBar();
-                    //     return false;
-                    // }
                     if (direction == "left" && distance > 75) {
                         closeSidebar();
                         return false;

@@ -23,8 +23,8 @@
                 <ul class="navbar-nav nav-shortlinks">
                     {% for shortlink in homepage.header_shortlinks %}
                         <li class="nav-item">
-                            <a href="{{ shortlink.url }}" title="{{- shortlink.title -}}"
-                               target="{{ (shortlink.target_blank) ? '_blank' : '_self' }}" class="nav-link text-white">
+                            <a href="{{ shortlink.url }}" title="{{- shortlink.link_title -}}"
+                               target="{{ (shortlink.target_blank is not defined or shortlink.target_blank is empty) ? '_self' : '_blank' }}" class="nav-link text-white">
                                 <i class="{{ shortlink.icon }}"></i><span>{{- shortlink.text -}}</span>
                             </a>
                         </li>

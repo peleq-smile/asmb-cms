@@ -7,7 +7,7 @@
     min-height: 100vh;
     height: 100vh;
     z-index: 1000;
-    background: theme-color('primary');
+    background: theme-color('secondary');
     padding: 0;
     box-shadow: 0 0 0.5rem 0.1rem $gray-800;
     transition: all 0.3s;
@@ -35,7 +35,7 @@
                 }
 
                 &:hover span {
-                    color: theme-color('primary-xxlight');
+                    color: theme-color('secondary-xxlight');
                 }
             }
         }
@@ -45,10 +45,10 @@
         margin: 2rem 1rem 1rem 1rem;
 
         button {
-            background-color: theme-color('primary');
+            background-color: theme-color('secondary');
 
             &:hover {
-                background-color: theme-color('primary-xxlight');
+                background-color: theme-color('secondary-xxlight');
             }
         }
     }
@@ -63,7 +63,7 @@
             display: block;
 
             &:hover {
-                background: theme-color('primary-hover');
+                background: theme-color('secondary-hover');
                 text-decoration: none;
                 color: $white;
             }
@@ -80,7 +80,7 @@
                 margin: 0;
                 font-size: 0.9em !important;
                 padding-left: 30px !important;
-                background: theme-color('primary-light');
+                background: theme-color('secondary-light');
 
                 span {
                     border-bottom: none;
@@ -94,7 +94,7 @@
             a {
                 font-size: 0.8em !important;
                 padding-left: 60px !important;
-                background: theme-color('primary-xlight');
+                background: theme-color('secondary-xlight');
                 border-bottom: none;
             }
         }
@@ -109,7 +109,7 @@
 
         span {
             display: block;
-            color: theme-color('primary-xxlight');
+            color: theme-color('secondary-xxlight');
             width: 52px;
             height: 38px;
             line-height: 38px;
@@ -117,7 +117,7 @@
         }
 
         &:hover span {
-            background-color: theme-color('primary-xlight');
+            background-color: theme-color('secondary-xlight');
         }
     }
 }

@@ -43,7 +43,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #fff;
+  background-color: white;
 }
 
 /* line 73, ../lib/bootstrap-4.1.3/scss/_reboot.scss */
@@ -533,7 +533,7 @@ mark,
 /* line 14, ../lib/bootstrap-4.1.3/scss/_images.scss */
 .img-thumbnail {
   padding: 0.25rem;
-  background-color: #fff;
+  background-color: white;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
   max-width: 100%;
@@ -1806,7 +1806,7 @@ pre code {
 }
 /* line 26, ../lib/bootstrap-4.1.3/scss/_tables.scss */
 .table .table {
-  background-color: #fff;
+  background-color: white;
 }
 
 /* line 37, ../lib/bootstrap-4.1.3/scss/_tables.scss */
@@ -2003,7 +2003,7 @@ pre code {
 
 /* line 116, ../lib/bootstrap-4.1.3/scss/_tables.scss */
 .table .thead-dark th {
-  color: #fff;
+  color: white;
   background-color: #212529;
   border-color: #32383e;
 }
@@ -2016,7 +2016,7 @@ pre code {
 
 /* line 132, ../lib/bootstrap-4.1.3/scss/_tables.scss */
 .table-dark {
-  color: #fff;
+  color: white;
   background-color: #212529;
 }
 /* line 136, ../lib/bootstrap-4.1.3/scss/_tables.scss */
@@ -2388,7 +2388,7 @@ textarea.form-control {
 }
 /* line 118, ../lib/bootstrap-4.1.3/scss/mixins/_forms.scss */
 .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before, .custom-control-input.is-valid:focus ~ .custom-control-label::before {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 /* line 129, ../lib/bootstrap-4.1.3/scss/mixins/_forms.scss */
@@ -2498,7 +2498,7 @@ textarea.form-control {
 }
 /* line 118, ../lib/bootstrap-4.1.3/scss/mixins/_forms.scss */
 .was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before, .custom-control-input.is-invalid:focus ~ .custom-control-label::before {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
 /* line 129, ../lib/bootstrap-4.1.3/scss/mixins/_forms.scss */
@@ -3804,7 +3804,7 @@ input[type="button"].btn-block {
 }
 /* line 33, ../lib/bootstrap-4.1.3/scss/_custom-forms.scss */
 .custom-control-input:focus ~ .custom-control-label::before {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 /* line 38, ../lib/bootstrap-4.1.3/scss/_custom-forms.scss */
 .custom-control-input:active ~ .custom-control-label::before {
@@ -4038,15 +4038,15 @@ input[type="button"].btn-block {
 }
 /* line 326, ../lib/bootstrap-4.1.3/scss/_custom-forms.scss */
 .custom-range:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 /* line 327, ../lib/bootstrap-4.1.3/scss/_custom-forms.scss */
 .custom-range:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 /* line 328, ../lib/bootstrap-4.1.3/scss/_custom-forms.scss */
 .custom-range:focus::-ms-thumb {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 1px white, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 /* line 331, ../lib/bootstrap-4.1.3/scss/_custom-forms.scss */
 .custom-range::-moz-focus-outer {
@@ -4224,8 +4224,8 @@ input[type="button"].btn-block {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: #495057;
-  background-color: #fff;
-  border-color: #dee2e6 #dee2e6 #fff;
+  background-color: white;
+  border-color: #dee2e6 #dee2e6 white;
 }
 /* line 61, ../lib/bootstrap-4.1.3/scss/_nav.scss */
 .nav-tabs .dropdown-menu {
@@ -10347,12 +10347,12 @@ a.text-dark:hover, a.text-dark:focus {
 }
 /* line 2, ../scss/_master.scss */
 a {
-  color: #452b3a;
+  color: #323b43;
 }
 /* line 5, ../scss/_master.scss */
 a:hover {
   text-decoration: none;
-  color: #87617c;
+  color: #5b6a72;
 }
 /* line 10, ../scss/_master.scss */
 a[data-toggle="collapse"] {
@@ -10380,15 +10380,20 @@ a[data-toggle="collapse"] {
   overflow: hidden;
 }
 
+/* line 34, ../scss/_master.scss */
+.text-underline {
+  font-weight: bold;
+}
+
 @media (max-width: 799.98px) {
-  /* line 36, ../scss/_master.scss */
+  /* line 41, ../scss/_master.scss */
   .wrapper {
     flex-direction: column;
   }
 }
 /* line 3, ../scss/_header.scss */
 #header {
-  background-color: #7295d2;
+  background-color: #026199;
   margin-left: 15rem;
   position: relative;
   z-index: 999;
@@ -10438,8 +10443,8 @@ a[data-toggle="collapse"] {
 #header .navbar-brand .header-title strong {
   font-weight: bold;
   font-size: 1.3em;
-  color: #452b3a;
-  text-shadow: 1px 1px #87617c;
+  color: #323b43;
+  text-shadow: 1px 1px #5b6a72;
 }
 /* line 56, ../scss/_header.scss */
 #header .navbar-brand .header-baseline {
@@ -10447,7 +10452,7 @@ a[data-toggle="collapse"] {
   font-style: italic;
   font-size: 0.8em;
   margin: 2rem auto 0 auto;
-  color: #452b3a;
+  color: #98bae1;
   line-height: 1.2em;
   letter-spacing: -0.05em;
 }
@@ -10492,7 +10497,7 @@ a[data-toggle="collapse"] {
 }
 /* line 111, ../scss/_header.scss */
 #header .nav-shortlinks li .nav-link:hover i, #header .nav-shortlinks li .nav-link:hover span {
-  color: #361f2c;
+  color: #222931;
 }
 /* line 115, ../scss/_header.scss */
 #header .nav-shortlinks li .nav-link:hover .custom-bj {
@@ -10640,7 +10645,7 @@ a[data-toggle="collapse"] {
   min-height: 100vh;
   height: 100vh;
   z-index: 1000;
-  background: #361f2c;
+  background: #222931;
   padding: 0;
   box-shadow: 0 0 0.5rem 0.1rem #343a40;
   transition: all 0.3s;
@@ -10673,7 +10678,7 @@ a[data-toggle="collapse"] {
 }
 /* line 37, ../scss/_sidebar.scss */
 #sidebar .sidebar-header h1 a:hover span {
-  color: #87617c;
+  color: #5b6a72;
 }
 /* line 44, ../scss/_sidebar.scss */
 #sidebar .form-search {
@@ -10681,11 +10686,11 @@ a[data-toggle="collapse"] {
 }
 /* line 47, ../scss/_sidebar.scss */
 #sidebar .form-search button {
-  background-color: #361f2c;
+  background-color: #222931;
 }
 /* line 50, ../scss/_sidebar.scss */
 #sidebar .form-search button:hover {
-  background-color: #87617c;
+  background-color: #5b6a72;
 }
 /* line 56, ../scss/_sidebar.scss */
 #sidebar ul.components {
@@ -10717,7 +10722,7 @@ a[data-toggle="collapse"] {
   margin: 0;
   font-size: 0.9em !important;
   padding-left: 30px !important;
-  background: #452b3a;
+  background: #323b43;
 }
 /* line 85, ../scss/_sidebar.scss */
 #sidebar ul.components ul a span {
@@ -10731,7 +10736,7 @@ a[data-toggle="collapse"] {
 #sidebar ul.components ul ul a {
   font-size: 0.8em !important;
   padding-left: 60px !important;
-  background: #543649;
+  background: #49555d;
   border-bottom: none;
 }
 /* line 103, ../scss/_sidebar.scss */
@@ -10745,7 +10750,7 @@ a[data-toggle="collapse"] {
 /* line 110, ../scss/_sidebar.scss */
 #sidebar .close span {
   display: block;
-  color: #87617c;
+  color: #5b6a72;
   width: 52px;
   height: 38px;
   line-height: 38px;
@@ -10753,7 +10758,7 @@ a[data-toggle="collapse"] {
 }
 /* line 119, ../scss/_sidebar.scss */
 #sidebar .close:hover span {
-  background-color: #543649;
+  background-color: #49555d;
 }
 
 /* line 125, ../scss/_sidebar.scss */
@@ -10801,17 +10806,88 @@ a[data-toggle="collapse"] {
 #main.under-sticky {
   padding-top: 10rem;
 }
+/* line 12, ../scss/_main.scss */
+#main .container .flex-column {
+  margin: 0 1rem;
+  min-width: 50%;
+}
+/* line 16, ../scss/_main.scss */
+#main .container .block {
+  padding: 2rem;
+  background-color: #e6e3c0;
+  margin-bottom: 1rem;
+}
+/* line 22, ../scss/_main.scss */
+#main .container .block h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #222931;
+  margin-bottom: 2rem;
+}
+/* line 29, ../scss/_main.scss */
+#main .container .block h3 {
+  color: #633d3d;
+  font-size: 1.4em;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+/* line 36, ../scss/_main.scss */
+#main .container .block a {
+  color: #02497e;
+}
+/* line 39, ../scss/_main.scss */
+#main .container .block a:hover {
+  color: #222931;
+}
+/* line 44, ../scss/_main.scss */
+#main .container .block p {
+  white-space: normal;
+}
+/* line 48, ../scss/_main.scss */
+#main .container .block table {
+  width: 100%;
+}
+/* line 51, ../scss/_main.scss */
+#main .container .block table td {
+  padding-right: 1rem;
+}
+/* line 56, ../scss/_main.scss */
+#main .container .block.block-with-bg {
+  color: #fff;
+}
+/* line 59, ../scss/_main.scss */
+#main .container .block.block-with-bg h2, #main .container .block.block-with-bg h3, #main .container .block.block-with-bg h4, #main .container .block.block-with-bg h5 h6 {
+  color: #fff;
+}
+/* line 63, ../scss/_main.scss */
+#main .container .block.block-with-bg a {
+  color: #fff;
+}
+/* line 66, ../scss/_main.scss */
+#main .container .block.block-with-bg a:hover {
+  color: #222931;
+}
+/* line 72, ../scss/_main.scss */
+#main .container .block .bottom-link {
+  margin-top: 1rem;
+  text-align: right;
+  font-size: 1.2em;
+}
 
 @media (min-width: 800px) {
-  /* line 14, ../scss/_main.scss */
+  /* line 83, ../scss/_main.scss */
   #main {
     margin-left: 15rem;
   }
 }
 @media (min-width: 1200px) {
-  /* line 21, ../scss/_main.scss */
+  /* line 90, ../scss/_main.scss */
   #main {
     margin-left: 20%;
+  }
+  /* line 93, ../scss/_main.scss */
+  #main.under-sticky {
+    padding-top: 6rem;
   }
 }
 /* line 3, ../scss/_footer.scss */
@@ -10873,7 +10949,7 @@ a[data-toggle="collapse"] {
 }
 /* line 57, ../scss/_footer.scss */
 #footer .top .embed-icon.ballejaune {
-  background-color: #361f2c;
+  background-color: #222931;
   background-image: url("../images/dark-ballejaune.png");
   background-size: 150px 30px;
   width: 172px;
