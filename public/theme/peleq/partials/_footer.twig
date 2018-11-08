@@ -1,39 +1,26 @@
-{# Récupération de certains éléments du pied de page contribués dans le contenu "Accueil" #}
-{% setcontent homepage = 'accueil/accueil' %}
-
-<footer id="footer">
-    <div class="top row align-items-stretch">
-        {# SECTION: CONTACT #}
-        <div class="col-footer col-footer-contact">
-            {{ include('partials/footer/_footer_contact.twig', { 'homepage' : homepage} ) }}
-        </div>
-
-        {# SECTION: RÉSERVATION / REJOINDRE LE CLUB #}
-        <div class="col-footer col-footer-book-join">
-            {{ include('partials/footer/_footer_book_join.twig', { 'homepage' : homepage} ) }}
-        </div>
-
-        {# SECTION: LIENS EXTERNES #}
-        <div class="col-footer col-footer-external-links">
-            {{ menu(identifier = 'footer_external_links', template = 'partials/_sub_menu_footer.twig') }}
-        </div>
-
-        {#<div class="col-footer d-flex flex-column-reverse align-items-start">#}
-            {#<div class="tribute m-auto">#}
-                {#<a href="">#}
-                    {#<img src="{{ asset('philippe.png', 'files') }}" width="100px" height="100px"/>#}
-                    {#<span>Philippe Le Gouic</span>#}
-                {#</a>#}
-            {#</div>#}
-        {#</div>#}
-    </div>
-
-    <div class="bottom d-flex">
+{# Footer #}
+<footer role="contentinfo" class="footer">
+    <div class="container">
+        <nav class="level" role="navigation" aria-label="footer navigation">
+            <div class="level-left">
+                <div class="level-item">
+                    <p>
+                        &copy; {{ "now"|date("Y") }} &bullet;
+                        {{ __("This website is <a href='%url%' target='_blank' title='Sophisticated, lightweight & simple CMS'>Built with Bolt</a>.", {'%url%':'https://bolt.cm'}) }}
+                    </p>
+                </div>
+            </div>
+            <div class="level-right">
+                {{ menu(
+                    identifier = 'main',
+                    template = 'partials/_sub_menu_footer.twig',
+                    params = {'withsubmenus': false}
+                ) }}
+            </div>
+        </nav>
         {{ widgets('footer') }}
-        <p class="copyright">
-            Copyright © 2018 ASMB Tennis Nantes | <a href="">Mentions légales</a><br>
-            <span class="font-italic">{{ __("This website is <a href='%url%' target='_blank' title='Sophisticated, lightweight & simple CMS'>Built with Bolt</a>.",{'%url%':'http://bolt.cm'}) }}</span>
-        </p>
-        <p class="empty"></p>
     </div>
 </footer>
+
+<script src="{{ asset('js/normalizeBrightness.js', 'theme') }}"></script>
+<script src="{{ asset('js/app.js', 'theme') }}"></script>

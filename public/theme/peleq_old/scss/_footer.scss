@@ -1,9 +1,9 @@
 $col-footer-width-down-sm: 300px;
 
 #footer {
-    margin-left: 0;
-    margin-top: 0;
     background-color: theme-color('tertiary');
+    position: relative;
+    margin: auto;
 
     .top {
         display: flex;
@@ -195,14 +195,14 @@ $col-footer-width-down-sm: 300px;
 // Écrans > 800px
 @include media-breakpoint-up(md) {
     #footer {
-        margin-left: $navbar-width;
+        //margin-left: $navbar-width;
     }
 }
 
 // Écrans > 1200px
 @include media-breakpoint-up(xl) {
     #footer {
-        margin-left: $navbar-width-up-xl;
+        //margin-left: $navbar-width-up-xl;
 
         .private-access {
             display: block;

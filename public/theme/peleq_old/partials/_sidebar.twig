@@ -1,0 +1,13 @@
+<nav id="sidebar" role="navigation" aria-label="main navigation">
+    <button id="closeSidebar" type="button" class="close sidebar-collapse" aria-label="Fermer le menu">
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+    <div class="hidden">
+    {{ include('partials/_searchform.twig') }}
+    </div>
+
+    <div id="sidebarMenu">
+    {{ menu(template = 'partials/_sub_menu.twig') }}
+    </div>
+</nav>

@@ -14,11 +14,24 @@
 {% macro display_menu_item(item, loop, extraclass, withsubmenus) %}
     {% from _self import display_menu_item %}
     {% spaceless %}
-    <p class="level-item">
-        <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='{{ item.class|default('') }}'>
-            {{- item.label|default('-') -}}
-        </a>
-    </p>
+        {% if item.submenu|default is empty %}
+            {% if item.link|default is empty %}
+                <div class="item">{{- item.label|default('-')|raw -}}</div>
+            {% else %}
+                <div class="item">
+                    <a href="{{ item.link }}" title="{{ item.title|default('')|escape }}">
+                        <i class="fas fa-caret-right"></i>
+                        {{- item.label|default('-')|raw -}}
+                    </a></div>
+            {% endif %}
+        {% endif %}
+
+        {% if item.submenu is defined and withsubmenus %}
+            <p class="footer-title {{ item.class|default('') }}">{{- item.label|default('-')|raw -}}</p>
+            {% for submenu in item.submenu|default %}
+                {{ display_menu_item(submenu, loop, '', false) }}
+            {% endfor %}
+        {% endif %}
     {% endspaceless %}
 {% endmacro %}
 

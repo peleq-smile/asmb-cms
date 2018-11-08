@@ -14,28 +14,26 @@
 {% macro display_menu_item(item, loop, extraclass, withsubmenus) %}
     {% from _self import display_menu_item %}
     {% spaceless %}
-        <li class="{{ item|current ? 'active' }} {{ item.class|default('') }}">
+    {% if item.submenu|default is empty %}
+    <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='navbar-item {{ item|current ? 'is-active' }} {{ item.class|default('') }}'>
+        {{- item.label|default('-') -}}
+    </a>
+    {% endif %}
 
-            {% if item.submenu|default is empty %}
-                <a href="{{ item.link }}" title="{{ item.title|default('')|escape }}">
-                    {{- item.label|default('-') -}}
-                </a>
-            {% endif %}
+    {% if item.submenu is defined and withsubmenus %}
+    <div class="navbar-item
+        {{ (item.submenu|default(false) and withsubmenus) ? ' has-dropdown is-hoverable' -}}">
 
-            {% if item.submenu is defined and withsubmenus %}
-                <a href="#subMenuOfItem{{- loop.index -}}" title="{{ item.title|default('')|escape }}" aria-expanded="false"
-                   class="dropdown-toggle" data-toggle="collapse">
-                    {{- item.label|default('-') -}}
-                </a>
-                <ul class="collapse list-unstyled" id="subMenuOfItem{{- loop.index -}}">
-                    {% if item.submenu is defined and withsubmenus %}
-                        {% for submenu in item.submenu|default %}
-                            {{ display_menu_item(submenu, loop, '', withsubmenus) }}
-                        {% endfor %}
-                    {% endif %}
-                </ul>
-            {% endif %}
-        </li>
+        <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='navbar-link {{ item|current ? 'is-active' }}{{ item.class|default('') }}'>
+            {{- item.label|default('-') -}}
+        </a>
+        <div class="navbar-dropdown">
+            {% for submenu in item.submenu|default %}
+                {{ display_menu_item(submenu, loop, withsubmenus) }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     {% endspaceless %}
 {% endmacro %}
 
@@ -43,10 +41,8 @@
 {% from _self import display_menu_item %}
 
 {# The main menu loop: Iterates over the items, calling `display_menu_item` #}
-<ul class="list-unstyled components">
-    {% for item in menu %}
-        {% if item.label is defined %}
-            {{ display_menu_item(item, loop, '', withsubmenus) }}
-        {% endif %}
-    {% endfor %}
-</ul>
+{% for item in menu %}
+    {% if item.label is defined %}
+        {{ display_menu_item(item, loop, '', withsubmenus) }}
+    {% endif %}
+{% endfor %}

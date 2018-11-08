@@ -1,36 +1,18 @@
-{# Récupération de certains éléments de l'en-tête contribués dans le contenu "Accueil" #}
-{% setcontent homepage = 'accueil/accueil' %}
-
-<header id="header">
-    <nav class="navbar justify-content-around">
-        <button id="openSidebar" class="navbar-toggler navbar-light" type="button">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-brand flex-grow-1">
-            <span class="header-title">{{- homepage.header_title -}}</span>
-
-            {% if homepage.header_baselines is not empty %}
-                <ul class="header-baseline list-inline">
-                    {% for baseline in homepage.header_baselines %}
-                        <li class="list-inline-item">{{- baseline.item -}}</li>
-                    {% endfor %}
-                </ul>
+{% if record.contenttype.slug|default() not in ['showcases', 'entries'] %}
+{% setcontent homepage = "homepage" limit 1 returnsingle %}
+<section class="hero hero-image is-primary is-bold is-medium {% if app.request.get('_route') == "homepage" %}is-large{% endif %}"
+    {%- if homepage.image|default %}
+        {% set filename = homepage.image.file|default(homepage.image) %}
+        data-background-image="{{ asset(filename, 'files') }}" style="background-image: url({{ asset(filename, 'files') }})"
+    {% endif -%}
+    >
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title">{{ config.get('general/sitename') }}</h1>
+            {% if config.get('general/payoff') %}
+            <h2 class="subtitle">{{ config.get('general/payoff') }}</h2>
             {% endif %}
         </div>
-
-        {% if homepage.header_shortlinks is not empty %}
-            {% spaceless %}
-                <ul class="navbar-nav nav-shortlinks">
-                    {% for shortlink in homepage.header_shortlinks %}
-                        <li class="nav-item">
-                            <a href="{{ shortlink.url }}" title="{{- shortlink.link_title -}}"
-                               target="{{ (shortlink.target_blank is not defined or shortlink.target_blank is empty) ? '_self' : '_blank' }}" class="nav-link text-white">
-                                <i class="{{ shortlink.icon }}"></i><span>{{- shortlink.text -}}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endspaceless %}
-        {% endif %}
-    </nav>
-</header>
+    </div>
+</section>
+{% endif %}

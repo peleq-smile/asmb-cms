@@ -1,0 +1,52 @@
+{# This file might seem a little complex, because of the high density of tags.
+   It uses Twig macros and ternary selectors. Read up on them, if required:
+   macros: http://twig.sensiolabs.org/doc/templates.html#macros
+   ternary operators: http://twig.sensiolabs.org/doc/templates.html#other-operators
+#}
+
+{# Make sure the setting for the submenus is defined. #}
+{% if withsubmenus is not defined %}
+    {% set withsubmenus = true %}
+{% endif %}
+
+{# The 'recursive' macro, for inserting one menu item. If it has a submenu, it
+   invokes itself to insert the items of the submenus. #}
+{% macro display_menu_item(item, loop, extraclass, withsubmenus) %}
+    {% from _self import display_menu_item %}
+    {% spaceless %}
+        <li class="{{ item|current ? 'active' }} {{ item.class|default('') }}">
+
+            {% if item.submenu|default is empty %}
+                <a href="{{ item.link }}" title="{{ item.title|default('')|escape }}">
+                    {{- item.label|default('-') -}}
+                </a>
+            {% endif %}
+
+            {% if item.submenu is defined and withsubmenus %}
+                <a href="#subMenuOfItem{{- loop.index -}}" title="{{ item.title|default('')|escape }}" aria-expanded="false"
+                   class="dropdown-toggle" data-toggle="collapse">
+                    {{- item.label|default('-') -}}
+                </a>
+                <ul class="collapse list-unstyled" id="subMenuOfItem{{- loop.index -}}">
+                    {% if item.submenu is defined and withsubmenus %}
+                        {% for submenu in item.submenu|default %}
+                            {{ display_menu_item(submenu, loop, '', withsubmenus) }}
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endspaceless %}
+{% endmacro %}
+
+{# Make the macro available for use #}
+{% from _self import display_menu_item %}
+
+{# The main menu loop: Iterates over the items, calling `display_menu_item` #}
+<ul class="list-unstyled components">
+    {% for item in menu %}
+        {% if item.label is defined %}
+            {{ display_menu_item(item, loop, '', withsubmenus) }}
+        {% endif %}
+    {% endfor %}
+</ul>

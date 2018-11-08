@@ -1,26 +1,41 @@
 main:
-    -
-        path: page/editorial
-        label: Éditorial
-    -
-        path: page/inscriptions
-        label: Inscriptions
-    -
-        path: page/le-bureau
-        label: 'Le Club'
-        submenu:
-            -
-                path: page/terrains
-                label: Terrains
-            -
-                path: page/le-bureau
-                label: 'Le Bureau'
-            -
-                path: page/adherents
-                label: Adhérents
-            -
-                path: page/reglement
-                label: Règlement
+    - label: 'Le Club'
+      path: page/Edito
+      submenu:
+          - path: page/edito
+            label: 'Édito'
+          - path: page/terrains
+            label: 'Terrains'
+          - path: page/le-bureau
+            label: 'Le Bureau'
+          - path: page/statistiques
+            label: 'Adhérents / statistiques'
+          - path: page/reglement
+            label: 'Règlement'
+
+    - label: 'Jouer'
+      path: page/inscriptions
+      submenu:
+          - label: 'Inscriptions / Devenir membre'
+            path: page/inscriptions
+          - label: 'Tennis Loisir'
+            path: page/tennis-loisir
+            submenu:
+                - label: 'Créneaux'
+                  path: page/creneaux
+                - label: 'Réservations'
+                  path: page/reservations
+                - label: 'Rechercher un partenaire'
+                  path: page/reservations
+
+          - label: 'Enseignement'
+            path: page/enseignement
+            submenu:
+                - label: 'Pour plus d''entraînement'
+                  path: page/pour-plus-d-entrainement
+                - label: 'Prépa. physique avant saison'
+                  path: page/prepa-physique-avant-saison
+
     -
         path: page/competitions
         label: Compétitions
@@ -40,61 +55,50 @@ main:
                         label: 'Seniors Plus'
                     -
                         path: page/jeunes
-                        label: Jeunes
+                        label: 'Jeunes'
                     -
                         path: page/championnat-d-ete
                         label: 'Championnat d''été'
             -
                 path: page/tournois
                 label: Tournois
-    -
-        path: page/tennis-loisir
-        label: 'Tennis Loisir'
-        submenu:
-            -
-                path: page/creneaux
-                label: Créneaux
-            -
-                path: page/reservations
-                label: Réservations
-    -
-        path: page/enseignement
-        label: Enseignement
-        submenu:
-            -
-                path: page/pour-plus-d-entrainement
-                label: 'Pour plus d''entraînement'
-            -
-                path: page/prepa-physique-avant-saison
-                label: 'Prépa. physique avant saison'
+
     -
         path: page/evenements
-        label: Évènements
-    -
-        path: page/agenda
-        label: Agenda
-    -
-        path: page/le-jeu-de-paume
-        label: 'Historique du tennis'
+        label: Actualités
         submenu:
             -
-                path: page/le-jeu-de-paume
-                label: 'Le jeu de Paume'
+                path: page/evenements
+                label: 'Évènements'
             -
-                path: page/invention-du-lawn-tennis
-                label: 'Invention du Lawn-Tennis'
+                path: page/calendrier
+                label: 'Calendrier'
             -
-                path: page/conquete-du-lawn-tennis
-                label: 'Conquête du Lawn-Tennis'
-            -
-                path: page/tennis-moderne
-                label: 'Tennis Moderne'
+                path: page/galerie-photos
+                label: 'Galerie photos'
+
     -
-        path: page/guides-pratiques
-        label: 'Guides pratiques'
-    -
-        path: page/galerie-photos
-        label: 'Galerie photos'
+        path: page/articles
+        label: 'Articles'
+        submenu:
+            -
+                path: page/infos-pratiques
+                label: 'Infos pratiques'
+            -
+                label: 'Histoire du Tennis'
+                submenu:
+                    -
+                        path: page/le-jeu-de-paume
+                        label: 'Le jeu de Paume'
+                    -
+                        path: page/invention-du-lawn-tennis
+                        label: 'Invention du Lawn-Tennis'
+                    -
+                        path: page/conquete-du-lawn-tennis
+                        label: 'Conquête du Lawn-Tennis'
+                    -
+                        path: page/tennis-moderne
+                        label: 'Tennis Moderne'
 
 footer_external_links:
     -

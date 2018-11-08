@@ -7,6 +7,7 @@
 // Variables Bootstrap surchargées
 $font-family-sans-serif: -apple-system, BlinkMacSystemFont, Lato, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 $body-bg: white;
+$white: #dddddd;
 
 @import "../lib/bootstrap-4.1.3/scss/bootstrap";
 
@@ -15,12 +16,15 @@ $body-bg: white;
 $font-family-cursive: 'Mali', cursive;
 
 $grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 800px,
-  lg: 992px,
-  xl: 1200px
+    xs: 0,
+    sm: 576px,
+    md: 800px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1600px
 );
+
+$test: rgba(69, 65, 15, 0.9);
 
 $theme-colors: (
     "primary": #026199,
@@ -37,15 +41,24 @@ $theme-colors: (
     "tertiary-xdark": #ab785c
 );
 
-$navbar-width: 15rem;
-$navbar-width-up-xl: 20%;
+$main-max-width: 1600px;
+
+$header-height: 24rem;
+$header-height-sticky: 4rem;
+$header-bg-color-filter: rgba(2, 97, 153, 0.95);
+
+$navbar-width: 24rem;
+$navbar-width-up-xl: $navbar-width;
 $navbar-width-down-sm: 20rem;
+
+$main-padding-side: 6rem;
 
 $footer-height: 10rem;
 $link-color: theme-color('secondary-light');
 $link-color-hover: theme-color('secondary-xxlight');
 
 @import "_master.scss";
+@import "_searchform.scss";
 @import "_header.scss";
 @import "_sidebar.scss";
 @import "_main.scss";
