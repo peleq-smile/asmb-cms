@@ -8,13 +8,6 @@
         {{ __('general.phrase.read-more') }}
     </a>
     {% endif %}
-    {% if record.editlink() %}
-        <span class="edit-link">
-            <a href="{{ record.editlink() }}" class="button is-info is-outlined">
-                {{ __('general.phrase.edit') }}
-            </a>
-        </span>
-    {% endif %}
 </p>
 {% if extended|default() %}
 <p class="meta">

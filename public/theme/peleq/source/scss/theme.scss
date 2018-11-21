@@ -1,10 +1,16 @@
 // Theme specific styling.
+//cd /var/www/html/asmb-cms/public/theme/peleq/source/; yarn run gulp
 
 @import 'settings';
 @import 'typography';
 @import 'breakpointdebug';
 @import 'node_modules/baguettebox.js/src/baguetteBox';
 @import 'node_modules/prismjs/themes/prism';
+
+@import '_theme.header';
+@import '_theme.footer';
+@import '_theme.index';
+@import '_theme.matches';
 
 .visually-hidden:not(:focus):not(:active) {
     position: absolute !important;
@@ -50,8 +56,7 @@
 }
 
 .teaser {
-    font-weight: bold;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
 }
 
 .card {
@@ -128,24 +133,29 @@ p.meta {
 
 .hero-image {
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: center center !important;
     background-size: cover;
-    margin-top: 52px;
 }
 
-.hero.is-large .hero-body {
+.hero .hero-body {
     padding-bottom: 4rem;
     padding-top: 4rem;
+
     h1.title,
     h2.subtitle {
         text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.4);
+
+        strong {
+            font-weight: bold;
+        }
     }
     h1.title  {
         font-size: $title-size;
-        font-weight: bold;
     }
     h2.subtitle  {
+        margin-top: 2rem;
         font-size: $subtitle-size;
+        font-family: $font-sans-serif;
     }
     @include tablet {
         padding-bottom: 12rem;

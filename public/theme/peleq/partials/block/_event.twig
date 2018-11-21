@@ -1,0 +1,19 @@
+<div class="columns event">
+    <div class="column event-content">
+        {% if event.contentlink %}
+            <h2 class="title"><a href="{{ event.contentlink }}">{{ event.title }}</a></h2>
+        {% else %}
+            <h2 class="title">{{ event.title }}</h2>
+        {% endif %}
+
+        {{ event.text }}
+
+        {% if event.contentlink %}
+            <a href="{{ event.contentlink }}" class="button see-more"
+               title="{{ event.contentlink_label|default('En savoir plus...') }}">
+                {{ event.contentlink_label|default('En savoir plus...') }}
+            </a>
+        {% endif %}
+
+    </div>
+</div>

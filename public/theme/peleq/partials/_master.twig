@@ -1,42 +1,55 @@
 <!doctype html>
 <html lang="{{ htmllang() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {# make sure we always display a proper title: The record's title if there is one, appended with the
-           sitename. If there is no title, we append the sitename with the payoff, if there is one. #}
-        <title>
-            {%- if record.title is defined %}{{ record.title|striptags }} | {% endif -%}
-                {{ config.get('general/sitename') -}}
-            {% if record.title is not defined and config.get('general/payoff') %} | {{ config.get('general/payoff') }}{% endif -%}
-        </title>
-        <link href="https://fonts.googleapis.com/css?family=Bitter|Roboto:400,400i,700" rel="stylesheet">
-        <link rel="stylesheet" href="{{ asset('css/bulma.css', 'theme') }}">
-        <link rel="stylesheet" href="{{ asset('css/theme.css', 'theme') }}">
-    </head>
-    <body{% if app.request.get('_route') == "homepage" %} class="front"{% endif %}>
-        <a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# make sure we always display a proper title: The record's title if there is one, appended with the
+       sitename. If there is no title, we append the sitename with the payoff, if there is one. #}
+    <title>
+        {%- if record.title is defined %}{{ record.title|striptags }} | {% endif -%}
+        {{ config.get('general/sitename') -}}
+        {% if record.title is not defined and config.get('general/payoff') %} | {{ config.get('general/payoff') }}{% endif -%}
+    </title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}"/>
 
-        {% block body %}
+    <link href="https://fonts.googleapis.com/css?family=Bitter|Roboto:400,400i,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato|Niramit|Poppins|Mali|Ultra|Comfortaa|Raleway"
+          rel="stylesheet">
 
-            <header role="banner" class="header">
-            {{ include('partials/_navbar.twig') }}
-            {{ include('partials/_header.twig') }}
-            </header>
+    <link rel="stylesheet" href="{{ asset('css/bulma.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/theme.css', 'theme') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+<body{% if app.request.get('_route') == "homepage" %} class="front"{% endif %}>
+<a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
 
-            {{ widgets('main_top') }}
+{% block body %}
 
-            <a id="main-content"></a>
-            {% block main %}
-            {% endblock main %}
+    <header id="header" role="banner" class="header">
+        {{ include('partials/_navbar.twig') }}
+        {{ include('partials/_header.twig') }}
+    </header>
 
-            {{ widgets('main_bottom') }}
+    <div id="main-content">
+        {{ widgets('main_top') }}
 
-        {% endblock body %}
+        {% block main %}
+        {% endblock main %}
 
-        {{ include('partials/_footer.twig') }}
+        {{ widgets('main_bottom') }}
+    </div>
+{% endblock body %}
 
-    </body>
+{{ include('partials/_footer.twig') }}
+
+<script src="{{ asset('js/lib/jquery-3.3.1.slim.min.js', 'theme') }}"></script>
+<script src="{{ asset('js/lib/jquery.touchSwipe.min.js', 'theme') }}"></script>
+<!-- jQuery Custom Scroller CDN -->
+
+<script src="{{ asset('js/app.js', 'theme') }}"></script>
+
+</body>
 </html>
 
 

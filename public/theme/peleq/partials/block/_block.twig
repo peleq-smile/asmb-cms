@@ -1,0 +1,44 @@
+{# Make sure the index data is defined. #}
+{% if index is not defined %}
+    {% set index = 1 %}
+{% endif %}
+
+<div class="columns block {% if block.image %}block-with-image{% endif %} block-{{ (index is odd) ? 'odd':'even' }}">
+    <div class="column block-content">
+        {% if block.contentlink %}
+            <h2 class="title"><a href="{{ block.contentlink }}">{{ block.title }}</a></h2>
+        {% else %}
+            <h2 class="title">{{ block.title }}</h2>
+        {% endif %}
+
+        {% if block.subtitle %}
+            <h3 class="title">{{ block.subtitle }}</h3>
+        {% endif %}
+
+        {{ block.content }}
+
+        {% if block.contentlink %}
+            <a href="{{ block.contentlink }}" class="button see-more"
+               title="{{ block.contentlink_label|default('En savoir plus...') }}">
+                {{ block.contentlink_label|default('En savoir plus...') }}
+            </a>
+        {% endif %}
+    </div>
+
+    {% if block.image %}
+        {% set height = imageinfo(block.image).height %}
+        {% set width = imageinfo(block.image).width %}
+
+        <div class="column block-image">
+            {% if block.contentlink %}
+                <a class="image" href="{{ block.contentlink }}"
+                   style="background: url('{{ asset(block.image, 'files') }}'); height: {{ height }}px; width: {{ width }}px;">
+                    <span class="see-more">&plus; d'info</span>
+                </a>
+            {% else %}
+                <div class="image"
+                     style="background: url('{{ asset(block.image, 'files') }}'); height: {{ height }}px; width: {{ width }}px;"></div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

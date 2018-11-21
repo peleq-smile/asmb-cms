@@ -1,0 +1,186 @@
+header {
+    .header-top {
+        box-shadow: 0 0 10px 1px $dark;
+        z-index: 1000;
+        position: relative;
+
+        .topbar {
+            padding: 0.5rem 0;
+
+            .navbar-item {
+                a {
+                    color: $primary;
+
+                    &:hover {
+                        color: $dark;
+                    }
+
+                    i {
+                        font-size: 2em;
+                        padding-right: 0.5rem;
+                    }
+
+                    address, span {
+                        line-height: 2em;
+                    }
+                }
+            }
+        }
+
+        .navbar {
+            transition: height 0.4s linear;
+            height: $header-height-navbar;
+
+            .container {
+                padding: 0 1rem;
+
+                .navbar-brand {
+                    padding: 0.5rem 0;
+                    a {
+                        display: flex;
+                        height: 100%;
+                        transition: all .2s ease-in-out;
+
+                        &:hover {
+                            transform: scale(1.1);
+                        }
+                    }
+                }
+
+                .top-navigation {
+                    font-size: 1.2em;
+
+                    .navbar-item {
+                        &.has-dropdown {
+                            height: 100%;
+                        }
+                        .navbar-link {
+                            background-color: transparent;
+                        }
+                    }
+
+                    .navbar-dropdown {
+                        .navbar-item {
+                            padding-top: 0.5rem;
+                            padding-bottom: 0.5rem;
+
+                            &:hover {
+                                background-color: $navbar-item-hover-background-color;
+                            }
+                        }
+                        .navbar-link {
+                            padding-left: 0;
+                            width: 100%;
+
+                            &:after {
+                                transform: rotate(-135deg);
+                                margin-top: -0.3em;
+                                right: 0;
+                            }
+                        }
+
+                        .navbar-dropdown {
+                            display: none;
+                            top: 0;
+                            left: 100%;
+                        }
+
+                        .is-hoverable {
+                            .navbar-link {
+                                padding-top: 0;
+                                padding-bottom: 0;
+                            }
+
+                            &:hover {
+                                & > .navbar-dropdown {
+                                    display: block;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            img {
+                height: 120px;
+                width: 120px;
+                transition: all 0.4s linear;
+            }
+        }
+    }
+
+    .hero {
+        .title {
+            text-shadow: 4px 8px 16px $black;
+            line-height: 1.5em;
+        }
+        .subtitle {
+            margin-top: 1rem;
+        }
+
+        &.hero-image {
+            background: linear-gradient($header-hero-linear-gradient), url(../images/header-bg.png) no-repeat center bottom;
+            background-size: cover;
+            max-height: 620px;
+        }
+    }
+
+    address {
+        font-style: normal;
+    }
+
+    &.sticky .navbar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: $header-height-navbar-sticky;
+        padding: 0;
+        box-shadow: 0 0 10px 1px $dark;
+        animation-duration: 3s;
+        animation-name: slideInDown;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+
+        img {
+            height: 70px;
+            width: 70px;
+        }
+    }
+}
+
+#header-reservation {
+    border-radius: 45px;
+    background: $dark no-repeat center;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 2px;
+    color: transparent;
+    padding: 0.3rem 1rem;
+    border: solid 2px $white;
+
+    .text {
+        color: $light
+    }
+
+    .ballejaune {
+        display: block;
+        width: 100%;
+        min-height: 30px;
+        background: url("../images/dark-ballejaune.png") no-repeat center bottom;
+    }
+
+    &:hover {
+        background: $white;
+        border: solid 2px $dark;
+
+        .text {
+            color: $dark;
+        }
+
+        .ballejaune {
+            background: url("../images/dark-ballejaune-reverse.png") no-repeat center bottom;
+        }
+    }
+}

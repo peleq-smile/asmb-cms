@@ -5,13 +5,13 @@
 #}
 
 {# Make sure the setting for the submenus is defined. #}
-{% if withsubmenus is not defined %}
-    {% set withsubmenus = true %}
+{% if submenuLevel is not defined %}
+    {% set submenuLevel = 1 %}
 {% endif %}
 
 {# The 'recursive' macro, for inserting one menu item. If it has a submenu, it
    invokes itself to insert the items of the submenus. #}
-{% macro display_menu_item(item, loop, extraclass, withsubmenus) %}
+{% macro display_menu_item(item, loop, extraclass, submenuLevel) %}
     {% from _self import display_menu_item %}
     {% spaceless %}
     {% if item.submenu|default is empty %}
@@ -20,16 +20,17 @@
     </a>
     {% endif %}
 
-    {% if item.submenu is defined and withsubmenus %}
+    {% if item.submenu is defined and submenuLevel %}
     <div class="navbar-item
-        {{ (item.submenu|default(false) and withsubmenus) ? ' has-dropdown is-hoverable' -}}">
+        {{ (item.submenu|default(false) and submenuLevel) ? ' has-dropdown is-hoverable' -}}">
 
         <a href="{{ item.link }}" title='{{ item.title|default('')|escape }}' class='navbar-link {{ item|current ? 'is-active' }}{{ item.class|default('') }}'>
             {{- item.label|default('-') -}}
         </a>
-        <div class="navbar-dropdown">
+
+        <div class="navbar-dropdown {{ (submenuLevel > 1) ? 'navbar-submenu' -}}">
             {% for submenu in item.submenu|default %}
-                {{ display_menu_item(submenu, loop, withsubmenus) }}
+                {{ display_menu_item(submenu, loop, '', submenuLevel+1) }}
             {% endfor %}
         </div>
     </div>
@@ -43,6 +44,6 @@
 {# The main menu loop: Iterates over the items, calling `display_menu_item` #}
 {% for item in menu %}
     {% if item.label is defined %}
-        {{ display_menu_item(item, loop, '', withsubmenus) }}
+        {{ display_menu_item(item, loop, '', submenuLevel) }}
     {% endif %}
 {% endfor %}

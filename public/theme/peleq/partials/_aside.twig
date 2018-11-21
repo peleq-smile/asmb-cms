@@ -16,22 +16,13 @@
         {# check if we have a title. If so, we know we have content to display. Otherwise, we will
             output a default text, telling the user to create the 'blocks' in the backend. #}
         {% if block.title is defined %}
-
-            {{ popup(block.values.image, 480, 320) }}
-
             <h2 class="title">{{ block.title }}</h2>
+
+            {{ showimage(block.values.image, 500, 500) }}
+
             {{ block.content }}
-
             {% include 'partials/_record_meta.twig' with {'record': block } %}
-
-        {% else %}
-
-            <h2 class="title">{{ __('general.phrase.missing-about-page') }}</h2>
-
-            <p>{{ __('general.phrase.missing-about-page-block') }}</p>
-
         {% endif %}
-
     </div>
 
     {% endif %}

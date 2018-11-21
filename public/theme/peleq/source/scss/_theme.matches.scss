@@ -1,0 +1,107 @@
+.matches {
+    .container {
+        h2.title {
+            margin-bottom: 3rem;
+            color: $primary;
+        }
+
+        .columns {
+            background-color: $dark;
+        }
+
+        h3.title {
+            color: $white;
+        }
+
+        .box {
+            height: 100%;
+        }
+
+        .table {
+            background-color: $bg-light;
+            border-collapse: separate;
+
+            th {
+                color: $secondary;
+            }
+
+            td {
+                vertical-align: middle;
+            }
+
+            a {
+                color: $dark;
+                padding: 0.5rem;
+
+                &:hover {
+                    color: $secondary;
+                }
+            }
+
+            .hour {
+                text-align: center;
+                width: 20%;
+                white-space: nowrap;
+                cursor: help;
+            }
+
+            .first-team {
+                text-align: right;
+                width: 25%;
+            }
+
+            .score {
+                width: 10%;
+                white-space: nowrap;
+                text-align: center;
+
+                span {
+                    color: $white;
+                    border-radius: 12px;
+                    padding: 5px;
+
+                    &.win {
+                        background: $win;
+                    }
+
+                    &.lost {
+                        background: $lost;
+                    }
+
+                    &.draw {
+                        background: $draw;
+                    }
+                }
+            }
+
+            .second-team {
+                text-align: left;
+                width: 25%;
+            }
+
+            .action {
+                width: 20%;
+                text-align: right;
+                font-size: 1.3em;
+            }
+
+            .home {
+                color: $primary;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .updated-at {
+        background-color: $dark;
+        text-align: right;
+        color: $white;
+        font-style: italic;
+        margin: 0 -1.5rem;
+        padding-right: 1.5rem;
+        padding-bottom: 1rem;
+        font-size: 0.8em;
+        position: relative;
+        top: -1rem;
+    }
+}

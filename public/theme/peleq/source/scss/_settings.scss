@@ -10,63 +10,64 @@ $debug-breakpoint: false;
 // 2. Set your own initial variables
 
 // Colors
-$light: rgb(240, 239, 239);
-$dark: #444;
-$medium: #777;
+$light: #caeafc;
+$dark: #2c2d32;
+$medium: #026094;
+$bg-light: #f0f0f0;
+
+// Custom other colors
+$secondary: #d1a633;
+
+// Text colors
+$text: $dark;
+$text-invert: findColorInvert($text) !default
 
 // Fonts
-$font-sans-serif    : 'Roboto', sans-serif;     // Base font
-$font-serif         : 'Bitter', serif;          // Headings
+$font-sans-serif    : 'Raleway', 'Roboto', sans-serif;     // Base font
+$font-serif         : 'Comfortaa', 'Bitter', serif;          // Headings
 
 // 3. Set the derived variables
 
 // Option 1: https://color.adobe.com/ims-construction-colors-color-theme-10555392/
-$link: #DF1C31;
-$info: #1B2A3F;
-$primary: #2873A4;
-$success: #F1A42C;
+$primary: $medium;
+$info: $dark;
+$link: $secondary;
+$success: $light;
 
-// Option 2: https://color.adobe.com/mapa-laranja-color-theme-10556928/
-// $primary: #C97B5C;
-// $info: #3F3430;
-// $link: #3F271D;
-// $success: #8B7368;
-
-// Option 3: https://color.adobe.com/WASD-color-theme-10551808/
-// $primary: #0D6545;
-// $info: #373B3A;
-// $link: #0E724E;
-// $success: #8B7368;
-
-// Option 4: https://color.adobe.com/Palette-de-couleurs-1-color-theme-10564608/
-// $primary: darken(#9FD4F1, 10);
-// $info: #9B8D1F;
-// $link: #385681;
-// $success: #9C8754;
-
-// Option 5: Black & White
-// $primary: #444;
-// $info: #888;
-// $link: #385691;
-// $success: #777;
+// Clor for win/lost/draw matches
+$win: #3e603d;
+$lost: #8f0000;
+$draw: #ac561d;
 
 $pre-background: $grey-lighter;
 $family-primary: $font-sans-serif;
 
 // Generic variables
-$body-background-color: $white;
+$body-background-color: $bg-light;
 $body-weight: $weight-light;
 $column-gap: 1.5rem;
 
+// Header
+$header-hero-linear-gradient: rgba(2, 96, 148, 0.8);
+$header-height-navbar: 136px;
+$header-height-navbar-sticky: 86px;
+
 // Title
-$title-color: $black;
+$title-color: $white;
 $title-weight: $weight-normal;
-$title-size: 2rem;
-$subtitle-size: 1.5rem;
+$title-size: 2.6rem;
+
+$subtitle-size: 1.1rem;
+$subtitle-color: $white;
 
 // Box
 $box-radius: 0;
 $box-shadow: 0;
+$box-shadow-color: $dark;
+
+// Block
+$block-with-image-gap: 3rem;
+$block-with-image-lg: rgba(230, 230, 230, 0.6);
 
 // 4. Setup your Custom Colors
 $linkedin: #0077b5;
@@ -76,5 +77,13 @@ $twitter-invert: findColorInvert($twitter);
 $github: #333;
 $github-invert: findColorInvert($github);
 
-// 5. Import the rest of the "utilities".
+// 5. Navbar
+$navbar-item-color: $dark;
+$navbar-item-active-color: $link;
+$navbar-item-hover-background-color: $white-bis;
+
+$navbar-dropdown-border-top: 2px solid $secondary;
+$navbar-dropdown-radius: 0;
+
+// 6. Import the rest of the "utilities".
 @import "../node_modules/bulma/sass/utilities/all";

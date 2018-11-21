@@ -2,127 +2,118 @@ main:
     - label: 'Le Club'
       path: page/Edito
       submenu:
-          - path: page/edito
-            label: 'Édito'
-          - path: page/terrains
-            label: 'Terrains'
-          - path: page/le-bureau
-            label: 'Le Bureau'
-          - path: page/statistiques
-            label: 'Adhérents / statistiques'
-          - path: page/reglement
-            label: 'Règlement'
+        - path: page/edito
+          label: 'Édito'
+        - path: page/terrains
+          label: 'Terrains'
+        - path: page/le-bureau
+          label: 'Le Bureau'
+        - path: page/statistiques
+          label: 'Adhérents / statistiques'
+        - path: page/reglement
+          label: 'Règlement'
 
     - label: 'Jouer'
       path: page/inscriptions
       submenu:
-          - label: 'Inscriptions / Devenir membre'
-            path: page/inscriptions
-          - label: 'Tennis Loisir'
-            path: page/tennis-loisir
-            submenu:
-                - label: 'Créneaux'
-                  path: page/creneaux
-                - label: 'Réservations'
-                  path: page/reservations
-                - label: 'Rechercher un partenaire'
-                  path: page/reservations
+        - label: 'Inscriptions / Devenir membre'
+          path: page/inscriptions
+        - label: 'Tennis Loisir'
+          path: page/tennis-loisir
+          submenu:
+            - label: 'Créneaux'
+              path: page/creneaux
+            - label: 'Réservations'
+              path: page/reservations
+            - label: 'Rechercher un partenaire'
+              path: page/reservations
 
-          - label: 'Enseignement'
-            path: page/enseignement
-            submenu:
-                - label: 'Pour plus d''entraînement'
-                  path: page/pour-plus-d-entrainement
-                - label: 'Prépa. physique avant saison'
-                  path: page/prepa-physique-avant-saison
+        - label: 'Enseignement'
+          path: page/enseignement
+          submenu:
+            - label: 'Pour plus d''entraînement'
+              path: page/pour-plus-d-entrainement
+            - label: 'Prépa. physique avant saison'
+              path: page/prepa-physique-avant-saison
 
-    -
-        path: page/competitions
-        label: Compétitions
-        submenu:
-            -
-                path: page/championnat
-                label: Championnat
-                submenu:
-                    -
-                        path: page/seniors-hommes
-                        label: 'Seniors Hommes'
-                    -
-                        path: page/seniors-dames
-                        label: 'Seniors Dames'
-                    -
-                        path: page/seniots-plus
-                        label: 'Seniors Plus'
-                    -
-                        path: page/jeunes
-                        label: 'Jeunes'
-                    -
-                        path: page/championnat-d-ete
-                        label: 'Championnat d''été'
-            -
-                path: page/tournois
-                label: Tournois
+    - label: 'Compétitions'
+      path: page/competitions
+      submenu:
+        - label: Championnat
+          path: page/championnat
+          submenu:
+            - label: 'Seniors Hommes'
+              path: page/seniors-hommes
 
-    -
-        path: page/evenements
-        label: Actualités
-        submenu:
-            -
-                path: page/evenements
-                label: 'Évènements'
-            -
-                path: page/calendrier
-                label: 'Calendrier'
-            -
-                path: page/galerie-photos
-                label: 'Galerie photos'
+            - label: 'Seniors Dames'
+              path: page/seniors-dames
 
-    -
-        path: page/articles
-        label: 'Articles'
-        submenu:
-            -
-                path: page/infos-pratiques
-                label: 'Infos pratiques'
-            -
-                label: 'Histoire du Tennis'
-                submenu:
-                    -
-                        path: page/le-jeu-de-paume
-                        label: 'Le jeu de Paume'
-                    -
-                        path: page/invention-du-lawn-tennis
-                        label: 'Invention du Lawn-Tennis'
-                    -
-                        path: page/conquete-du-lawn-tennis
-                        label: 'Conquête du Lawn-Tennis'
-                    -
-                        path: page/tennis-moderne
-                        label: 'Tennis Moderne'
+            - label: 'Seniors Plus'
+              path: page/seniots-plus
+
+            - label: 'Jeunes'
+              path: page/jeunes
+
+            - label: 'Championnat d''été'
+              path: page/championnat-d-ete
+
+        - label: 'Tournois'
+          path: page/tournois
+
+    - label: 'Actualités'
+      path: page/evenements
+      submenu:
+        - label: 'Évènements'
+          path: page/evenements
+
+        - label: 'Calendrier'
+          path: page/calendrier
+
+        - label: 'Galerie photos'
+          path: page/galerie-photos
+
+
+    - label: 'Articles'
+      path: page/articles
+      submenu:
+        - label: 'Infos pratiques'
+          path: page/infos-pratiques
+
+        - label: 'Histoire du Tennis'
+          path: page/le-jeu-de-paume
+          submenu:
+            - label: 'Le jeu de Paume'
+              path: page/le-jeu-de-paume
+            - label: 'Invention du Lawn-Tennis'
+              path: page/invention-du-lawn-tennis
+            - label: 'Conquête du Lawn-Tennis'
+              path: page/conquete-du-lawn-tennis
+            - label: 'Tennis Moderne'
+              path: page/tennis-moderne
+
 
 footer_external_links:
-    -
-        label: 'Liens externes'
-        class: liens-utiles
-        submenu:
-            -
-                link: http://www.fft.fr/portail/default.asp
-                label: 'Fédération Française de Tennis'
-            -
-                link: http://www.comite.fft.fr/loire-atlantique/02L00440_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
-                label: 'Comité Départemental'
-            -
-                link: http://www.ligue.fft.fr/pays-loire/paysdelaloire_a/cms/index_public.php?PHPSESSID=0fe0c5d5881e834f19d3b15c90dc4e77&us_action=show_note_site&ui_id_site=1
-                label: 'Ligue des Pays de Loire'
-            -
-                link: http://www.gs.applipub-fft.fr/fftfr/frameset.do?dispatch=load
-                label: 'Gestion Sportive (Championnat)'
-            -
-                link: https://mon-espace-tennis.fft.fr/
-                label: 'Mon espace tennis'
-            -
-                link: https://mon-espace-tennis.fft.fr/tournoi/82120115
-                label: 'Championnat individuel'
-            -
-                link: http://www.ei.applipub-fft.fr/eipublic/competitionRecherche.do?dispatch=afficher
-                label: 'Tournois FFT'
+    - label: 'Liens externes'
+      class: liens-utiles
+      submenu:
+        - label: 'Fédération Française de Tennis'
+          link: http://www.fft.fr/portail/default.asp
+
+        - label: 'Comité Départemental'
+          link: http://www.comite.fft.fr/loire-atlantique/02L00440_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
+
+        - label: 'Ligue des Pays de Loire'
+          link: http://www.ligue.fft.fr/pays-loire/paysdelaloire_a/cms/index_public.php?PHPSESSID=0fe0c5d5881e834f19d3b15c90dc4e77&us_action=show_note_site&ui_id_site=1
+
+        - label: 'Gestion Sportive (Championnat)'
+          link: http://www.gs.applipub-fft.fr/fftfr/frameset.do?dispatch=load
+
+        - label: 'Mon espace tennis'
+          link: https://mon-espace-tennis.fft.fr/
+
+        - label: 'Championnat individuel'
+          link: https://mon-espace-tennis.fft.fr/tournoi/82120115
+
+        - label: 'Tournois FFT'
+          link: http://www.ei.applipub-fft.fr/eipublic/competitionRecherche.do?dispatch=afficher
+

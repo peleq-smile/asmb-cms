@@ -1,31 +1,76 @@
-{# Navbar #}
-<nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
-    <div class="container">
-        <div class="navbar-brand">
-            <span class="navbar-item">
-                {{ config.get('general/sitename') }}
-            </span>
-            <span class="navbar-burger" data-target="navbar-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </span>
-        </div>
-        <div class="navbar-menu" id="navbar-toggle">
-            <div class="navbar-start">
-                {{ menu(template = 'partials/_sub_menu.twig') }}
-            </div>
-            <div class="navbar-end">
-                <form class="field has-addons" method="get" action="{{ path('search') }}" enctype="text/plain">
-                    <label class="label is-hidden" for="search">Search</label>
-                    <div class="control">
-                        <input class="input" type="search" value="{% if search is defined %}{{ search|escape }}{% endif %}" placeholder="{{ __('general.phrase.search-ellipsis') }}" name="search" id="search">
+{% setcontent homepage = "homepage" limit 1 returnsingle %}
+
+{# TOP navbar #}
+<div class="header-top">
+    <div class="topbar">
+        <div class="container">
+            <div class="navbar-menu" id="navbar-toggle">
+                <div class="navbar-start ">
+                    <div class="navbar-item">
+                        <a class="is-flex" href="{{ absolute_url(homepage.header_location_url|trimtext) }}"
+                           title="Accéder au plan d'accès au club">
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            <address>{{ homepage.header_location_text }}</address>
+                        </a>
                     </div>
-                    <div class="control">
-                        <button class="button is-black" type="submit">{{ __('general.phrase.search') }}</button>
+                    <div class="navbar-item">
+                        <a class="is-flex" href="{{ absolute_url(homepage.header_contact_url|trimtext) }}">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            <span>{{ homepage.header_contact_text }} </span>
+                        </a>
                     </div>
-                </form>
+                    <div class="navbar-item">
+                        <a class="is-flex" href="{{ homepage.header_facebook_url }}" target="_blank">
+                            <i class="fab fa-facebook-square" aria-hidden="true"></i>
+                            <span>{{ homepage.header_facebook_text }} </span>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-end is-flex">
+                    <form class="field has-addons" method="get" action="{{ path('search') }}" enctype="text/plain">
+                        <label class="label is-hidden" for="search">Recherche</label>
+                        <div class="control">
+                            <input class="input" type="search"
+                                   value="{% if search is defined %}{{ search|escape }}{% endif %}"
+                                   placeholder="{{ __('general.phrase.search-ellipsis') }}" name="search" id="search">
+                        </div>
+                        <div class="control">
+                            <button class="button is-primary" type="submit">{{ __('general.phrase.search') }}</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</nav>
+
+    {# Navbar #}
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="{{ path('homepage') }}" title="Accueil">
+                    <img class="img-responsive" width="120" height="120"
+                         src="{{ asset('images/logo.png', 'theme') }}" alt="{{ config.get('general/sitename') }}">
+                </a>
+
+                <span class="navbar-burger" data-target="navbar-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+            </div>
+            <div class="navbar-menu" id="navbar-toggle">
+                <div class="navbar-end top-navigation">
+                    {{ menu(template = 'partials/_sub_menu.twig') }}
+                </div>
+                <div class="navbar-end">
+                    <a id="header-reservation" href="{{ homepage.header_book_url }}"
+                       target="_blank"
+                       title="Réservation d'un créneau sur un des courts du club via le site ballejaune.com">
+                        <span class="text">Je réserve un créneau sur</span><br>
+                        <span class="ballejaune embed-icon">balle jaune</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
