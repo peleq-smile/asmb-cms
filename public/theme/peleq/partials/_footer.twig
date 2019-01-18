@@ -2,7 +2,7 @@
 {% setcontent homepage = 'accueil/accueil' %}
 
 <footer id="footer">
-    <div class="top row align-items-stretch">
+    <div class="top">
         {# SECTION: CONTACT #}
         <div class="col-footer col-footer-contact">
             {{ include('partials/footer/_footer_contact.twig', { 'homepage' : homepage} ) }}
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="bottom is-flex">
+    <div class="bottom">
         {{ widgets('footer') }}
         <p class="copyright">
             Copyright © 2018 ASMB Tennis Nantes | <a href="">Mentions légales</a><br>

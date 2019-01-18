@@ -6,6 +6,7 @@ header {
 
         .topbar {
             padding: 0.5rem 0;
+            display: flex;
 
             .navbar-item {
                 a {
@@ -24,6 +25,15 @@ header {
                         line-height: 2em;
                     }
                 }
+            }
+
+            .navbar-end {
+                align-items: center;
+            }
+
+            form {
+                margin-right: 1rem;
+                padding: 0;
             }
         }
 
@@ -45,10 +55,24 @@ header {
                             transform: scale(1.1);
                         }
                     }
+
+                    img {
+                        height: 120px;
+                        width: 120px;
+                        transition: all 0.4s linear;
+                    }
+                }
+
+                .navbar-menu-content {
+                    height: 100%;
                 }
 
                 .top-navigation {
                     font-size: 1.2em;
+                    display: flex;
+                    align-content: stretch;
+                    margin: auto;
+                    height: 100%;
 
                     .navbar-item {
                         &.has-dropdown {
@@ -63,20 +87,10 @@ header {
                         .navbar-item {
                             padding-top: 0.5rem;
                             padding-bottom: 0.5rem;
-
-                            &:hover {
-                                background-color: $navbar-item-hover-background-color;
-                            }
                         }
                         .navbar-link {
                             padding-left: 0;
                             width: 100%;
-
-                            &:after {
-                                transform: rotate(-135deg);
-                                margin-top: -0.3em;
-                                right: 0;
-                            }
                         }
 
                         .navbar-dropdown {
@@ -90,22 +104,13 @@ header {
                                 padding-top: 0;
                                 padding-bottom: 0;
                             }
-
-                            &:hover {
-                                & > .navbar-dropdown {
-                                    display: block;
-                                }
-                            }
                         }
                     }
                 }
 
-            }
-
-            img {
-                height: 120px;
-                width: 120px;
-                transition: all 0.4s linear;
+                .navbar-reservation {
+                    margin: auto;
+                }
             }
         }
     }
@@ -143,9 +148,13 @@ header {
         animation-iteration-count: 1;
         animation-direction: normal;
 
-        img {
-            height: 70px;
-            width: 70px;
+        .container {
+            .navbar-brand {
+                img {
+                    height: 70px;
+                    width: 70px;
+                }
+            }
         }
     }
 }
@@ -155,10 +164,11 @@ header {
     background: $dark no-repeat center;
     display: inline-block;
     vertical-align: middle;
-    margin-left: 2px;
+    text-align: center;
     color: transparent;
     padding: 0.3rem 1rem;
     border: solid 2px $white;
+    white-space: nowrap;
 
     .text {
         color: $light
@@ -167,8 +177,10 @@ header {
     .ballejaune {
         display: block;
         width: 100%;
+        min-width: 150px;
         min-height: 30px;
         background: url("../images/dark-ballejaune.png") no-repeat center bottom;
+        background-size: 142.5px 28.75px;
     }
 
     &:hover {
@@ -181,6 +193,285 @@ header {
 
         .ballejaune {
             background: url("../images/dark-ballejaune-reverse.png") no-repeat center bottom;
+            background-size: 142.5px 28.75px;
+        }
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $desktop) {
+    header .header-top .navbar .container {
+        .navbar-reservation {
+            margin: auto 0;
+        }
+
+        .navbar-menu {
+            margin: 0 auto;
+            flex-grow: 0;
+
+            .navbar-dropdown {
+                .navbar-item {
+                    &:hover {
+                        background-color: $navbar-item-hover-background-color !important;
+                    }
+                }
+                .navbar-link {
+                    &:after {
+                        transform: rotate(-135deg);
+                        margin-top: -0.3em;
+                        right: 0;
+                    }
+                }
+                .is-hoverable {
+                    &:hover {
+                        & > .navbar-dropdown {
+                            display: block !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $widescreen) {
+    header {
+        .container {
+            max-width: none;
+            width: 100%;
+            margin: 0 2rem;
+
+            .navbar-link {
+                padding-right: 2.1em;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $desktop) {
+    header {
+        .container {
+            margin: 0;
+        }
+
+        .header-top {
+            .topbar {
+                padding: 0.5rem 0 0.5rem 0.5rem;
+
+                .navbar-item {
+                    padding: 0.3rem 0.4rem;
+
+                    a *:nth-child(2) {
+                        display: none;
+                    }
+                }
+
+                .navbar-start {
+                    margin-right: auto;
+                    padding-right: 0.5rem;
+                }
+
+                form {
+                    margin-right: 0.5rem;
+                }
+            }
+
+            .navbar {
+                height: auto;
+
+                .container {
+                    display: flex;
+                    align-items: center;
+                    padding: 0;
+
+                    .navbar-brand {
+                        order: 1;
+                        margin: 0 auto 0 0.2rem;
+
+                        img {
+                            height: 80px;
+                            width: 80px;
+                        }
+                    }
+                    .navbar-reservation {
+                        order: 2;
+
+                        #header-reservation .ballejaune {
+                            min-width: 120px;
+                            min-height: 24px;
+                            background-size: 114px 23px;
+                        }
+                    }
+                    .navbar-burger {
+                        order: 3;
+                        min-width: 3.25rem;
+                        margin: 0 0.2rem 0 auto;
+                        height: 100%;
+                        text-align: center;
+
+                        &:hover {
+                            background: none;
+                        }
+
+                        .fas {
+                            padding: 1.5rem 1rem;
+                        }
+                    }
+                    .navbar-menu {
+                        display: block;
+                        position: fixed;
+                        z-index: 1000;
+                        top: 0;
+                        bottom: 0;
+                        right: -102%;
+                        width: 100%;
+                        min-height: 100vh;
+                        overflow: auto;
+                        padding: 0;
+                        transition: all 0.3s ease-in-out;
+                        background: transparent;
+
+                        .navbar-menu-content {
+                            width: 80%;
+                            min-height: 100%;
+                            height: auto;
+                            margin: 0 0 0 auto;
+                            background: $navbar-vertical-bg;
+                            box-shadow: 0 0 6px 0;
+
+                            .top-navigation {
+                                flex-direction: column;
+                                height: auto;
+                                padding-top: 6rem;
+                                padding-bottom: 6rem;
+
+                                div.navbar-item {
+                                    padding: 0.25rem 0;
+
+                                    .navbar-link {
+                                        color: $link;
+                                        padding: 0.5rem 2.5rem 0.5rem 1.5rem;
+                                    }
+
+                                    &.has-dropdown {
+                                        height: auto;
+
+                                        .navbar-link {
+                                            &:after {
+                                                transform: rotate(-135deg);
+                                                display: block;
+                                                right: 2rem;
+                                            }
+
+                                            &.is-active {
+                                                background-color: inherit;
+
+                                                &:after {
+                                                    transform: rotate(-45deg);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                a.navbar-item {
+                                    color: $light;
+                                }
+
+                                .navbar-dropdown {
+                                    display: none;
+                                    font-size: 1rem;
+                                    color: $light;
+                                    background: $navbar-vertical-bg-dropdown-lvl1;
+
+                                    a.navbar-item, a.navbar-link {
+                                        padding-left: 3.5rem;
+
+                                        &.is-active {
+                                            background: none;
+                                        }
+                                    }
+
+                                    .navbar-dropdown {
+                                        background: $navbar-vertical-bg-dropdown-lvl2;
+
+                                        &.is-active {
+                                            background: $navbar-vertical-bg-dropdown-lvl2 !important;
+                                        }
+
+                                        .navbar-item {
+                                            padding-left: 5.5rem;
+                                        }
+                                    }
+
+                                    &.is-active {
+                                        display: block;
+                                        background: $navbar-vertical-bg-dropdown-lvl1 !important;;
+                                    }
+                                }
+                            }
+                        }
+
+                        .navbar-burger {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            z-index: 1000;
+                            height: auto;
+                            color: $white;
+                        }
+
+                        &.is-active {
+                            right: 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        .hero {
+            .hero-body {
+                padding: 3rem 1.5rem;
+
+                h1.title {
+                    font-size: 1.6rem;
+                    white-space: nowrap;
+
+                    strong {
+                        margin-left: -6px;
+                    }
+
+                    span {
+                        display: none;
+
+                        &:last-child {
+                            display: inline;
+                        }
+                    }
+                }
+
+                .subtitle {
+                    margin-top: 1rem;
+                }
+            }
+        }
+
+        &.sticky {
+            .container {
+                .navbar-burger {
+                    margin-top: 0.6rem;
+                }
+            }
+
+            .header-top {
+                .navbar {
+                    .navbar-reservation {
+                        top: 0.6rem;
+                    }
+                }
+            }
         }
     }
 }

@@ -8,7 +8,9 @@ $col-footer-width-down-sm: 300px;
 
     .top {
         display: flex;
-        padding: 0 3rem 1rem 3rem;
+        max-width: $fullhd;
+        margin: auto;
+        padding-left: 1rem;
         justify-content: space-around;
 
         .footer-title {
@@ -46,16 +48,6 @@ $col-footer-width-down-sm: 300px;
         }
 
         .col-footer-contact {
-            //.footer-title {
-            //    margin-left: 200px;
-            //}
-            //.map {
-            //    height: 200px;
-            //    width: 200px;
-            //    background-image: url("../images/PlanNantesCircle.png");
-            //    background-size: 200px;
-            //}
-
             address span {
                 white-space: nowrap;
             }
@@ -93,6 +85,7 @@ $col-footer-width-down-sm: 300px;
     }
 
     .bottom {
+        display: flex;
         background-color: $primary;
         padding: 1rem;
         justify-content: space-between;
@@ -122,7 +115,7 @@ $col-footer-width-down-sm: 300px;
     }
 
     .private-access {
-        display: block;
+        display: none;
         position: absolute;
         bottom: 0;
         opacity: 0.5;
@@ -134,95 +127,112 @@ $col-footer-width-down-sm: 300px;
     }
 }
 
-// Écrans < 1200px
-//@include media-breakpoint-down(lg) {
-//    #footer .top {
-//        padding: 0 0 1rem 12%;
-//
-//        .col-footer {
-//            flex: 1;
-//
-//            &.col-footer-book-join {
-//                order: -1;
-//                flex: unset;
-//                width: 100%;
-//                display: flex;
-//
-//                .sub-col {
-//                    flex: 1;
-//                }
-//            }
-//        }
-//    }
-//}
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (max-width: $fullhd) {
+    #footer {
+        .top {
+            max-width: $widescreen;
+        }
+    }
+}
+@media screen and (max-width: $widescreen) {
+    #footer {
+        .top {
+            max-width: $desktop;
+        }
+    }
+}
+@media screen and (max-width: $desktop) {
+    #footer {
+        font-size: 0.9rem;
 
-// Écrans < 992px
-//@include media-breakpoint-down(md) {
-//    #footer {
-//        .top {
-//            padding: 0 0 1rem 8%;
-//        }
-//
-//        .bottom {
-//            font-size: 0.8rem;
-//            .copyright {
-//                text-align: right;
-//            }
-//
-//            .empty {
-//                display: none;
-//            }
-//        }
-//
-//        .tribute {
-//            a span {
-//                display: none;
-//            }
-//        }
-//    }
-//}
+        .top {
+            max-width: $tablet;
+        }
 
-// Écrans < 576px
-//@include media-breakpoint-down(xs) {
-//    #footer {
-//        .top {
-//            p {
-//                margin-bottom: 0.3rem;
-//            }
-//
-//            .col-footer {
-//                width: $col-footer-width-down-sm;
-//                flex: unset;
-//                margin: auto;
-//
-//                &.col-footer-book-join {
-//                    display: block;
-//                    width: $col-footer-width-down-sm;
-//
-//                    .sub-col {
-//                        width: 100%;
-//                        flex: unset;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+        .bottom {
+            font-size: 0.8rem;
+            .copyright {
+                text-align: right;
+            }
 
-// Écrans > 800px
-//@include media-breakpoint-up(md) {
-//    #footer {
-//        //margin-left: $navbar-width;
-//    }
-//}
+            .empty {
+                display: none;
+            }
+        }
+    }
+}
 
-// Écrans > 1200px
-//@include media-breakpoint-up(xl) {
-//    #footer {
-//        //margin-left: $navbar-width-up-xl;
-//
-//        .private-access {
-//            display: block;
-//        }
-//    }
-//}
+@media screen and (min-width: $tablet) and (max-width: $desktop) {
+    #footer .top {
+        .col-footer {
+            flex: 2;
+
+            &.col-footer-book-join {
+                flex: unset;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+
+                .sub-col {
+                    flex: 2;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tablet) {
+    #footer {
+        .top {
+            flex-direction: column;
+            padding-left: 0;
+
+            p {
+                margin-bottom: 0.3rem;
+            }
+
+            .col-footer {
+                width: $col-footer-width-down-sm;
+                flex: unset;
+                margin: auto;
+
+                &.col-footer-book-join {
+                    display: block;
+                    width: $col-footer-width-down-sm;
+
+                    .sub-col {
+                        width: 100%;
+                        flex: unset;
+                    }
+                }
+            }
+        }
+
+        .bottom {
+            font-size: 0.8rem;
+
+            .copyright {
+                text-align: right;
+            }
+
+            .empty {
+                display: none;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $desktop) {
+    #footer {
+        .top {
+            padding-bottom: 1rem;
+        }
+        .private-access {
+            display: block;
+        }
+    }
+}

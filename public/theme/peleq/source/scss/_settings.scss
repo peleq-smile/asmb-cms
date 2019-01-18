@@ -9,6 +9,13 @@ $debug-breakpoint: false;
 
 // 2. Set your own initial variables
 
+// Responsiveness
+
+$tablet: 769px !default
+$desktop: 1087px + (2 * $gap) !default
+$widescreen: 1280px + (2 * $gap) !default
+$fullhd: 1472px + (2 * $gap) !default
+
 // Colors
 $light: #caeafc;
 $dark: #2c2d32;
@@ -17,6 +24,8 @@ $bg-light: #f0f0f0;
 
 // Custom other colors
 $secondary: #d1a633;
+$secondary-light: #e4c676;
+$secondary-xlight: #e4c676;
 
 // Text colors
 $text: $dark;
@@ -78,6 +87,11 @@ $github: #333;
 $github-invert: findColorInvert($github);
 
 // 5. Navbar
+$navbar-vertical-bg: $dark;
+$navbar-vertical-bg-dropdown-lvl1: #404146;
+$navbar-vertical-bg-dropdown-lvl2: #54555a;
+$navbar-vertical-bg: $dark;
+
 $navbar-item-color: $dark;
 $navbar-item-active-color: $link;
 $navbar-item-hover-background-color: $white-bis;

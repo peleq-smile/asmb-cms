@@ -1,3 +1,9 @@
+#main-content {
+    &.under-sticky {
+        padding-top: 4rem;
+    }
+}
+
 .columns.white-framed {
     display: flex;
     align-items: center;
@@ -130,4 +136,15 @@
 
 .matches {
     background-color: $white;
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (max-width: $widescreen) {
+    #main-content {
+        &.under-sticky {
+            padding-top: 1rem;
+        }
+    }
 }

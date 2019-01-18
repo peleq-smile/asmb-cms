@@ -2,7 +2,7 @@
 <html lang="{{ htmllang() }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     {# make sure we always display a proper title: The record's title if there is one, appended with the
        sitename. If there is no title, we append the sitename with the payoff, if there is one. #}
     <title>
@@ -16,8 +16,8 @@
     <link href="https://fonts.googleapis.com/css?family=Lato|Niramit|Poppins|Mali|Ultra|Comfortaa|Raleway"
           rel="stylesheet">
 
+    <link rel="stylesheet" href="{{ asset('css/theme.css', 'theme') }}?random={{ "now"|date("U") }}">
     <link rel="stylesheet" href="{{ asset('css/bulma.css', 'theme') }}">
-    <link rel="stylesheet" href="{{ asset('css/theme.css', 'theme') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
           integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 </head>
@@ -27,7 +27,7 @@
 {% block body %}
 
     <header id="header" role="banner" class="header">
-        {{ include('partials/_navbar.twig') }}
+        {{ include('partials/_header_top.twig') }}
         {{ include('partials/_header.twig') }}
     </header>
 
@@ -37,7 +37,7 @@
         {% block main %}
         {% endblock main %}
 
-        {{ widgets('main_bottom') }}
+        {#{{ widgets('main_bottom') }}#}
     </div>
 {% endblock body %}
 
@@ -46,6 +46,7 @@
 <script src="{{ asset('js/lib/jquery-3.3.1.slim.min.js', 'theme') }}"></script>
 <script src="{{ asset('js/lib/jquery.touchSwipe.min.js', 'theme') }}"></script>
 <!-- jQuery Custom Scroller CDN -->
+<script src="{{ asset('lib/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js', 'theme') }}"></script>
 
 <script src="{{ asset('js/app.js', 'theme') }}"></script>
 
