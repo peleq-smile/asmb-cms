@@ -1,0 +1,24 @@
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>{{ pool.finalName() }}</th>
+        <th>{{ __('page.edit-scores.points.title') }}</th>
+        <th>{{ __('page.edit-scores.played-day.title') }}</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for teamScores in teamsScores %}
+        <tr>
+            <td>{{ team.finalName() }}</td>
+            <td>{{ team.finalName() }}</td>
+        </tr>
+    {% endfor %}
+
+    {% if teams is empty %}
+        <tr>
+            <td colspan="2"><em>{{ __('general.phrase.empty-list') }}</em></td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

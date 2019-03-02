@@ -1,0 +1,15 @@
+<form action="{{ path('pooldelete', {'championshipId': championship.id}) }}" method="post">
+    <a href="{{ path('pooledit', {'poolId': pool.id}) }}"
+       title="{{ __('page.edit-pool.title') }}"
+       class="btn btn-xs btn-default">
+        <i class="fa fa-edit"></i>
+    </a>
+
+    <input type="hidden" name="poolId" value="{{ pool.id }}">
+    <button type="submit" class="btn btn-xs confirm" title="{{ __('page.delete-pool.title') }}"
+            data-confirm="{{ __('general.phrase.confirm-delete-pool', { '%name%': pool.short_name ? pool.short_name : pool.name }) }}">
+    <span class="pull-left">
+        <i class="fa fa-trash"></i>
+    </span>
+    </button>
+</form>

@@ -24,16 +24,16 @@ class Visitor extends BaseTable
     }
 
     /**
-     * Define the columns that require indexing.
+     * {@inheritdoc}
      */
     protected function addIndexes()
     {
-        $this->table->addUniqueIndex(['ip', 'httpUserAgent']);
         $this->table->addIndex(['ip', 'httpUserAgent']);
+        $this->table->addUniqueIndex(['ip', 'httpUserAgent']);
     }
 
     /**
-     * Set the table's primary key.
+     * {@inheritdoc}
      */
     protected function setPrimaryKey()
     {

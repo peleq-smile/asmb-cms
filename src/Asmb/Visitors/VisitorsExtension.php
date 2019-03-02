@@ -1,5 +1,4 @@
 <?php
-
 namespace Bundle\Asmb\Visitors;
 
 use Silex\Application;
@@ -69,7 +68,6 @@ class VisitorsExtension extends SimpleExtension
      */
     protected function registerServices(Application $app)
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         $this->extendDatabaseSchemaServices();
     }
 

@@ -50,5 +50,6 @@ composer.phar
 Thumbs.db
 Vagrantfile
 
-/app/config/extensions/menueditor.bacboslab.yml
-/app/config/extensions/menu_backups/
+app/config/extensions/menueditor.bacboslab.yml
+app/config/extensions/menu_backups/
+dev

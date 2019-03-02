@@ -394,6 +394,11 @@ blocks:
     singular_name: Bloc
     singular_slug: block
     fields:
+        multiselect:
+            type: select
+            values: [ A-tuin, Donatello, Rafael, Leonardo, Michelangelo, Koopa, Squirtle ]
+            multiple: true
+            postfix: "Select your favourite turtle(s)."
         title:
             type: text
             label: 'Titre'

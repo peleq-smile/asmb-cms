@@ -64,6 +64,24 @@ gulp.task('theme-sass', function() {
       .pipe(gulp.dest('../css'));
   });
 
+// Compile Theme Sass into CSS. Not compressed.
+gulp.task('backend-sass', function() {
+
+    return gulp.src('scss/backend.scss')
+      .pipe($.sourcemaps.init())
+      .pipe($.sass({
+        includePaths: PATHS.sass
+      })
+        .on('error', $.sass.logError))
+      .pipe($.autoprefixer({
+        browsers: COMPATIBILITY
+      }))
+      // If you _do_ want to compress this file on 'production', uncomment the the lines below.
+      .pipe($.if(PRODUCTION, $.cssnano()))
+      .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
+      .pipe(gulp.dest('../css'));
+  });
+
 // Set up 'compress' task.
 gulp.task('compress', function() {
   return gulp.src(javascriptFiles)
@@ -78,11 +96,11 @@ gulp.task('setproduction', function(done) {
 });
 
 // Set up 'default' task, with watches.
-gulp.task('default', gulp.series(gulp.parallel('compress', 'bulma-sass', 'theme-sass'), function watch() {
-  gulp.watch(['scss/**/*.scss'], gulp.series('theme-sass', 'bulma-sass'));
+gulp.task('default', gulp.series(gulp.parallel('compress', 'bulma-sass', 'theme-sass', 'backend-sass'), function watch() {
+  gulp.watch(['scss/**/*.scss'], gulp.series('theme-sass', 'bulma-sass', 'backend-sass'));
   gulp.watch(['javascript/**/*.js'], gulp.series('compress'));
 }));
 
 // Set up 'build' task, without watches and force 'production'.
-gulp.task('build', gulp.series(gulp.parallel('setproduction', 'compress', 'bulma-sass', 'theme-sass')));
+gulp.task('build', gulp.series(gulp.parallel('setproduction', 'compress', 'bulma-sass', 'theme-sass', 'backend-sass')));
 

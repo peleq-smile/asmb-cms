@@ -1,2 +1,3 @@
 extensions:
     - Bundle\Asmb\Visitors\VisitorsExtension
+    - Bundle\Asmb\Competition\CompetitionExtension

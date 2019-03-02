@@ -1,0 +1,23 @@
+<div class="btn-group">
+    <a class="btn btn-default btn-xs hidden-xs"
+       href="{{ path('teamedit', {'id': team.id}) }}">
+        <i class="fa fa-edit"></i> {{ __('general.phrase.edit') }}
+    </a>
+
+    <button type="button" class="btn dropdown-toggle btn-default btn-xs" data-toggle="dropdown">
+        <i class="fa fa-info-sign"></i>
+        <span class="caret"></span>
+    </button>
+
+    <ul class="dropdown-menu pull-right">
+        <li>
+            <form action="{{ path('teamdelete', {'id': team.id}) }}" method="post">
+                {{ include('@bolt/_sub/_csrf_token.twig') }}
+                <button type="submit" class="btn btn-block btn-link confirm"
+                        data-confirm="{{ __('general.phrase.confirm-delete-team', { '%name%': team.name }) }}">
+                    <span class="pull-left"><i class="fa fa-trash"></i> {{ __('general.phrase.delete') }}</span>
+                </button>
+            </form>
+        </li>
+    </ul>
+</div>

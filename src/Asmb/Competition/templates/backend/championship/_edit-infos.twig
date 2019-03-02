@@ -1,0 +1,47 @@
+{% form_theme form 'form_bolt_layout.twig' %}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        {{ form_start(form) }}
+        <table class="table-condensed">
+            <thead>
+            <tr>
+                <th><label for="championship_edit_name">{{ __('general.phrase.name') }}</label></th>
+                <th><label for="championship_edit_year">{{ __('general.phrase.year') }}</label></th>
+                <th><label for="championship_edit_short_name">{{ __('general.phrase.short_name') }}</label></th>
+                <th></th>
+                <th class="text-right"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td class="name">
+                    {{ form_widget(form.name) }}
+                </td>
+
+                <td class="year">
+                    {{ form_widget(form.year) }}
+                </td>
+
+                <td class="short_name">
+                    {{ form_widget(form.short_name) }}
+                </td>
+                <td class="actions">
+                    {{ form_widget(form.save) }}
+                </td>
+                <td class="actions">
+                    {% if championship.id %}
+                    {# Shortcut to action: Enter match scores #}
+                    <a class="btn btn-default"
+                       href="{{ path('championshipeditscores', {'id': championship.id}) }}">
+                        <i class="fa fa-calculator"></i> {{ __('general.phrase.enter-score') }}
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {{ form_end(form) }}
+    </div>
+</div>
