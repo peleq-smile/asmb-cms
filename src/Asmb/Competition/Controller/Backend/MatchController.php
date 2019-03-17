@@ -100,7 +100,7 @@ class MatchController extends BackendBase
             'action'        => null,
             // Date of match must be different of pool day date
             'excluded_date' => $poolDay->getDate(),
-            'available_years' => [$championship->getYear() - 1, $championship->getYear()],
+            'available_years' => [$championship->getYear(), $championship->getYear() - 1],
         ];
 
         $form = $this->createFormBuilder(FormType\MatchEditDateType::class, $match, $formOptions)

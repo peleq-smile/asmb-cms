@@ -46,7 +46,7 @@ page.add-team-pool.message.saved: "La/les équipe(s) a/ont bien été ajoutée(s
 page.delete-pool.message.not-saved: "La poule n'a pas été supprimée."
 page.delete-pool.message.saved: "La poule a bien été supprimée."
 page.delete-pool.title: "Supprimer la poule"
-page.edit-championship.completeness: "Saisie des matchs: %percent% % effectuée"
+page.edit-championship.completeness: "Saisie des matchs : %percent% % effectuée"
 page.edit-championship.edit-pool-matches: "Éditer les matchs (%percent% % effectué)"
 page.edit-championship.message.duplicate-error: "Impossible d'enregistrer les données : un championnat de même nom pour la même année existe déjà !"
 page.edit-championship.message.not-saved: "Impossible d'enregistrer les données du championnat."

@@ -25,10 +25,6 @@ class Pool extends AbstractShortNamedEntity
      */
     protected $link_fft;
     /**
-     * @var array
-     */
-    protected $teams = [];
-    /**
      * @var integer
      */
     protected $position;
@@ -83,57 +79,6 @@ class Pool extends AbstractShortNamedEntity
     public function setLinkFft($linkFft)
     {
         $this->link_fft = $linkFft;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTeams()
-    {
-        return $this->teams;
-    }
-
-    /**
-     * @param array $teams
-     */
-    public function setTeams(array $teams = null)
-    {
-        if (null !== $teams) {
-            $this->teams = $teams;
-        } else {
-            $this->teams = [];
-        }
-    }
-
-    /**
-     * @param integer $teamId
-     * @param int     $score
-     */
-    public function addTeam($teamId, $score = 0)
-    {
-        if (is_numeric($teamId) && ! in_array($teamId, $this->teams)) {
-            $this->teams[$teamId] = $score;
-        }
-    }
-
-    /**
-     * @param array $teamIds
-     */
-    public function addTeams($teamIds)
-    {
-        foreach ($teamIds as $teamId) {
-            $this->addTeam($teamId);
-        }
-    }
-
-    /**
-     * @param integer $teamId
-     */
-    public function removeTeam($teamId)
-    {
-        if (isset($this->teams[$teamId])) {
-            unset($this->teams[$teamId]);
-        }
     }
 
     /**

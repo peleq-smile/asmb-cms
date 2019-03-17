@@ -24,7 +24,6 @@ class ChampionshipPool extends BaseTable
         $this->table->addColumn('name', 'string', ['length' => 255, 'notnull' => true]);
         $this->table->addColumn('short_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('link_fft', 'string', ['length' => 255, 'notnull' => false]);
-        $this->table->addColumn('teams', 'json', []);
     }
 
     /**

@@ -11,19 +11,19 @@
     </thead>
     <tbody>
 
-    {% for team in teams %}
+    {% for poolTeam in teams %}
         {% if loop.index0 % 2 == 0 or loop.first %}
             <tr class="form-inline">
         {% endif %}
 
-        <td class="col-xs-5"><span class="form-group{{ team.is_club ? ' is-club' }}">{{ team.short_name }}</span></td>
+        <td class="col-xs-5"><span class="form-group{{ poolTeam.team_is_club ? ' is-club' }}">{{ poolTeam.team_name }}</span></td>
 
         <td class="col-xs-1">
             <form action="{{ path('poolteamremove', {'championshipId': championship.id, 'poolId': pool.id}) }}"
                   method="post" class="pull-right">
 
                 <input type="hidden" name="{{ 'pool' ~ pool.id ~ '_remove_team_teamId' }}"
-                       value="{{ team.id }}">
+                       value="{{ poolTeam.team_id }}">
 
                 <button type="submit" class="btn btn-xs btn-tertiary"
                         name="{{ 'pool' ~ pool.id ~ '_remove_team_save' }}">

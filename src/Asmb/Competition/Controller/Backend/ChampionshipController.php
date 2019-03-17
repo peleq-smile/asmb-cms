@@ -124,7 +124,9 @@ class ChampionshipController extends AbstractController
                     = $this->buildAddTeamToPoolForm($request, $pool)->createView();
             }
 
-            $completenessByPoolId = $this->getRepository('championship_pool')->getEditionCompletenesses($pools);
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
+            $poolRepository = $this->getRepository('championship_pool');
+            $completenessByPoolId = $poolRepository->getEditionCompletenesses($pools);
 
             $context += [
                 'addPoolForm'          => $addPoolForm->createView(),
@@ -139,7 +141,7 @@ class ChampionshipController extends AbstractController
             [
                 'championship'        => $championship,
                 'poolsByCategoryName' => $this->getPoolsByCategoryName($championship->getId()),
-                'teamsByPool'         => $this->getTeamsByPoolId($championship->getId()),
+                'teamsByPool'         => $this->getPoolTeamsGroupByPoolId($championship->getId()),
             ]
         );
     }
@@ -175,7 +177,7 @@ class ChampionshipController extends AbstractController
             [
                 'championship'        => $championship,
                 'poolsByCategoryName' => $this->getPoolsByCategoryName($championship->getId()),
-                'teamsByPool'         => $this->getTeamsByPoolId($championship->getId()),
+                'teamsByPool'         => $this->getPoolTeamsGroupByPoolId($championship->getId()),
                 'teamsScoresByPool'   => $this->getTeamScoresByPoolId($pools),
             ]
         );

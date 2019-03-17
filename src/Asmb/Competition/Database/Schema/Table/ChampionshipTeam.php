@@ -22,7 +22,6 @@ class ChampionshipTeam extends BaseTable
         $this->table->addColumn('short_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('category_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('is_club', 'boolean', ['default' => false, 'notnull' => true]);
-        $this->table->addColumn('link_fft', 'string', ['length' => 255, 'notnull' => false]);
     }
 
     /**
@@ -45,7 +44,7 @@ class ChampionshipTeam extends BaseTable
     {
         $this->table->addIndex(['category_name']);
         $this->table->addIndex(['is_club']);
-        $this->table->addUniqueIndex(['category_name', 'name']);
+        $this->table->addUniqueIndex(['category_name', 'name', 'short_name']);
     }
 
     /**

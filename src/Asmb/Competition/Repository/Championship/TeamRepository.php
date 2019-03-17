@@ -5,6 +5,7 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 use Bolt\Storage\Repository;
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
+use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
 use Bundle\Asmb\Competition\Entity\Championship\Team;
 
 /**
@@ -65,6 +66,7 @@ class TeamRepository extends Repository
      * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
      *
      * @return array
+     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function findByPoolIdAsChoices(Pool $pool)
     {
@@ -85,13 +87,45 @@ class TeamRepository extends Repository
      * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
      *
      * @return bool|mixed|Team[]
+     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function findByPool(Pool $pool)
     {
-        $teamIds = array_keys($pool->getTeams());
-        $teams = $this->findBy(['id' => $teamIds], ['short_name', 'ASC']);
-        $teams = (false !== $teams) ? $teams : [];
+        $teams = [];
+
+        /** @var PoolTeamRepository $poolTeamRepository */
+        $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
+        $poolTeams = $poolTeamRepository->findBy(['pool_id' => $pool->getId()]);
+
+        if (false !== $poolTeams) {
+            $teamIds = array_map(function(PoolTeam $poolTeam) { return $poolTeam->getTeamId(); }, $poolTeams);
+
+            $teams = $this->findBy(['id' => $teamIds], ['short_name', 'ASC']);
+            $teams = (false !== $teams) ? $teams : [];
+        }
 
         return $teams;
+    }
+
+    /**
+     * Return teams from given team ids.
+     *
+     * @param array $teamIds
+     *
+     * @return array
+     */
+    public function findByIds($teamIds)
+    {
+        $teamNamesById = [];
+
+        $teams = $this->findBy(['id' => $teamIds]);
+        if (false !== $teams) {
+            /** @var Team $team */
+            foreach ($teams as $team) {
+                $teamNamesById[$team->getId()] = $team;
+            }
+        }
+
+        return $teamNamesById;
     }
 }

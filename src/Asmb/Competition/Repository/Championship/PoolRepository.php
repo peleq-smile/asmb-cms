@@ -116,7 +116,10 @@ class PoolRepository extends Repository
     {
         $completeness = 0;
 
-        $teamsCount = count($pool->getTeams());
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+        $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
+        $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
+
         $daysCount = PoolHelper::getDaysCount($teamsCount);
         $matchesCountPerDay = PoolHelper::getMatchesCountPerDay($teamsCount);
 
@@ -144,6 +147,7 @@ class PoolRepository extends Repository
      * @param Pool[] $pools
      *
      * @return array
+     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function getEditionCompletenesses(array $pools)
     {
@@ -155,22 +159,38 @@ class PoolRepository extends Repository
         $poolIds = array_keys($completenesses);
 
         if (!empty($poolIds)) {
-            $qb = $this->getLoadQuery();
-            $qb->select($this->getAlias() . '.id as pool_id');
-            $qb->addSelect('COUNT(m.id) as filled_match_count');
-            // TODO rajouter commentaire bien détaillé !!!
-            $qb->addSelect('(IF(JSON_LENGTH(pool.teams) % 2 = 0, JSON_LENGTH(pool.teams) - 1, JSON_LENGTH(pool.teams))) * floor(JSON_LENGTH(pool.teams) / 2) as expected_match_count');
-            $qb->leftJoin('pool', 'bolt_championship_match', 'm', 'm.pool_id = pool.id');
-            $qb->where($qb->expr()->in('pool_id', $poolIds));
-            $qb->andWhere('home_team_id IS NOT NULL');
-            $qb->andWhere('visitor_team_id IS NOT NULL');
-            $qb->groupBy('pool_id');
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+            $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
+            $poolTeamAlias = $poolTeamRepository->getAlias();
+            $matchAlias = 'm';
+
+            $qb = $poolTeamRepository->getLoadQuery();
+            // SELECT
+            $qb->select("$poolTeamAlias.pool_id as pool_id");
+            $qb->addSelect("COUNT(DISTINCT $matchAlias.id) as filled_match_count");
+            // Expected match count depends on teams count into each pool : if it's even or odd
+            $qb->addSelect('(IF(COUNT(DISTINCT pool_team.team_id) % 2 = 0, 
+                                COUNT(DISTINCT pool_team.team_id) - 1, 
+                                COUNT(DISTINCT pool_team.team_id))
+                            ) * floor(COUNT(DISTINCT pool_team.team_id) / 2) as expected_match_count');
+            // JOIN
+            $qb->leftJoin(
+                $poolTeamAlias,
+                'bolt_championship_match',
+                $matchAlias,
+                $qb->expr()->eq("$matchAlias.pool_id", "$poolTeamAlias.pool_id")
+            );
+            // WHERE
+            $qb->where($qb->expr()->in("$poolTeamAlias.pool_id", $poolIds));
+            $qb->andWhere("$matchAlias.home_team_id IS NOT NULL");
+            $qb->andWhere("$matchAlias.visitor_team_id IS NOT NULL");
+            // GROUP BY
+            $qb->groupBy("$poolTeamAlias.pool_id");
 
             $result = $qb->execute()->fetchAll();
 
             foreach ($result as $row) {
                 $completenesses[$row['pool_id']] = (int) (100 * ($row['filled_match_count'] / $row['expected_match_count']));
-
             }
         }
 

@@ -2,9 +2,9 @@
 
 namespace Bundle\Asmb\Competition\Controller\Backend;
 
-use Bolt\Controller\Backend\BackendBase;
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
+use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
 use Bundle\Asmb\Competition\Repository\Championship\MatchRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolDayRepository;
 use Bundle\Asmb\Competition\Repository\Championship\TeamRepository;
@@ -72,9 +72,12 @@ class PoolController extends AbstractController
             $position = $pool->getPosition();
             if (null === $position || !$position) {
                 // Set position to count of pool of same championship + 1
-                /** @var \Bundle\Asmb\Competition\Entity\Championship $championship */
-                $countOfPools = $this->getRepository('championship_pool')
-                    ->countByChampionshipIdAndCategoryName($championshipId, $pool->getCategoryName());
+                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
+                $poolRepository = $this->getRepository('championship_pool');
+                $countOfPools = $poolRepository->countByChampionshipIdAndCategoryName(
+                    $championshipId,
+                    $pool->getCategoryName()
+                );
                 $pool->setPosition($countOfPools + 1);
             }
 
@@ -197,34 +200,59 @@ class PoolController extends AbstractController
      */
     public function addTeams(Request $request, $championshipId, $poolId)
     {
-        $pool = $this->getRepository('championship_pool')->find($poolId);
-        $form = $this->buildAddTeamToPoolForm($request, $pool);
+        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $teamIdInputName = 'pool' . $poolId . '_add_team_teamId';
-            $teamIds = $form->get($teamIdInputName)->getData();
+        try {
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
+            $poolRepository = $this->getRepository('championship_pool');
+            $pool = $poolRepository->find($poolId);
 
-            $pool->addTeams($teamIds);
+            $form = $this->buildAddTeamToPoolForm($request, $pool);
 
-            try {
-                $saved = $this->getRepository('championship_pool')->save($pool);
-                if ($saved) {
-                    $this->flashes()->success(
-                        Trans::__('page.add-team-pool.message.saved')
-                    );
-                } else {
-                    $this->flashes()->error(
-                        Trans::__('page.add-pool-team.message.duplicate-error')
-                    );
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+                $poolTeamRepository = $this->getRepository('championship_pool_team');
+                $poolTeams = $poolTeamRepository->findByPoolIdSortedByName($poolId);
+
+                $teamIdInputName = 'pool' . $poolId . '_add_team_teamId';
+                $teamIds = $form->get($teamIdInputName)->getData();
+
+                $saved = true;
+
+                // Retrieve all team names from selected team ids (optimized cause in ONE query), to be able to set
+                // required team name.
+
+                /** @var \Bundle\Asmb\Competition\Repository\Championship\TeamRepository $teamRepository */
+                $teamRepository = $this->getRepository('championship_team');
+                $teams = $teamRepository->findByIds($teamIds);
+                /** @var \Bundle\Asmb\Competition\Entity\Championship\Team $team */
+                foreach ($teams as $team) {
+                    if (!isset($poolTeams[$team->getId()])) { // Save only if team is not already into pool
+                        $poolTeam = new PoolTeam();
+                        $poolTeam->setPoolId($poolId);
+                        $poolTeam->setTeamId($team->getId());
+                        // Let's retrieve name of team from id here.
+                        $poolTeam->setTeamName($team->getFinalName());
+                        $poolTeam->setTeamIsClub($team->isClub());
+                        $poolTeam->setPosition(count($poolTeams) + 1);
+
+                        $saved = $saved && $this->getRepository('championship_pool_team')->save($poolTeam);
+                    }
                 }
-            } catch (\Exception $e) {
-                $this->flashes()->error(
-                    Trans::__('page.add-pool-team.message.not-saved')
-                );
-            }
-        }
 
-        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]) . '#pool' . $pool->getId();
+                if ($saved) {
+                    $this->flashes()->success(Trans::__('page.add-team-pool.message.saved'));
+                } else {
+                    $this->flashes()->error(Trans::__('page.add-pool-team.message.duplicate-error'));
+                }
+
+                $url .= '#pool' . $pool->getId();
+            }
+        } catch (\Exception $e) {
+            $this->flashes()->error(
+                Trans::__('page.add-pool-team.message.not-saved')
+            );
+        }
 
         return $this->redirect($url);
     }
@@ -248,11 +276,15 @@ class PoolController extends AbstractController
                 $teamIdInputName = 'pool' . $poolId . '_remove_team_teamId';
                 $teamId = $form->get($teamIdInputName)->getData();
 
-                $pool->removeTeam($teamId);
+                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+                $poolTeamRepository = $this->getRepository('championship_pool_team');
+                $poolTeam = $poolTeamRepository->findOneBy(
+                    ['pool_id' => $poolId, 'team_id' => $teamId]
+                );
 
                 try {
-                    $saved = $this->getRepository('championship_pool')->save($pool);
-                    if ($saved) {
+                    $deleted = $poolTeamRepository->delete($poolTeam);
+                    if ($deleted) {
                         $this->flashes()->success(
                             Trans::__('page.remove-team-pool.message.saved')
                         );

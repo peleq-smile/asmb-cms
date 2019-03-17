@@ -39,7 +39,7 @@ class TeamController extends BackendBase
 
     /**
      * @param Request $request
-     * @param string  $cat
+     * @param string  $categoryName
      *
      * @return Response
      */

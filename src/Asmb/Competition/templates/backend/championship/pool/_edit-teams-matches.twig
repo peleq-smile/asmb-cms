@@ -48,15 +48,17 @@
         ) }}
     </div>
 
-    {% set completeness = context.completenessByPoolId[pool.id] %}
-    {% set btnClass = completeness == 0 ? 'btn-danger' : completeness == 100 ? 'btn-success' : 'btn-warning' %}
+    {% if teams|length > 1 %}
+        {% set completeness = context.completenessByPoolId[pool.id] %}
+        {% set btnClass = completeness == 0 ? 'btn-danger' : completeness == 100 ? 'btn-success' : 'btn-warning' %}
 
-    <div class="completeness-block">
-        <div class="panel-body clearfix">
-            <div class="text-center ">
-                <a href="{{ path('pooleditmatches', {'poolId': pool.id}) }}" title="{{ __('page.edit-pool-matches.title') }}"
-                   class="btn btn-lg {{ btnClass }}">{{ __('page.edit-championship.edit-pool-matches', {'%percent%': completeness}) }}</a>
+        <div class="completeness-block">
+            <div class="panel-body clearfix">
+                <div class="text-center ">
+                    <a href="{{ path('pooleditmatches', {'poolId': pool.id}) }}" title="{{ __('page.edit-pool-matches.title') }}"
+                       class="btn btn-lg {{ btnClass }}">{{ __('page.edit-championship.edit-pool-matches', {'%percent%': completeness}) }}</a>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>

@@ -20,10 +20,6 @@ class Team extends AbstractShortNamedEntity
      * @var boolean
      */
     protected $is_club;
-    /**
-     * @var string
-     */
-    protected $link_fft;
 
     /**
      * @return string
@@ -55,21 +51,5 @@ class Team extends AbstractShortNamedEntity
     public function setIsClub($isClub)
     {
         $this->is_club = $isClub;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLinkFft()
-    {
-        return $this->link_fft;
-    }
-
-    /**
-     * @param string $linkFft
-     */
-    public function setLinkFft($linkFft)
-    {
-        $this->link_fft = $linkFft;
     }
 }

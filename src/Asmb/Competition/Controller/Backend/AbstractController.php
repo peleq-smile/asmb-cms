@@ -8,6 +8,7 @@ use Bundle\Asmb\Competition\Form\FormType;
 use Bundle\Asmb\Competition\Repository\Championship\MatchRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolDayRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
+use Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository;
 use Bundle\Asmb\Competition\Repository\Championship\TeamRepository;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +58,9 @@ abstract class AbstractController extends BackendBase
      */
     protected function buildAddTeamToPoolForm(Request $request, Pool $pool)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\TeamRepository $teamRepository */
+        $teamRepository = $this->getRepository('championship_team');
+
         $formOptions = [
             'action'          => $this->generateUrl(
                 'poolteamadd',
@@ -67,8 +70,9 @@ abstract class AbstractController extends BackendBase
                 ]
             ),
             'championship_id' => $pool->getChampionshipId(),
-            'available_teams' => $this->getRepository('championship_team')
-                ->findByCategoryNameAsChoices($pool->getCategoryName()),
+            'available_teams' => $teamRepository->findByCategoryNameAsChoices(
+                $pool->getCategoryName()
+            ),
         ];
 
         // Generate the form
@@ -106,7 +110,6 @@ abstract class AbstractController extends BackendBase
      * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
      *
      * @return FormInterface
-     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     protected function buildEditPoolMatchesForm(Request $request, Pool $pool)
     {
@@ -137,7 +140,7 @@ abstract class AbstractController extends BackendBase
             'pool_id'         => $pool->getId(),
             'available_teams' => $this->getRepository('championship_team')
                 ->findByPoolIdAsChoices($pool),
-            'available_years' => [$championship->getYear() - 1, $championship->getYear()],
+            'available_years' => [$championship->getYear(), $championship->getYear() - 1],
         ];
 
         // Generate the form
@@ -155,7 +158,31 @@ abstract class AbstractController extends BackendBase
      *
      * @return array
      */
-    protected function getTeamsByPoolId($championshipId)
+    protected function getPoolTeamsGroupByPoolId($championshipId)
+    {
+        $teamsByPool = [];
+        if (null !== $championshipId) {
+            $pools = $this->getPools($championshipId);
+            $poolIds = array_keys($pools);
+            $teamsByPool = array_fill_keys($poolIds, []);
+
+            /** @var PoolTeamRepository $poolTeamRepository */
+            $poolTeamRepository = $this->getRepository('championship_pool_team');
+            $teamsByPool = $poolTeamRepository->findByPoolIdsGroupByPoolIdSortedByName($poolIds) + $teamsByPool;
+        }
+
+        return $teamsByPool;
+    }
+
+    /**
+     * Retrieve teams by pool id, for championship with given id.
+     *
+     * @param integer $championshipId
+     *
+     * @return array
+     * @throws \Bolt\Exception\InvalidRepositoryException
+     */
+    protected function getTeamsByPoolIdOLD($championshipId)
     {
         $teamsByPool = [];
 
@@ -219,10 +246,8 @@ abstract class AbstractController extends BackendBase
      *
      * @return bool|mixed|object[]
      */
-    protected
-    function getMatchesByPoolIdByDay(
-        array $pools
-    ) {
+    protected function getMatchesByPoolIdByDay(array $pools)
+    {
         /** @var MatchRepository $matchRepository */
         $matchRepository = $this->getRepository('championship_match');
 
@@ -238,7 +263,8 @@ abstract class AbstractController extends BackendBase
      *
      * @return bool|mixed|object[]
      */
-    protected function getTeamScoresByPoolId(array $pools) {
+    protected function getTeamScoresByPoolId(array $pools)
+    {
         $teamScoresByPoolId = [];
 
         foreach ($pools as $pool) {

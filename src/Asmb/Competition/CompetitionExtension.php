@@ -25,12 +25,13 @@ class CompetitionExtension extends SimpleExtension
     protected function registerExtensionTables()
     {
         return [
-            'championship'          => Table\Championship::class,
-            'championship_category' => Table\ChampionshipCategory::class,
-            'championship_match'    => Table\ChampionshipMatch::class,
-            'championship_pool'     => Table\ChampionshipPool::class,
-            'championship_pool_day' => Table\ChampionshipPoolDay::class,
-            'championship_team'     => Table\ChampionshipTeam::class,
+            'championship'           => Table\Championship::class,
+            'championship_category'  => Table\ChampionshipCategory::class,
+            'championship_match'     => Table\ChampionshipMatch::class,
+            'championship_pool'      => Table\ChampionshipPool::class,
+            'championship_pool_day'  => Table\ChampionshipPoolDay::class,
+            'championship_pool_team' => Table\ChampionshipPoolTeam::class,
+            'championship_team'      => Table\ChampionshipTeam::class,
         ];
     }
 
@@ -69,11 +70,12 @@ class CompetitionExtension extends SimpleExtension
     {
         return [
             'championship'          => [Entity\Championship::class => Repository\ChampionshipRepository::class],
-            'championship_category' => [Entity\Championship\Category::class => Repository\Championship\CategoryRepository::class],
-            'championship_match'    => [Entity\Championship\Match::class => Repository\Championship\MatchRepository::class],
-            'championship_pool'     => [Entity\Championship\Pool::class => Repository\Championship\PoolRepository::class],
-            'championship_pool_day' => [Entity\Championship\PoolDay::class => Repository\Championship\PoolDayRepository::class],
-            'championship_team'     => [Entity\Championship\Team::class => Repository\Championship\TeamRepository::class],
+            'championship_category'  => [Entity\Championship\Category::class => Repository\Championship\CategoryRepository::class],
+            'championship_match'     => [Entity\Championship\Match::class => Repository\Championship\MatchRepository::class],
+            'championship_pool'      => [Entity\Championship\Pool::class => Repository\Championship\PoolRepository::class],
+            'championship_pool_day'  => [Entity\Championship\PoolDay::class => Repository\Championship\PoolDayRepository::class],
+            'championship_pool_team' => [Entity\Championship\PoolTeam::class => Repository\Championship\PoolTeamRepository::class],
+            'championship_team'      => [Entity\Championship\Team::class => Repository\Championship\TeamRepository::class],
         ];
     }
 
