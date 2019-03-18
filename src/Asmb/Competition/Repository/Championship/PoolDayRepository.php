@@ -14,7 +14,7 @@ use Bundle\Asmb\Competition\Entity\Championship\PoolDay;
 class PoolDayRepository extends Repository
 {
     /**
-     * Return matches of given pool id, grouped by day then by position.
+     * Return date per day for given pool id.
      *
      * @param integer $poolId
      *
@@ -32,7 +32,7 @@ class PoolDayRepository extends Repository
     }
 
     /**
-     * Return matches of given pool id, grouped by day then by position.
+     * Return PoolDay per day for given pool id.
      *
      * @param integer $poolId
      *

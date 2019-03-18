@@ -123,6 +123,10 @@ abstract class AbstractController extends BackendBase
         $matchesData = $matchRepository->findAllByPoolIdAsArray($pool->getId());
         $daysData = $poolDayRepository->findDateByPoolId($pool->getId());
 
+        if (empty($daysData)) {
+            $daysData = $this->guessDaysData($pool);
+        }
+
         $formData = [
             'matches' => $matchesData,
             'days'    => $daysData,
@@ -149,6 +153,31 @@ abstract class AbstractController extends BackendBase
             ->handleRequest($request);
 
         return $form;
+    }
+
+    private function guessDaysData(Pool $pool)
+    {
+        $daysData = [];
+
+        // We only try to guess days dates for pool with position greater than position 1
+        /** @var PoolRepository $poolRepository */
+        $poolRepository = $this->getRepository('championship_pool');
+        $poolRepository->findOneBy(
+            [
+                'championship_id' => $pool->getId(),
+
+            ]
+        );
+
+        /** @var PoolDayRepository $poolDayRepository */
+        $otherPoolId = $poolRepository->findPoolWithLteTeamCount($pool);
+        if ($otherPoolId) {
+            /** @var PoolDayRepository $poolDayRepository */
+            $poolDayRepository = $this->getRepository('championship_pool_day');
+            $daysData = $poolDayRepository->findDateByPoolId($otherPoolId);
+        }
+
+        return $daysData;
     }
 
     /**

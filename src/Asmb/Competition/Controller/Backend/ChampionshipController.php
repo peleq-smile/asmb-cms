@@ -133,6 +133,9 @@ class ChampionshipController extends AbstractController
                 'addTeamsForms'        => $formsAddTeamViews,
                 'completenessByPoolId' => $completenessByPoolId,
             ];
+
+            // TODO bouger ça ?
+            $this->checkChampionshipActionState($championship, $completenessByPoolId);
         } // ELSE: add new championship case
 
         return $this->render(
@@ -144,6 +147,31 @@ class ChampionshipController extends AbstractController
                 'teamsByPool'         => $this->getPoolTeamsGroupByPoolId($championship->getId()),
             ]
         );
+    }
+
+    /**
+     * Check if current champioship should switch on "Edit Score Mode" instead of simple "Edit Mode".
+     *
+     * @param \Bundle\Asmb\Competition\Entity\Championship $championship
+     * @param array                                        $completenessByPoolId
+     *
+     * @return void
+     */
+    private function checkChampionshipActionState(Championship $championship, array $completenessByPoolId)
+    {
+        $isEditScoreMode = true;
+
+        foreach ($completenessByPoolId as $completeness) {
+            if ($completeness < 100) {
+                $isEditScoreMode = false;
+                break;
+            }
+        }
+
+        if ($isEditScoreMode !== $championship->isEditScoreMode()) {
+            $championship->setIsEditScoreMode($isEditScoreMode);
+            $this->getRepository('championship')->save($championship, true);
+        }
     }
 
     /**

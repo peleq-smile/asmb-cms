@@ -17,6 +17,10 @@ class Championship extends AbstractShortNamedEntity
      * @var int
      */
     protected $year;
+    /**
+     * @var boolean
+     */
+    protected $is_edit_score_mode;
 
     /**
      * @return int
@@ -32,5 +36,21 @@ class Championship extends AbstractShortNamedEntity
     public function setYear($year)
     {
         $this->year = $year;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEditScoreMode()
+    {
+        return $this->is_edit_score_mode;
+    }
+
+    /**
+     * @param boolean $isEditScoreMode
+     */
+    public function setIsEditScoreMode($isEditScoreMode)
+    {
+        $this->is_edit_score_mode = $isEditScoreMode;
     }
 }
