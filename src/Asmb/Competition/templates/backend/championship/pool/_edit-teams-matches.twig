@@ -2,7 +2,7 @@
 
 <div id="pool{{ pool.id }}" class="panel panel-default">
     <div class="panel-heading">
-        <span>{{ pool.short_name ? pool.short_name : pool.name }}</span>
+        <span>{{ pool.getFinalName() }}</span>
         {% if pool.link_fft %}
             &nbsp;&bullet;&nbsp;
             <a href="{{ pool.link_fft }}" target="_blank">

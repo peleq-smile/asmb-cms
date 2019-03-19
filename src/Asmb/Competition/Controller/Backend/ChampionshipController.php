@@ -7,6 +7,8 @@ use Bundle\Asmb\Competition\Entity;
 use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Form\FormType;
+use Bundle\Asmb\Competition\Repository\Championship\MatchRepository;
+use Bundle\Asmb\Competition\Repository\Championship\PoolDayRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Silex\ControllerCollection;
 use Symfony\Component\Form\FormInterface;
@@ -85,7 +87,7 @@ class ChampionshipController extends AbstractController
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param null                                      $id
+     * @param string                                    $id
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Bolt\Exception\InvalidRepositoryException
@@ -117,10 +119,10 @@ class ChampionshipController extends AbstractController
             $addPoolForm = $this->buildAddPoolForm($request, $championship->getId());
 
             // FORM 3: add team to pool forms (one per pool)
-            $formsAddTeamViews = [];
+            $addTeamFormViews = [];
             $pools = $this->getPools($championship->getId());
             foreach ($pools as $pool) {
-                $formsAddTeamViews[$pool->getId()]
+                $addTeamFormViews[$pool->getId()]
                     = $this->buildAddTeamToPoolForm($request, $pool)->createView();
             }
 
@@ -130,7 +132,7 @@ class ChampionshipController extends AbstractController
 
             $context += [
                 'addPoolForm'          => $addPoolForm->createView(),
-                'addTeamsForms'        => $formsAddTeamViews,
+                'addTeamsForms'        => $addTeamFormViews,
                 'completenessByPoolId' => $completenessByPoolId,
             ];
 
@@ -143,7 +145,7 @@ class ChampionshipController extends AbstractController
             $context,
             [
                 'championship'        => $championship,
-                'poolsByCategoryName' => $this->getPoolsByCategoryName($championship->getId()),
+                'poolsByCategoryName' => $this->getPoolsGroupByCategoryName($championship->getId()),
                 'teamsByPool'         => $this->getPoolTeamsGroupByPoolId($championship->getId()),
             ]
         );
@@ -178,7 +180,7 @@ class ChampionshipController extends AbstractController
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param                                           $id
      *
-     * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView
+     * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function editScores(Request $request, $id)
@@ -192,11 +194,19 @@ class ChampionshipController extends AbstractController
         }
 
         $pools = $this->getPools($championship->getId());
-        $matchesByPoolIdByDay = $this->getMatchesByPoolIdByDay($pools);
+        // Get match data to edit scores
+        $matchesByPoolId = $this->getMatchesByPoolIdByDay($pools);
+
+        $editScoresForm = $this->buildEditPoolMatchScoresForm($request, $matchesByPoolId);
+        if ($this->handleEditPoolMatchScoresFormSubmit($editScoresForm)) {
+            // We don't want to POST again data, so we redirect to current in GET route in case of submitted form
+            // with success
+            return $this->redirectToRoute('championshipeditscores', ['id' => $championship->getId()]);
+        }
 
         // Render
         $context = [
-            'matches' => $matchesByPoolIdByDay,
+            'editScoresForm' => $editScoresForm->createView()
         ];
 
         return $this->render(
@@ -204,11 +214,60 @@ class ChampionshipController extends AbstractController
             $context,
             [
                 'championship'        => $championship,
-                'poolsByCategoryName' => $this->getPoolsByCategoryName($championship->getId()),
-                'teamsByPool'         => $this->getPoolTeamsGroupByPoolId($championship->getId()),
-                'teamsScoresByPool'   => $this->getTeamScoresByPoolId($pools),
+                'poolsByCategoryName' => $this->getPoolsGroupByCategoryName($championship->getId()),
+                'poolTeamsByPoolId'   => $this->getPoolTeamsGroupByPoolId($championship->getId()),
+                'matchesByPoolId'     => $matchesByPoolId,
             ]
         );
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param array                                     $matches
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    protected function buildEditPoolMatchScoresForm(Request $request, array $matches)
+    {
+        $formData = [
+            'matches' => $matches,
+        ];
+
+        // Generate the form
+        $form = $this->createFormBuilder(FormType\MatchEditScoreType::class, $formData)
+            ->getForm()
+            ->handleRequest($request);
+
+        return $form;
+    }
+
+     /**
+     * Handle championship edit scores form submission.
+     *
+     * @param FormInterface $form
+     *
+     * @return boolean
+     */
+    protected function handleEditPoolMatchScoresFormSubmit(FormInterface $form)
+    {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
+            /** @var MatchRepository $matchRepository */
+            $matchRepository = $this->getRepository('championship_match');
+            try {
+                $saved = $matchRepository->saveMatchScores($formData);
+                if ($saved) {
+                    $this->flashes()->success(Trans::__('page.edit-championship-scores.message.saved'));
+                }
+
+                return true;
+            } catch (\Exception $e) {
+                $this->flashes()->error(Trans::__('page.edit-championship-scores.message.not-saved'));
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public function delete(Request $request, $id = null)

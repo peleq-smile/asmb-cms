@@ -13,7 +13,7 @@
         <section class="section welcome">
             <div class="container">
                 <div class="columns white-framed">
-                    <div class="column is-two-thirds">
+                    <div class="column">
                         <div class="content">
                             <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
                             <div class="teaser">{{ homepage.teaser }}</div>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="column">
                         {% if homepage.teaser_image %}
-                            {{ showimage(homepage.teaser_image) }}
+                            {{ homepage.teaser_image|showimage(300) }}
                         {% endif %}
                     </div>
                 </div>

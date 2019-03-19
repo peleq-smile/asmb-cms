@@ -22,7 +22,6 @@ class ChampionshipPoolTeam extends BaseTable
         $this->table->addColumn('team_id', 'integer', ['notnull' => false]);
         $this->table->addColumn('team_name', 'string', ['length' => 255, 'notnull' => true]);
         $this->table->addColumn('team_is_club', 'boolean', ['default' => false, 'notnull' => true]);
-        $this->table->addColumn('position', 'integer', ['notnull' => true, 'default' => 0, 'unsigned' => true]);
         $this->table->addColumn('points', 'integer', ['notnull' => true, 'default' => 0]);
         $this->table->addColumn('days_played', 'integer', ['notnull' => true, 'default' => 0, 'unsigned' => true]);
         $this->table->addColumn('match_diff', 'integer', ['notnull' => true, 'default' => 0]);
@@ -54,7 +53,6 @@ class ChampionshipPoolTeam extends BaseTable
      */
     protected function addIndexes()
     {
-        $this->table->addIndex(['position']);
         $this->table->addIndex(['team_name']);
         $this->table->addUniqueIndex(['pool_id', 'team_id']);
     }

@@ -155,6 +155,13 @@ abstract class AbstractController extends BackendBase
         return $form;
     }
 
+    /**
+     * Guess days date for given pool. Aims to facilitate days date contribution.
+     *
+     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
+     *
+     * @return array
+     */
     private function guessDaysData(Pool $pool)
     {
         $daysData = [];
@@ -197,31 +204,7 @@ abstract class AbstractController extends BackendBase
 
             /** @var PoolTeamRepository $poolTeamRepository */
             $poolTeamRepository = $this->getRepository('championship_pool_team');
-            $teamsByPool = $poolTeamRepository->findByPoolIdsGroupByPoolIdSortedByName($poolIds) + $teamsByPool;
-        }
-
-        return $teamsByPool;
-    }
-
-    /**
-     * Retrieve teams by pool id, for championship with given id.
-     *
-     * @param integer $championshipId
-     *
-     * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
-     */
-    protected function getTeamsByPoolIdOLD($championshipId)
-    {
-        $teamsByPool = [];
-
-        if (null !== $championshipId) {
-            /** @var TeamRepository $teamRepository */
-            $teamRepository = $this->getRepository('championship_team');
-
-            foreach ($this->getPools($championshipId) as $pool) {
-                $teamsByPool[$pool->getId()] = $teamRepository->findByPool($pool);
-            }
+            $teamsByPool = $poolTeamRepository->findByPoolIdsGroupByPoolIdSortedByScore($poolIds) + $teamsByPool;
         }
 
         return $teamsByPool;
@@ -255,7 +238,7 @@ abstract class AbstractController extends BackendBase
      * @return bool|mixed|object[]
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    protected function getPoolsByCategoryName($championshipId)
+    protected function getPoolsGroupByCategoryName($championshipId)
     {
         $pools = [];
 
@@ -274,6 +257,7 @@ abstract class AbstractController extends BackendBase
      * @param Pool[] $pools
      *
      * @return bool|mixed|object[]
+     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     protected function getMatchesByPoolIdByDay(array $pools)
     {
@@ -283,27 +267,5 @@ abstract class AbstractController extends BackendBase
         $poolIds = array_keys($pools);
 
         return $matchRepository->findGroupByPoolIdAndDay($poolIds);
-    }
-
-    /**
-     * Retrieve teams scores of given pools, grouped by pool id.
-     *
-     * @param Pool[] $pools
-     *
-     * @return bool|mixed|object[]
-     */
-    protected function getTeamScoresByPoolId(array $pools)
-    {
-        $teamScoresByPoolId = [];
-
-        foreach ($pools as $pool) {
-            $teamsScores = $pool->getTeams();
-
-            natsort($teamsScores);
-            $teamScoresByPoolId[$pool->getId()] = $teamsScores;
-            // TODO
-        }
-
-        return $teamScoresByPoolId;
     }
 }

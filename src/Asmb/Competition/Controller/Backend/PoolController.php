@@ -332,7 +332,7 @@ class PoolController extends AbstractController
 
         /** @var TeamRepository $teamRepository */
         $teamRepository = $this->getRepository('championship_team');
-        $teams = $teamRepository->findByPool($pool);
+        $teams = $teamRepository->findByPoolId($pool->getId());
 
         return $this->render(
             '@AsmbCompetition/championship/pool/edit-matches.twig',

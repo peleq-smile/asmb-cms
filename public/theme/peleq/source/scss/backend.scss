@@ -43,6 +43,7 @@ $danger: #a94442;
         &.table-matches {
             th {
                 background-color: #eeeeee;
+                vertical-align: middle;
             }
             td {
                 padding: 2px;
@@ -75,6 +76,18 @@ $danger: #a94442;
             .info-date-match {
                 color: $danger;
                 font-weight: bold;
+            }
+            .input-score {
+                display: inline;
+                width: 22px;
+                height: 22px;
+                text-align: center;
+            }
+        }
+
+        tr.is-club {
+            td {
+                background-color: #fcf8e3;
             }
         }
     }

@@ -31,10 +31,6 @@ class PoolTeam extends Entity
     /**
      * @var integer
      */
-    protected $position;
-    /**
-     * @var integer
-     */
     protected $points;
     /**
      * @var integer
@@ -120,22 +116,6 @@ class PoolTeam extends Entity
     /**
      * @return int
      */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-
-    /**
-     * @param int $position
-     */
-    public function setPosition($position)
-    {
-        $this->position = $position;
-    }
-
-    /**
-     * @return int
-     */
     public function getPoints()
     {
         return $this->points;
@@ -147,6 +127,14 @@ class PoolTeam extends Entity
     public function setPoints($points)
     {
         $this->points = $points;
+    }
+
+    /**
+     * @param int $points
+     */
+    public function addPoints($points)
+    {
+        $this->points += $points;
     }
 
     /**
@@ -166,6 +154,14 @@ class PoolTeam extends Entity
     }
 
     /**
+     * @param int $daysPlayed
+     */
+    public function addDaysPlayed($daysPlayed = 1)
+    {
+        $this->days_played += $daysPlayed;
+    }
+
+    /**
      * @return int
      */
     public function getMatchDiff()
@@ -179,6 +175,14 @@ class PoolTeam extends Entity
     public function setMatchDiff($matchDiff)
     {
         $this->match_diff = $matchDiff;
+    }
+
+    /**
+     * @param int $matchDiff
+     */
+    public function addMatchDiff($matchDiff)
+    {
+        $this->match_diff += $matchDiff;
     }
 
     /**
@@ -198,6 +202,14 @@ class PoolTeam extends Entity
     }
 
     /**
+     * @param int $setDiff
+     */
+    public function addSetDiff($setDiff)
+    {
+        $this->set_diff += $setDiff;
+    }
+
+    /**
      * @return int
      */
     public function getGameDiff()
@@ -211,5 +223,13 @@ class PoolTeam extends Entity
     public function setGameDiff($gameDiff)
     {
         $this->game_diff = $gameDiff;
+    }
+
+    /**
+     * @param int $gameDiff
+     */
+    public function addGameDiff($gameDiff)
+    {
+        $this->game_diff += $gameDiff;
     }
 }

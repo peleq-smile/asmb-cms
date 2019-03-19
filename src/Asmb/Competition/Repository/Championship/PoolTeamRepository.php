@@ -79,6 +79,34 @@ class PoolTeamRepository extends Repository
     }
 
     /**
+     * Return teams group by pool id sorted by score, from given pool ids.
+     *
+     * @param array $poolIds
+     *
+     * @return PoolTeam[]
+     */
+    public function findByPoolIdsGroupByPoolIdSortedByScore(array $poolIds)
+    {
+        $poolsGroupByPoolIdSortedByName = [];
+
+        $qb = $this->findWithCriteria(['pool_id' => $poolIds]);
+        $qb->orderBy('points', 'DESC');
+        $qb->addOrderBy('match_diff', 'DESC');
+        $result = $qb->execute()->fetchAll();
+
+        if ($result) {
+            $poolTeams = $this->hydrateAll($result, $qb);
+
+            /** @var PoolTeam $poolTeam */
+            foreach ($poolTeams as $poolTeam) {
+                $poolsGroupByPoolIdSortedByName[$poolTeam->getPoolId()][$poolTeam->getTeamId()] = $poolTeam;
+            }
+        }
+
+        return $poolsGroupByPoolIdSortedByName;
+    }
+
+    /**
      * @param       $poolId
      * @param array $formData
      *
@@ -118,7 +146,7 @@ class PoolTeamRepository extends Repository
     }
 
     /**
-     * Return matches of given pool id, grouped by day then by position.
+     * Return matches of given pool id, grouped by day.
      *
      * @param integer $poolId
      *

@@ -1,1 +1,46 @@
-TODO edit scores
+<div class="col-lg-3 col-xs-12">
+    <div id="pool{{ pool.id }}" class="panel panel-default">
+        <div class="panel-heading">
+            <span>{{ pool.getFinalName() }}</span>
+            {% if pool.link_fft %}
+                &nbsp;&bullet;&nbsp;
+                <a href="{{ pool.link_fft }}" target="_blank">
+                    <i class="fa fa-external-link"></i> {{ __('general.phrase.go-to-fft') }}
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="panel-body">
+            {{ include('@AsmbCompetition/championship/pool/teams/_ranking.twig',
+                {
+                    'pool': pool,
+                    'poolTeams': poolTeamsByPoolId[pool.id]
+                }) }}
+        </div>
+
+        <div class="panel-body">
+            <table class="table table-condensed table-matches">
+                {% for day, matchesOfDay in matchesPerDay %}
+                    {% for match in matchesOfDay %}
+                        {% set homeTeam = match.getHomeTeam() %}
+                        {% set visitorTeam = match.getVisitorTeam() %}
+                        <tr>
+                            {% if loop.first %}
+                                <th class="text-center" colspan="4"
+                                    rowspan="{{ matchesOfDay|length }}">{{ __('general.phrase.match-day', {'%day%': day}) }}</th>
+                            {% endif %}
+
+                            <td class="text-right{{ homeTeam and homeTeam.is_club ? ' is-club' }}">{{ (homeTeam) ? homeTeam.getFinalName() }}</td>
+                            <td class="text-center">
+                                {{ form_widget(form['pool' ~ pool.id ~ '_day' ~ day ~ '_match' ~ match.id ~ '_score_home']) }}
+                                /
+                                {{ form_widget(form['pool' ~ pool.id ~ '_day' ~ day ~ '_match' ~ match.id ~ '_score_visitor']) }}
+                            </td>
+                            <td class="text-left{{ visitorTeam and visitorTeam.is_club ? ' is-club' }}">{{ (visitorTeam) ? visitorTeam.getFinalName() }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>

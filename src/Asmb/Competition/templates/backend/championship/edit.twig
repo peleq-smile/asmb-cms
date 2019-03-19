@@ -2,7 +2,13 @@
 
 {% block page_nav 'championship-menu' %}
 
-{% block page_title __('general.phrase.championship.all') %}
+{% if championship.name %}
+    {% set championship_title = championship.name ~ ' ' ~ championship.year %}
+{% else %}
+    {% set championship_title = __('general.phrase.championship.all') %}
+{% endif %}
+
+{% block page_title championship_title %}
 
 {% block page_main %}
     <div class="competition-edit">

@@ -68,10 +68,10 @@ class TeamRepository extends Repository
      * @return array
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function findByPoolIdAsChoices(Pool $pool)
+    public function findByPoolAsChoices(Pool $pool)
     {
         $asChoices = [];
-        $teams = $this->findByPool($pool);
+        $teams = $this->findByPoolId($pool->getId());
 
         /** @var \Bundle\Asmb\Competition\Entity\Championship\Team $team */
         foreach ($teams as $team) {
@@ -82,26 +82,32 @@ class TeamRepository extends Repository
     }
 
     /**
-     * Find teams for given Pool.
+     * Find teams for given pool id(s).
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
+     * @param integer|array $poolId
      *
      * @return bool|mixed|Team[]
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function findByPool(Pool $pool)
+    public function findByPoolId($poolId)
     {
         $teams = [];
 
+        $poolIds = is_array($poolId) ? $poolId : [$poolId];
+
         /** @var PoolTeamRepository $poolTeamRepository */
         $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
-        $poolTeams = $poolTeamRepository->findBy(['pool_id' => $pool->getId()]);
+        $poolTeams = $poolTeamRepository->findBy(['pool_id' => $poolIds]);
 
         if (false !== $poolTeams) {
             $teamIds = array_map(function(PoolTeam $poolTeam) { return $poolTeam->getTeamId(); }, $poolTeams);
 
             $teams = $this->findBy(['id' => $teamIds], ['short_name', 'ASC']);
             $teams = (false !== $teams) ? $teams : [];
+
+            // Let's add team id as key of result array
+            $teamIds = array_map(function(Team $team) { return $team->getId(); }, $teams);
+            $teams = array_combine($teamIds, $teams);
         }
 
         return $teams;

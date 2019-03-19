@@ -22,6 +22,12 @@ class Match extends Entity
     protected $score_visitor;
     protected $position;
 
+    // Following properties are not stored in DB, but used as simple object data.
+    /** @var \Bundle\Asmb\Competition\Entity\Championship\Team */
+    private $homeTeam;
+    /** @var \Bundle\Asmb\Competition\Entity\Championship\Team */
+    private $visitorTeam;
+
     /**
      * @return mixed
      */
@@ -164,5 +170,37 @@ class Match extends Entity
     public function setPosition($position)
     {
         $this->position = $position;
+    }
+
+    /**
+     * @return \Bundle\Asmb\Competition\Entity\Championship\Team
+     */
+    public function getHomeTeam()
+    {
+        return $this->homeTeam;
+    }
+
+    /**
+     * @param \Bundle\Asmb\Competition\Entity\Championship\Team $homeTeam
+     */
+    public function setHomeTeam($homeTeam)
+    {
+        $this->homeTeam = $homeTeam;
+    }
+
+    /**
+     * @return \Bundle\Asmb\Competition\Entity\Championship\Team
+     */
+    public function getVisitorTeam()
+    {
+        return $this->visitorTeam;
+    }
+
+    /**
+     * @param \Bundle\Asmb\Competition\Entity\Championship\Team $visitorTeam
+     */
+    public function setVisitorTeam($visitorTeam)
+    {
+        $this->visitorTeam = $visitorTeam;
     }
 }

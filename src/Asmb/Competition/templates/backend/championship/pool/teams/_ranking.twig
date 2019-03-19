@@ -1,21 +1,30 @@
 <table class="table table-condensed">
     <thead>
     <tr>
-        <th>{{ pool.finalName() }}</th>
-        <th>{{ __('page.edit-scores.points.title') }}</th>
-        <th>{{ __('page.edit-scores.played-day.title') }}</th>
+        <th></th>
+        <th></th>
+        <th class="text-center" title="{{ __('page.edit-scores.points.title') }}">{{ __('page.edit-scores.points.short_title') }}</th>
+        <th class="text-center" title="{{ __('page.edit-scores.days_played.title') }}">{{ __('page.edit-scores.days_played.short_title') }}</th>
+        <th class="text-center" title="{{ __('page.edit-scores.match_diff.title') }}">{{ __('page.edit-scores.match_diff.short_title') }}</th>
+        {#<th class="text-center" title="{{ __('page.edit-scores.set_diff.title') }}">{{ __('page.edit-scores.set_diff.short_title') }}</th>#}
+        {#<th class="text-center" title="{{ __('page.edit-scores.game_diff.title') }}">{{ __('page.edit-scores.game_diff.short_title') }}</th>#}
     </tr>
     </thead>
     <tbody>
 
-    {% for teamScores in teamsScores %}
-        <tr>
-            <td>{{ team.finalName() }}</td>
-            <td>{{ team.finalName() }}</td>
+    {% for poolTeam in poolTeams %}
+        <tr class="{{ poolTeam.team_is_club ? 'is-club' }}">
+            <td class="text-left">{{ loop.index }}</td>
+            <td>{{ poolTeam.team_name }}</td>
+            <td class="text-center">{{ poolTeam.points }}</td>
+            <td class="text-center">{{ poolTeam.days_played }}</td>
+            <td class="text-center">{{ poolTeam.match_diff }}</td>
+            {#<td class="text-center">{{ poolTeam.set_diff }}</td>#}
+            {#<td class="text-center">{{ poolTeam.game_diff }}</td>#}
         </tr>
     {% endfor %}
 
-    {% if teams is empty %}
+    {% if poolTeams is empty %}
         <tr>
             <td colspan="2"><em>{{ __('general.phrase.empty-list') }}</em></td>
         </tr>
