@@ -1,9 +1,3 @@
-#main-content {
-    &.under-sticky {
-        padding-top: 4rem;
-    }
-}
-
 .columns.white-framed {
     align-items: center;
     background: linear-gradient(to right, $white 50%, $body-background-color);
@@ -41,43 +35,6 @@
             }
         }
 
-        .block-image {
-            flex-grow: 0;
-            background-color: $secondary;
-            margin-right: $block-with-image-gap + 3rem;
-            padding-right: 0;
-            max-width: 45%;
-
-            .image {
-                margin: $block-with-image-gap 0;
-                left: $block-with-image-gap;
-                display: flex;
-                text-align: center;
-                transition: all .2s ease-in-out;
-                max-width: 100% !important;
-                max-height: 100% !important;
-                border: white solid 8px;
-                overflow: hidden;
-
-                .see-more {
-                    display: none;
-                    font-size: 3em;
-                    background: linear-gradient($block-with-image-lg);
-                    color: $dark;
-                    margin: auto;
-                    padding: 20%;
-                }
-
-                &:hover {
-                    transform: scale(0.95);
-
-                    .see-more {
-                        display: inline-block;
-                    }
-                }
-            }
-        }
-
         .block-content {
             flex-grow: 2;
             h3 {
@@ -104,8 +61,6 @@
         }
 
         &.block-even {
-            flex-direction: row;
-
             h2 {
                 color: $primary;
 
@@ -117,47 +72,156 @@
                     }
                 }
             }
+        }
+    }
 
-            .block-image {
-                margin-left: $block-with-image-gap + 2rem;
-                padding-left: 0;
-                background-color: $primary;
+    .matches {
+        background-color: $white;
+    }
+}
 
-                .image {
-                    left: auto;
-                    right: $block-with-image-gap;
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (max-width: $desktop) {
+    .columns.white-framed {
+        padding: 0;
+    }
+
+    .homepage {
+        h2 {
+            font-size: 2rem;
+        }
+
+        .columns.block {
+            font-size: 0.9rem;
+            position: relative;
+            margin-top: 1.5rem;
+            margin-bottom: 0;
+            padding: 1.5rem;
+            overflow: hidden;
+
+            &.block-with-image {
+                .block-content {
+                    margin-top: 0;
+                    position: relative;
+                    height: 100%;
+                    z-index: 2;
+                    background: rgba(255, 255, 255, 0.9);
+                }
+            }
+        }
+
+        .block-image {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            padding: 0;
+
+            .image {
+                margin: auto;
+                width: 100% !important;
+
+                .see-more {
+                    display: none;
+                }
+            }
+        }
+
+        .block-content {
+            .see-more {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .section {
+            padding: 0 1.5rem;
+
+            &.matches {
+                margin-top: 3rem;
+
+                h2.title {
+                    padding: 1.5rem 0;
+                    margin-bottom: 1.5rem;
+                }
+
+                .box {
+                    padding: 0.5rem;
+
+                    .table {
+                        font-size: 90%;
+
+                        th {
+                            padding: 8px 4px 0px 4px;
+                        }
+
+                        td {
+                            padding: 2px 4px;
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-.matches {
-    background-color: $white;
-}
-
-/*****************/
-/** RESPONSIVE  **/
-/*****************/
-@media screen and (max-width: $tablet) {
-    .columns.white-framed {
-        padding: 0;
-    }
-
+@media screen and (min-width: $desktop) {
     .homepage {
         .columns.block {
             .block-image {
-                display: none;
+                flex-grow: 0;
+                background-color: $secondary;
+                margin-right: $block-with-image-gap + 3rem;
+                padding-right: 0;
+                max-width: 45%;
+
+                .image {
+                    margin: $block-with-image-gap 0;
+                    left: $block-with-image-gap;
+                    display: flex;
+                    text-align: center;
+                    transition: all .2s ease-in-out;
+                    max-width: 100% !important;
+                    max-height: 100% !important;
+                    border: white solid 8px;
+                    overflow: hidden;
+
+                    .see-more {
+                        display: none;
+                        font-size: 3em;
+                        background: linear-gradient($block-with-image-lg);
+                        color: $dark;
+                        margin: auto;
+                        padding: 20%;
+                    }
+
+                    &:hover {
+                        transform: scale(0.95);
+
+                        .see-more {
+                            display: inline-block;
+                        }
+                    }
+                }
+            }
+
+            &.block-even {
+                flex-direction: row;
+
+                .block-image {
+                    margin-left: $block-with-image-gap + 2rem;
+                    padding-left: 0;
+                    background-color: $primary;
+
+                    .image {
+                        left: auto;
+                        right: $block-with-image-gap;
+                    }
+                }
             }
         }
     }
 }
-
-@media screen and (max-width: $widescreen) {
-    #main-content {
-        &.under-sticky {
-            padding-top: 1rem;
-        }
-    }
-}
-

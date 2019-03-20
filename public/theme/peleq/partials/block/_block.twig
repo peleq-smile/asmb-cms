@@ -26,18 +26,18 @@
     </div>
 
     {% if block.image %}
-        {% set height = imageinfo(block.image).height %}
-        {% set width = imageinfo(block.image).width %}
+        {% set height = block.image_height %}
+        {% set width = block.image_width %}
 
         <div class="column block-image">
             {% if block.contentlink %}
                 <a class="image" href="{{ block.contentlink }}"
-                   style="background: url('{{ asset(block.image, 'files') }}'); height: {{ height }}px; width: {{ width }}px;">
+                   style="background: url('{{ asset(block.image, 'files') }}') no-repeat; height: {{ height }}px; width: {{ width }}px;">
                     <span class="see-more">&plus; d'info</span>
                 </a>
             {% else %}
                 <div class="image"
-                     style="background: url('{{ asset(block.image, 'files') }}'); height: {{ height }}px; width: {{ width }}px;"></div>
+                     style="background: url('{{ asset(block.image, 'files') }}') no-repeat; height: {{ height }}px; width: {{ width }}px;"></div>
             {% endif %}
         </div>
     {% endif %}

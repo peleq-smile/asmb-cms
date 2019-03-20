@@ -4,12 +4,6 @@
     {% setcontent homepage = "homepage" limit 1 returnsingle %}
 
     <div class="homepage">
-        {#<section class="section welcome">#}
-            {#Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a neque aliquam, congue arcu nec, semper eros. Nam laoreet, lectus convallis euismod scelerisque, lorem enim lacinia velit, at pulvinar turpis magna nec dolor. Fusce id placerat neque, quis consequat tortor. Etiam ultrices sodales congue. Curabitur condimentum ornare nibh in mollis. Duis sed vestibulum felis. Suspendisse at felis et magna scelerisque fermentum vel vel erat. Nulla laoreet varius tempus. Sed egestas nisl quis augue scelerisque, ut auctor eros mollis. Phasellus id ullamcorper est, a efficitur libero. Nunc eget fermentum mi, in tristique est.#}
-            {#Duis sit amet erat hendrerit, venenatis nisl non, suscipit erat. Morbi placerat nulla viverra nunc tristique, et sollicitudin nisl blandit. Aenean nibh ligula, iaculis a mi fringilla, malesuada tincidunt urna. Pellentesque ac condimentum sapien. Aenean laoreet tincidunt dui et porttitor. Curabitur euismod feugiat ipsum, gravida tempus purus finibus elementum. Donec sodales vehicula nisl sed dignissim. Aenean at nulla varius, hendrerit nibh vel, hendrerit felis.#}
-            {#Quisque ut turpis pretium, ultrices nibh hendrerit, blandit est. Curabitur tincidunt quam vulputate, viverra sem vitae, pellentesque arcu. In scelerisque tincidunt tellus a blandit. Curabitur viverra bibendum blandit. Vestibulum aliquet augue vitae dolor aliquet gravida. Phasellus maximus mattis quam eget consequat. Donec in tempor mi. Ut a est et velit pulvinar elementum. In iaculis nec justo sed tincidunt. Nunc sit amet nibh enim. Suspendisse magna risus, luctus eu euismod eget, porttitor in massa. Proin sed lacinia mi, in porttitor magna. Aliquam a mauris ac urna malesuada ultricies. Nullam consectetur, diam id finibus pharetra, orci erat faucibus turpis, in convallis tortor augue in mauris. Aliquam suscipit justo quis nisl aliquam, in pulvinar felis vehicula. Suspendisse ligula elit, convallis non lorem sed, interdum ornare velit.#}
-        {#</section>#}
-
         <section class="section welcome">
             <div class="container">
                 <div class="columns white-framed">
@@ -34,7 +28,7 @@
         {# TOP BLOCKS #}
         {% setcontent blocks = 'block' where { etiquettes: 'accueil-top' } %}
         {% if blocks is not empty %}
-            <section class="section hero">
+            <section class="section">
                 <div class="container">
                     {% for block in blocks %}
                         {% include 'partials/block/_block.twig' with {'block': block, 'index': loop.index} %}
