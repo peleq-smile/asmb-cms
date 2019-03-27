@@ -5,10 +5,7 @@ namespace Bundle\Asmb\Competition\Controller\Backend;
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Entity;
 use Bundle\Asmb\Competition\Entity\Championship;
-use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Form\FormType;
-use Bundle\Asmb\Competition\Repository\Championship\MatchRepository;
-use Bundle\Asmb\Competition\Repository\Championship\PoolDayRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Silex\ControllerCollection;
 use Symfony\Component\Form\FormInterface;
@@ -16,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The controller for Championship routes.
+ * Contrôleur pour les routes des compétitions par poules.
  *
  * @copyright 2019
  */
@@ -34,9 +31,14 @@ class ChampionshipController extends AbstractController
             ->assert('id', '\d*')
             ->bind('championshipedit');
 
-        $c->match('/edit/scores/{id}', 'editScores')
+        $c->match('/edit/{id}/{categoryName}', 'edit')
             ->assert('id', '\d*')
-            ->bind('championshipeditscores');
+            ->assert('categoryName', '[\+\w]+')
+            ->bind('championshipeditwithcategoryname');
+
+        $c->match('/view/{id}', 'view')
+            ->assert('id', '\d+')
+            ->bind('championshipview');
 
         $c->post('/delete/{id}', 'delete')
             ->assert('id', '\d*')
@@ -49,21 +51,16 @@ class ChampionshipController extends AbstractController
      * @param Request $request
      *
      * @return Response
-     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function index(Request $request)
     {
         $championships = $this->getRepository('championship')->findAll();
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\TeamRepository $teamsRepo */
-        $teamsRepo = $this->getRepository('championship_team');
-        $teamsByCategoryName = $teamsRepo->findAllGroupByCategoryName();
 
         return $this->render(
             '@AsmbCompetition/championship/index.twig',
             [],
             [
-                'championships'       => $championships,
-                'teamsByCategoryName' => $teamsByCategoryName,
+                'championships' => $championships,
             ]
         );
     }
@@ -88,20 +85,20 @@ class ChampionshipController extends AbstractController
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string                                    $id
+     * @param string|null                               $categoryName
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function edit(Request $request, $id = '')
+    public function edit(Request $request, $id = '', $categoryName = null)
     {
-        // Retrieve championship
         /** @var Championship $championship */
         $championship = $this->getRepository('championship')->find($id);
         if (!$championship) {
             $championship = new Entity\Championship();
         }
 
-        // FORM 1: championship edit infos
+        // FORM 1: édition des infos de base d'un championnat
         $editForm = $this->buildEditForm($request, $championship);
         if ($this->handleEditFormSubmit($editForm)) {
             // We don't want to POST again data, so we redirect to current in GET route in case of submitted form
@@ -115,165 +112,104 @@ class ChampionshipController extends AbstractController
         ];
 
         if (null !== $championship->getId()) {
-            // FORM 2: add pool to championship
-            $addPoolForm = $this->buildAddPoolForm($request, $championship->getId());
+            $poolTeamsPerPoolId = $this->getPoolTeamsPerPoolId($championship->getId());
 
-            // FORM 3: add team to pool forms (one per pool)
-            $addTeamFormViews = [];
-            $pools = $this->getPools($championship->getId());
-            foreach ($pools as $pool) {
-                $addTeamFormViews[$pool->getId()]
-                    = $this->buildAddTeamToPoolForm($request, $pool)->createView();
-            }
-
-            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
-            $poolRepository = $this->getRepository('championship_pool');
-            $completenessByPoolId = $poolRepository->getEditionCompletenesses($pools);
-
+            // FORM 2: ajout d'une poule
+            $addPoolForm = $this->buildAddPoolForm($request, $championship->getId(), $categoryName);
             $context += [
-                'addPoolForm'          => $addPoolForm->createView(),
-                'addTeamsForms'        => $addTeamFormViews,
-                'completenessByPoolId' => $completenessByPoolId,
+                'addPoolForm' => $addPoolForm->createView(),
             ];
 
-            // TODO bouger ça ?
-            $this->checkChampionshipActionState($championship, $completenessByPoolId);
-        } // ELSE: add new championship case
+            if (! empty($poolTeamsPerPoolId)) {
+                // FORM 3: édition des équipes (nom interne + est du club), par poule
+                $editPoolsTeamsForm = $this->buildEditPoolsTeamsForm($request, $championship, $poolTeamsPerPoolId);
+                if ($this->handleEditPoolsTeamsFormSubmit($request, $editPoolsTeamsForm)) {
+                    // We don't want to POST again data, so we redirect to current in GET route in case of submitted form
+                    // with success
+                    return $this->redirectToRoute('championshipedit', ['id' => $championship->getId()]);
+                }
+
+                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
+                //            $poolRepository = $this->getRepository('championship_pool');
+                //            $completenessByPoolId = $poolRepository->getEditionCompletenesses($pools);
+
+                $context += [
+                    'editPoolsTeamsForm' => $editPoolsTeamsForm->createView(),
+                    //                'completenessByPoolId' => $completenessByPoolId,
+                ];
+            }
+        } else { // ELSE: add new championship case
+            $poolTeamsPerPoolId = [];
+        }
 
         return $this->render(
             '@AsmbCompetition/championship/edit.twig',
             $context,
             [
-                'championship'        => $championship,
-                'poolsByCategoryName' => $this->getPoolsGroupByCategoryName($championship->getId()),
-                'teamsByPool'         => $this->getPoolTeamsGroupByPoolId($championship->getId()),
+                'championship'         => $championship,
+                'poolsPerCategoryName' => $this->getPoolsPerCategoryName($championship->getId()),
+                'poolTeamsPerPoolId'   => $poolTeamsPerPoolId,
             ]
         );
     }
 
     /**
-     * Check if current champioship should switch on "Edit Score Mode" instead of simple "Edit Mode".
+     * Visualisation des classements et rencontres des poules du championnat d'id donné.
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship $championship
-     * @param array                                        $completenessByPoolId
-     *
-     * @return void
-     */
-    private function checkChampionshipActionState(Championship $championship, array $completenessByPoolId)
-    {
-        $isEditScoreMode = true;
-
-        foreach ($completenessByPoolId as $completeness) {
-            if ($completeness < 100) {
-                $isEditScoreMode = false;
-                break;
-            }
-        }
-
-        if ($isEditScoreMode !== $championship->isEditScoreMode()) {
-            $championship->setIsEditScoreMode($isEditScoreMode);
-            $this->getRepository('championship')->save($championship, true);
-        }
-    }
-
-    /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param                                           $id
+     * @param integer                                   $id
      *
-     * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function editScores(Request $request, $id)
+    public function view(Request $request, $id)
     {
-        // Retrieve championship
         /** @var Championship $championship */
         $championship = $this->getRepository('championship')->find($id);
         if (!$championship) {
-            $this->flashes()->error(Trans::__('general.phrase.wrong-parameter-cannot-edit'));
+            $this->flashes()->error(Trans::__('general.phrase.wrong-parameter-cannot-view'));
             $this->redirectToRoute('championship');
         }
 
-        $pools = $this->getPools($championship->getId());
-        // Get match data to edit scores
-        $matchesByPoolId = $this->getMatchesByPoolIdByDay($pools);
-
-        $editScoresForm = $this->buildEditPoolMatchScoresForm($request, $matchesByPoolId);
-        if ($this->handleEditPoolMatchScoresFormSubmit($editScoresForm)) {
-            // We don't want to POST again data, so we redirect to current in GET route in case of submitted form
-            // with success
-            return $this->redirectToRoute('championshipeditscores', ['id' => $championship->getId()]);
-        }
-
-        // Render
-        $context = [
-            'editScoresForm' => $editScoresForm->createView()
-        ];
-
         return $this->render(
-            '@AsmbCompetition/championship/edit-scores.twig',
-            $context,
+            '@AsmbCompetition/championship/view.twig',
+            [],
             [
-                'championship'        => $championship,
-                'poolsByCategoryName' => $this->getPoolsGroupByCategoryName($championship->getId()),
-                'poolTeamsByPoolId'   => $this->getPoolTeamsGroupByPoolId($championship->getId()),
-                'matchesByPoolId'     => $matchesByPoolId,
+                'championship'          => $championship,
+                'poolsPerCategoryName'  => $this->getPoolsPerCategoryName($championship->getId()),
+                'poolRankingPerPoolId'  => $this->getPoolRankingPerPoolId($championship->getId()),
+                'poolMeetingsPerPoolId' => $this->getPoolMeetingsPerPoolId($championship->getId()),
             ]
         );
     }
 
     /**
+     * Action de suppression d'un championnat.
+     *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param array                                     $matches
+     * @param integer                                   $id
      *
-     * @return \Symfony\Component\Form\FormInterface
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function buildEditPoolMatchScoresForm(Request $request, array $matches)
+    public function delete(Request $request, $id)
     {
-        $formData = [
-            'matches' => $matches,
-        ];
+        /** @var Championship $championship */
+        $championship = $this->getRepository('championship')->find($id);
 
-        // Generate the form
-        $form = $this->createFormBuilder(FormType\MatchEditScoreType::class, $formData)
-            ->getForm()
-            ->handleRequest($request);
-
-        return $form;
-    }
-
-     /**
-     * Handle championship edit scores form submission.
-     *
-     * @param FormInterface $form
-     *
-     * @return boolean
-     */
-    protected function handleEditPoolMatchScoresFormSubmit(FormInterface $form)
-    {
-        if ($form->isSubmitted() && $form->isValid()) {
-            $formData = $form->getData();
-            /** @var MatchRepository $matchRepository */
-            $matchRepository = $this->getRepository('championship_match');
-            try {
-                $saved = $matchRepository->saveMatchScores($formData);
-                if ($saved) {
-                    $this->flashes()->success(Trans::__('page.edit-championship-scores.message.saved'));
-                }
-
-                return true;
-            } catch (\Exception $e) {
-                $this->flashes()->error(Trans::__('page.edit-championship-scores.message.not-saved'));
+        try {
+            $deleted = $this->getRepository('championship')->delete($championship);
+            if ($deleted) {
+                $this->flashes()->success(
+                    Trans::__('page.delete-championship.message.saved')
+                );
             }
-            return true;
+        } catch (\Exception $e) {
+            $this->flashes()->error(
+                Trans::__('page.delete-championship.message.not-saved')
+            );
         }
 
-        return false;
-    }
-
-    public function delete(Request $request, $id = null)
-    {
-        // TODO delete championship
-        return new Response('OK');
+        return $this->redirectToRoute('championship');
     }
 
     /**
@@ -305,6 +241,7 @@ class ChampionshipController extends AbstractController
                 $this->flashes()->error(
                     Trans::__('page.edit-championship.message.not-saved', ['%name%' => $championship->getName()])
                 );
+                $this->flashes()->error($e->getMessage());
             }
         }
 
@@ -312,36 +249,41 @@ class ChampionshipController extends AbstractController
     }
 
     /**
-     * Handle add team to pool form submission.
+     * Gère la soumission du formulaire d'édition des équipes des poules.
      *
-     * @param FormInterface                                     $form
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
+     * @param FormInterface $form
      *
      * @return boolean
-     * @deprecated
      */
-    protected function handleAddTeamToPoolFormSubmit(FormInterface $form, Pool $pool)
+    protected function handleEditPoolsTeamsFormSubmit(Request $request, FormInterface $form)
     {
         if ($form->isSubmitted() && $form->isValid()) {
-            $teamId = $form->get('team')->getData();
-            $pool->addTeam($teamId);
-
+            /** @var Championship $data */
+            $championship = $form->getData();
             try {
-                $saved = $this->getRepository('championship_pool')->save($pool);
+                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+                $poolTeamRepository = $this->getRepository('championship_pool_team');
+                $submittedFormData = $request->get('pools_teams_edit');
+                $poolIds = array_keys($this->getPools($championship->getId()));
+                $poolTeams = $poolTeamRepository->findBy(['pool_id' => $poolIds]);
+                $saved = $poolTeamRepository->savePoolsTeamsOfChampionship($poolTeams, $submittedFormData);
+
                 if ($saved) {
                     $this->flashes()->success(
-                        Trans::__('page.add-team-pool.message.saved')
+                        Trans::__('page.edit-championship.message.saved', ['%name%' => $championship->getName()])
                     );
                 }
 
                 return true;
             } catch (UniqueConstraintViolationException $e) {
                 $this->flashes()->error(
-                    Trans::__('page.add-pool.message.duplicate-error')
+                    Trans::__('page.edit-championship.message.duplicate-error', ['%name%' => $championship->getName()])
+                    . "\n" . $e->getMessage()
                 );
             } catch (\Exception $e) {
                 $this->flashes()->error(
-                    Trans::__('page.add-pool.message.not-saved')
+                    Trans::__('page.edit-championship.message.not-saved', ['%name%' => $championship->getName()])
+                    . "\n" . $e->getMessage()
                 );
             }
         }

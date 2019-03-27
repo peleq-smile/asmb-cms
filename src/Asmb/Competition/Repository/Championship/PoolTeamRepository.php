@@ -3,11 +3,10 @@
 namespace Bundle\Asmb\Competition\Repository\Championship;
 
 use Bolt\Storage\Repository;
-use Bundle\Asmb\Competition\Entity\Championship\PoolDay;
 use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
 
 /**
- * Repository for competition pool team.
+ * Repository des équipes de poules.
  *
  * @author    Perrine Léquipé <perrine.lequipe@smile.fr>
  * @copyright 2019
@@ -15,7 +14,7 @@ use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
 class PoolTeamRepository extends Repository
 {
     /**
-     * Return pool teams count from given pool id.
+     * Retourne le nombre d'équipes pour la poule d'id donné.
      *
      * @param integer $poolId
      *
@@ -26,7 +25,6 @@ class PoolTeamRepository extends Repository
         $qb = $this->getLoadQuery();
         $qb->select('COUNT(' . $this->getAlias() . '.id) as count')
             ->where('pool_id = :poolId')
-            ->andWhere('team_id IS NOT NULL')
             ->setParameter('poolId', $poolId);
 
         $result = (int) $qb->execute()->fetchColumn(0);
@@ -35,136 +33,95 @@ class PoolTeamRepository extends Repository
     }
 
     /**
-     * Return pool teams from given pool id.
+     * Retourne les équipes de la poule d'id donné, trié par nom d'équipe.
      *
      * @param integer $poolId
      *
      * @return PoolTeam[]
      */
-    public function findByPoolIdSortedByName($poolId)
-    {
-        $poolTeamsSortedByName = [];
-
-        $poolTeams = $this->findBy(['pool_id' => $poolId], ['team_name', 'ASC']);
-        if (false !== $poolTeams) {
-            /** @var PoolTeam $poolTeam */
-            foreach ($poolTeams as $poolTeam) {
-                $poolTeamsSortedByName[$poolTeam->getTeamId()] = $poolTeam;
-            }
-        }
-
-        return $poolTeamsSortedByName;
-    }
+//    public function findByPoolIdSortedByName($poolId)
+//    {
+//        $poolTeamsSortedByName = [];
+//
+//        $poolTeams = $this->findBy(['pool_id' => $poolId], ['name', 'ASC']);
+//        if (false !== $poolTeams) {
+//            /** @var PoolTeam $poolTeam */
+//            foreach ($poolTeams as $poolTeam) {
+//                $poolTeamsSortedByName[$poolTeam->getName()] = $poolTeam;
+//            }
+//        }
+//
+//        return $poolTeamsSortedByName;
+//    }
 
     /**
-     * Return teams group by pool id sorted by team name, from given pool ids.
+     * Retourne les équipes, par id de poule à partir des ids de poules donnés, trié par nom d'équipe FFT.
      *
      * @param array $poolIds
      *
      * @return PoolTeam[]
      */
-    public function findByPoolIdsGroupByPoolIdSortedByName(array $poolIds)
+    public function findByPoolIdsSortedByNameFft(array $poolIds)
     {
-        $poolsGroupByPoolIdSortedByName = [];
+        $poolTeamsPerPoolIdSortedByName = [];
 
-        $poolTeams = $this->findBy(['pool_id' => $poolIds], ['team_name', 'ASC']);
+        $poolTeams = $this->findBy(['pool_id' => $poolIds], ['name_fft', 'ASC']);
         if (false !== $poolTeams) {
             /** @var PoolTeam $poolTeam */
             foreach ($poolTeams as $poolTeam) {
-                $poolsGroupByPoolIdSortedByName[$poolTeam->getPoolId()][$poolTeam->getTeamId()] = $poolTeam;
+                $poolTeamsPerPoolIdSortedByName[$poolTeam->getPoolId()][$poolTeam->getNameFft()] = $poolTeam;
             }
         }
 
-        return $poolsGroupByPoolIdSortedByName;
+        return $poolTeamsPerPoolIdSortedByName;
     }
 
     /**
-     * Return teams group by pool id sorted by score, from given pool ids.
+     * Retourne les équipes groupées par id de poule à partir des ids de poules donnés, trié par nom d'équipe.
      *
      * @param array $poolIds
      *
      * @return PoolTeam[]
      */
-    public function findByPoolIdsGroupByPoolIdSortedByScore(array $poolIds)
-    {
-        $poolsGroupByPoolIdSortedByName = [];
-
-        $qb = $this->findWithCriteria(['pool_id' => $poolIds]);
-        $qb->orderBy('points', 'DESC');
-        $qb->addOrderBy('match_diff', 'DESC');
-        $result = $qb->execute()->fetchAll();
-
-        if ($result) {
-            $poolTeams = $this->hydrateAll($result, $qb);
-
-            /** @var PoolTeam $poolTeam */
-            foreach ($poolTeams as $poolTeam) {
-                $poolsGroupByPoolIdSortedByName[$poolTeam->getPoolId()][$poolTeam->getTeamId()] = $poolTeam;
-            }
-        }
-
-        return $poolsGroupByPoolIdSortedByName;
-    }
+//    public function findByPoolIdsPerPoolIdSortedByName(array $poolIds)
+//    {
+//        $poolsGroupByPoolIdSortedByName = [];
+//
+//        $poolTeams = $this->findBy(['pool_id' => $poolIds], ['name', 'ASC']);
+//        if (false !== $poolTeams) {
+//            /** @var PoolTeam $poolTeam */
+//            foreach ($poolTeams as $poolTeam) {
+//                $poolsGroupByPoolIdSortedByName[$poolTeam->getPoolId()][$poolTeam->getName()] = $poolTeam;
+//            }
+//        }
+//
+//        return $poolsGroupByPoolIdSortedByName;
+//    }
 
     /**
-     * @param       $poolId
+     * Sauvegarde les données sur les équipes des poulées données, à partir des données soumise dans le formulaire
+     * correspondant.
+     *
+     * @param PoolTeam[] $poolTeams
      * @param array $formData
      *
-     * @return void
+     * @return bool
      */
-    public function savePoolDays($poolId, array $formData)
+    public function savePoolsTeamsOfChampionship(array $poolTeams, array $formData)
     {
-        $existingDays = $this->findByPoolId($poolId);
+        foreach ($poolTeams as $poolTeam) {
+            $poolTeam->setName($formData["pool_team{$poolTeam->getId()}_name"]);
 
-        foreach ($formData as $key => $value) {
-            if (strpos($key, "pool{$poolId}_") !== 0) {
-                // We considere here only submitted data beginning with 'poolX_'
-                continue;
+            // Seules les données valorisées sont soumises pour les checkboxes
+            if (isset($formData["pool_team{$poolTeam->getId()}_is_club"])) {
+                $poolTeam->setIsClub(true);
+            } else {
+                $poolTeam->setIsClub(false);
             }
 
-            // Day date case (there is other data submitted, so we have to check)
-            /** @see \Bundle\Asmb\Competition\Repository\Championship\MatchRepository::savePoolMatches */
-            if (preg_match("/^pool{$poolId}_day_(\d+)$/", $key, $pregMatches)) {
-                $day = $pregMatches[1]; // Day is second entry of this array
-
-                /** @var PoolDay $poolDay */
-                // Let's check if day already exists or if it's new one
-                if (isset($existingDays["day_{$day}"])) {
-                    // Update case: retrieve existing day
-                    $poolDay = $existingDays["day_{$day}"];
-                } else {
-                    // Insert case
-                    $poolDay = new PoolDay();
-                    $poolDay->setPoolId($poolId);
-                    $poolDay->setDay($day);
-                }
-                $poolDay->setDate($value);
-
-                $this->save($poolDay, true);
-            }
-        }
-    }
-
-    /**
-     * Return matches of given pool id, grouped by day.
-     *
-     * @param integer $poolId
-     *
-     * @return PoolDay[]
-     */
-    public function findByPoolId($poolId)
-    {
-        $daysByPoolId = [];
-
-        $poolDays = $this->findBy(['pool_id' => $poolId]);
-
-        if (false !== $poolDays) {
-            /** @var PoolDay $poolDay */
-            foreach ($poolDays as $poolDay) {
-                $daysByPoolId['day_' . $poolDay->getDay()] = $poolDay;
-            }
+            $this->save($poolTeam);
         }
 
-        return $daysByPoolId;
+        return true;
     }
 }

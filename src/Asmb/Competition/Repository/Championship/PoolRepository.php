@@ -116,17 +116,17 @@ class PoolRepository extends Repository
     {
         $completeness = 0;
 
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolTeamRepository */
         $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
         $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
 
         $daysCount = PoolHelper::getDaysCount($teamsCount);
-        $matchesCountPerDay = PoolHelper::getMatchesCountPerDay($teamsCount);
+        $matchesCountPerDay = PoolHelper::getMeetingsCountPerDay($teamsCount);
 
         $completeMatchesCountToCheck = $daysCount * $matchesCountPerDay;
 
         if ($completeMatchesCountToCheck > 0) {
-            /** @var \Bundle\Asmb\Competition\Repository\Championship\MatchRepository $matchRepository */
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository $matchRepository */
             $matchRepository = $this->em->getRepository('championship_match');
             $qb = $matchRepository->getLoadQuery();
             $qb->select('COUNT(' . $matchRepository->getAlias() . '.id) as count')
@@ -159,10 +159,10 @@ class PoolRepository extends Repository
         $poolIds = array_keys($completenesses);
 
         if (!empty($poolIds)) {
-            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolTeamRepository */
             $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
             $poolTeamAlias = $poolTeamRepository->getAlias();
-            $matchAlias = 'm';
+            $matchAlias = 'm'; //TODO plus maintenant
 
             $qb = $poolTeamRepository->getLoadQuery();
             // SELECT
@@ -202,38 +202,38 @@ class PoolRepository extends Repository
      *
      * @return integer|boolean
      */
-    public function findPoolWithLteTeamCount(Pool $pool)
-    {
-        $qb = $this->getLoadQuery();
-        $qb->select("other_pool.id as other_pool_id");
-        $qb->addSelect("count(distinct other_pt.team_id) as other_pool_team_count");
-
-        $qb->leftJoin(
-            $this->getAlias(),
-            'bolt_championship_pool_team',
-            'orig_pt',
-            $qb->expr()->eq("orig_pt.pool_id", "{$this->getAlias()}.id")
-        );
-        $qb->leftJoin(
-            $this->getAlias(),
-            'bolt_championship_pool',
-            'other_pool',
-            $qb->expr()->eq("other_pool.championship_id", "{$this->getAlias()}.championship_id")
-        );
-        $qb->leftJoin(
-            'other_pool',
-            'bolt_championship_pool_team',
-            'other_pt',
-            $qb->expr()->eq("other_pt.pool_id", "other_pool.id")
-        );
-
-        $qb->where($qb->expr()->eq("{$this->getAlias()}.id", $pool->getId()));
-        $qb->andWhere($qb->expr()->neq("other_pool.id", $pool->getId()));
-        $qb->groupBy('other_pool_id');
-        $qb->having($qb->expr()->lte("other_pool_team_count", 'count(distinct orig_pt.team_id)'));
-
-        $otherPoolId = $qb->execute()->fetchColumn();
-
-        return $otherPoolId;
-    }
+//    public function findPoolWithLteTeamCount(Pool $pool)
+//    {
+//        $qb = $this->getLoadQuery();
+//        $qb->select("other_pool.id as other_pool_id");
+//        $qb->addSelect("count(distinct other_pt.team_id) as other_pool_team_count");
+//
+//        $qb->leftJoin(
+//            $this->getAlias(),
+//            'bolt_championship_pool_team',
+//            'orig_pt',
+//            $qb->expr()->eq("orig_pt.pool_id", "{$this->getAlias()}.id")
+//        );
+//        $qb->leftJoin(
+//            $this->getAlias(),
+//            'bolt_championship_pool',
+//            'other_pool',
+//            $qb->expr()->eq("other_pool.championship_id", "{$this->getAlias()}.championship_id")
+//        );
+//        $qb->leftJoin(
+//            'other_pool',
+//            'bolt_championship_pool_team',
+//            'other_pt',
+//            $qb->expr()->eq("other_pt.pool_id", "other_pool.id")
+//        );
+//
+//        $qb->where($qb->expr()->eq("{$this->getAlias()}.id", $pool->getId()));
+//        $qb->andWhere($qb->expr()->neq("other_pool.id", $pool->getId()));
+//        $qb->groupBy('other_pool_id');
+//        $qb->having($qb->expr()->lte("other_pool_team_count", 'count(distinct orig_pt.team_id)'));
+//
+//        $otherPoolId = $qb->execute()->fetchColumn();
+//
+//        return $otherPoolId;
+//    }
 }

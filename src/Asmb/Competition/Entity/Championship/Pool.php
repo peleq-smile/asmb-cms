@@ -3,6 +3,7 @@
 namespace Bundle\Asmb\Competition\Entity\Championship;
 
 use Bolt\Storage\Entity\Entity;
+use Carbon\Carbon;
 
 /**
  * Entity for championship pool.
@@ -10,12 +11,16 @@ use Bolt\Storage\Entity\Entity;
  * @author    Perrine Léquipé <perrine.lequipe@gmail.com>
  * @copyright 2019
  */
-class Pool extends AbstractShortNamedEntity
+class Pool extends Entity
 {
     /**
      * @var string
      */
     protected $championship_id;
+    /**
+     * @var integer
+     */
+    protected $position;
     /**
      * @var string
      */
@@ -23,11 +28,16 @@ class Pool extends AbstractShortNamedEntity
     /**
      * @var string
      */
-    protected $link_fft;
+    protected $name;
     /**
-     * @var integer
+     * @var string
      */
-    protected $position;
+    protected $fft_id;
+    /**
+     * @var Carbon
+     */
+    protected $updated_at;
+
     /**
      * @var integer
      */
@@ -50,6 +60,22 @@ class Pool extends AbstractShortNamedEntity
     }
 
     /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
      * @return string
      */
     public function getCategoryName()
@@ -68,33 +94,33 @@ class Pool extends AbstractShortNamedEntity
     /**
      * @return string
      */
-    public function getLinkFft()
+    public function getName()
     {
-        return $this->link_fft;
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFftId()
+    {
+        return $this->fft_id;
     }
 
     /**
      * @param $linkFft
      */
-    public function setLinkFft($linkFft)
+    public function setFftId($linkFft)
     {
-        $this->link_fft = $linkFft;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-
-    /**
-     * @param int $position
-     */
-    public function setPosition($position)
-    {
-        $this->position = $position;
+        $this->fft_id = $linkFft;
     }
 
     /**
@@ -111,5 +137,37 @@ class Pool extends AbstractShortNamedEntity
     public function setCompleteness($completeness)
     {
         $this->completeness = $completeness;
+    }
+
+    /**
+     * @return string
+     * @deprecated
+     * @todo déporter en fonction twig
+     */
+    public function getLinkFft()
+    {
+        return "http://www.gs.applipub-fft.fr/fftfr/pouleClassement.do?dispatch=load&pou_iid={$this->getFftId()}";
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @param Carbon|null $updateAt
+     *
+     * @return void
+     */
+    public function setUpdatedAt($updateAt = null)
+    {
+        if (null === $updateAt) {
+            $updateAt = new Carbon();
+        }
+
+        $this->updated_at = $updateAt;
     }
 }

@@ -5,7 +5,7 @@ namespace Bundle\Asmb\Competition\Database\Schema\Table;
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 
 /**
- * Table for championship matches data.
+ * Table des équipes de poules.
  *
  * @author    Perrine Léquipé <perrine.lequipe@gmail.com>
  * @copyright 2019
@@ -19,14 +19,9 @@ class ChampionshipPoolTeam extends BaseTable
     {
         $this->table->addColumn('id', 'integer', ['autoincrement' => true]);
         $this->table->addColumn('pool_id', 'integer', ['notnull' => true]);
-        $this->table->addColumn('team_id', 'integer', ['notnull' => false]);
-        $this->table->addColumn('team_name', 'string', ['length' => 255, 'notnull' => true]);
-        $this->table->addColumn('team_is_club', 'boolean', ['default' => false, 'notnull' => true]);
-        $this->table->addColumn('points', 'integer', ['notnull' => true, 'default' => 0]);
-        $this->table->addColumn('days_played', 'integer', ['notnull' => true, 'default' => 0, 'unsigned' => true]);
-        $this->table->addColumn('match_diff', 'integer', ['notnull' => true, 'default' => 0]);
-        $this->table->addColumn('set_diff', 'integer', ['notnull' => true, 'default' => 0]);
-        $this->table->addColumn('game_diff', 'integer', ['notnull' => true, 'default' => 0]);
+        $this->table->addColumn('name_fft', 'string', ['length' => 255, 'notnull' => true]);
+        $this->table->addColumn('name', 'string', ['length' => 20, 'notnull' => false]);
+        $this->table->addColumn('is_club', 'boolean', ['default' => 0, 'notnull' => true]);
     }
 
     /**
@@ -40,12 +35,6 @@ class ChampionshipPoolTeam extends BaseTable
             ['id'],
             ['onDelete' => 'CASCADE']
         );
-        $this->table->addForeignKeyConstraint(
-            'bolt_championship_team',
-            ['team_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
     }
 
     /**
@@ -53,8 +42,8 @@ class ChampionshipPoolTeam extends BaseTable
      */
     protected function addIndexes()
     {
-        $this->table->addIndex(['team_name']);
-        $this->table->addUniqueIndex(['pool_id', 'team_id']);
+        $this->table->addUniqueIndex(['name_fft', 'pool_id']);
+        $this->table->addUniqueIndex(['name', 'pool_id']);
     }
 
     /**

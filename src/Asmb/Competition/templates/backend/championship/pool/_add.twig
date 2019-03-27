@@ -7,21 +7,15 @@
         <table class="table-condensed">
             <thead>
             <tr>
-                <th class="col-xs-1"><label for="{{ form.position.vars.id }}">{{ __('general.phrase.position') }}</label></th>
                 <th class="col-xs-2"><label for="{{ form.category_name.vars.id }}">{{ __('general.phrase.category_name') }}</label></th>
-                <th class="col-xs-3"><label for="{{ form.name.vars.id }}">{{ __('general.phrase.name-fft') }}</label></th>
-                <th class="col-xs-2"><label for="{{ form.short_name.vars.id }}">{{ __('general.phrase.short_name') }}</label></th>
-                <th class="col-xs-5"><label for="{{ form.link_fft.vars.id }}">{{ __('general.phrase.link_fft') }}</label></th>
+                <th class="col-xs-3"><label for="{{ form.name.vars.id }}">{{ __('general.phrase.name') }}</label></th>
+                <th class="col-xs-2"><label for="{{ form.fft_id.vars.id }}">{{ __('general.phrase.fft_id') }}</label></th>
                 <th></th>
             </tr>
             </thead>
 
             <tbody>
             <tr>
-                <td class="position">
-                    {{ form_widget(form.position, {'attr': {'min': 1, 'max': 99}}) }}
-                </td>
-
                 <td class="name">
                     {{ form_widget(form.category_name) }}
                 </td>
@@ -30,13 +24,8 @@
                     {{ form_widget(form.name) }}
                 </td>
 
-                <td class="short_name">
-                    {{ form_widget(form.short_name) }}
-                </td>
-
-
                 <td class="link_fft">
-                    {{ form_widget(form.link_fft) }}
+                    {{ form_widget(form.fft_id) }}
                 </td>
 
                 <td class="actions">

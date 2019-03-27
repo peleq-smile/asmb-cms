@@ -5,7 +5,7 @@ namespace Bundle\Asmb\Competition\Entity\Championship;
 use Bolt\Storage\Entity\Entity;
 
 /**
- * Entity for championship pool team.
+ * Entité représentant une équipe d'une poule.
  *
  * @author    Perrine Léquipé <perrine.lequipe@smile.fr>
  * @copyright 2019
@@ -17,37 +17,17 @@ class PoolTeam extends Entity
      */
     protected $pool_id;
     /**
-     * @var integer
+     * @var string
      */
-    protected $team_id;
+    protected $name_fft;
     /**
      * @var string
      */
-    protected $team_name;
+    protected $name;
     /**
      * @var boolean
      */
-    protected $team_is_club;
-    /**
-     * @var integer
-     */
-    protected $points;
-    /**
-     * @var integer
-     */
-    protected $days_played;
-    /**
-     * @var integer
-     */
-    protected $match_diff;
-    /**
-     * @var integer
-     */
-    protected $set_diff;
-    /**
-     * @var integer
-     */
-    protected $game_diff;
+    protected $is_club;
 
     /**
      * @return int
@@ -58,178 +38,58 @@ class PoolTeam extends Entity
     }
 
     /**
-     * @param int $poolId
+     * @param int $pool_id
      */
-    public function setPoolId($poolId)
+    public function setPoolId($pool_id)
     {
-        $this->pool_id = $poolId;
+        $this->pool_id = $pool_id;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getTeamId()
+    public function getNameFft()
     {
-        return $this->team_id;
+        return $this->name_fft;
     }
 
     /**
-     * @param int $teamId
+     * @param string $name_fft
      */
-    public function setTeamId($teamId)
+    public function setNameFft($name_fft)
     {
-        $this->team_id = $teamId;
+        $this->name_fft = $name_fft;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getTeamName()
+    public function getName()
     {
-        return $this->team_name;
+        return $this->name;
     }
 
     /**
-     * @param int $teamName
+     * @param string $name
      */
-    public function setTeamName($teamName)
+    public function setName($name)
     {
-        $this->team_name = $teamName;
+        $this->name = $name;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function getTeamIsClub()
+    public function isClub()
     {
-        return $this->team_is_club;
+        return $this->is_club;
     }
 
     /**
-     * @param boolean $teamIsClub
+     * @param bool $is_club
      */
-    public function setTeamIsClub($teamIsClub)
+    public function setIsClub($is_club)
     {
-        $this->team_is_club = $teamIsClub;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPoints()
-    {
-        return $this->points;
-    }
-
-    /**
-     * @param int $points
-     */
-    public function setPoints($points)
-    {
-        $this->points = $points;
-    }
-
-    /**
-     * @param int $points
-     */
-    public function addPoints($points)
-    {
-        $this->points += $points;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDaysPlayed()
-    {
-        return $this->days_played;
-    }
-
-    /**
-     * @param int $daysPlayed
-     */
-    public function setDaysPlayed($daysPlayed)
-    {
-        $this->days_played = $daysPlayed;
-    }
-
-    /**
-     * @param int $daysPlayed
-     */
-    public function addDaysPlayed($daysPlayed = 1)
-    {
-        $this->days_played += $daysPlayed;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMatchDiff()
-    {
-        return $this->match_diff;
-    }
-
-    /**
-     * @param int $matchDiff
-     */
-    public function setMatchDiff($matchDiff)
-    {
-        $this->match_diff = $matchDiff;
-    }
-
-    /**
-     * @param int $matchDiff
-     */
-    public function addMatchDiff($matchDiff)
-    {
-        $this->match_diff += $matchDiff;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSetDiff()
-    {
-        return $this->set_diff;
-    }
-
-    /**
-     * @param int $setDiff
-     */
-    public function setSetDiff($setDiff)
-    {
-        $this->set_diff = $setDiff;
-    }
-
-    /**
-     * @param int $setDiff
-     */
-    public function addSetDiff($setDiff)
-    {
-        $this->set_diff += $setDiff;
-    }
-
-    /**
-     * @return int
-     */
-    public function getGameDiff()
-    {
-        return $this->game_diff;
-    }
-
-    /**
-     * @param int $gameDiff
-     */
-    public function setGameDiff($gameDiff)
-    {
-        $this->game_diff = $gameDiff;
-    }
-
-    /**
-     * @param int $gameDiff
-     */
-    public function addGameDiff($gameDiff)
-    {
-        $this->game_diff += $gameDiff;
+        $this->is_club = $is_club;
     }
 }

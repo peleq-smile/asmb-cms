@@ -21,9 +21,9 @@ class ChampionshipPool extends BaseTable
         $this->table->addColumn('championship_id', 'integer');
         $this->table->addColumn('position', 'integer');
         $this->table->addColumn('category_name', 'string', ['length' => 20, 'notnull' => false]);
-        $this->table->addColumn('name', 'string', ['length' => 255, 'notnull' => true]);
-        $this->table->addColumn('short_name', 'string', ['length' => 20, 'notnull' => false]);
-        $this->table->addColumn('link_fft', 'string', ['length' => 255, 'notnull' => false]);
+        $this->table->addColumn('name', 'string', ['length' => 20, 'notnull' => true]);
+        $this->table->addColumn('fft_id', 'string', ['length' => 10, 'notnull' => true]);
+        $this->table->addColumn('updated_at', 'datetime', ['notnull' => false, 'default' => null]);
     }
 
     /**
@@ -52,7 +52,8 @@ class ChampionshipPool extends BaseTable
     {
         $this->table->addIndex(['championship_id']);
         $this->table->addIndex(['position']);
-        $this->table->addUniqueIndex(['championship_id', 'category_name', 'name']);
+        $this->table->addIndex(['category_name']);
+        $this->table->addUniqueIndex(['championship_id', 'name', 'category_name']);
     }
 
     /**

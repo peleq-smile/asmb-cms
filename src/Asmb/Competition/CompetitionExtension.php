@@ -2,13 +2,16 @@
 
 namespace Bundle\Asmb\Competition;
 
-use Bolt\Asset\File\Stylesheet;
 use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
 use Bolt\Menu\MenuEntry;
 use Bundle\Asmb\Competition\Database\Schema\Table;
+use Bundle\Asmb\Competition\Extension\TwigFiltersTrait;
+use Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser;
+use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
+use Bundle\Asmb\Competition\Parser\PoolRankingParser;
+use Bundle\Asmb\Competition\Parser\PoolTeamsParser;
 use Silex\Application;
-use Silex\ControllerCollection;
 
 /**
  * Asmb Competition bundle extension loader.
@@ -19,19 +22,20 @@ class CompetitionExtension extends SimpleExtension
 {
     use DatabaseSchemaTrait;
 
+    use TwigFiltersTrait;
+
     /**
      * {@inheritdoc}
      */
     protected function registerExtensionTables()
     {
         return [
-            'championship'           => Table\Championship::class,
-            'championship_category'  => Table\ChampionshipCategory::class,
-            'championship_match'     => Table\ChampionshipMatch::class,
-            'championship_pool'      => Table\ChampionshipPool::class,
-            'championship_pool_day'  => Table\ChampionshipPoolDay::class,
-            'championship_pool_team' => Table\ChampionshipPoolTeam::class,
-            'championship_team'      => Table\ChampionshipTeam::class,
+            'championship'              => Table\Championship::class,
+            'championship_category'     => Table\ChampionshipCategory::class,
+            'championship_pool'         => Table\ChampionshipPool::class,
+            'championship_pool_meeting' => Table\ChampionshipPoolMeeting::class,
+            'championship_pool_ranking' => Table\ChampionshipPoolRanking::class,
+            'championship_pool_team'    => Table\ChampionshipPoolTeam::class,
         ];
     }
 
@@ -42,8 +46,6 @@ class CompetitionExtension extends SimpleExtension
     {
         return [
             '/extensions/championship' => new Controller\Backend\ChampionshipController(),
-            '/extensions/match'        => new Controller\Backend\MatchController(),
-            '/extensions/team'         => new Controller\Backend\TeamController(),
             '/extensions/pool'         => new Controller\Backend\PoolController(),
         ];
     }
@@ -69,13 +71,12 @@ class CompetitionExtension extends SimpleExtension
     protected function registerRepositoryMappings()
     {
         return [
-            'championship'          => [Entity\Championship::class => Repository\ChampionshipRepository::class],
-            'championship_category'  => [Entity\Championship\Category::class => Repository\Championship\CategoryRepository::class],
-            'championship_match'     => [Entity\Championship\Match::class => Repository\Championship\MatchRepository::class],
-            'championship_pool'      => [Entity\Championship\Pool::class => Repository\Championship\PoolRepository::class],
-            'championship_pool_day'  => [Entity\Championship\PoolDay::class => Repository\Championship\PoolDayRepository::class],
-            'championship_pool_team' => [Entity\Championship\PoolTeam::class => Repository\Championship\PoolTeamRepository::class],
-            'championship_team'      => [Entity\Championship\Team::class => Repository\Championship\TeamRepository::class],
+            'championship'              => [Entity\Championship::class => Repository\ChampionshipRepository::class],
+            'championship_category'     => [Entity\Championship\Category::class => Repository\Championship\CategoryRepository::class],
+            'championship_pool'         => [Entity\Championship\Pool::class => Repository\Championship\PoolRepository::class],
+            'championship_pool_meeting' => [Entity\Championship\PoolMeeting::class => Repository\Championship\PoolMeetingRepository::class],
+            'championship_pool_ranking' => [Entity\Championship\PoolRanking::class => Repository\Championship\PoolRankingRepository::class],
+            'championship_pool_team'    => [Entity\Championship\PoolTeam::class => Repository\Championship\PoolTeamRepository::class],
         ];
     }
 
@@ -86,6 +87,27 @@ class CompetitionExtension extends SimpleExtension
     {
         $this->extendDatabaseSchemaServices();
         $this->extendRepositoryMapping();
+
+        $app['pool_meetings_parser'] = $app->share(
+            function ($app) {
+                return new PoolMeetingsParser();
+            }
+        );
+        $app['pool_ranking_parser'] = $app->share(
+            function ($app) {
+                return new PoolRankingParser();
+            }
+        );
+        $app['pool_teams_guesser'] = $app->share(
+            function ($app) {
+                return new PoolTeamsGuesser();
+            }
+        );
+        $app['pool_teams_parser'] = $app->share(
+            function ($app) {
+                return new PoolTeamsParser();
+            }
+        );
     }
 
     /**

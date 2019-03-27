@@ -7,6 +7,11 @@ $success: #3c763d;
 $warning: #ec971f;
 $danger: #a94442;
 
+$white: #ffffff;
+$even: #f2f4f3;
+
+$widescreen: 1280px;
+
 //---- Styles
 .row.small-gap {
     margin-right: -10px;
@@ -26,10 +31,27 @@ $danger: #a94442;
     margin-bottom: 20px;
 }
 
-//-- Competition edit view
-.competition-edit {
+//-- Liste des championnats
+.championship-index {
+    .dashboardlisting {
+        th, td {
+            vertical-align: middle;
+        }
+
+        .is_active i {
+            cursor: help;
+        }
+    }
+}
+
+//-- Pages d'édition de championnats
+.championship-edit {
     .is-club {
         font-weight: bold;
+    }
+
+    .panel-default > .panel-heading {
+        line-height: 2.5rem;
     }
 
     input[type=date], input[type=time] {
@@ -39,14 +61,58 @@ $danger: #a94442;
         min-width: 72px;
     }
 
+    .table-condensed {
+        .checkbox {
+            padding: 0;
+
+            label {
+                padding: 0;
+                margin: auto;
+                text-align: center;
+
+                input {
+                    margin: 0;
+                    padding: 0;
+                    position: unset;
+                }
+            }
+        }
+    }
+
     .table {
-        &.table-matches {
+        &.table-teams {
+
             th {
-                background-color: #eeeeee;
+                white-space: nowrap;
+                padding: 4px 1px;
+            }
+
+            td {
+                vertical-align: middle;
+                padding: 4px 1px;
+            }
+
+            input.team-name {
+                width: 13rem;
+                padding: 6px;
+            }
+
+            input[type=checkbox] {
+                margin-top: 5px;
+            }
+
+            tr.is-club {
+                td {
+                    background-color: #fcf8e3;
+                }
+            }
+        }
+        &.table-meetings {
+            th {
                 vertical-align: middle;
             }
             td {
-                padding: 2px;
+                padding: 2px 4px;
                 white-space: nowrap;
                 vertical-align: middle;
             }
@@ -65,29 +131,13 @@ $danger: #a94442;
                 min-width: 105px;
             }
             .info-pop {
-                display: inline-block;
-                color: $danger;
                 cursor: help;
-
-                i {
-                    font-size: 1.4rem;
-                }
-            }
-            .info-date-match {
-                color: $danger;
-                font-weight: bold;
-            }
-            .input-score {
-                display: inline;
-                width: 22px;
-                height: 22px;
-                text-align: center;
             }
         }
 
-        tr.is-club {
-            td {
-                background-color: #fcf8e3;
+        tr.even {
+            th, td {
+                background-color: $even;
             }
         }
     }
@@ -132,6 +182,36 @@ $danger: #a94442;
             }
             &.bg-warning {
                 background-color: $warning;
+            }
+        }
+    }
+
+    .score {
+        border-radius: 8px;
+        padding: 1px 6px;
+
+        &.victory {
+            background: $success;
+            color: $white;
+        }
+
+        &.defeat {
+            background: $danger;
+            color: $white;
+        }
+
+        &.draw {
+            background: $warning;
+            color: $white;
+        }
+    }
+}
+
+@media screen and (max-width: $widescreen) {
+    .championship-edit {
+        .table-teams, .table-meetings {
+            & * {
+                font-size: 0.8em;
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Bundle\Asmb\Competition\Helpers;
 class PoolHelper
 {
     /**
-     * Get days count for the pool, according to given teams count.
+     * Compte et retourne le nombre de journées de rencontres, fonction du nombre d'équipes donné.
      *
      * @param int $teamsCount
      *
@@ -25,16 +25,28 @@ class PoolHelper
     }
 
     /**
-     * Get matches count per day for this pool, according to given teams count.
+     * Compte et retourne le nombre de rencontres à jouer par journée de championnat, fonction du nombre d'équipes donné.
      *
      * @param int $teamsCount
      *
      * @return int
      */
-    public static function getMatchesCountPerDay($teamsCount)
+    public static function getMeetingsCountPerDay($teamsCount)
     {
-        $matchesCountPerDay = (int) floor($teamsCount / 2);
+        $meetingsCountPerDay = (int) floor($teamsCount / 2);
 
-        return $matchesCountPerDay;
+        return $meetingsCountPerDay;
+    }
+
+    /**
+     * Compte et retourne le nombre de rencontres total d'une poule, fonction du nombre d'équipes donné.
+     *
+     * @param int $teamsCount
+     *
+     * @return int
+     */
+    public static function getTotalMeetingsCount($teamsCount)
+    {
+        return self::getDaysCount($teamsCount) * self::getMeetingsCountPerDay($teamsCount);
     }
 }

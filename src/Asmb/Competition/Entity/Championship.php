@@ -20,7 +20,7 @@ class Championship extends AbstractShortNamedEntity
     /**
      * @var boolean
      */
-    protected $is_edit_score_mode;
+    protected $is_active;
 
     /**
      * @return int
@@ -41,16 +41,16 @@ class Championship extends AbstractShortNamedEntity
     /**
      * @return boolean
      */
-    public function isEditScoreMode()
+    public function isActive()
     {
-        return $this->is_edit_score_mode;
+        return $this->is_active;
     }
 
     /**
-     * @param boolean $isEditScoreMode
+     * @param boolean $isActive
      */
-    public function setIsEditScoreMode($isEditScoreMode)
+    public function setIsActive($isActive)
     {
-        $this->is_edit_score_mode = $isEditScoreMode;
+        $this->is_active = $isActive;
     }
 }

@@ -4,14 +4,14 @@ namespace Bundle\Asmb\Competition\Controller\Backend;
 
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
-use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
-use Bundle\Asmb\Competition\Repository\Championship\MatchRepository;
-use Bundle\Asmb\Competition\Repository\Championship\PoolDayRepository;
-use Bundle\Asmb\Competition\Repository\Championship\TeamRepository;
+use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
+use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
+use Bundle\Asmb\Competition\Form\FormType;
+use Bundle\Asmb\Competition\Helpers\PoolHelper;
+use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
-use Bundle\Asmb\Competition\Form\FormType;
 
 /**
  * The controller for Pool routes.
@@ -33,27 +33,19 @@ class PoolController extends AbstractController
             ->assert('poolId', '\d+')
             ->bind('pooledit');
 
-        $c->post('/delete/{championshipId}', 'delete')
-            ->assert('championshipId', '\d+')
+        $c->match('/delete/{poolId}', 'delete')
+            ->assert('poolId', '\d+')
             ->bind('pooldelete');
 
-        $c->post('/team/add/{championshipId}/{poolId}', 'addTeams')
+        $c->match('/fetch/teams/{championshipId}/{poolId}', 'fetchTeams')
             ->assert('championshipId', '\d+')
             ->assert('poolId', '\d+')
-            ->bind('poolteamadd');
+            ->bind('poolfetchteams');
 
-        $c->post('/team/remove/{championshipId}/{poolId}', 'removeTeam')
+        $c->match('/fetch/{championshipId}/{poolId}', 'fetchRankingAndMeetings')
             ->assert('championshipId', '\d+')
             ->assert('poolId', '\d+')
-            ->bind('poolteamremove');
-
-        $c->match('/matches/edit/{poolId}', 'editDaysAndMatches')
-            ->assert('poolId', '\d+')
-            ->bind('pooleditmatches');
-
-        $c->post('/matches/save/{poolId}', 'saveDaysAndMatches')
-            ->assert('poolId', '\d+')
-            ->bind('poolmatchessave');
+            ->bind('poolfetch');
 
         return $c;
     }
@@ -64,6 +56,8 @@ class PoolController extends AbstractController
      */
     public function add(Request $request, $championshipId)
     {
+        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]);
+
         $form = $this->buildAddPoolForm($request, $championshipId);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -97,9 +91,15 @@ class PoolController extends AbstractController
                     Trans::__('page.add-pool.message.not-saved')
                 );
             }
+
+            $url = $this->generateUrl(
+                'championshipeditwithcategoryname',
+                ['id' => $championshipId, 'categoryName' => $pool->getCategoryName()]
+            );
+            $url .= '#pool' . $pool->getId();
         }
 
-        return $this->redirectToRoute('championshipedit', ['id' => $championshipId]);
+        return $this->redirect($url);
     }
 
     /**
@@ -117,13 +117,20 @@ class PoolController extends AbstractController
             $this->redirectToRoute('championship');
         }
 
+        // On vérifie si la poule a déjà ses équipes synchronisées ou non.
+        // Si c'est le cas, on empêche la modification de l'Id de Gestion Sportive FFT
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+        $poolTeamRepository = $this->getRepository('championship_pool_team');
+        $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
+
         /** @noinspection PhpUndefinedMethodInspection */
         $formOptions = [
             'category_names'  => $this->getRepository('championship_category')->findAllAsChoices(),
             'championship_id' => $pool->getChampionshipId(),
+            'has_teams'       => ($teamsCount > 0),
         ];
 
-        // Generate the form
+        // Génération du formulaire d'édition de la poule
         $form = $this->createFormBuilder(FormType\PoolEditType::class, $pool, $formOptions)
             ->getForm()
             ->handleRequest($request);
@@ -166,16 +173,17 @@ class PoolController extends AbstractController
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param                                           $championshipId
+     * @param int                                       $poolId
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function delete(Request $request, $championshipId)
+    public function delete(Request $request, $poolId)
     {
-        $poolId = $request->get('poolId');
+        /** @var Pool $pool */
+        $pool = $this->getRepository('championship_pool')->find($poolId);
+        $championshipId = $pool->getChampionshipId();
 
         try {
-            $pool = $this->getRepository('championship_pool')->find($poolId);
             $deleted = $this->getRepository('championship_pool')->delete($pool);
             if ($deleted) {
                 $this->flashes()->success(
@@ -192,185 +200,185 @@ class PoolController extends AbstractController
     }
 
     /**
+     * Récupération des équipes de la poule d'id donné depuis la FFT.
+     *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param                                           $championshipId
-     * @param                                           $poolId
+     * @param integer                                   $championshipId
+     * @param integer                                   $poolId
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function addTeams(Request $request, $championshipId, $poolId)
+    public function fetchTeams(Request $request, $championshipId, $poolId)
     {
-        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]);
+        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]) . "#pool{$poolId}";
 
         try {
             /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
             $poolRepository = $this->getRepository('championship_pool');
             $pool = $poolRepository->find($poolId);
 
-            $form = $this->buildAddTeamToPoolForm($request, $pool);
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+            $poolTeamRepository = $this->getRepository('championship_pool_team');
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
-                $poolTeamRepository = $this->getRepository('championship_pool_team');
-                $poolTeams = $poolTeamRepository->findByPoolIdSortedByName($poolId);
+            // Récupération des données depuis la Gestion Sportive de la FFT
+            /** @var \Bundle\Asmb\Competition\Parser\PoolTeamsParser $poolTeamsParser */
+            $poolTeamsParser = $this->app['pool_teams_parser'];
+            /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam[] $poolTeams */
+            $poolTeams = $poolTeamsParser->parse($pool);
 
-                $teamIdInputName = 'pool' . $poolId . '_add_team_teamId';
-                $teamIds = $form->get($teamIdInputName)->getData();
-
-                $saved = true;
-
-                // Retrieve all team names from selected team ids (optimized cause in ONE query), to be able to set
-                // required team name.
-
-                /** @var \Bundle\Asmb\Competition\Repository\Championship\TeamRepository $teamRepository */
-                $teamRepository = $this->getRepository('championship_team');
-                $teams = $teamRepository->findByIds($teamIds);
-                /** @var \Bundle\Asmb\Competition\Entity\Championship\Team $team */
-                foreach ($teams as $team) {
-                    if (!isset($poolTeams[$team->getId()])) { // Save only if team is not already into pool
-                        $poolTeam = new PoolTeam();
-                        $poolTeam->setPoolId($poolId);
-                        $poolTeam->setTeamId($team->getId());
-                        // Let's retrieve name of team from id here.
-                        $poolTeam->setTeamName($team->getFinalName());
-                        $poolTeam->setTeamIsClub($team->isClub());
-                        $poolTeam->setPosition(count($poolTeams) + 1);
-
-                        $saved = $saved && $this->getRepository('championship_pool_team')->save($poolTeam);
-                    }
-                }
-
-                if ($saved) {
-                    $this->flashes()->success(Trans::__('page.add-team-pool.message.saved'));
-                } else {
-                    $this->flashes()->error(Trans::__('page.add-pool-team.message.duplicate-error'));
-                }
-
-                $url .= '#pool' . $pool->getId();
+            foreach ($poolTeams as $poolTeam) {
+                // On sauvegarde dans un premier temps toutes les équipes
+                $poolTeamRepository->save($poolTeam, true);
             }
-        } catch (\Exception $e) {
-            $this->flashes()->error(
-                Trans::__('page.add-pool-team.message.not-saved')
-            );
-        }
 
-        return $this->redirect($url);
-    }
+            // Valorisation des noms des équipes utilisées en interne
+            /** @var \Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser $poolTeamsGuesser */
+            $poolTeamsGuesser = $this->app['pool_teams_guesser'];
+            $poolTeamsGuesser->guess($poolTeams);
 
-    /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param                                           $championshipId
-     * @param                                           $poolId
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @todo ne pas constuire de formulaire
-     */
-    public function removeTeam(Request $request, $championshipId, $poolId)
-    {
-        /** @var Pool $pool */
-        $pool = $this->getRepository('championship_pool')->find($poolId);
-        $form = $this->buildRemoveTeamFromPoolForm($request, $pool);
-
-        if ($form->isSubmitted()) {
-            if ($form->isValid()) {
-                $teamIdInputName = 'pool' . $poolId . '_remove_team_teamId';
-                $teamId = $form->get($teamIdInputName)->getData();
-
-                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
-                $poolTeamRepository = $this->getRepository('championship_pool_team');
-                $poolTeam = $poolTeamRepository->findOneBy(
-                    ['pool_id' => $poolId, 'team_id' => $teamId]
-                );
-
+            foreach ($poolTeams as $poolTeam) {
                 try {
-                    $deleted = $poolTeamRepository->delete($poolTeam);
-                    if ($deleted) {
-                        $this->flashes()->success(
-                            Trans::__('page.remove-team-pool.message.saved')
-                        );
-                    }
+                    $poolTeamRepository->save($poolTeam, true);
                 } catch (\Exception $e) {
-                    $this->flashes()->error(
-                        Trans::__('page.remove-pool-team.message.not-saved')
+                    $this->flashes()->warning(
+                        Trans::__('page.pool-teams.message.not-saved', ['%poolTeam%' => $poolTeam->getNameFft()])
                     );
                 }
-            } else {
-                foreach ($form->getErrors() as $error) {
-                    $this->flashes()->danger($error->getMessage());
-                }
             }
+        } catch (\Exception $e) {
+            $this->flashes()->error(Trans::__('page.pool-teams.message.not-fetched'));
         }
-
-        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]) . '#pool' . $pool->getId();
 
         return $this->redirect($url);
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param integer                                   $poolId
+     * Récupération du classement et des rencontres de la poule d'id donné depuis la FFT.
      *
-     * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView
-     * @throws \Bolt\Exception\InvalidRepositoryException
-     */
-    public function editDaysAndMatches(Request $request, $poolId)
-    {
-        /** @var Pool $pool */
-        $pool = $this->getRepository('championship_pool')->find($poolId);
-        if (!$pool) {
-            $this->flashes()->error(Trans::__('general.phrase.wrong-parameter-cannot-edit'));
-            $this->redirectToRoute('championship');
-        }
-
-        $completeness = $this->getRepository('championship_pool')->getEditionCompleteness($pool);
-
-        $form = $this->buildEditPoolMatchesForm($request, $pool);
-        $context = [
-            'form'         => $form->createView(),
-            'completeness' => $completeness,
-        ];
-
-        /** @var TeamRepository $teamRepository */
-        $teamRepository = $this->getRepository('championship_team');
-        $teams = $teamRepository->findByPoolId($pool->getId());
-
-        return $this->render(
-            '@AsmbCompetition/championship/pool/edit-matches.twig',
-            $context,
-            [
-                'pool'  => $pool,
-                'teams' => $teams,
-            ]
-        );
-    }
-
-    /**
      * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param integer                                   $championshipId
      * @param integer                                   $poolId
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function saveDaysAndMatches(Request $request, $poolId)
+    public function fetchRankingAndMeetings(Request $request, $championshipId, $poolId)
     {
-        /** @var Pool $pool */
-        $pool = $this->getRepository('championship_pool')->find($poolId);
-        if (!$pool) {
-            $this->flashes()->error(Trans::__('general.phrase.wrong-parameter-cannot-edit'));
-            $this->redirectToRoute('championship');
+        $url = $this->generateUrl('championshipview', ['id' => $championshipId]);
+
+        try {
+            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
+            $poolRepository = $this->getRepository('championship_pool');
+            /** @var \Bundle\Asmb\Competition\Entity\Championship\Pool $pool */
+            $pool = $poolRepository->find($poolId);
+
+            // Données CLASSEMENT
+            // Récupération des données depuis la Gestion Sportive de la FFT
+            /** @var \Bundle\Asmb\Competition\Parser\PoolRankingParser $poolRankingParser */
+            $poolRankingParser = $this->app['pool_ranking_parser'];
+            $poolRankingParsed = $poolRankingParser->parse($pool);
+            // Sauvegarde des classements en base
+            $this->savePoolRanking($pool, $poolRankingParsed);
+
+            // Données RENCONTRES
+            // Récupération des données depuis la Gestion Sportive de la FFT
+            // On commence par compter le nombre de page à parser
+            $pageCount = ceil($this->getTotalMeetingsCount($pool) / PoolMeetingsParser::MAX_PER_PAGE);
+
+            /** @var \Bundle\Asmb\Competition\Parser\PoolMeetingsParser $poolMatchesParser */
+            $poolMeetingsParser = $this->app['pool_meetings_parser'];
+            $poolMeetingsParsed = $poolMeetingsParser->parse($pool, $pageCount);
+            // Sauvegarde des rencontres en base
+            $this->saveMeetings($pool, $poolMeetingsParsed);
+
+            $pool->setUpdatedAt();
+            $poolRepository->save($pool);
+
+            $this->flashes()->success(
+                Trans::__('page.pool-ranking-and-meetings.message.fetched', ['%pool_name%' => $pool->getName()])
+            );
+        } catch (\Exception $e) {
+            $this->flashes()->error(
+                Trans::__('page.pool-ranking-and-meetings.message.not-fetched', ['%pool_name%' => $pool->getName()])
+            );
+            $this->flashes()->error($e->getMessage());
         }
 
-        $form = $this->buildEditPoolMatchesForm($request, $pool);
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var PoolDayRepository $poolDayRepository */
-            $poolDayRepository = $this->getRepository('championship_pool_day');
-            $poolDayRepository->savePoolDays($pool->getId(), $form->getData());
+        return $this->redirect($url);
+    }
 
-            /** @var MatchRepository $matchRepository */
-            $matchRepository = $this->getRepository('championship_match');
-            $matchRepository->savePoolMatches($pool->getId(), $form->getData());
+    /**
+     * Sauvegarde les classements données en paramètre.
+     *
+     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
+     * @param PoolRanking[]                                     $poolRankings
+     */
+    protected function savePoolRanking(Pool $pool, array $poolRankings)
+    {
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+        $poolTeamRepository = $this->getRepository('championship_pool_team');
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolRankingRepository */
+        $poolRankingRepository = $this->getRepository('championship_pool_ranking');
+
+        foreach ($poolRankings as $poolRanking) {
+            // On récupère le nom interne de l'équipe à partir du nom FFT
+            /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam $poolTeam */
+            $poolTeam = $poolTeamRepository->findOneBy(
+                ['pool_id' => $pool->getId(), 'name_fft' => $poolRanking->getTeamNameFft()]
+            );
+
+            if (!$poolTeam) {
+                $this->flashes()->error(Trans::__('page.pool-ranking.message.not-fetched'));
+            } else {
+                $poolRanking->setTeamIsClub($poolTeam->isClub());
+
+                // Création ou mise à jour ?
+                /** @var PoolRanking $existingPoolRanking */
+                $existingPoolRanking = $poolRankingRepository->findOneBy(
+                    [
+                        'pool_id'   => $pool->getId(),
+                        'team_name_fft' => $poolRanking->getTeamNameFft(),
+                    ]
+                );
+
+                if (false !== $existingPoolRanking) {
+                    // Mise à jour : on spécifie l'id pour se mettre en mode "update"
+                    $poolRanking->setId($existingPoolRanking->getId());
+                }
+                $poolRankingRepository->save($poolRanking, true);
+            }
         }
+    }
 
-        return $this->redirectToRoute('pooleditmatches', ['poolId' => $pool->getId()]);
+    /**
+     * Sauvegarde les matchs donnés en paramètre.
+     *
+     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
+     * @param PoolMeeting[]                                     $poolMeetings
+     */
+    protected function saveMeetings(Pool $pool, array $poolMeetings)
+    {
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository $poolMeetingRepository */
+        $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
+
+        foreach ($poolMeetings as $poolMeeting) {
+            // On récupère les 2 équipes de la rencontre à partir de leur nom FFT
+            /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam $homePoolTeam */
+
+            // Création ou mise à jour ?
+            /** @var PoolMeeting $existingPoolRanking */
+            $existingPoolMeeting = $poolMeetingRepository->findOneBy(
+                [
+                    'pool_id'          => $pool->getId(),
+                    'home_team_name_fft'    => $poolMeeting->getHomeTeamNameFft(),
+                    'visitor_team_name_fft' => $poolMeeting->getVisitorTeamNameFft(),
+                ]
+            );
+
+            if (false !== $existingPoolMeeting) {
+                // Mise à jour : on spécifie l'id pour se mettre en mode "update"
+                $poolMeeting->setId($existingPoolMeeting->getId());
+            }
+            $poolMeetingRepository->save($poolMeeting, true);
+        }
     }
 }

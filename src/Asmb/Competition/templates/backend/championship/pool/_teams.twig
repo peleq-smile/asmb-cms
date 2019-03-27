@@ -1,0 +1,49 @@
+<div id="pool{{ pool.id }}" class="panel panel-default">
+    <div class="panel-heading">
+        <span class="title">{{ pool.name }}</span>
+        {% if pool.getLinkFft() %}
+            &nbsp;&bullet;&nbsp;
+            <a href="{{ pool.getLinkFft() }}" target="_blank">
+                <i class="fa fa-external-link"></i> {{ __('general.phrase.go-to-fft') }}
+            </a>
+        {% endif %}
+
+        <div class="pull-right">
+            {{ include('@AsmbCompetition/championship/pool/_teams-actions.twig', {'pool': pool}) }}
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table table-condensed table-teams">
+            <thead>
+            <tr>
+                {% if poolTeams|length > 1 %}
+                    <th>{{ __('general.phrase.name-fft') }}</th>
+                    <th>{{ __('general.phrase.name-internal') }}</th>
+                    <th class="text-center">{{ __('general.phrase.is_club') }}</th>
+                {% else %}
+                    <th><em>{{ __('general.phrase.empty-list') }}</em></th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for poolTeam in poolTeams %}
+                <tr class="form-inline">
+                    <td>{{ poolTeam.name_fft }}</td>
+                    <td>{{ form_widget(context.editPoolsTeamsForm['pool_team' ~ poolTeam.id ~ '_name']) }}</td>
+                    <td class="text-center">{{ form_widget(context.editPoolsTeamsForm['pool_team' ~ poolTeam.id ~ '_is_club']) }}</td>
+                </tr>
+            {% endfor %}
+            {% if poolTeams is empty %}
+                <tr>
+                    <td class="text-center">
+                        <a href="{{ path('poolfetchteams', {'championshipId': championship.id, 'poolId': pool.id}) }}"
+                           class="btn btn-primary info-pop"
+                           data-content="{{ __('page.fetch-pool-teams.btn.title') }}"
+                        >{{ __('page.fetch-pool-teams.btn.text') }}</a>
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

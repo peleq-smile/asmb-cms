@@ -23,23 +23,27 @@ class PoolEditType extends AbstractType
     {
         parent::buildForm($builder, $options);
 
-        $keyTransLabelSave = ($builder->getData()->getId()) ? 'general.phrase.save' : 'general.phrase.add';
+        /** @var \Bundle\Asmb\Competition\Entity\Championship\Pool $pool */
+        $pool = $builder->getData();
+
+        $keyTransLabelSave = (null !== $pool->getId()) ? 'general.phrase.save' : 'general.phrase.add';
+
+        $builder->add(
+            'championship_id',
+            Type\HiddenType::class,
+            [
+                'empty_data' => $options['championship_id'],
+            ]
+        );
+
+        if (null !== $pool->getPosition()) {
+            $builder->add(
+                'position',
+                Type\IntegerType::class
+            );
+        }
 
         $builder
-            ->add(
-                'championship_id',
-                Type\HiddenType::class,
-                [
-                    'empty_data' => $options['championship_id'],
-                ]
-            )
-            ->add(
-                'position',
-                Type\IntegerType::class,
-                [
-                    'required' => false,
-                ]
-            )
             ->add(
                 'category_name',
                 Type\ChoiceType::class,
@@ -62,26 +66,12 @@ class PoolEditType extends AbstractType
                 ]
             )
             ->add(
-                'short_name',
+                'fft_id',
                 Type\TextType::class,
                 [
-                    'label'       => Trans::__('general.phrase.short_name'),
-                    'required'    => false,
-                    'constraints' => [
-                        new Assert\Length(['min' => 0, 'max' => 20]),
-                    ],
-                ]
-            )
-            ->add(
-                'link_fft',
-                Type\TextType::class,
-                [
-                    'label'       => Trans::__('general.phrase.link_fft'),
-                    'required'    => false,
-                    'attr'        => ['size' => '100'],
-                    'constraints' => [
-                        new Assert\Url(),
-                    ],
+                    'label'     => Trans::__('general.phrase.fft_id'),
+                    'required'  => true,
+                    'read_only' => $options['has_teams'],
                 ]
             )
             ->add(
@@ -104,6 +94,7 @@ class PoolEditType extends AbstractType
             [
                 'championship_id',
                 'category_names',
+                'has_teams',
             ]
         );
     }

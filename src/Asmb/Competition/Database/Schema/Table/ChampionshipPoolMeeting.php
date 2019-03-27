@@ -10,7 +10,7 @@ use Bolt\Storage\Database\Schema\Table\BaseTable;
  * @author    Perrine Léquipé <perrine.lequipe@gmail.com>
  * @copyright 2019
  */
-class ChampionshipMatch extends BaseTable
+class ChampionshipPoolMeeting extends BaseTable
 {
     /**
      * {@inheritdoc}
@@ -19,14 +19,15 @@ class ChampionshipMatch extends BaseTable
     {
         $this->table->addColumn('id', 'integer', ['autoincrement' => true]);
         $this->table->addColumn('pool_id', 'integer');
+        $this->table->addColumn('home_team_name_fft', 'string', ['length' => 255, 'notnull' => true]);
+        $this->table->addColumn('visitor_team_name_fft', 'string', ['length' => 255, 'notnull' => true]);
         $this->table->addColumn('day', 'smallint', ['notnull' => true]);
         $this->table->addColumn('date', 'date', ['notnull' => false]);
+        $this->table->addColumn('is_reported', 'boolean', ['default' => false, 'notnull' => true]);
         $this->table->addColumn('time', 'time', ['notnull' => false]);
-        $this->table->addColumn('position', 'integer', ['notnull' => true]);
-        $this->table->addColumn('home_team_id', 'integer', ['notnull' => false]);
-        $this->table->addColumn('visitor_team_id', 'integer', ['notnull' => false]);
-        $this->table->addColumn('score_home', 'smallint', ['notnull' => false]);
-        $this->table->addColumn('score_visitor', 'smallint', ['notnull' => false]);
+        $this->table->addColumn('result', 'string', ['length' => 20, 'notnull' => false]);
+        $this->table->addColumn('club_flag', 'smallint', ['default' => 0, 'notnull' => true]);
+        $this->table->addColumn('params_fdm_fft', 'json', []);
     }
 
     /**
@@ -36,13 +37,9 @@ class ChampionshipMatch extends BaseTable
     {
         $this->table->addIndex(['pool_id']);
         $this->table->addIndex(['day']);
-        $this->table->addIndex(['date']);
-        $this->table->addIndex(['time']);
-        $this->table->addIndex(['position']);
-        $this->table->addIndex(['home_team_id']);
-        $this->table->addIndex(['visitor_team_id']);
-        $this->table->addUniqueIndex(['pool_id', 'home_team_id', 'visitor_team_id']);
-        $this->table->addUniqueIndex(['pool_id', 'day', 'position']);
+        $this->table->addIndex(['date', 'time']);
+        $this->table->addIndex(['club_flag']);
+        $this->table->addUniqueIndex(['pool_id', 'home_team_name_fft', 'visitor_team_name_fft']);
     }
 
     /**
@@ -63,20 +60,6 @@ class ChampionshipMatch extends BaseTable
             ['pool_id'],
             ['id'],
             ['onDelete' => 'CASCADE']
-        );
-
-        $this->table->addForeignKeyConstraint(
-            'bolt_championship_team',
-            ['home_team_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-
-        $this->table->addForeignKeyConstraint(
-            'bolt_championship_team',
-            ['visitor_team_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
         );
     }
 }

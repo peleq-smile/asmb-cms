@@ -1,9 +1,10 @@
 <table class="dashboardlisting table-striped table-hover table-condensed">
     <thead>
     <tr>
-        <th>{{ __('general.phrase.championship-name') }}</th>
-        <th>{{ __('general.phrase.championship-year') }}</th>
-        <th>{{ __('general.phrase.championship-short_name') }}</th>
+        <th></th>
+        <th>{{ __('general.phrase.name') }}</th>
+        <th>{{ __('general.phrase.year') }}</th>
+        <th>{{ __('general.phrase.short_name') }}</th>
         <th></th>
     </tr>
     </thead>
@@ -11,6 +12,18 @@
     <tbody>
     {% for championship in championships %}
         <tr>
+
+            <td class="text-center is_active">
+                {%  if championship.is_active %}
+                    <i class="info-pop fa fa-circle status-published"
+                       data-content="{{ __('page.list-championship.is_active.info') }}"
+                       data-title="{{ __('page.list-championship.is_active.title') }}"></i>
+                {% else %}
+                    <i class="info-pop fa fa-circle"
+                       data-content="{{ __('page.list-championship.not-is_active.info') }}"
+                       data-title="{{ __('page.list-championship.not-is_active.title') }}"></i>
+                {% endif %}
+            </td>
 
             <td class="name">{{ championship.name }}</td>
 

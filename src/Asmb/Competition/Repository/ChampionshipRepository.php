@@ -13,12 +13,23 @@ use Bolt\Storage\Repository;
 class ChampionshipRepository extends Repository
 {
     /**
-     * Return all championship ordered by year, from newest to oldest.
+     * Retourne tous les championnats, par ordre d'année décroissante puis nom croissant.
      *
      * @return bool|mixed|object[]
      */
     public function findAll()
     {
-        return $this->findBy([], ['year', 'DESC']);
+        $championships = [];
+
+        $qb = $this->findWithCriteria([]);
+        $qb->orderBy('year', 'DESC');
+        $qb->orderBy('name', 'ASC');
+        $result = $qb->execute()->fetchAll();
+
+        if ($result) {
+            $championships = $this->hydrateAll($result, $qb);
+        }
+
+        return $championships;
     }
 }

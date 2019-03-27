@@ -3,15 +3,15 @@
 {% block page_nav 'championship-menu' %}
 
 {% if championship.name %}
-    {% set championship_title = championship.name ~ ' ' ~ championship.year %}
+    {% set championship_title =  __('page.edit-championship.edit.title', {'%championship%': championship.name ~ ' ' ~ championship.year})%}
 {% else %}
-    {% set championship_title = __('general.phrase.championship.all') %}
+    {% set championship_title = __('page.edit-championship.new.title') %}
 {% endif %}
 
 {% block page_title championship_title %}
 
 {% block page_main %}
-    <div class="competition-edit">
+    <div class="championship-edit">
         {% import '@bolt/_macro/_macro.twig' as macro %}
 
         {# Championship infos edit #}
@@ -29,22 +29,23 @@
         </div>
         {% endif %}
 
-        {%  if poolsByCategoryName is defined %}
-            {% for category_name, pools in poolsByCategoryName %}
+        {% if context.editPoolsTeamsForm is defined %}
+            {% form_theme context.editPoolsTeamsForm 'form_bolt_layout.twig' %}
+            {{ form_start(context.editPoolsTeamsForm) }}
+
+            {% for category_name, pools in poolsPerCategoryName %}
                 {% if pools is not empty %}
                     <fieldset>
                         <legend>{{ __('general.phrase.pools-of-category', {'%categoryName%': category_name}) }}</legend>
-
                         {% for pool in pools %}
                             {% if loop.index0 % 4 == 0 or loop.first %}
                                 <div class="row small-gap">
                             {% endif %}
 
                             <div class="col-lg-3 col-xs-12">
-                                {{ include('@AsmbCompetition/championship/pool/_edit-teams-matches.twig',
+                                {{ include('@AsmbCompetition/championship/pool/_teams.twig',
                                     {
-                                        'teams': teamsByPool[pool.id],
-                                        'addTeamsForm': context.addTeamsForms[pool.id],
+                                        'poolTeams': poolTeamsPerPoolId[pool.id],
                                     }) }}
                             </div>
                             {% if loop.index0 % 4 == 3 or loop.last %}
@@ -54,15 +55,33 @@
                     </fieldset>
                 {% endif %}
             {% endfor %}
-        {% endif %}
 
-        <div class="row form-group">
-            <div class="col-md-12">
-                <a href="{{ path('championship') }}" class="btn btn-default">
-                    <i class="fa fa-chevron-circle-left"></i>
-                    {{ __('general.phrase.back') }}
-                </a>
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        {{ form_widget(context.editPoolsTeamsForm['pools_teams_save']) }}
+                    </div>
+                    <div class="pull-left">
+                        <a href="{{ path('championship') }}" class="btn btn-default">
+                            <i class="fa fa-chevron-circle-left"></i>
+                            {{ __('general.phrase.back') }}
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            {{ form_end(context.editPoolsTeamsForm) }}
+        {% else %}
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <a href="{{ path('championship') }}" class="btn btn-default">
+                            <i class="fa fa-chevron-circle-left"></i>
+                            {{ __('general.phrase.back') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock page_main %}

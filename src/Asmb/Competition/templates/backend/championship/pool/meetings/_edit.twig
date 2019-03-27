@@ -1,7 +1,7 @@
 {% set teamsCount = teams|length %}
 {% if teamsCount > 1 %}
     {% set daysCount = (teamsCount is odd) ? teams|length : (teams|length - 1) %}
-    {% set matchesCountPerDay = (teamsCount / 2)|round(0, 'floor') %}
+    {% set meetingsCountPerDay = (teamsCount / 2)|round(0, 'floor') %}
 
     {{ form_start(form) }}
         <div class="clearfix">
@@ -22,57 +22,57 @@
                     </div>
 
                     <div class="panel-body">
-                        <table class="table table-condensed table-matches">
+                        <table class="table table-condensed table-meetings">
                             {% set dateOfDay = (form.vars.value.days['day_' ~ day] is defined) ? form.vars.value.days['day_' ~ day] : '' %}
                             <thead>
                             <tr>
                                 <th class="text-center"></th>
-                                <th>{{ __('page.edit-pool-matches.time') }}</th>
-                                <th>{{ __('page.edit-pool-matches.home_team') }}</th>
-                                <th>{{ __('page.edit-pool-matches.visitor_team') }}</th>
+                                <th>{{ __('page.edit-pool-meetings.time') }}</th>
+                                <th>{{ __('page.edit-pool-meetings.home_team') }}</th>
+                                <th>{{ __('page.edit-pool-meetings.visitor_team') }}</th>
                                 <th></th>
 
                             </tr>
                             </thead>
                             <tbody>
-                            {% for matchPosition in 1..matchesCountPerDay %}
+                            {% for meetingPosition in 1..meetingsCountPerDay %}
                                 <tr>
                                     <td class="text-center">
-                                        {# Check if we have a specific date for the match #}
-                                        {% set matchDate = (form.vars.value.matches['day_' ~ day][matchPosition] is defined) ? form.vars.value.matches['day_' ~ day][matchPosition].date : null %}
-                                        {% if matchDate is null %}
+                                        {# Check if we have a specific date for the meeting #}
+                                        {% set meetingDate = (form.vars.value.meetings['day_' ~ day][meetingPosition] is defined) ? form.vars.value.meetings['day_' ~ day][meetingPosition].date : null %}
+                                        {% if meetingDate is null %}
                                             {% set showInfo = false %}
-                                            {% set matchFormattedDate = '' %}
+                                            {% set meetingFormattedDate = '' %}
                                         {% else %}
                                             {% set showInfo = true %}
-                                            {% set matchFormattedDate = matchDate|date("d/m/Y") %}
+                                            {% set meetingFormattedDate = meetingDate|date("d/m/Y") %}
                                         {% endif %}
 
                                         <div class="info-pop{% if not showInfo %} hidden{% endif %}" data-html="true"
-                                             data-content="{{ __('page.edit-match-date.info', {'%date%': '<span class="info-date-match" id="infoDateMatch-' ~ pool.id ~ '-' ~ day ~ '-' ~ matchPosition ~ '">' ~ matchFormattedDate ~ '</span>' }) }}">
+                                             data-content="{{ __('page.edit-meeting-date.info', {'%date%': '<span class="info-date-meeting" id="infoDatemeeting-' ~ pool.id ~ '-' ~ day ~ '-' ~ meetingPosition ~ '">' ~ meetingFormattedDate ~ '</span>' }) }}">
                                             <i class="fa fa-calendar-o"></i>
                                         </div>
                                     </td>
 
                                     {# Time input #}
                                     <td class="text-left">
-                                        {{ form_widget(form['pool' ~ pool.id ~ '_day_' ~ day ~ '_match_' ~ matchPosition ~ '_time'], {'attr': {'title': __('page.edit-match-date.set-hour')}}) }}
+                                        {{ form_widget(form['pool' ~ pool.id ~ '_day_' ~ day ~ '_meeting_' ~ meetingPosition ~ '_time'], {'attr': {'title': __('page.edit-meeting-date.set-hour')}}) }}
                                     </td>
 
                                     {# Teams input #}
-                                    <td class="text-left">{{ form_widget(form['pool' ~ pool.id ~ '_day_' ~ day ~ '_match_' ~ matchPosition ~ '_home_team_id'], {'attr': {'class': 'select-team'}}) }}</td>
-                                    <td>{{ form_widget(form['pool' ~ pool.id ~ '_day_' ~ day ~ '_match_' ~ matchPosition ~ '_visitor_team_id'], {'attr': {'class': 'select-team'}}) }}</td>
+                                    <td class="text-left">{{ form_widget(form['pool' ~ pool.id ~ '_day_' ~ day ~ '_meeting_' ~ meetingPosition ~ '_home_team_id'], {'attr': {'class': 'select-team'}}) }}</td>
+                                    <td>{{ form_widget(form['pool' ~ pool.id ~ '_day_' ~ day ~ '_meeting_' ~ meetingPosition ~ '_visitor_team_id'], {'attr': {'class': 'select-team'}}) }}</td>
 
-                                    {#Button / info about specific date for the match#}
+                                    {#Button / info about specific date for the meeting#}
                                     <td class="text-center">
-                                        <a href="#editMatchModal-{{ pool.id ~ '-' ~ day ~ '-' ~ matchPosition }}"
+                                        <a href="#editmeetingModal-{{ pool.id ~ '-' ~ day ~ '-' ~ meetingPosition }}"
                                            class="btn btn-xs btn-silent-danger"
-                                           data-toggle="modal" title="{{ __('page.edit-match-date.title') }}">
+                                           data-toggle="modal" title="{{ __('page.edit-meeting-date.title') }}">
                                             <i class="fa fa-calendar-plus-o"></i>
                                         </a>
                                     </td>
                                 </tr>
-                            match in
+                            meeting in
                             </tbody>
                         </table>
                     </div>
@@ -86,19 +86,19 @@
         </div>
 
     <div class="pull-right">
-        {{ form_widget(form['pool' ~ pool.id ~ '_matches_save']) }}
+        {{ form_widget(form['pool' ~ pool.id ~ '_meetings_save']) }}
     </div>
 
     {% for day in 1..daysCount %}
-        {% for matchPosition in 1..matchesCountPerDay %}
-            <div class="modal fade" id="editMatchModal-{{ pool.id ~ '-' ~ day ~ '-' ~ matchPosition }}"
+        {% for meetingPosition in 1..meetingsCountPerDay %}
+            <div class="modal fade" id="editmeetingModal-{{ pool.id ~ '-' ~ day ~ '-' ~ meetingPosition }}"
                  tabindex="-1" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        {{ include('@AsmbCompetition/championship/match/_modal-edit.twig', {
+                        {{ include('@AsmbCompetition/championship/meeting/_modal-edit.twig', {
                             'pool': pool,
                             'day': day,
-                            'matchPosition': matchPosition
+                            'meetingPosition': meetingPosition
                         }) }}
                     </div>
                 </div>

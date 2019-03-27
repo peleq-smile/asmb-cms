@@ -1,0 +1,13 @@
+<a href="{{ path('pooledit', {'poolId': pool.id}) }}"
+   title="{{ __('page.edit-pool.title') }}"
+   class="btn btn-xs btn-default">
+    <i class="fa fa-edit"></i>
+</a>
+
+<a href="{{ path('pooldelete', {'poolId': pool.id}) }}" class="btn btn-silent-danger btn-xs confirm"
+   title="{{ __('page.delete-pool.title') }}"
+   data-confirm="{{ __('general.phrase.confirm-delete-pool', { '%name%': pool.short_name ? pool.short_name : pool.name }) }}">
+    <span class="pull-left">
+        <i class="fa fa-trash"></i>
+    </span>
+</a>

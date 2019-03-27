@@ -25,6 +25,15 @@ class ChampionshipEditType extends AbstractType
 
         $builder
             ->add(
+                'year',
+                Type\ChoiceType::class,
+                [
+                    'label'    => Trans::__('general.phrase.year'),
+                    'choices'  => $this->getYearsAsChoices(),
+                    'expanded' => false,
+                ]
+            )
+            ->add(
                 'name',
                 Type\TextType::class,
                 [
@@ -36,15 +45,6 @@ class ChampionshipEditType extends AbstractType
                 ]
             )
             ->add(
-                'year',
-                Type\ChoiceType::class,
-                [
-                    'label'             => Trans::__('general.phrase.year'),
-                    'choices'           => $this->getYearsAsChoices(),
-                    'expanded'          => false,
-                ]
-            )
-            ->add(
                 'short_name',
                 Type\TextType::class,
                 [
@@ -53,6 +53,22 @@ class ChampionshipEditType extends AbstractType
                     'constraints' => [
                         new Assert\Length(['min' => 0, 'max' => 20]),
                     ],
+                    'attr'        => [
+                        'size'      => 20,
+                        'maxlength' => 20,
+                    ],
+                ]
+            )
+            ->add(
+                'is_active',
+                Type\ChoiceType::class,
+                [
+                    'choices'    => [
+                        0 => Trans::__('general.phrase.no'),
+                        1 => Trans::__('general.phrase.yes'),
+                    ],
+                    'label'      => false,
+                    'empty_data' => 0,
                 ]
             )
             ->add('save', Type\SubmitType::class, ['label' => Trans::__('page.edit.button.save-edit')]);
