@@ -42,6 +42,8 @@ class PoolMeeting extends Entity
     protected $visitor_team_name;
     /** @var boolean */
     protected $visitor_team_is_club;
+    /** @var string */
+    protected $championship_name;
 
     /**
      * @return mixed
@@ -265,5 +267,21 @@ class PoolMeeting extends Entity
     public function setVisitorTeamIsClub($visitorTeamIsClub)
     {
         $this->visitor_team_is_club = (bool) $visitorTeamIsClub;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChampionshipName()
+    {
+        return $this->championship_name;
+    }
+
+    /**
+     * @param string $championshipName
+     */
+    public function setChampionshipName($championshipName)
+    {
+        $this->championship_name = $championshipName;
     }
 }

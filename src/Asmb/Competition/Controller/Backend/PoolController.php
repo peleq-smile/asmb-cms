@@ -377,6 +377,8 @@ class PoolController extends AbstractController
             if (false !== $existingPoolMeeting) {
                 // Mise à jour : on spécifie l'id pour se mettre en mode "update"
                 $poolMeeting->setId($existingPoolMeeting->getId());
+                // Si une heure existe, on la conserve
+                $poolMeeting->setTime($existingPoolMeeting->getTime());
             }
             $poolMeetingRepository->save($poolMeeting, true);
         }

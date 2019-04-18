@@ -3,6 +3,7 @@
 namespace Bundle\Asmb\Competition\Helpers;
 
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
+use Carbon\Carbon;
 
 /**
  * Helper pour les rencontres de poules.
@@ -26,12 +27,18 @@ class PoolMeetingHelper
      */
     public static function getScoreFromMeeting(PoolMeeting $meeting)
     {
+        $score = '';
+
         $result = $meeting->getResult();
 
         if (self::RESULT_NONE !== $result)  {
             $score = substr($result, 2, 3);
         } else {
-            $score = '';
+            $now = new Carbon();
+            $yesterday = $now->addDay(-1);
+            if ($meeting->getDate() < $yesterday) {
+                $score = ' - ';
+            }
         }
 
         return $score;

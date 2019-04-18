@@ -43,10 +43,11 @@ trait TwigFiltersTrait
      * Retourne le lien (HTML) vers la feuille de matchs de la Gestion Sportive (FFT).
      *
      * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
+     * @param string                                                   $faIcon
      *
      * @return string
      */
-    public function getMatchesSheetLink(PoolMeeting $meeting)
+    public function getMatchesSheetLink(PoolMeeting $meeting, $faIcon = 'leaf')
     {
         $link = '';
 
@@ -58,7 +59,11 @@ trait TwigFiltersTrait
                 . "&efm_iid={$paramsFdmFft['efm_iid']}"
                 . "&pha_iid={$paramsFdmFft['pha_iid']}";
 
-            $link = new \Twig_Markup('<a href="' . $url . '" class="btn btn-xs btn-tertiary" target="_blank"><i class="fa fa-file-text-o "></i></a>', 'utf-8');
+            $link = new \Twig_Markup(
+                '<a href="' . $url . '" class="btn btn-xs btn-link" target="_blank">'
+                . '<i class="fa fa-' . $faIcon . ' "></i></a>',
+                'utf-8'
+            );
         }
 
         return $link;

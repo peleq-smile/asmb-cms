@@ -22,8 +22,9 @@ class ChampionshipRepository extends Repository
         $championships = [];
 
         $qb = $this->findWithCriteria([]);
-        $qb->orderBy('year', 'DESC');
-        $qb->orderBy('name', 'ASC');
+        $qb->orderBy('is_active', 'DESC');
+        $qb->addOrderBy('year', 'DESC');
+        $qb->addOrderBy('id', 'DESC');
         $result = $qb->execute()->fetchAll();
 
         if ($result) {

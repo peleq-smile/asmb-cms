@@ -55,13 +55,12 @@
         <table class="table table-condensed table-meetings">
             {% for day, meetingsOfDay in meetingsPerDay %}
                 {% set oddOrEvenDay = cycle(['odd', 'even'], loop.index0) %}
+
                 {% for meeting in meetingsOfDay %}
-
-
                     <tr class="{{ oddOrEvenDay }}">
                         {% if loop.first %}
                             <th class="text-center" colspan="5"
-                                rowspan="{{ meetingsOfDay|length }}">{{ __('general.phrase.meeting-day', {'%day%': day}) }}
+                                rowspan="{{ meetingsOfDay|length }}">{{ __('general.phrase.meeting-day-short', {'%day%': day}) }}
                             </th>
                         {% endif %}
 
@@ -77,13 +76,32 @@
                                       data-content="{{ infoDateContent }}">{{ scoreHtml }}</span>
                             {% else %}
                                 {% set datetimeHtml = meeting.date|date('d/m') %}
-                                {% set datetimeHtml = datetimeHtml ~ ((meeting.time) ? meeting.time|date(' H:i') : '') %}
-
                                 <span class="datetime">{{ datetimeHtml }}</span>
                             {% endif %}
                         </td>
                         <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
-                        <td class="text-right">{{ meeting|matchesSheetLink }}</td>
+
+                        {% if scoreHtml is not empty %}
+                            <td class="text-right">{{ meeting|matchesSheetLink }}</td>
+                        {% else %}
+                            <td class="text-right">
+                                {% if meeting.home_team_is_club or meeting.visitor_team_is_club %}
+                                    {% if meeting.time %}
+                                        <span class="info-pop"
+                                              data-title="{{ __('page.view-championship.meeting-date.title') }}"
+                                              data-content="{{ __('page.view-championship.meeting-time.text', {'%time%': meeting.time|date(' H:i')}) }}">
+                                                <i class="fa fa-clock-o success"></i>
+                                        </span>
+                                    {% else %}
+                                        <span class="info-pop"
+                                              data-title="{{ __('page.view-championship.meeting-date.title') }}"
+                                              data-content="<em>{{ __('general.phrase.not-set') }}</em>" data-html="true">
+                                                <i class="fa fa-clock-o danger"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             {% endfor %}

@@ -20,5 +20,15 @@
                 {{ include('@AsmbCompetition/championship/_list.twig') }}
             </div>
         </div>
+
+        <div class="mt-md row">
+            <div class="col-md-12">
+                <h2><strong>{{ __('page.index-championship.meetings-of-the-moment.title') }}</strong></h2>
+                <p>{{ __('page.index-championship.meetings-of-the-moment.text') }}</p>
+            </div>
+
+            {{ include('@AsmbCompetition/championship/_meetings-of-the-moment.twig', {'meetings': lastMeetings, 'title': __('page.index-championship.last-meetings.title')}) }}
+            {{ include('@AsmbCompetition/championship/_meetings-of-the-moment.twig', {'meetings': nextMeetings, 'title': __('page.index-championship.next-meetings.title')}) }}
+        </div>
     </div>
 {% endblock page_main %}

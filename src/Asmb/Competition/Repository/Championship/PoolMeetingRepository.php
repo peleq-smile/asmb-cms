@@ -36,7 +36,6 @@ class PoolMeetingRepository extends Repository
      * @param array $poolIds
      *
      * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function findGroupByPoolIdAndDay(array $poolIds)
     {
@@ -92,5 +91,91 @@ class PoolMeetingRepository extends Repository
         }
 
         return $groupedMeetings;
+    }
+
+    /**
+     * Récupère et retourne les rencontres du moment concernant le club, en filtrant sur $pastDays jours en arrière
+     * et $futureDays en avant.
+     *
+     * @param int $pastDays
+     * @param int $futureDays
+     *
+     * @return PoolMeeting[]
+     */
+    public function findClubMeetingsOfTheMoment($pastDays, $futureDays)
+    {
+        $clubMeetingsOfTheMoment = [];
+
+        $qb = $this->getLoadQuery();
+
+        // Filtre sur les poules des championnats ACTIFS uniquement
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool',
+            'pool',
+            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
+        );
+        $qb->addSelect('championship.name as championship_name');
+        $qb->innerJoin(
+            'pool',
+            'bolt_championship',
+            'championship',
+            $qb->expr()->eq('pool.championship_id', 'championship.id')
+        );
+        $qb->where('championship.is_active = true');
+
+        // Filtre sur la date des matchs
+        $qb->andWhere("{$this->getAlias()}.date >= (CURDATE() - INTERVAL $pastDays DAY)");
+        $qb->andWhere("{$this->getAlias()}.date <= (CURDATE() + INTERVAL $futureDays DAY)");
+
+        // On veut le nom des équipes donné en interne (donc dans la table des PoolTeam) + savoir si c'est une
+        // équipe du club
+        // ÉQUIPE DOMICILE
+        $qb->addSelect("pt_home.name as home_team_name");
+        $qb->addSelect("pt_home.is_club as home_team_is_club");
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'pt_home',
+            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_home.pool_id')
+            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
+        );
+        // ÉQUIPE VISITEUR
+        $qb->addSelect("pt_visitor.name as visitor_team_name");
+        $qb->addSelect("pt_visitor.is_club as visitor_team_is_club");
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'pt_visitor',
+            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_visitor.pool_id')
+            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'pt_visitor.name_fft')
+        );
+
+        $qb->orderBy('championship_name');
+        $qb->addOrderBy('date');
+        $qb->addOrderBy('time');
+
+        $result = $qb->execute()->fetchAll();
+        if ($result) {
+            $meetings = $this->hydrateAll($result, $qb);
+
+            /** @var PoolMeeting $meeting */
+            foreach ($meetings as $idx => $meeting) {
+                // Ajout à la volée du nom interne des équipes + indicateur "fait partie du club"
+                $meeting->setHomeTeamName($result[$idx]['home_team_name']);
+                $meeting->setHomeTeamIsClub($result[$idx]['home_team_is_club']);
+                $meeting->setVisitorTeamName($result[$idx]['visitor_team_name']);
+                $meeting->setVisitorTeamIsClub($result[$idx]['visitor_team_is_club']);
+
+                $meeting->setChampionshipName($result[$idx]['championship_name']);
+
+                if ($meeting->getHomeTeamIsClub() || $meeting->getVisitorTeamIsClub()) {
+                    // On ne veut que les rencontres qui concernent le club
+                    $clubMeetingsOfTheMoment[] = $meeting;
+                }
+            }
+        }
+
+        return $clubMeetingsOfTheMoment;
     }
 }

@@ -1,0 +1,4 @@
+asmb:
+    competition:
+        last_meetings_past_days: 30
+        next_meetings_future_days: 30

@@ -23,6 +23,16 @@ abstract class AbstractController extends BackendBase
 {
     /** @var Pool[] */
     private $pools;
+    /** @var array */
+    private $config;
+
+    /**
+     * AbstractController constructor.
+     */
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
 
     /**
      * Build add pool to a championship form.
@@ -150,6 +160,25 @@ abstract class AbstractController extends BackendBase
     }
 
     /**
+     * Retourne les rencontres du moment, dans le passé ou le futur selon que $pastOrFutureDays soit négatif (passé)
+     * ou positif (futur).
+     *
+     * @param int $pastOrFutureDays
+     *
+     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
+     */
+    protected function getMeetingsOfTheMoment($pastOrFutureDays)
+    {
+        /** @var PoolMeetingRepository $poolMeetingRepository */
+        $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
+        $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;
+        $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
+        $meetingsOfTheMoment = $poolMeetingRepository->findClubMeetingsOfTheMoment($pastDays, $futureDays);
+
+        return $meetingsOfTheMoment;
+    }
+
+    /**
      * Retrieve pools of championship with given id.
      *
      * @param integer $championshipId
@@ -210,20 +239,14 @@ abstract class AbstractController extends BackendBase
     }
 
     /**
-     * Retrieve matches of given pools, grouped by pool id and day.
+     * Retourne la valeur du paramètre de config demandé.
      *
-     * @param Pool[] $pools
+     * @param string $key
      *
-     * @return bool|mixed|object[]
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return mixed
      */
-    //    protected function getMatchesByPoolIdByDay(array $pools)
-    //    {
-    //        /** @var PoolMatchRepository $matchRepository */
-    //        $matchRepository = $this->getRepository('championship_match');
-    //
-    //        $poolIds = array_keys($pools);
-    //
-    //        return $matchRepository->findGroupByPoolIdAndDay($poolIds);
-    //    }
+    public function getAsmbConfig($key)
+    {
+        return $this->config[$key];
+    }
 }

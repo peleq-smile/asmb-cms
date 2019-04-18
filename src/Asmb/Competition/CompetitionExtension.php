@@ -24,6 +24,8 @@ class CompetitionExtension extends SimpleExtension
 
     use TwigFiltersTrait;
 
+
+
     /**
      * {@inheritdoc}
      */
@@ -44,9 +46,12 @@ class CompetitionExtension extends SimpleExtension
      */
     protected function registerBackendControllers()
     {
+        $config = $this->getConfig();
+        $asmbCompetitionConfig = $config['asmb']['competition'];
+
         return [
-            '/extensions/championship' => new Controller\Backend\ChampionshipController(),
-            '/extensions/pool'         => new Controller\Backend\PoolController(),
+            '/extensions/championship' => new Controller\Backend\ChampionshipController($asmbCompetitionConfig),
+            '/extensions/pool'         => new Controller\Backend\PoolController($asmbCompetitionConfig),
         ];
     }
 

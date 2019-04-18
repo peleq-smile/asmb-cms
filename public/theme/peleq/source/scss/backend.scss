@@ -3,6 +3,7 @@
 
 //---- Parameters
 $default: #333333;
+$default-hover: #777777;
 $success: #3c763d;
 $warning: #ec971f;
 $danger: #a94442;
@@ -31,6 +32,35 @@ $widescreen: 1280px;
     margin-bottom: 20px;
 }
 
+.danger {
+    color: $danger;
+}
+
+.success {
+    color: $success;
+}
+
+.score {
+    border-radius: 8px;
+    padding: 1px 6px;
+    white-space: nowrap;
+
+    &.victory {
+        background: $success;
+        color: $white;
+    }
+
+    &.defeat {
+        background: $danger;
+        color: $white;
+    }
+
+    &.draw {
+        background: $warning;
+        color: $white;
+    }
+}
+
 //-- Liste des championnats
 .championship-index {
     .dashboardlisting {
@@ -40,6 +70,28 @@ $widescreen: 1280px;
 
         .is_active i {
             cursor: help;
+        }
+    }
+
+    .is-club {
+        font-weight: bold;
+    }
+
+    .table-meetings {
+        th em {
+            font-weight: normal;
+        }
+
+        thead:not(:first-child) th {
+            padding-top: 3rem;
+        }
+    }
+
+    .btn-link {
+        color: $default;
+
+        &:hover {
+            color: $default-hover;
         }
     }
 }
@@ -54,7 +106,7 @@ $widescreen: 1280px;
         line-height: 2.5rem;
     }
 
-    input[type=date], input[type=time] {
+    input[type=time] {
         width: auto;
         line-height: 20px;
         display: inline-block;
@@ -142,17 +194,6 @@ $widescreen: 1280px;
         }
     }
 
-    .modal {
-        .form-inline {
-            display: inline-block;
-
-            .btn-primary {
-                line-height: 19px;
-                vertical-align: top;
-            }
-        }
-    }
-
     .panel-heading {
         .control-label {
             font-weight: bold;
@@ -163,46 +204,34 @@ $widescreen: 1280px;
             margin-top: -2px;
         }
     }
+    //
+    //.completeness-block {
+    //    .btn {
+    //        color: white;
+    //        font-size: 1.5rem;
+    //    }
+    //
+    //    .badge {
+    //        line-height: 24px;
+    //        padding: 0 15px;
+    //
+    //        &.bg-danger {
+    //            background-color: $danger;
+    //        }
+    //        &.bg-success {
+    //            background-color: $success;
+    //        }
+    //        &.bg-warning {
+    //            background-color: $warning;
+    //        }
+    //    }
+    //}
 
-    .completeness-block {
-        .btn {
-            color: white;
-            font-size: 1.5rem;
-        }
+    .btn-link {
+        color: $default;
 
-        .badge {
-            line-height: 24px;
-            padding: 0 15px;
-
-            &.bg-danger {
-                background-color: $danger;
-            }
-            &.bg-success {
-                background-color: $success;
-            }
-            &.bg-warning {
-                background-color: $warning;
-            }
-        }
-    }
-
-    .score {
-        border-radius: 8px;
-        padding: 1px 6px;
-
-        &.victory {
-            background: $success;
-            color: $white;
-        }
-
-        &.defeat {
-            background: $danger;
-            color: $white;
-        }
-
-        &.draw {
-            background: $warning;
-            color: $white;
+        &:hover {
+            color: $default-hover;
         }
     }
 }
@@ -213,6 +242,10 @@ $widescreen: 1280px;
             & * {
                 font-size: 0.8em;
             }
+        }
+
+        input[type=time] {
+            min-width: 63px;
         }
     }
 }
