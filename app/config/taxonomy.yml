@@ -9,8 +9,8 @@ etiquettes:
     behaves_like: grouping
     multiple: true
     options:
-        accueil-top: À afficher sur l'accueil (sous le bloc de Bienvenue)
-        accueil-bottom: À afficher sur l'accueil (avant le bloc des Dernières infos)
+        accueil-top: Affiché sur l'accueil - section du haut
+        accueil-bottom: Afficher sur l'accueil - section du bas
     has_sortorder: true
 
 #tags:

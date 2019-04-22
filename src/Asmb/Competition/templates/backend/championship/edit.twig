@@ -1,6 +1,6 @@
 {% extends '@bolt/_base/_page-nav.twig' %}
 
-{% block page_nav 'championship-menu' %}
+{% block page_nav 'competition-menu' %}
 
 {% if championship.name %}
     {% set championship_title =  __('page.edit-championship.edit.title', {'%championship%': championship.name ~ ' ' ~ championship.year})%}
@@ -11,7 +11,7 @@
 {% block page_title championship_title %}
 
 {% block page_main %}
-    <div class="championship-edit">
+    <div class="competition-page-main">
         {% import '@bolt/_macro/_macro.twig' as macro %}
 
         {# Championship infos edit #}

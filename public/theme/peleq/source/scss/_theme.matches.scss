@@ -14,19 +14,29 @@
         }
 
         .box {
-            height: 100%;
+            height: calc(100% - 4.5rem);
         }
 
         .table {
             background-color: $bg-light;
             border-collapse: separate;
 
+            thead:not(:first-child) th {
+                padding-top: 2rem;
+            }
+
             th {
                 color: $secondary;
+                font-size: 1.6rem;
+
+                em {
+                    font-size: 1rem;
+                }
             }
 
             td {
                 vertical-align: middle;
+                padding: 0.25em 0.75em;
             }
 
             a {
@@ -54,17 +64,18 @@
                 width: 10%;
                 white-space: nowrap;
                 text-align: center;
+                line-height: 30px;
 
                 span {
                     color: $white;
                     border-radius: 12px;
-                    padding: 5px;
+                    padding: 5px 10px;
 
-                    &.win {
+                    &.victory {
                         background: $win;
                     }
 
-                    &.lost {
+                    &.defeat {
                         background: $lost;
                     }
 
@@ -85,23 +96,45 @@
                 font-size: 1.3em;
             }
 
-            .home {
+            .is-club {
                 color: $primary;
                 font-weight: 600;
             }
         }
     }
+}
 
-    .updated-at {
-        background-color: $dark;
-        text-align: right;
-        color: $white;
-        font-style: italic;
-        margin: 0 -1.5rem;
-        padding-right: 1.5rem;
-        padding-bottom: 1rem;
-        font-size: 0.8em;
-        position: relative;
-        top: -1rem;
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (max-width: $tablet) {
+    .matches {
+        .container {
+            .column {
+                h3.title {
+                    font-size: 1.8rem;
+                    margin-bottom: 0.5rem !important;
+                }
+
+                .box {
+                    height: auto !important;
+                    margin-left: -1rem;
+                    margin-right: -1rem;
+
+                    .table {
+                        th {
+                            font-size: 1.4rem;
+                            em {
+                                font-size: 0.9rem;
+                            }
+                        }
+                        .score {
+                            padding: 5px !important;
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }

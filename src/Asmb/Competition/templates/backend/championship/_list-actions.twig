@@ -14,7 +14,7 @@
         <button type="submit" class="btn btn-danger confirm"
                 data-confirm="{{ __('general.phrase.confirm-delete-championship', { '%name%': championship.name ~ ' ' ~ championship.year }) }}">
             <span class="pull-left"><i
-                        class="fa fa-trash"></i> {{ __('general.phrase.delete') }}</span>
+                        class="fa fa-trash"></i><span class="hidden">{{ __('general.phrase.delete') }}</span></span>
         </button>
     </form>
 </div>

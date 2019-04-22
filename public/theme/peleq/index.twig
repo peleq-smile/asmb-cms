@@ -25,7 +25,7 @@
             </div>
         </section>
 
-        {# TOP BLOCKS #}
+        {# BLOCS ACCUEIL - Section du haut #}
         {% setcontent blocks = 'block' where { etiquettes: 'accueil-top' } %}
         {% if blocks is not empty %}
             <section class="section">
@@ -50,7 +50,19 @@
         {#{% endif %}#}
 
         {# Rencontres du moment #}
-        {% include 'partials/home/_current_matches.twig' with {'record': homepage } %}
+        {% include 'partials/home/_meetings.twig' with {'record': homepage } %}
+
+        {# BLOCS ACCUEIL - Section du bas #}
+        {% setcontent blocks = 'block' where { etiquettes: 'accueil-bottom' } %}
+        {% if blocks is not empty %}
+            <section class="section">
+                <div class="container">
+                    {% for block in blocks %}
+                        {% include 'partials/block/_block.twig' with {'block': block, 'index': loop.index0} %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
         {# Pages section #}
 

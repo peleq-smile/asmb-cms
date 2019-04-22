@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Competition pool editing form type.
+ * Formulaire d'ajout ou édition d'une poule.
  *
  * @copyright 2019
  */

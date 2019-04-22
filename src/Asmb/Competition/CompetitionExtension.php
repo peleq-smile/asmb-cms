@@ -5,8 +5,10 @@ namespace Bundle\Asmb\Competition;
 use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
 use Bolt\Menu\MenuEntry;
+use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Database\Schema\Table;
 use Bundle\Asmb\Competition\Extension\TwigFiltersTrait;
+use Bundle\Asmb\Competition\Extension\TwigFunctionsTrait;
 use Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Bundle\Asmb\Competition\Parser\PoolRankingParser;
@@ -23,8 +25,7 @@ class CompetitionExtension extends SimpleExtension
     use DatabaseSchemaTrait;
 
     use TwigFiltersTrait;
-
-
+    use TwigFunctionsTrait;
 
     /**
      * {@inheritdoc}
@@ -50,8 +51,9 @@ class CompetitionExtension extends SimpleExtension
         $asmbCompetitionConfig = $config['asmb']['competition'];
 
         return [
-            '/extensions/championship' => new Controller\Backend\ChampionshipController($asmbCompetitionConfig),
-            '/extensions/pool'         => new Controller\Backend\PoolController($asmbCompetitionConfig),
+            '/extensions/competition/championship'  => new Controller\Backend\ChampionshipController($asmbCompetitionConfig),
+            '/extensions/competition/pool'          => new Controller\Backend\PoolController($asmbCompetitionConfig),
+            '/extensions/competition/pool/meetings' => new Controller\Backend\PoolMeetingsController($asmbCompetitionConfig),
         ];
     }
 
@@ -60,10 +62,22 @@ class CompetitionExtension extends SimpleExtension
      */
     protected function registerMenuEntries()
     {
-        $menu = MenuEntry::create('championship-menu', 'championship')
-            ->setLabel('Championnats')
+        // TODO créer permission ?
+
+        $menu = MenuEntry::create('competition-menu', 'competition')
+            ->setLabel(Trans::__('general.phrase.competition'))
             ->setIcon('fa:trophy')
-            ->setPermission('settings');
+            ->setPermission('contentaction');
+
+        $submenuChampionship = MenuEntry::create('championship-submenu', 'championship')
+            ->setLabel(Trans::__('general.phrase.championship'))
+            ->setIcon('fa:users');
+        $submenuMeetingsOfTheMoment = MenuEntry::create('meetings-of-the-moment-submenu', 'pool/meetings')
+            ->setLabel(Trans::__('general.phrase.meetings-of-the-moment'))
+            ->setIcon('fa:calendar');
+
+        $menu->add($submenuChampionship);
+        $menu->add($submenuMeetingsOfTheMoment);
 
         return [
             $menu,

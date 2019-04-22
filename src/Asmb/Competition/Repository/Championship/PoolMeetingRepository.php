@@ -5,6 +5,7 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 use Bolt\Storage\Repository;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Helpers\MatchHelper;
+use Carbon\Carbon;
 
 /**
  * Repository pour les rencontres entre équipes.
@@ -97,13 +98,19 @@ class PoolMeetingRepository extends Repository
      * Récupère et retourne les rencontres du moment concernant le club, en filtrant sur $pastDays jours en arrière
      * et $futureDays en avant.
      *
-     * @param int $pastDays
-     * @param int $futureDays
+     * @param int  $pastDays
+     * @param int  $futureDays
+     * @param bool $onlyActiveChampionship
+     * @param bool $withReportDates
      *
      * @return PoolMeeting[]
      */
-    public function findClubMeetingsOfTheMoment($pastDays, $futureDays)
-    {
+    public function findClubMeetingsOfTheMoment(
+        $pastDays,
+        $futureDays,
+        $onlyActiveChampionship = true,
+        $withReportDates = true
+    ) {
         $clubMeetingsOfTheMoment = [];
 
         $qb = $this->getLoadQuery();
@@ -116,17 +123,26 @@ class PoolMeetingRepository extends Repository
             $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
         );
         $qb->addSelect('championship.name as championship_name');
+        $qb->addSelect('championship.short_name as championship_short_name');
         $qb->innerJoin(
             'pool',
             'bolt_championship',
             'championship',
             $qb->expr()->eq('pool.championship_id', 'championship.id')
         );
-        $qb->where('championship.is_active = true');
 
-        // Filtre sur la date des matchs
-        $qb->andWhere("{$this->getAlias()}.date >= (CURDATE() - INTERVAL $pastDays DAY)");
-        $qb->andWhere("{$this->getAlias()}.date <= (CURDATE() + INTERVAL $futureDays DAY)");
+        if ($onlyActiveChampionship) {
+            $qb->where('championship.is_active = true');
+        }
+
+        // Filtre sur la date des matchs (éventuellement en prenant en compte les dates de report)
+        if ($withReportDates) {
+            $qb->addSelect("IFNULL({$this->getAlias()}.report_date, {$this->getAlias()}.date) as final_date");
+        } else {
+            $qb->addSelect("{$this->getAlias()}.date as final_date");
+        }
+        $qb->having("final_date >= (CURDATE() - INTERVAL $pastDays DAY)");
+        $qb->andHaving("final_date <= (CURDATE() + INTERVAL $futureDays DAY)");
 
         // On veut le nom des équipes donné en interne (donc dans la table des PoolTeam) + savoir si c'est une
         // équipe du club
@@ -152,7 +168,7 @@ class PoolMeetingRepository extends Repository
         );
 
         $qb->orderBy('championship_name');
-        $qb->addOrderBy('date');
+        $qb->addOrderBy('final_date');
         $qb->addOrderBy('time');
 
         $result = $qb->execute()->fetchAll();
@@ -167,9 +183,18 @@ class PoolMeetingRepository extends Repository
                 $meeting->setVisitorTeamName($result[$idx]['visitor_team_name']);
                 $meeting->setVisitorTeamIsClub($result[$idx]['visitor_team_is_club']);
 
-                $meeting->setChampionshipName($result[$idx]['championship_name']);
-
                 if ($meeting->getHomeTeamIsClub() || $meeting->getVisitorTeamIsClub()) {
+                    // Ajout à la volée du nom du championnat
+                    $meeting->setChampionshipName($result[$idx]['championship_name']);
+                    $meeting->setChampionshipShortName($result[$idx]['championship_short_name']);
+
+                    // Mise à jour de la date avec la date de report éventuelle
+                    if ($withReportDates && null !== $result[$idx]['final_date']) {
+                        $date = Carbon::createFromFormat('Y-m-d', $result[$idx]['final_date']);
+                        $date->setTime(0, 0, 0);
+                        $meeting->setDate($date);
+                    }
+
                     // On ne veut que les rencontres qui concernent le club
                     $clubMeetingsOfTheMoment[] = $meeting;
                 }

@@ -1,0 +1,35 @@
+{% set lastMeetings = getLastMeetings() %}
+{% set nextMeetings = getNextMeetings() %}
+
+{% if lastMeetings is not empty or nextMeetings is not empty %}
+<section class="section matches">
+    <div class="container">
+        <h2 class="title">{{ __("home.meetings_of_the_moment.title") }}</h2>
+        <div class="columns">
+            {% if lastMeetings is not empty %}
+            <div class="column is-half">
+                {% include 'partials/home/meetings/_meetings_by_date.twig' with {
+                    'title': __("home.last-meetings.title"),
+                    'meetings': lastMeetings
+                    }
+                %}
+            </div>
+            {% endif %}
+
+            {% if nextMeetings is not empty %}
+            <div class="column is-half">
+                {% include 'partials/home/meetings/_meetings_by_date.twig' with {
+                    'title': __("home.next-meetings.title"),
+                    'meetings': nextMeetings
+                    }
+                %}
+            </div>
+            {% endif %}
+
+            {% if lastMeetings is empty or nextMeetings is empty %}
+                TODO combler le vide !!
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}

@@ -23,7 +23,7 @@ class ChampionshipPoolMeeting extends BaseTable
         $this->table->addColumn('visitor_team_name_fft', 'string', ['length' => 255, 'notnull' => true]);
         $this->table->addColumn('day', 'smallint', ['notnull' => true]);
         $this->table->addColumn('date', 'date', ['notnull' => false]);
-        $this->table->addColumn('is_reported', 'boolean', ['default' => false, 'notnull' => true]);
+        $this->table->addColumn('report_date', 'date', ['notnull' => false]);
         $this->table->addColumn('time', 'time', ['notnull' => false]);
         $this->table->addColumn('result', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('club_flag', 'smallint', ['default' => 0, 'notnull' => true]);

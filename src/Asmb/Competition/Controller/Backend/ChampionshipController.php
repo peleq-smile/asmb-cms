@@ -56,16 +56,11 @@ class ChampionshipController extends AbstractController
     {
         $championships = $this->getRepository('championship')->findAll();
 
-        $pastDays = -1 * (int) $this->getAsmbConfig('last_meetings_past_days');
-        $futureDays = (int) $this->getAsmbConfig('next_meetings_future_days');
-
         return $this->render(
             '@AsmbCompetition/championship/index.twig',
             [],
             [
                 'championships' => $championships,
-                'lastMeetings'  => $this->getMeetingsOfTheMoment($pastDays),
-                'nextMeetings'  => $this->getMeetingsOfTheMoment($futureDays),
             ]
         );
     }

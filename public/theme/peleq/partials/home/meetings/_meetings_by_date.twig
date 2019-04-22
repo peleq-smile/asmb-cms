@@ -1,0 +1,43 @@
+<h3 class="title">{{ title }}</h3>
+<div class="box">
+    <table class="table is-fullwidth">
+        {% for meeting in meetings %}
+            {% if (previousDate is not defined or previousDate != meeting.date)
+                or (previousChpName is not defined or previousChpName != meeting.championship_name)
+            %}
+                {% if loop.index != 1 %}
+                    </tbody>
+                {% endif %}
+
+                <thead>
+                <tr>
+                    <th colspan="5">
+                        <span class="is-hidden-touch">
+                            {{ meeting|formattedDate }}
+                            <em> &bullet; {{ meeting.championship_name }}</em>
+                        </span>
+                        <span class="is-hidden-desktop">
+                            {{ meeting|formattedDate(true) }}
+                            <em> &bullet; {{ meeting.championship_short_name }}</em>
+                        </span>
+                    </th>
+                </tr>
+                </thead>
+                {% set previousDate = meeting.date %}
+                {% set previousChpName = meeting.championship_name %}
+
+                <tbody>
+            {% endif %}
+
+            {% set scoreHtml = meeting|score(true) %}
+
+            <tr>
+                <td class="hour" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
+                <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
+                <td class="score">{{ scoreHtml ? scoreHtml : '-' }}</td>
+                <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
+                <td class="action">{{ meeting|matchesSheetLink('eye') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

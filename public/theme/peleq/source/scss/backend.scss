@@ -61,8 +61,8 @@ $widescreen: 1280px;
     }
 }
 
-//-- Liste des championnats
-.championship-index {
+//-- Styles BO sur la gestion des compétitions
+.competition-page-main {
     .dashboardlisting {
         th, td {
             vertical-align: middle;
@@ -77,14 +77,8 @@ $widescreen: 1280px;
         font-weight: bold;
     }
 
-    .table-meetings {
-        th em {
-            font-weight: normal;
-        }
-
-        thead:not(:first-child) th {
-            padding-top: 3rem;
-        }
+    .is-reported {
+        color: $warning;
     }
 
     .btn-link {
@@ -93,13 +87,6 @@ $widescreen: 1280px;
         &:hover {
             color: $default-hover;
         }
-    }
-}
-
-//-- Pages d'édition de championnats
-.championship-edit {
-    .is-club {
-        font-weight: bold;
     }
 
     .panel-default > .panel-heading {
@@ -110,28 +97,36 @@ $widescreen: 1280px;
         width: auto;
         line-height: 20px;
         display: inline-block;
-        min-width: 72px;
+        min-width: 80px;
     }
 
-    .table-condensed {
-        .checkbox {
-            padding: 0;
-
-            label {
-                padding: 0;
-                margin: auto;
-                text-align: center;
-
-                input {
-                    margin: 0;
-                    padding: 0;
-                    position: unset;
-                }
-            }
-        }
+    input[type=date] {
+        width: auto;
+        padding: 0 12px;
+        line-height: 33px;
+        display: inline-block;
+        min-width: 120px;
     }
 
     .table {
+        &.table-condensed {
+            .checkbox {
+                padding: 0;
+
+                label {
+                    padding: 0;
+                    margin: auto;
+                    text-align: center;
+
+                    input {
+                        margin: 0;
+                        padding: 0;
+                        position: unset;
+                    }
+                }
+            }
+        }
+
         &.table-teams {
 
             th {
@@ -187,6 +182,20 @@ $widescreen: 1280px;
             }
         }
 
+        &.table-meetings-by-date {
+            th em {
+                font-weight: normal;
+            }
+
+            thead:not(:first-child) th {
+                padding-top: 3rem;
+            }
+
+            td {
+                line-height: 26px;
+            }
+        }
+
         tr.even {
             th, td {
                 background-color: $even;
@@ -226,14 +235,6 @@ $widescreen: 1280px;
     //        }
     //    }
     //}
-
-    .btn-link {
-        color: $default;
-
-        &:hover {
-            color: $default-hover;
-        }
-    }
 }
 
 @media screen and (max-width: $widescreen) {

@@ -77,28 +77,6 @@ class PoolTeamRepository extends Repository
     }
 
     /**
-     * Retourne les équipes groupées par id de poule à partir des ids de poules donnés, trié par nom d'équipe.
-     *
-     * @param array $poolIds
-     *
-     * @return PoolTeam[]
-     */
-//    public function findByPoolIdsPerPoolIdSortedByName(array $poolIds)
-//    {
-//        $poolsGroupByPoolIdSortedByName = [];
-//
-//        $poolTeams = $this->findBy(['pool_id' => $poolIds], ['name', 'ASC']);
-//        if (false !== $poolTeams) {
-//            /** @var PoolTeam $poolTeam */
-//            foreach ($poolTeams as $poolTeam) {
-//                $poolsGroupByPoolIdSortedByName[$poolTeam->getPoolId()][$poolTeam->getName()] = $poolTeam;
-//            }
-//        }
-//
-//        return $poolsGroupByPoolIdSortedByName;
-//    }
-
-    /**
      * Sauvegarde les données sur les équipes des poulées données, à partir des données soumise dans le formulaire
      * correspondant.
      *

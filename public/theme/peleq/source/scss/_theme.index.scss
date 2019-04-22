@@ -83,6 +83,13 @@
 /*****************/
 /** RESPONSIVE  **/
 /*****************/
+@media screen and (max-width: $tablet) {
+    .section.welcome {
+        .column:not(:last-child) {
+            padding-bottom: 0;
+        }
+    }
+}
 @media screen and (max-width: $desktop) {
     .columns.white-framed {
         padding: 0;

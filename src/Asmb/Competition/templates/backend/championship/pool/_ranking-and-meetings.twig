@@ -67,16 +67,22 @@
                         <td class="text-right{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                         <td class="text-center">
                             {% set scoreHtml = meeting|score(true) %}
+                            {% set finalDate = meeting.report_date ? meeting.report_date : meeting.date %}
+
                             {% if scoreHtml is not empty %}
-                                {% set infoDateContent = __('page.view-championship.meeting-date.text', {'%date%': meeting.date|date("d/m/Y")}) %}
+                                {% set infoDateContent = __('page.view-championship.meeting-date.text', {'%date%': finalDate|date("d/m/Y")}) %}
                                 {% set infoDateContent = (meeting.time) ? infoDateContent ~ ' ' ~ __('page.view-championship.meeting-time.text', {'%time%': meeting.time|date('H:i')}) : infoDateContent %}
 
                                 <span class="info-pop"
                                       data-title="{{ __('page.view-championship.meeting-date.title') }}"
                                       data-content="{{ infoDateContent }}">{{ scoreHtml }}</span>
                             {% else %}
-                                {% set datetimeHtml = meeting.date|date('d/m') %}
-                                <span class="datetime">{{ datetimeHtml }}</span>
+                                {% set datetimeHtml = finalDate|date('d/m') %}
+
+                                <span class="datetime{% if finalDate != meeting.date %} is-reported{% endif %}"
+                                      title="{% if finalDate != meeting.date %}{{ __('general.phrase.report-date') }}{% endif %}">
+                                    {{ datetimeHtml }}
+                                </span>
                             {% endif %}
                         </td>
                         <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>

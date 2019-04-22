@@ -163,17 +163,23 @@ abstract class AbstractController extends BackendBase
      * Retourne les rencontres du moment, dans le passé ou le futur selon que $pastOrFutureDays soit négatif (passé)
      * ou positif (futur).
      *
-     * @param int $pastOrFutureDays
+     * @param int  $pastOrFutureDays
+     * @param bool $onlyActiveChampionship
+     * @param bool $withReportDates
      *
      * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
      */
-    protected function getMeetingsOfTheMoment($pastOrFutureDays)
-    {
+    protected function getPastOrFutureMeetings(
+        $pastOrFutureDays,
+        $onlyActiveChampionship = true,
+        $withReportDates = true
+    ) {
         /** @var PoolMeetingRepository $poolMeetingRepository */
         $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
         $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;
         $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
-        $meetingsOfTheMoment = $poolMeetingRepository->findClubMeetingsOfTheMoment($pastDays, $futureDays);
+        $meetingsOfTheMoment = $poolMeetingRepository
+            ->findClubMeetingsOfTheMoment($pastDays, $futureDays, $onlyActiveChampionship, $withReportDates);
 
         return $meetingsOfTheMoment;
     }

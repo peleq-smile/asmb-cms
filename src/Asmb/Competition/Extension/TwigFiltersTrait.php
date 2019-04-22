@@ -70,13 +70,39 @@ trait TwigFiltersTrait
     }
 
     /**
+     * Formate la date de la rencontre donnée de sorte à avoir une date du type "Dimanche 31 mars".
+     *
+     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
+     * @param bool                                                     $short
+     *
+     * @return string
+     */
+    public function getFormattedDate(PoolMeeting $meeting, $short = false)
+    {
+        /** @var \Carbon\Carbon $meetingDate */
+        $meetingDate = $meeting->getDate();
+        $dayOfMonth = (int) $meetingDate->format('d');
+
+        $formatDay = $short ? '%a' : '%A';
+
+        if (1 === $dayOfMonth) {
+            $formattedDate = $meetingDate->formatLocalized("$formatDay %eer %B");
+        } else {
+            $formattedDate = $meetingDate->formatLocalized("$formatDay %e %B");
+        }
+
+        return ucfirst($formattedDate);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function registerTwigFilters()
     {
         return [
-            'score'            => 'extractScoreFromResult',
             'matchesSheetLink' => 'getMatchesSheetLink',
+            'formattedDate'    => 'getFormattedDate',
+            'score'            => 'extractScoreFromResult',
         ];
     }
 }

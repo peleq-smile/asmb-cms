@@ -22,8 +22,8 @@ class PoolMeeting extends Entity
     protected $day;
     /** @var \DateTime */
     protected $date;
-    /** @var boolean */
-    protected $is_reported = false;
+    /** @var \DateTime */
+    protected $report_date;
     /** @var \DateTime */
     protected $time;
     /** @var string */
@@ -44,6 +44,8 @@ class PoolMeeting extends Entity
     protected $visitor_team_is_club;
     /** @var string */
     protected $championship_name;
+    /** @var string */
+    protected $championship_short_name;
 
     /**
      * @return mixed
@@ -110,7 +112,7 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -118,7 +120,7 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @param mixed $date
+     * @param \DateTime $date
      */
     public function setDate($date)
     {
@@ -126,19 +128,19 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function isReported()
+    public function getReportDate()
     {
-        return $this->is_reported;
+        return $this->report_date;
     }
 
     /**
-     * @param bool $isReported
+     * @param mixed $reportDate
      */
-    public function setIsReported($isReported)
+    public function setReportDate($reportDate)
     {
-        $this->is_reported = $isReported;
+        $this->report_date = $reportDate;
     }
 
     /**
@@ -283,5 +285,21 @@ class PoolMeeting extends Entity
     public function setChampionshipName($championshipName)
     {
         $this->championship_name = $championshipName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChampionshipShortName()
+    {
+        return $this->championship_short_name;
+    }
+
+    /**
+     * @param string $championshipShortName
+     */
+    public function setChampionshipShortName($championshipShortName)
+    {
+        $this->championship_short_name = $championshipShortName;
     }
 }
