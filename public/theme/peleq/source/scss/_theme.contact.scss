@@ -1,0 +1,42 @@
+.section-contact {
+    .columns {
+        .boltform {
+            margin: 1rem auto;
+        }
+
+        .column-image {
+            text-align: center;
+
+            i {
+                font-size: 10rem;
+                padding-top: 6rem;
+                color: $secondary;
+            }
+        }
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $tablet) {
+    .section-contact {
+        .columns {
+            margin-top: 2rem;
+            padding-left: 6rem;
+            background-color: $white;
+        }
+    }
+}
+
+@media screen and (max-width: $tablet) {
+    .section-contact .columns {
+        .column-image {
+            i {
+                font-size: 5rem;
+                padding-top: 0;
+                padding-bottom: 2rem;
+            }
+        }
+    }
+}

@@ -178,8 +178,10 @@ pages:
             height: 300px
         template:
             type: templateselect
-            filter: '*.twig'
+            filter: 'template_*.twig'
+    record_template: template_page.twig
     recordsperpage: 20
+    taxonomy: [ rubriques ]
 
 
 evenements:
@@ -220,8 +222,6 @@ evenements:
             options:
                 ckeditor:
                     removeButtons: Image,Table,SpecialChar
-    taxonomy: [ etiquettes ]
-
 
 
 # Entries can be used for things like 'news' or 'blogpostings'. They have a

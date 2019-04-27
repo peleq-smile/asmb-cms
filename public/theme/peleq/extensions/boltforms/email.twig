@@ -1,0 +1,16 @@
+{#
+ # Passed in variables:
+ #   fields   — Field data from the form configuration
+ #   config   — Email configuration data
+ #   data     — POSTed data
+ #   metadata — Form meta data
+ #}
+<p>Bonjour !</p>
+
+<p>Le formulaire de contact a été soumis depuis le site {{ paths.currenturl }}.</p>
+
+<p><u>Informations envoyées par le formulaire :</u></p>
+<hr>
+{{ block('submission_summary', '@BoltForms/email/_blocks.twig') }}
+<hr>
+<em>Envoyé par l'extension <a href="https://github.com/bolt/boltforms">BoltForms</a> pour <a href="https://bolt.cm">Bolt</a>.</em>

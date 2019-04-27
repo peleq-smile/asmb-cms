@@ -1,42 +1,51 @@
-{% extends 'partials/_master.twig' %}
+{% block head_title __('page.not-found.title') %}
+{% block body_class 'page-not-found' %}
+
+{% extends 'partials/_master-lite.twig' %}
 
 {% setcontent record = 'blocks/404-not-found' %}
 
 {% block main %}
 
-<section class="section section-not-found">
-    <div class="container">
-        <div class="content">
-            {% if record %}
-                <h1 class="title">{{ record.title|default('404 not found') }}</h1>
-                {{ record.content|default('<p>The requested page was not found.</p>')|raw }}
-            {% else %}
-                <h1 class="title">404 not found</h1>
-                <p>
-                    The requested page was not found.
-                </p>
+    <section class="section section-not-found">
+        <div class="container">
+            <div class="content">
+                <a href="{{ path('homepage') }}" title="{{ __('page.not-found.link.title') }}">
+                    <img class="img-responsive" width="120" height="120"
+                         src="{{ asset('images/logo.png', 'theme') }}" alt="{{ config.get('general/sitename') }}">
+                </a>
 
-                <div class="notification is-warning">
-                    {# <button class="delete"></button> #}
-                    Add a Blocks record with slug '404-not-found' to customize this message.
-                    If it's not showing up here, doublecheck that the <tt>slug</tt> is correct, and that the Block is published.
-                </div>
-            {% endif %}
+                {% if record %}
+                    <h1 class="title is-size-1 is-size-3-mobile">{{ record.title|default('404 not found') }}</h1>
+                    {{ record.content|default('<p>The requested page was not found.</p>')|raw }}
+                {% else %}
+                    <h1 class="title is-size-1 is-size-3-mobile">{{ __('page.not-found.title') }}</h1>
+                    <p class="text-secondary">{{ __('page.not-found.text-top') }}</p>
+
+                    <div class="panel-404">
+                        <a href="{{ path('homepage') }}" title="{{ __('page.not-found.link.title') }}">
+                            <div class="title">{{ __('general.phrase.panel.title') }}</div>
+
+                            <div class="team">{{ __('general.phrase.visitor') }}</div>
+                            <div>
+                                <img src="{{ asset('images/score-4.jpg', 'theme') }}"/>
+                                <img src="{{ asset('images/score-0.jpg', 'theme') }}"/>
+                                <img src="{{ asset('images/score-4.jpg', 'theme') }}"/>
+                            </div>
+
+                            <div class="team">{{ __('general.phrase.club') }}</div>
+                            <div>
+                                <img src="{{ asset('images/score-6.jpg', 'theme') }}"/>
+                                <img src="{{ asset('images/score-6.jpg', 'theme') }}"/>
+                                <img src="{{ asset('images/score-6.jpg', 'theme') }}"/>
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-
-        <form class="field has-addons" method="get" action="{{ path('search') }}" enctype="text/plain">
-            <label class="label is-hidden" for="search-box">Search</label>
-            <div class="control">
-                <input class="input" type="search" value="{% if search is defined %}{{ search|escape }}{% endif %}" placeholder="{{ __('general.phrase.search-ellipsis') }}" name="search" id="search-box">
-            </div>
-            <div class="control">
-                <button class="button is-primary" type="submit">{{ __('general.phrase.search') }}</button>
-            </div>
-        </form>
-
-    </div>
 </section>
 {% endblock main %}
- 
 
- 
+
+

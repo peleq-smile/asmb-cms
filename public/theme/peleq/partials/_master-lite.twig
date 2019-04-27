@@ -9,6 +9,7 @@
         {%- if record.title is defined %}{{ record.title|striptags }} | {% endif -%}
         {{ config.get('general/sitename') -}}
         {% if record.title is not defined and config.get('general/payoff') %} | {{ config.get('general/payoff') }}{% endif -%}
+        {% if block('head_title') is defined %} - {{ block('head_title') }}{% endif -%}
     </title>
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}"/>
 
@@ -21,38 +22,20 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
           integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-   {% block head %}{% endblock head %}
+    {% block head %}{% endblock head %}
 </head>
 
-<body class="{{ block('body_class') }}">
-
-<a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
-
+<body>
+{#<header id="header" role="banner" class="header">#}
+    {#{{ include('partials/_header_top.twig') }}#}
+{#</header>#}
 {% block body %}
-    <header id="header" role="banner" class="header">
-        {{ include('partials/_header_top.twig') }}
-        {{ include('partials/_header.twig') }}
-    </header>
-
     <div id="main-content">
-        {{ widgets('main_top') }}
-
         {% block main %}
         {% endblock main %}
-
-        {#{{ widgets('main_bottom') }}#}
     </div>
 {% endblock body %}
-
-{{ include('partials/_footer.twig') }}
-
-<script src="{{ asset('js/lib/jquery-3.3.1.slim.min.js', 'theme') }}"></script>
-<script src="{{ asset('js/lib/jquery.touchSwipe.min.js', 'theme') }}"></script>
-<!-- jQuery Custom Scroller CDN -->
-<script src="{{ asset('lib/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js', 'theme') }}"></script>
-
-<script src="{{ asset('js/app.js', 'theme') }}"></script>
-
+{#{{ include('partials/_footer.twig') }}#}
 </body>
 </html>
 

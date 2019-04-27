@@ -1,0 +1,30 @@
+.section-listing {
+
+    h1 span {
+        white-space: nowrap;
+    }
+
+    .columns {
+        background-color: $white;
+    }
+
+    .image {
+        img {
+            width: auto;
+            margin: auto;
+        }
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $tablet) {
+    .section-listing {
+        .column {
+            .content {
+                margin-left: 7rem;
+            }
+        }
+    }
+}

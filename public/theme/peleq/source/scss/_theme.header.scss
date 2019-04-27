@@ -147,6 +147,7 @@ header {
         animation-name: slideInDown;
         animation-iteration-count: 1;
         animation-direction: normal;
+        z-index: 1001;
 
         .container {
             .navbar-brand {

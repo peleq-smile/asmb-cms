@@ -6,10 +6,16 @@
 @import 'node_modules/baguettebox.js/src/baguetteBox';
 @import 'node_modules/prismjs/themes/prism';
 
+@import '_theme.common';
+@import '_theme.contact';
 @import '_theme.header';
 @import '_theme.footer';
-@import '_theme.index';
-@import '_theme.matches';
+@import '_theme.homepage';
+@import '_theme.listing';
+@import '_theme.location';
+@import '_theme.meetings';
+@import '_theme.page';
+@import '_theme.page-404';
 
 .visually-hidden:not(:focus):not(:active) {
     position: absolute !important;
@@ -139,6 +145,11 @@ p.meta {
 .hero .hero-body {
     padding-bottom: 4rem;
     padding-top: 4rem;
+
+    &.is-medium {
+        padding-bottom: 7rem;
+        padding-top: 7rem;
+    }
 
     h1.title,
     h2.subtitle {

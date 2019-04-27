@@ -1,6 +1,6 @@
 main:
     - label: 'Le Club'
-      path: page/Edito
+      path: page/edito
       submenu:
         - path: page/edito
           label: 'Édito'

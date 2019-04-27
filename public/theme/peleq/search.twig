@@ -8,7 +8,7 @@
         records matching the current query. If there are no results, the
         code in the 'else' part of the for-loop is used. #}
 
-        <h1 class="title is-size-2 is-size-4-mobile">
+        <h1 class="title is-size-1 is-size-3-mobile">
         {% if search is not empty %}
             {{ __('general.phrase.search-results-for-variable', { '%search%': search }) }}
         {% else %}
@@ -25,16 +25,6 @@
                 {{ block.content }}
             </div>
         {% endif %}
-
-        <form class="field has-addons" action="{{ path('search') }}">
-            <label class="label is-hidden" for="search-form">Search</label>
-            <div class="control">
-                <input class="input" type="search" value="{% if search is defined %}{{ search|escape }}{% endif %}" placeholder="{{ __('general.phrase.search-ellipsis') }}" name="search" id="search-form">
-            </div>
-            <div class="control">
-                <button class="button is-primary" type="submit">{{ __('general.phrase.search') }}</button>
-            </div>
-        </form>
     </div>
 </section>
 
@@ -42,29 +32,25 @@
     <div class="container">
         {% for record in records %}
         <article role="article" class="media columns">
-            <div class="media-content column is-7">
+            <div class="media-content column is-8">
                 <div class="content">
                     <h2 class="title"><a href="{{ record.link }}">{{ record.title }}</a></h2>
 
-                    <p class="meta is-hidden-touch">
-                        {% if record.editlink() %}
-                            <span class="edit-link"><a href="{{ record.editlink() }}"><strong>Edit</strong></a></span> &bullet;
-                        {% endif %}
-                        <a href="{{ record.link() }}">{{ __('general.phrase.permalink') }}</a> &bullet;
-                        {{ __('general.phrase.written-by-on', {
-                            '%name%': record.user.displayname|default(__('Unknown')),
-                            '%date%': record.datepublish|localedatetime("%A %B %e, %Y")
-                        }) }}
-                    </p>
-
                     {# display something introduction-like.. #}
                     <p>{{ record.excerpt(300, false, search|default('')) }}</p>
+
+                    <p class="meta">
+                        {{ __('general.phrase.written-by-on', {
+                            '%name%': record.user.displayname|default(__('Unknown')),
+                            '%date%': record.datepublish|localedatetime("%e %B %Y")
+                        }) }}
+                    </p>
                 </div>
             </div>
             {% if record.image is not empty %}
-            <div class="media-right column">
+            <div class="media-right column is-hidden-touch is-hidden-desktop-only">
                 <figure class="image">
-                    <img src="{{ record.image|image(480, 320, "r") }}" alt="{{ record.values.image.alt|default() }}" />
+                    <img src="{{ record.image|image(240, 160, "r") }}" alt="{{ record.values.image.alt|default() }}" />
                 </figure>
             </div>
             {% endif %}

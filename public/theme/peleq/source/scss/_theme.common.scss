@@ -1,0 +1,55 @@
+.text-primary {
+    color: $primary;
+}
+
+.text-secondary {
+    color: $secondary;
+}
+
+#main-content {
+    h1.title {
+        color: $text;
+        font-weight: bold;
+
+        strong {
+            color: $secondary;
+        }
+    }
+}
+
+.columns.white-framed {
+    align-items: center;
+    background: linear-gradient(to right, $white 50%, $body-background-color);
+    padding: 2.5rem 4rem;
+
+    .column {
+        img {
+            border: solid 8px $primary;
+            display: block;
+            margin: auto;
+        }
+    }
+}
+
+.sticky .hero {
+    margin-top: 5rem;
+}
+
+mark {
+    background-color: $secondary-xlight;
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $desktop) {
+    #main-content .container {
+        max-width: 90%;
+    }
+}
+
+@media screen and (max-width: $desktop) {
+    .columns.white-framed {
+        padding: 0;
+    }
+}

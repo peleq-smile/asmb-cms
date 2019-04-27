@@ -1,0 +1,55 @@
+.section-location .columns {
+    flex-direction: row-reverse;
+
+    .column-content {
+        h2 {
+            margin-top: 3rem;
+            color: $primary;
+        }
+
+        h3 {
+            margin-top: 2rem;
+            color: $secondary;
+        }
+    }
+}
+
+#map {
+    width: 100%;
+    border: solid 10px $white;
+    box-shadow: 0 8px 12px -4px $box-shadow-color;
+    border-radius: 0;
+}
+
+.leaflet-top, .leaflet-bottom {
+    z-index: 900 !important;
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $tablet) {
+    .section-location {
+        .columns {
+            background-color: $white;
+            margin-top: 2rem;
+
+            .column-content {
+                padding: 2rem;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tablet) {
+    .section-location .columns {
+        .column-map {
+            margin-top: 2rem;
+        }
+
+        .column-content {
+            max-width: 90%;
+            margin: -1.5rem auto 1.5rem auto;
+        }
+    }
+}

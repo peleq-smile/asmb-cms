@@ -7,10 +7,21 @@ etiquettes:
     slug: etiquettes
     singular_slug: etiquette
     behaves_like: grouping
-    multiple: true
+    multiple: false
     options:
         accueil-top: Affiché sur l'accueil - section du haut
         accueil-bottom: Afficher sur l'accueil - section du bas
+    has_sortorder: true
+
+rubriques:
+    name: Rubriques
+    singular_name: Rubrique
+    slug: rubriques
+    singular_slug: rubriques
+    behaves_like: grouping
+    multiple: false
+    options:
+        histoire-tennis: Histoire du tennis
     has_sortorder: true
 
 #tags:

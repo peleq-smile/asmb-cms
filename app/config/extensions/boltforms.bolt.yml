@@ -11,8 +11,8 @@
 # — specific for and to that form. It is considered best practice to use only
 # this global setting.
 debug:
-    enabled: true
-    address: noreply@example.com
+    enabled: false
+    address: perrine.lequipe@gmail.com
 
 ## CSRF protection
 #
@@ -34,9 +34,9 @@ csrf: true
 # e.g. You created your templates in the `extensions/boltforms/` directory
 # inside your theme, you would use similar to:
 #
-#templates:
+templates:
 #    form: extensions/boltforms/form.twig
-#    email: extensions/boltforms/email.twig
+    email: extensions/boltforms/email.twig
 #    subject: extensions/boltforms/subject.twig
 #    files: extensions/boltforms/file_browser.twig
 
@@ -99,55 +99,50 @@ contact:
         ajax: false                   # Use AJAX for form submission and handling
     notification:
         enabled: true
-        debug: false
-        debug_address: name@example.com # Email address used when debug mode is enabled
+        debug: true
+        debug_address: perrine.lequipe@gmail.com # Email address used when debug mode is enabled
         debug_smtp: true
-        subject: Your message was submitted
+        subject: "[Site ASMB] Contact"
         from_name: name                 # Email addresses and names can be either the
         from_email: email               # name of a field below or valid text.
         replyto_email: email            #
         replyto_name: name              # NOTE: Email addresses must be valid
-        to_name: My Site                #
-        to_email: noreply@example.com   #
+        to_name: Webmaster ASMB         #
+        to_email: contact@asmbtennis.fr #
     feedback:
-        success: Message submission successful
-        error: There are errors in the form, please fix before trying to resubmit
+        success: Votre message a bien été envoyé.
+        error: Votre message n'a pas pu être envoyé. Merci de corriger la/les erreur(s) avant de soumettre à nouveau le formulaire.
     fields:
         name:
             type: text
             options:
                 required: true
-                label: Name
-                attr:
-                    placeholder: Your name...
+                label: Votre nom
                 constraints: [ NotBlank, { Length: { 'min': 3, 'max': 128 } } ]
         email:
             type: email
             options:
                 required: true
-                label: Email address
-                attr:
-                    placeholder: Your email...
+                label: Votre adresse e-mail
                 constraints: [ NotBlank, Email ]
         message:
             type: textarea
             options:
                 required: true
-                label: Your message
-                attr:
-                    placeholder: Your message...
-                    class: myclass
-        needreply:
-            type: choice
-            options:
-                required: false
-                label: Do you want us to contact you back?
-                choices: { 'Yes': 'yes', 'No': 'no' }
-                multiple: false
+                label: Votre message
+
+#        needreply:
+#            type: choice
+#            options:
+#                required: false
+#                label: Souhaitez-vous être contacté.e en retour ?
+#                choices: { 'Oui': 'Oui', 'Non': 'Non' }
+#                multiple: false
+
         submit:
             type: submit
             options:
-                label: Submit my message »
+                label: Envoyer »
                 attr:
                     class: button primary
 

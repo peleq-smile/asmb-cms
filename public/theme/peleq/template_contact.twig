@@ -1,0 +1,32 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    <section class="section section-contact">
+        <div class="container">
+            <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+            {{ record.teaser }}
+
+            <div class="columns">
+                <div class="column">
+                    {{ record.body }}
+
+                    {{ boltforms('contact') }}
+                </div>
+                <div class="column column-image">
+                    {% if record.image is not empty %}
+                        <figure class="image">
+                            <img src="{{ record.image|image }}" alt="{{ record.values.image.alt|default() }}"/>
+                            <figcaption>
+                                {{ record.values.image.title|default() }}
+                            </figcaption>
+                        </figure>
+                    {% else %}
+                        <i class="fas fa-mail-bulk"></i>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock main %}

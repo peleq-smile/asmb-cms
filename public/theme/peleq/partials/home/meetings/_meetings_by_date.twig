@@ -30,13 +30,14 @@
             {% endif %}
 
             {% set scoreHtml = meeting|score(true) %}
+            {% set matchesSheetLinkHtml = meeting|matchesSheetLink('eye') %}
 
             <tr>
-                <td class="hour" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
+                <td class="hour{{ scoreHtml ? ' is-hidden-touch is-hidden-desktop-only' }}" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
                 <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                 <td class="score">{{ scoreHtml ? scoreHtml : '-' }}</td>
                 <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
-                <td class="action">{{ meeting|matchesSheetLink('eye') }}</td>
+                <td class="action{{ not matchesSheetLinkHtml ? ' is-hidden' }}">{{ matchesSheetLinkHtml }}</td>
             </tr>
         {% endfor %}
     </table>
