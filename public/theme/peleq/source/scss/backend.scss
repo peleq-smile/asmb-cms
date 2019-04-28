@@ -44,20 +44,24 @@ $widescreen: 1280px;
     border-radius: 8px;
     padding: 1px 6px;
     white-space: nowrap;
+    border: solid 1px $default-hover;
 
     &.victory {
         background: $success;
         color: $white;
+        border: none;
     }
 
     &.defeat {
         background: $danger;
         color: $white;
+        border: none;
     }
 
     &.draw {
         background: $warning;
         color: $white;
+        border: none;
     }
 }
 
@@ -238,7 +242,7 @@ $widescreen: 1280px;
 }
 
 @media screen and (max-width: $widescreen) {
-    .championship-edit {
+    .competition-page-main {
         .table-teams, .table-meetings {
             & * {
                 font-size: 0.8em;

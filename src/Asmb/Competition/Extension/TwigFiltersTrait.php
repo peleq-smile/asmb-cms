@@ -47,7 +47,7 @@ trait TwigFiltersTrait
      *
      * @return string
      */
-    public function getMatchesSheetLink(PoolMeeting $meeting, $faIcon = 'leaf')
+    public function getMatchesSheetLink(PoolMeeting $meeting, $faIcon = 'eye')
     {
         $link = '';
 

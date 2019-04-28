@@ -13,6 +13,7 @@ use Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Bundle\Asmb\Competition\Parser\PoolRankingParser;
 use Bundle\Asmb\Competition\Parser\PoolTeamsParser;
+use Pimple as Container;
 use Silex\Application;
 
 /**
@@ -174,5 +175,15 @@ class CompetitionExtension extends SimpleExtension
         }
 
         return $end;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerNutCommands(Container $container)
+    {
+        return [
+            new Nut\RefreshCommand($container),
+        ];
     }
 }

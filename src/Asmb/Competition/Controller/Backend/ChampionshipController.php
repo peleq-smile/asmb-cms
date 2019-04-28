@@ -129,13 +129,8 @@ class ChampionshipController extends AbstractController
                     return $this->redirectToRoute('championshipedit', ['id' => $championship->getId()]);
                 }
 
-                /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
-                //            $poolRepository = $this->getRepository('championship_pool');
-                //            $completenessByPoolId = $poolRepository->getEditionCompletenesses($pools);
-
                 $context += [
                     'editPoolsTeamsForm' => $editPoolsTeamsForm->createView(),
-                    //                'completenessByPoolId' => $completenessByPoolId,
                 ];
             }
         } else { // ELSE: add new championship case

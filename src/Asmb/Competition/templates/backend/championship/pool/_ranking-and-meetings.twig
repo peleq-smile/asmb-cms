@@ -88,9 +88,9 @@
                         <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
 
                         {% if scoreHtml is not empty %}
-                            <td class="text-right">{{ meeting|matchesSheetLink }}</td>
+                            <td class="text-center">{{ meeting|matchesSheetLink }}</td>
                         {% else %}
-                            <td class="text-right">
+                            <td class="text-center">
                                 {% if meeting.home_team_is_club or meeting.visitor_team_is_club %}
                                     {% if meeting.time %}
                                         <span class="info-pop"

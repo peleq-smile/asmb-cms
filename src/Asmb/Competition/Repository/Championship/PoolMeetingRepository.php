@@ -5,6 +5,7 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 use Bolt\Storage\Repository;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Helpers\MatchHelper;
+use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 use Carbon\Carbon;
 
 /**
@@ -115,7 +116,7 @@ class PoolMeetingRepository extends Repository
 
         $qb = $this->getLoadQuery();
 
-        // Filtre sur les poules des championnats ACTIFS uniquement
+        // Récupération du nom (court et long) du championnat
         $qb->innerJoin(
             $this->getAlias(),
             'bolt_championship_pool',
@@ -132,10 +133,11 @@ class PoolMeetingRepository extends Repository
         );
 
         if ($onlyActiveChampionship) {
+            // Filtre sur les poules des championnats ACTIFS uniquement
             $qb->where('championship.is_active = true');
         }
 
-        // Filtre sur la date des matchs (éventuellement en prenant en compte les dates de report)
+        // Filtre sur la date des rencontres (éventuellement en prenant en compte les dates de report)
         if ($withReportDates) {
             $qb->addSelect("IFNULL({$this->getAlias()}.report_date, {$this->getAlias()}.date) as final_date");
         } else {
@@ -143,6 +145,17 @@ class PoolMeetingRepository extends Repository
         }
         $qb->having("final_date >= (CURDATE() - INTERVAL $pastDays DAY)");
         $qb->andHaving("final_date <= (CURDATE() + INTERVAL $futureDays DAY)");
+
+        // Si $pastDays est >0, alors on veut les derniers résultats donc des rencontres avec le score.
+        if ($pastDays > 0) {
+            $qb->andWhere("{$this->getAlias()}.result IS NOT NULL");
+            $qb->andWhere("{$this->getAlias()}.result <> :noneResult");
+            $qb->setParameter(':noneResult', PoolMeetingHelper::RESULT_NONE);
+        }
+        if ($futureDays > 0) {
+            $qb->andWhere("({$this->getAlias()}.result IS NULL OR {$this->getAlias()}.result = :noneResult)");
+            $qb->setParameter(':noneResult', PoolMeetingHelper::RESULT_NONE);
+        }
 
         // On veut le nom des équipes donné en interne (donc dans la table des PoolTeam) + savoir si c'est une
         // équipe du club
@@ -202,5 +215,34 @@ class PoolMeetingRepository extends Repository
         }
 
         return $clubMeetingsOfTheMoment;
+    }
+
+    /**
+     * Sauvegarde les rencontres données en paramètre, pour la poule d'id donné.
+     *
+     * @param PoolMeeting[] $poolMeetings
+     * @param int           $poolId
+     */
+    public function saveAll(array $poolMeetings, $poolId)
+    {
+        foreach ($poolMeetings as $poolMeeting) {
+            // Création ou mise à jour ? On vérifie sur l'id de poule + le nom des 2 équipes
+            /** @var PoolMeeting $existingPoolRanking */
+            $existingPoolMeeting = $this->findOneBy(
+                [
+                    'pool_id'               => $poolId,
+                    'home_team_name_fft'    => $poolMeeting->getHomeTeamNameFft(),
+                    'visitor_team_name_fft' => $poolMeeting->getVisitorTeamNameFft(),
+                ]
+            );
+
+            if (false !== $existingPoolMeeting) {
+                // Mise à jour : on spécifie l'id pour se mettre en mode "update"
+                $poolMeeting->setId($existingPoolMeeting->getId());
+                // Si une heure existe, on la conserve
+                $poolMeeting->setTime($existingPoolMeeting->getTime());
+            }
+            $this->save($poolMeeting, true);
+        }
     }
 }

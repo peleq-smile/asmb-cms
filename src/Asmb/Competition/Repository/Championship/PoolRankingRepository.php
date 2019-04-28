@@ -4,6 +4,7 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 
 use Bolt\Storage\Repository;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
+use Bundle\Asmb\Competition\Exception\PoolTeamNotFoundException;
 
 /**
  * Repository de l'entité PoolRaking, pour le classement des équipes dans une poule.
@@ -61,5 +62,55 @@ class PoolRankingRepository extends Repository
         }
 
         return $poolRankingsPerPoolId;
+    }
+
+    /**
+     * Sauvegarde les données de classement passées en paramètre, pour la poule d'id donné.
+     *
+     * @param PoolRanking[] $poolRankings
+     * @param int           $poolId
+     *
+     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @throws \Bundle\Asmb\Competition\Exception\PoolTeamNotFoundException
+     */
+    public function saveAll(array $poolRankings, $poolId)
+    {
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+        $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
+
+        foreach ($poolRankings as $poolRanking) {
+            // On récupère le nom interne de l'équipe à partir du nom FFT
+            /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam $poolTeam */
+            $poolTeam = $poolTeamRepository->findOneBy(
+                ['pool_id' => $poolId, 'name_fft' => $poolRanking->getTeamNameFft()]
+            );
+
+            if (!$poolTeam) {
+                throw new PoolTeamNotFoundException(
+                    sprintf(
+                        'Aucune équipe trouvée avec le nom FFT %s, pour la poule d\'ID %d',
+                        $poolRanking->getTeamNameFft(),
+                        $poolId
+                    )
+                );
+            }
+
+            $poolRanking->setTeamIsClub($poolTeam->isClub());
+
+            // Création ou mise à jour ?
+            /** @var PoolRanking $existingPoolRanking */
+            $existingPoolRanking = $this->findOneBy(
+                [
+                    'pool_id'       => $poolId,
+                    'team_name_fft' => $poolRanking->getTeamNameFft(),
+                ]
+            );
+
+            if (false !== $existingPoolRanking) {
+                // Mise à jour : on spécifie l'id pour se mettre en mode "update"
+                $poolRanking->setId($existingPoolRanking->getId());
+            }
+            $this->save($poolRanking, true);
+        }
     }
 }

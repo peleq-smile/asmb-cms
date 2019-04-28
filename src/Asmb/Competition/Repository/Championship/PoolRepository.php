@@ -5,6 +5,8 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 use Bolt\Storage\Repository;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Helpers\PoolHelper;
+use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
+use Bundle\Asmb\Competition\Helpers\PoolTeamHelper;
 
 /**
  * Repository for champioship pools.
@@ -90,150 +92,53 @@ class PoolRepository extends Repository
     }
 
     /**
-     * Check if given Pool has all their matches filled.
+     * Retourne toutes les poules nécessitant un rafraîchissement des données depuis la FFT.
+     * Une poule est considérée comme "à rafraîchir" si elle appartient à une compétition au statut ACTIF et s'il existe
+     * au moins 1 rencontre passée ou du jour-même sans résultat.
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
-     *
-     * @return bool
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return Pool[]
      */
-    public function checkEditionIsComplete(Pool $pool)
+    public function findAllToRefresh()
     {
-        $isComplete = (100 === $this->getEditionCompleteness($pool));
+        $pools = [];
 
-        return $isComplete;
-    }
+        $qb = $this->getLoadQuery();
 
-    /**
-     * Calculate completeness of given Pool, according to filled match count.
-     *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
-     *
-     * @return int
-     * @throws \Bolt\Exception\InvalidRepositoryException
-     */
-    public function getEditionCompleteness(Pool $pool)
-    {
-        $completeness = 0;
+        // Filtre sur les poules des championnats ACTIFS uniquement
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship',
+            'championship',
+            $qb->expr()->eq("{$this->getAlias()}.championship_id", 'championship.id')
+        );
+        $qb->where('championship.is_active = true');
 
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolTeamRepository */
-        $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
-        $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
+        // Filtre sur les poules ayant au moins 1 rencontre passée (ou du jour même) sans résultat
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_meeting',
+            'pool_meeting',
+            $qb->expr()->eq("{$this->getAlias()}.id", 'pool_meeting.pool_id')
+        );
+        // On exclut les rencontres avec les "fausses équipes"
+        $exemptTeamPrefix = PoolTeamHelper::EXEMPT_TEAM_PREFIX;
+        $qb->andWhere("pool_meeting.home_team_name_fft NOT LIKE '$exemptTeamPrefix%'");
+        $qb->andWhere("pool_meeting.visitor_team_name_fft NOT LIKE '$exemptTeamPrefix%'");
 
-        $daysCount = PoolHelper::getDaysCount($teamsCount);
-        $matchesCountPerDay = PoolHelper::getMeetingsCountPerDay($teamsCount);
+        // On prend en compte les éventuelles dates de report
+        $qb->andWhere('IFNULL(pool_meeting.report_date, pool_meeting.date) <= CURDATE()');
 
-        $completeMatchesCountToCheck = $daysCount * $matchesCountPerDay;
+        // On exclut les rencontres ayant déjà un résultat
+        $qb->andWhere('(pool_meeting.result IS NULL OR pool_meeting.result = :noneResult)');
+        $qb->setParameter(':noneResult', PoolMeetingHelper::RESULT_NONE);
 
-        if ($completeMatchesCountToCheck > 0) {
-            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository $matchRepository */
-            $matchRepository = $this->em->getRepository('championship_match');
-            $qb = $matchRepository->getLoadQuery();
-            $qb->select('COUNT(' . $matchRepository->getAlias() . '.id) as count')
-                ->where('pool_id = :poolId')
-                ->andWhere('home_team_id IS NOT NULL')
-                ->andWhere('visitor_team_id IS NOT NULL')
-                ->setParameter('poolId', $pool->getId());
+        $qb->groupBy("{$this->getAlias()}.id");
 
-            $result = (int) $qb->execute()->fetchColumn(0);
-
-            $completeness = (int) (100 * ($result / $completeMatchesCountToCheck));
+        $result = $qb->execute()->fetchAll();
+        if ($result) {
+            $pools = $this->hydrateAll($result, $qb);
         }
 
-        return $completeness;
+        return $pools;
     }
-
-    /**
-     * @param Pool[] $pools
-     *
-     * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
-     */
-    public function getEditionCompletenesses(array $pools)
-    {
-        $completenesses = [];
-
-        foreach ($pools as $pool) {
-            $completenesses[$pool->getId()] = 0;
-        }
-        $poolIds = array_keys($completenesses);
-
-        if (!empty($poolIds)) {
-            /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolTeamRepository */
-            $poolTeamRepository = $this->getEntityManager()->getRepository('championship_pool_team');
-            $poolTeamAlias = $poolTeamRepository->getAlias();
-            $matchAlias = 'm'; //TODO plus maintenant
-
-            $qb = $poolTeamRepository->getLoadQuery();
-            // SELECT
-            $qb->select("$poolTeamAlias.pool_id as pool_id");
-            $qb->addSelect("COUNT(DISTINCT $matchAlias.id) as filled_match_count");
-            // Expected match count depends on teams count into each pool : if it's even or odd
-            $qb->addSelect("(IF(COUNT(DISTINCT $poolTeamAlias.team_id) % 2 = 0, 
-                                COUNT(DISTINCT $poolTeamAlias.team_id) - 1, 
-                                COUNT(DISTINCT $poolTeamAlias.team_id))
-                            ) * floor(COUNT(DISTINCT $poolTeamAlias.team_id) / 2) as expected_match_count");
-            // JOIN
-            $qb->leftJoin(
-                $poolTeamAlias,
-                'bolt_championship_match',
-                $matchAlias,
-                $qb->expr()->eq("$matchAlias.pool_id", "$poolTeamAlias.pool_id")
-            );
-            // WHERE
-            $qb->where($qb->expr()->in("$poolTeamAlias.pool_id", $poolIds));
-            $qb->andWhere("$matchAlias.home_team_id IS NOT NULL");
-            $qb->andWhere("$matchAlias.visitor_team_id IS NOT NULL");
-            // GROUP BY
-            $qb->groupBy("$poolTeamAlias.pool_id");
-
-            $result = $qb->execute()->fetchAll();
-
-            foreach ($result as $row) {
-                $completenesses[$row['pool_id']] = (int) (100 * ($row['filled_match_count'] / $row['expected_match_count']));
-            }
-        }
-
-        return $completenesses;
-    }
-
-    /**
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
-     *
-     * @return integer|boolean
-     */
-//    public function findPoolWithLteTeamCount(Pool $pool)
-//    {
-//        $qb = $this->getLoadQuery();
-//        $qb->select("other_pool.id as other_pool_id");
-//        $qb->addSelect("count(distinct other_pt.team_id) as other_pool_team_count");
-//
-//        $qb->leftJoin(
-//            $this->getAlias(),
-//            'bolt_championship_pool_team',
-//            'orig_pt',
-//            $qb->expr()->eq("orig_pt.pool_id", "{$this->getAlias()}.id")
-//        );
-//        $qb->leftJoin(
-//            $this->getAlias(),
-//            'bolt_championship_pool',
-//            'other_pool',
-//            $qb->expr()->eq("other_pool.championship_id", "{$this->getAlias()}.championship_id")
-//        );
-//        $qb->leftJoin(
-//            'other_pool',
-//            'bolt_championship_pool_team',
-//            'other_pt',
-//            $qb->expr()->eq("other_pt.pool_id", "other_pool.id")
-//        );
-//
-//        $qb->where($qb->expr()->eq("{$this->getAlias()}.id", $pool->getId()));
-//        $qb->andWhere($qb->expr()->neq("other_pool.id", $pool->getId()));
-//        $qb->groupBy('other_pool_id');
-//        $qb->having($qb->expr()->lte("other_pool_team_count", 'count(distinct orig_pt.team_id)'));
-//
-//        $otherPoolId = $qb->execute()->fetchColumn();
-//
-//        return $otherPoolId;
-//    }
 }

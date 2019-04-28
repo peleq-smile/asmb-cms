@@ -1,0 +1,30 @@
+.section-bureau {
+    article.content {
+        h2 {
+            text-align: center;
+            margin: 4rem auto 1rem auto;
+            font-size: 2rem;
+        }
+
+        .column {
+            text-align: center;
+
+
+            h3 {
+                margin-top: 0;
+            }
+
+            img {
+                max-height: 250px;
+            }
+
+            p {
+                b {
+                    font-size: 1.1rem;
+                    line-height: 2.5rem;
+                }
+            }
+        }
+    }
+
+}

@@ -2,14 +2,17 @@
 
 namespace Bundle\Asmb\Competition\Controller\Backend;
 
+use Bolt\Exception\InvalidRepositoryException;
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
+use Bundle\Asmb\Competition\Exception\PoolTeamNotFoundException;
 use Bundle\Asmb\Competition\Form\FormType;
 use Bundle\Asmb\Competition\Helpers\PoolHelper;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -314,43 +317,18 @@ class PoolController extends AbstractController
      */
     protected function savePoolRanking(Pool $pool, array $poolRankings)
     {
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
-        $poolTeamRepository = $this->getRepository('championship_pool_team');
         /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolRankingRepository */
         $poolRankingRepository = $this->getRepository('championship_pool_ranking');
-
-        foreach ($poolRankings as $poolRanking) {
-            // On récupère le nom interne de l'équipe à partir du nom FFT
-            /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam $poolTeam */
-            $poolTeam = $poolTeamRepository->findOneBy(
-                ['pool_id' => $pool->getId(), 'name_fft' => $poolRanking->getTeamNameFft()]
-            );
-
-            if (!$poolTeam) {
-                $this->flashes()->error(Trans::__('page.pool-ranking.message.not-fetched'));
-            } else {
-                $poolRanking->setTeamIsClub($poolTeam->isClub());
-
-                // Création ou mise à jour ?
-                /** @var PoolRanking $existingPoolRanking */
-                $existingPoolRanking = $poolRankingRepository->findOneBy(
-                    [
-                        'pool_id'   => $pool->getId(),
-                        'team_name_fft' => $poolRanking->getTeamNameFft(),
-                    ]
-                );
-
-                if (false !== $existingPoolRanking) {
-                    // Mise à jour : on spécifie l'id pour se mettre en mode "update"
-                    $poolRanking->setId($existingPoolRanking->getId());
-                }
-                $poolRankingRepository->save($poolRanking, true);
-            }
+        try {
+            $poolRankingRepository->saveAll($poolRankings, $pool->getId());
+        } catch (Exception $e) {
+            $this->flashes()->error(Trans::__('page.pool-ranking.message.not-fetched'));
+            $this->flashes()->error($e->getMessage());
         }
     }
 
     /**
-     * Sauvegarde les matchs donnés en paramètre.
+     * Sauvegarde les rencontres donnés en paramètre.
      *
      * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
      * @param PoolMeeting[]                                     $poolMeetings
@@ -359,28 +337,6 @@ class PoolController extends AbstractController
     {
         /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository $poolMeetingRepository */
         $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
-
-        foreach ($poolMeetings as $poolMeeting) {
-            // On récupère les 2 équipes de la rencontre à partir de leur nom FFT
-            /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam $homePoolTeam */
-
-            // Création ou mise à jour ?
-            /** @var PoolMeeting $existingPoolRanking */
-            $existingPoolMeeting = $poolMeetingRepository->findOneBy(
-                [
-                    'pool_id'          => $pool->getId(),
-                    'home_team_name_fft'    => $poolMeeting->getHomeTeamNameFft(),
-                    'visitor_team_name_fft' => $poolMeeting->getVisitorTeamNameFft(),
-                ]
-            );
-
-            if (false !== $existingPoolMeeting) {
-                // Mise à jour : on spécifie l'id pour se mettre en mode "update"
-                $poolMeeting->setId($existingPoolMeeting->getId());
-                // Si une heure existe, on la conserve
-                $poolMeeting->setTime($existingPoolMeeting->getTime());
-            }
-            $poolMeetingRepository->save($poolMeeting, true);
-        }
+        $poolMeetingRepository->saveAll($poolMeetings, $pool->getId());
     }
 }

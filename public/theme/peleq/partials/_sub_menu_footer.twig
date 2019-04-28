@@ -19,7 +19,7 @@
                 <div class="item">{{- item.label|default('-')|raw -}}</div>
             {% else %}
                 <div class="item">
-                    <a href="{{ item.link }}" title="{{ item.title|default('')|escape }}">
+                    <a href="{{ item.link }}" title="{{ item.title|default('')|escape }}" target="_blank">
                         <i class="fas fa-caret-right"></i>
                         {{- item.label|default('-')|raw -}}
                     </a></div>

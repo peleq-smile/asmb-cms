@@ -22,7 +22,8 @@
     <div class="bottom">
         {{ widgets('footer') }}
         <p class="copyright">
-            Copyright © 2018 ASMB Tennis Nantes | <a href="">Mentions légales</a><br>
+            {# TODO #}
+            Copyright © {{ date()|localdate('%Y') }} ASMB Tennis Nantes | <a href="#todo">Mentions légales</a><br>
             <span class="font-italic">{{ __("This website is <a href='%url%' target='_blank' title='Sophisticated, lightweight & simple CMS'>Built with Bolt</a>.",{'%url%':'http://bolt.cm'}) }}</span>
         </p>
         <p class="empty"></p>

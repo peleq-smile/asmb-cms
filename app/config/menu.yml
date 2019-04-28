@@ -19,14 +19,16 @@ main:
         - label: 'Inscriptions / Devenir membre'
           path: page/inscriptions
         - label: 'Tennis Loisir'
-          path: page/tennis-loisir
+          path: page/creneaux
           submenu:
+            - label: 'La carte'
+              path: page/la-carte-loisir
             - label: 'Créneaux'
               path: page/creneaux
             - label: 'Réservations'
               path: page/reservations
             - label: 'Rechercher un partenaire'
-              path: page/reservations
+              path: page/recherche-partenaire
 
         - label: 'Enseignement'
           path: page/enseignement
@@ -36,11 +38,11 @@ main:
             - label: 'Prépa. physique avant saison'
               path: page/prepa-physique-avant-saison
 
-    - label: 'Compétitions'
-      path: page/competitions
+    - label: 'Compétition'
+      path: page/championnats
       submenu:
-        - label: Championnat
-          path: page/championnat
+        - label: Championnats
+          path: page/championnats
           submenu:
             - label: 'Seniors Hommes'
               path: page/seniors-hommes
@@ -49,7 +51,7 @@ main:
               path: page/seniors-dames
 
             - label: 'Seniors Plus'
-              path: page/seniots-plus
+              path: page/seniors-plus
 
             - label: 'Jeunes'
               path: page/jeunes
@@ -74,7 +76,7 @@ main:
 
 
     - label: 'Articles'
-      path: page/articles
+      path: page/infos-pratiques
       submenu:
         - label: 'Infos pratiques'
           path: page/infos-pratiques
@@ -103,7 +105,7 @@ footer_external_links:
           link: http://www.comite.fft.fr/loire-atlantique/02L00440_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
 
         - label: 'Ligue des Pays de Loire'
-          link: http://www.ligue.fft.fr/pays-loire/paysdelaloire_a/cms/index_public.php?PHPSESSID=0fe0c5d5881e834f19d3b15c90dc4e77&us_action=show_note_site&ui_id_site=1
+          link: http://www.ligue.fft.fr/pays-loire/pays-loire_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
 
         - label: 'Gestion Sportive (Championnat)'
           link: http://www.gs.applipub-fft.fr/fftfr/frameset.do?dispatch=load
