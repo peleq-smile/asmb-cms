@@ -21,6 +21,7 @@
         .table {
             background-color: $bg-light;
             border-collapse: separate;
+            line-height: 30px;
 
             thead:not(:first-child) th {
                 padding-top: 2rem;
@@ -61,31 +62,6 @@
                 width: 25%;
             }
 
-            .score {
-                width: 10%;
-                white-space: nowrap;
-                text-align: center;
-                line-height: 30px;
-
-                span {
-                    color: $white;
-                    border-radius: 12px;
-                    padding: 5px 10px;
-
-                    &.victory {
-                        background: $win;
-                    }
-
-                    &.defeat {
-                        background: $lost;
-                    }
-
-                    &.draw {
-                        background: $draw;
-                    }
-                }
-            }
-
             .second-team {
                 text-align: left;
                 width: 25%;
@@ -101,6 +77,40 @@
                 color: $primary;
                 font-weight: 600;
             }
+        }
+    }
+}
+
+table {
+    td.score {
+        width: 10%;
+        white-space: nowrap;
+        text-align: center;
+    }
+    span.score {
+        line-height: 30px;
+        color: $text;
+        border-radius: 12px;
+        padding: 4px 9px;
+        border: solid 1px $grey;
+        white-space: nowrap;
+
+        &.victory, &.defeat, &.draw {
+            color: $white;
+            padding: 5px 10px;
+            border: none;
+        }
+
+        &.victory {
+            background: $win;
+        }
+
+        &.defeat {
+            background: $lost;
+        }
+
+        &.draw {
+            background: $draw;
         }
     }
 }
@@ -127,13 +137,19 @@
                                 font-size: 0.9rem;
                             }
                         }
-                        .score {
-                            padding: 5px !important;
-                        }
                     }
                 }
             }
 
+        }
+    }
+    table {
+        span.score {
+            padding: 2px 5px !important;
+
+            &.victory, &.defeat, &.draw {
+                padding: 3px 6px !important;
+            }
         }
     }
 }

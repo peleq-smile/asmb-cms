@@ -2,6 +2,7 @@
 
 namespace Bundle\Asmb\Competition\Extension;
 
+use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 
@@ -43,11 +44,11 @@ trait TwigFiltersTrait
      * Retourne le lien (HTML) vers la feuille de matchs de la Gestion Sportive (FFT).
      *
      * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
-     * @param string                                                   $faIcon
+     * @param null|string                                              $withThisContent
      *
      * @return string
      */
-    public function getMatchesSheetLink(PoolMeeting $meeting, $faIcon = 'eye')
+    public function getMatchesSheetLink(PoolMeeting $meeting, $withThisContent = null)
     {
         $link = '';
 
@@ -59,11 +60,16 @@ trait TwigFiltersTrait
                 . "&efm_iid={$paramsFdmFft['efm_iid']}"
                 . "&pha_iid={$paramsFdmFft['pha_iid']}";
 
-            $link = new \Twig_Markup(
-                '<a href="' . $url . '" class="btn btn-xs btn-link" target="_blank">'
-                . '<i class="fa fa-' . $faIcon . ' "></i></a>',
-                'utf-8'
-            );
+            $title = Trans::__('general.phrase.go-to-matches-sheet');
+            $linkContent = '<a href="' . $url . '" class="btn btn-xs btn-link" target="_blank" title="' . $title . '">';
+
+            if ($withThisContent) {
+                $linkContent .= $withThisContent . '</a>';
+            } else {
+                $linkContent .= '<i class="fa fa-eye"></i></a>';
+            }
+
+            $link = new \Twig_Markup($linkContent, 'utf-8');
         }
 
         return $link;

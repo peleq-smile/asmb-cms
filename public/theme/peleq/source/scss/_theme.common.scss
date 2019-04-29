@@ -6,6 +6,18 @@
     color: $secondary;
 }
 
+.text-center {
+    text-align: center !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
 #main-content {
     h1.title {
         color: $text;

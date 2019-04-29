@@ -1,0 +1,77 @@
+{% if poolRanking is not empty %}
+    <table class="table table-ranking is-fullwidth">
+        <thead>
+        <tr>
+            <th colspan="2">
+                <a class="pool-name" href="{{ pool.getLinkFft() }}" target="_blank"
+                   title="{{ __('general.phrase.see-pool-on-fft') }}">
+                    <i class="fas fa-external-link-alt"></i> {{ pool.name }}
+                </a>
+            </th>
+            <th class="text-center"
+                title="{{ __('page.view-championship.points.title') }}">{{ __('page.view-championship.points.short_title') }}</th>
+            <th class="text-center"
+                title="{{ __('page.view-championship.days_played.title') }}">{{ __('page.view-championship.days_played.very_short_title') }}</th>
+            <th class="text-center"
+                title="{{ __('page.view-championship.match_diff.title') }}">{{ __('page.view-championship.match_diff.very_short_title') }}</th>
+            <th class="text-center"
+                title="{{ __('page.view-championship.set_diff.title') }}">{{ __('page.view-championship.set_diff.very_short_title') }}</th>
+            <th class="text-center"
+                title="{{ __('page.view-championship.game_diff.title') }}">{{ __('page.view-championship.game_diff.very_short_title') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for poolRankingRow in poolRanking %}
+            <tr class="{{ poolRankingRow.team_is_club ? 'is-club' }}">
+                <td class="text-left">{{ loop.index }}&nbsp;</td>
+                <td>{{ poolRankingRow.team_name }}</td>
+                <td class="text-center">{{ poolRankingRow.points }}</td>
+                <td class="text-center">{{ poolRankingRow.days_played }}</td>
+                <td class="text-center">{{ poolRankingRow.match_diff }}</td>
+                <td class="text-center">{{ poolRankingRow.set_diff }}</td>
+                <td class="text-center">{{ poolRankingRow.game_diff }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="table table-meetings is-fullwidth">
+        <tbody>
+        {% for day, meetingsOfDay in meetingsPerDay %}
+            {% set oddOrEvenDay = cycle(['odd', 'even'], loop.index0) %}
+
+            {% for meeting in meetingsOfDay %}
+                <tr class="{{ oddOrEvenDay }}">
+                    {% if loop.first %}
+                        <th class="text-center" colspan="5"
+                            rowspan="{{ meetingsOfDay|length }}">{{ __('general.phrase.meeting-day-short', {'%day%': day}) }}
+                        </th>
+                    {% endif %}
+
+                    <td class="text-right{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
+
+                    {% set scoreHtml = meeting|score(true) %}
+                    {% set finalDate = meeting.report_date ? meeting.report_date : meeting.date %}
+
+                    <td class="text-center">
+                        {% if scoreHtml is not empty %}
+                            {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
+                            {{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}
+                        {% else %}
+                            {% set datetimeHtml = finalDate|date('d/m') %}
+
+                            <span class="datetime{% if finalDate != meeting.date %} is-reported{% endif %}"
+                                  title="{% if finalDate != meeting.date %}{{ __('general.phrase.report-date') }}{% endif %}">
+                                    {{ datetimeHtml }}
+                                </span>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

@@ -39,25 +39,25 @@ main:
               path: page/prepa-physique-avant-saison
 
     - label: 'Compétition'
-      path: page/championnats
+      path: competition/championnat-d-ete
       submenu:
         - label: Championnats
-          path: page/championnats
+          path: competition/championnat-d-ete
           submenu:
             - label: 'Seniors Hommes'
-              path: page/seniors-hommes
+              path: competition/seniors-hommes
 
             - label: 'Seniors Dames'
-              path: page/seniors-dames
+              path: competition/seniors-dames
 
             - label: 'Seniors Plus'
-              path: page/seniors-plus
+              path: competition/seniors-plus
 
             - label: 'Jeunes'
-              path: page/jeunes
+              path: competition/jeunes
 
             - label: 'Championnat d''été'
-              path: page/championnat-d-ete
+              path: competition/championnat-d-ete
 
         - label: 'Tournois'
           path: page/tournois

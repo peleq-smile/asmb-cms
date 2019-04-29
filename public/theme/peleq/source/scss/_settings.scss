@@ -45,8 +45,10 @@ $success: $light;
 
 // Clor for win/lost/draw matches
 $win: #3e603d;
-$lost: #8f0000;
-$draw: #ac561d;
+$lost: #7a0000;
+$draw: #cc6c30;
+
+$border-color-table: #dbdbdb;
 
 $pre-background: $grey-lighter;
 $family-primary: $font-sans-serif;
@@ -98,6 +100,8 @@ $navbar-item-hover-background-color: $white-bis;
 
 $navbar-dropdown-border-top: 2px solid $secondary;
 $navbar-dropdown-radius: 0;
+
+
 
 // 6. Import the rest of the "utilities".
 @import "../node_modules/bulma/sass/utilities/all";

@@ -1,0 +1,107 @@
+.section-competition {
+    h2 {
+        margin: 1rem 0 0.5rem 0;
+        color: $text;
+    }
+    .pool-name {
+        color: $primary;
+        font-weight: bold;
+        line-height: 30px;
+        font-size: 1.1rem;
+
+        &:hover {
+            color: $dark;
+        }
+    }
+    .columns {
+        margin: 1rem -1.5rem;
+        flex-wrap: wrap;
+        align-content: stretch;
+        background: $white;
+
+        .column {
+            margin-bottom: 0;
+
+            &.is-new-line {
+                &::before {
+                    content: '';
+                    width: 100%;
+                }
+            }
+
+            table {
+                tr {
+                    &.is-club {
+                        background-color: $secondary-xlight;
+                        font-weight: bold;
+                    }
+
+                    th, td {
+                        padding: 2px;
+                        font-size: 0.8rem;
+                        vertical-align: middle;
+
+                        &.is-club {
+                            font-weight: bold;
+                        }
+                    }
+
+                    th.text-center {
+                        cursor: help;
+                    }
+
+                    &.even th, &.even td {
+                        background-color: $bg-light;
+                    }
+                }
+
+                &.table tbody tr:last-child td {
+                    border-bottom-width: 1px;
+                }
+
+                &.table-meetings {
+                    border-top: solid 2px $border-color-table;
+                    th, td {
+                        line-height: 30px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $tablet) and (max-width: $widescreen) {
+    .section-competition {
+        .columns {
+            .column {
+                padding: 0.75rem;
+
+                table {
+                    &.table-meetings {
+                        th, td {
+                            font-size: 0.7rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tablet) {
+    .section-competition {
+        .columns {
+            .column {
+                padding: 0.5rem 1.5rem;
+
+                h2.title {
+                    margin-bottom: 0.75rem;
+                    font-size: 2rem;
+                }
+            }
+        }
+    }
+}

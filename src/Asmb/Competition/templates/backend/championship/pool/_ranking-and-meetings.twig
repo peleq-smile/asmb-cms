@@ -94,13 +94,13 @@
                                 {% if meeting.home_team_is_club or meeting.visitor_team_is_club %}
                                     {% if meeting.time %}
                                         <span class="info-pop"
-                                              data-title="{{ __('page.view-championship.meeting-date.title') }}"
+                                              data-title="{{ __('page.view-championship.meeting-time.title') }}"
                                               data-content="{{ __('page.view-championship.meeting-time.text', {'%time%': meeting.time|date(' H:i')}) }}">
                                                 <i class="fa fa-clock-o success"></i>
                                         </span>
                                     {% else %}
                                         <span class="info-pop"
-                                              data-title="{{ __('page.view-championship.meeting-date.title') }}"
+                                              data-title="{{ __('page.view-championship.meeting-time.title') }}"
                                               data-content="<em>{{ __('general.phrase.not-set') }}</em>" data-html="true">
                                                 <i class="fa fa-clock-o danger"></i>
                                         </span>

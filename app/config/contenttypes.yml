@@ -183,6 +183,25 @@ pages:
     recordsperpage: 20
     taxonomy: [ rubriques ]
 
+competitions:
+    name: Compétitions
+    singular_name: Compétition
+    fields:
+        title:
+            type: text
+            class: large
+            group: content
+        slug:
+            type: slug
+            uses: title
+        competition_id:
+            type: integer
+            label: ID (Bolt) de la compétition
+        competition_categories:
+            type: select
+            values: ['Hommes','Dames','+35','Jeunes']
+            label: Afficher uniquement les données de cette/ces catégorie(s)
+            multiple: true
 
 evenements:
     name: Évènements
