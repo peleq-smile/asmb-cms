@@ -28,6 +28,8 @@ abstract class AbstractController extends BackendBase
 
     /**
      * AbstractController constructor.
+     *
+     * @param $config
      */
     public function __construct($config)
     {
@@ -141,7 +143,6 @@ abstract class AbstractController extends BackendBase
      * @param integer $championshipId
      *
      * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
      */
     protected function getPoolMeetingsPerPoolId($championshipId)
     {
