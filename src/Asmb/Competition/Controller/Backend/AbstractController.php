@@ -6,7 +6,7 @@ use Bolt\Controller\Backend\BackendBase;
 use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Form\FormType;
-use Bundle\Asmb\Competition\Helpers\CalendarHelper;
+use Bundle\Asmb\Competition\Helpers\PoolHelper;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
@@ -240,7 +240,7 @@ abstract class AbstractController extends BackendBase
         /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
         $poolTeamRepository = $this->getRepository('championship_pool_team');
         $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
-        $totalMeetingsCount = CalendarHelper::getTotalMeetingsCount($teamsCount);
+        $totalMeetingsCount = PoolHelper::getTotalMeetingsCount($teamsCount);
 
         return $totalMeetingsCount;
     }
