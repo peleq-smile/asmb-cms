@@ -32,12 +32,12 @@
         <div class="column block-image">
             {% if block.contentlink %}
                 <a class="image" href="{{ block.contentlink }}"
-                   style="background: url('{{ asset(block.image, 'files') }}') no-repeat; background-size: cover; height: 100%; width: {{ width }}px;">
+                   style="background: url('{{ asset(block.image, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
                     <span class="see-more">&plus; d'info</span>
                 </a>
             {% else %}
                 <div class="image"
-                     style="background: url('{{ asset(block.image, 'files') }}') no-repeat; background-size: cover; height: 100%; width: {{ width }}px;"></div>
+                     style="background: url('{{ asset(block.image, 'files') }}') no-repeat  center; background-size: cover; height: 100%; width: {{ width }}px;"></div>
             {% endif %}
         </div>
     {% endif %}

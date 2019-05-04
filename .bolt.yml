@@ -1,3 +1,4 @@
 extensions:
-    - Bundle\Asmb\Visitors\VisitorsExtension
+    - Bundle\Asmb\Calendar\CalendarExtension
     - Bundle\Asmb\Competition\CompetitionExtension
+    - Bundle\Asmb\Visitors\VisitorsExtension

@@ -3,7 +3,7 @@
 namespace Bundle\Asmb\Competition\Nut;
 
 use Bolt\Nut\BaseCommand;
-use Bundle\Asmb\Competition\Helpers\PoolHelper;
+use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
 use Exception;
@@ -80,7 +80,7 @@ class RefreshCommand extends BaseCommand
                 // Données RENCONTRES
                 // On commence par compter le nombre de page à parser
                 $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
-                $totalMeetingsCount = PoolHelper::getTotalMeetingsCount($teamsCount);
+                $totalMeetingsCount = CalendarHelper::getTotalMeetingsCount($teamsCount);
                 $pageCount = ceil($totalMeetingsCount / PoolMeetingsParser::MAX_PER_PAGE);
 
                 // On parse

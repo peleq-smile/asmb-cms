@@ -16,10 +16,26 @@
             width: auto !important;
             max-height: 400px;
         }
-    }
 
-    .pagination {
-        justify-content: center;
+        ul {
+            list-style: none;
+            margin-bottom: 1rem;
+
+            li {
+                &:before {
+                    font-family: "Font Awesome 5 Free";
+                    content: '\f058';
+                    padding-right: 0.4rem;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .table {
+            th, td {
+                vertical-align: middle;
+            }
+        }
     }
 }
 
@@ -33,6 +49,39 @@
                 margin: 4rem auto;
                 box-shadow: 2rem 2rem 0 0 $secondary-xlight, -2rem -2rem 0 0rem $primary;
                 max-width: 60%;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $desktop) {
+    .section-page {
+        .container {
+            ul {
+                list-style: none;
+                margin-left: 0;
+            }
+
+            .table.is-responsive {
+                tr {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+
+                    th, td {
+                        display: block;
+                    }
+
+                    td:last-child {
+                        margin-bottom: 0.5rem;
+                    }
+
+                    &:not(:first-child) {
+                        th {
+                            margin-top: 1.5rem;
+                        }
+                    }
+                }
             }
         }
     }

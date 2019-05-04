@@ -17,13 +17,19 @@
                     {% if pools is not empty %}
                         {% for pool in pools %}
 
-                            {% set forceNewLine = false %}
-                            {% if loop.first and (pools|length + idx) > MAX_PER_ROW %}
-                                {% set forceNewLine = true %}
-                                <div class="column is-{{ MAX_PER_ROW-1 }} is-invisible-desktop is-hidden-touch"></div>
+                            {% if loop.first and (pools|length + (idx % MAX_PER_ROW)) > MAX_PER_ROW %}
+                                {% set nbEmptyBlock = (pools|length + (idx % MAX_PER_ROW)) - MAX_PER_ROW %}
+                                {% for i in 0..nbEmptyBlock %}
+                                    {% if (idx % MAX_PER_ROW) != 0 %}
+                                        <div class="column is-{{ MAX_PER_ROW-1 }} is-invisible-desktop is-hidden-touch"></div>
+                                        {% set idx = idx+1 %}
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
 
-                            <div class="column is-{{ MAX_PER_ROW-1 }}{{ forceNewLine ? ' is-new-line' }}">
+                            <div class="column is-{{ MAX_PER_ROW-1 }}">
+                                {# TODO retirer, pour debug #}
+                                {#idx={{ idx }} ; idx % MAX_PER_ROW={{ (idx % MAX_PER_ROW) }} ; pools|length + idx={{ pools|length + idx }}#}
                                 {% if loop.first or prevCategoryName != categoryName %}
                                     <h2 class="title">{{ categoryName }}</h2>
                                     {% set prevCategoryName = categoryName %}

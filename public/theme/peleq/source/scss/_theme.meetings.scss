@@ -34,6 +34,14 @@
                 em {
                     font-size: 1rem;
                 }
+
+                a {
+                    color: $secondary;
+
+                    &:hover {
+                        color: $dark;
+                    }
+                }
             }
 
             td {

@@ -29,6 +29,12 @@
     }
 }
 
+.container {
+    .pagination {
+        justify-content: center;
+    }
+}
+
 .columns.white-framed {
     align-items: center;
     background: linear-gradient(to right, $white 50%, $body-background-color);
@@ -49,6 +55,13 @@
 
 mark {
     background-color: $secondary-xlight;
+}
+
+.anchor {
+    display: block;
+    height: 210px;
+    margin-top: -210px;
+    visibility: hidden;
 }
 
 /*****************/

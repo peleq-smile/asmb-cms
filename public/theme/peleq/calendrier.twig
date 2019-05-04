@@ -1,0 +1,64 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+    {% set MAX_PER_ROW = 5 %}
+
+    <section class="section section-calendar">
+        <div class="container">
+            <h1 class="title is-size-1 is-size-3-mobile">{{ record.name }}</h1>
+
+            {% set calendarData = getCalendarData(record) %}
+            {% set skipCalEventTd = 0 %}
+            <div class="box">
+                <div class="columns">
+                    {% for month, monthDays in calendarData %}
+                        <div class="column{% if loop.index0 % MAX_PER_ROW == 0 %} first{% endif %}">
+                            <table class="table is-fullwidth is-narrow">
+                                <thead>
+                                <tr>
+                                    <th colspan="2">{{ month }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for dayLabel, dayData in monthDays %}
+                                    <tr{% if dayData.classNames is not empty %} class="{{ dayData.classNames|join(' ') }}"{% endif %}>
+                                        <td class="cal-day" title="{{ dayData.title|default('') }}">{{ dayLabel }}</td>
+                                        {% if dayData.event is not empty %}
+                                            <td class="cal-event"{% if dayData.event.duration > 1 %} rowspan="{{ dayData.event.duration }}"{% endif %}
+                                                style="background: {{ dayData.event.color }}">
+                                                {{ dayData.event.name }}
+                                            </td>
+                                            {% set skipCalEventTd = dayData.event.duration-1 %}
+                                        {% elseif skipCalEventTd == 0 %}
+                                            <td class="cal-event"></td>
+                                        {% else %}
+                                            {% set skipCalEventTd = skipCalEventTd-1 %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% set eventTypes = getCalendarEventTypes() %}
+            <div class="box calendar-legend">
+                <div class="columns">
+                    {% for eventType in eventTypes %}
+                        <div class="column{% if loop.index0 % MAX_PER_ROW == 0 %} first{% endif %}">
+                            <div class="event-type">
+                                <span class="color" style="background-color: {{ eventType.color }}">&nbsp;</span>
+                                <span class="name">{{ eventType.name }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {{ include('partials/_recordfooter.twig', { 'record': record, 'extended': true }) }}
+        </div>
+    </section>
+
+{% endblock main %}

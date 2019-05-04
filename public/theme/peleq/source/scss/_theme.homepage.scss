@@ -15,6 +15,11 @@
             }
         }
 
+        h4 {
+            font-weight: bold;
+            color: $dark;
+        }
+
         &.block-with-image {
             .block-content {
                 margin-top: $block-with-image-gap + 2rem;
@@ -38,11 +43,15 @@
 
             ul li {
                 &:before {
+                    padding-right: 4px;
                     font-family: "Font Awesome 5 Free";
                     content: '\f058';
-                    padding-right: 0.4rem;
                     font-weight: bold;
                 }
+            }
+
+            ol li {
+                list-style: none;
             }
         }
 
@@ -194,7 +203,7 @@
                 flex-grow: 0;
                 background-color: $secondary;
                 margin-right: $block-with-image-gap + 1rem;
-                padding-right: 0;
+                padding: 3rem 0 3rem 2rem;
                 max-width: 40%;
 
                 .image {

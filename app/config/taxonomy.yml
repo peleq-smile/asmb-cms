@@ -1,11 +1,11 @@
 # This file defines the different types of taxonomies in Bolt. See the
 # documentation for details: https://docs.bolt.cm/contenttypes/taxonomies
 
-etiquettes:
-    name: Étiquettes
-    singular_name: Étiquette
-    slug: etiquettes
-    singular_slug: etiquette
+home_flags:
+    name: Indicateurs accueil
+    singular_name: Indicateur accueil
+    slug: home_flags
+    singular_slug: home_flag
     behaves_like: grouping
     multiple: false
     options:
@@ -13,14 +13,16 @@ etiquettes:
         accueil-bottom: Afficher sur l'accueil - section du bas
     has_sortorder: true
 
-rubriques:
-    name: Rubriques
-    singular_name: Rubrique
-    slug: rubriques
-    singular_slug: rubriques
+tags:
+    name: Tags
+    singular_name: Tag
+    slug: tags
+    singular_slug: tag
     behaves_like: grouping
     multiple: false
     options:
+        calendrier: Calendrier
+        competition: Compétition
         histoire-tennis: Histoire du tennis
     has_sortorder: true
 

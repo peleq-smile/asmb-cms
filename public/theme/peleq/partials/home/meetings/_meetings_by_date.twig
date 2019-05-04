@@ -3,28 +3,42 @@
     <table class="table is-fullwidth">
         {% for meeting in meetings %}
             {% if (previousDate is not defined or previousDate != meeting.date)
-                or (previousChpName is not defined or previousChpName != meeting.championship_name)
+                or (previousChpId is not defined or previousChpId != meeting.championship_id)
             %}
                 {% if loop.index != 1 %}
                     </tbody>
                 {% endif %}
 
+        {# On récupère le contenu "Competition" pour ajouter un lien vers la page #}
+        {% setcontent competitions = 'competition' where { competition_id: meeting.championship_id } %}
+
                 <thead>
                 <tr>
                     <th colspan="4">
-                        <span class="is-hidden-touch">
-                            {{ meeting|formattedDate }}
-                            <em> &bullet; {{ meeting.championship_name }}</em>
-                        </span>
-                        <span class="is-hidden-desktop">
-                            {{ meeting|formattedDate(true) }}
-                            <em> &bullet; {{ meeting.championship_short_name }}</em>
-                        </span>
+                        {% if competitions is not empty %}
+                            <span class="is-hidden-touch">
+                                {{ meeting|formattedDate }}
+                                <em> &bullet; <a href="{{ competitions|first.link }}"> <i class="fas fa-chevron-circle-right"></i></i> {{ meeting.championship_name }}<i class=""></i></a></em>
+                            </span>
+                            <span class="is-hidden-desktop">
+                                {{ meeting|formattedDate(true) }}
+                                <em> &bullet; <a href="{{ competitions|first.link }}"> <i class="fas fa-chevron-circle-right"></i> {{ meeting.championship_short_name }}</a></em>
+                            </span>
+                        {% else %}
+                            <span class="is-hidden-touch">
+                                {{ meeting|formattedDate }}
+                                <em> &bullet; {{ meeting.championship_name }}</em>
+                            </span>
+                            <span class="is-hidden-desktop">
+                                {{ meeting|formattedDate(true) }}
+                                <em> &bullet; {{ meeting.championship_short_name }}</em>
+                            </span>
+                        {% endif %}
                     </th>
                 </tr>
                 </thead>
                 {% set previousDate = meeting.date %}
-                {% set previousChpName = meeting.championship_name %}
+        {% set previousChpId = meeting.championship_id %}
 
                 <tbody>
             {% endif %}
@@ -33,7 +47,7 @@
             {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
 
             <tr>
-                <td class="hour{{ scoreHtml ? ' is-hidden-touch is-hidden-desktop-only' }}" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
+                <td class="hour" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
                 <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                 <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                 <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>

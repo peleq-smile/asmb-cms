@@ -16,8 +16,13 @@ main:
     - label: 'Jouer'
       path: page/inscriptions
       submenu:
-        - label: 'Inscriptions / Devenir membre'
+        - label: 'Inscriptions & tarifs'
           path: page/inscriptions
+          submenu:
+            - label: 'Inscriptions'
+              path: page/inscriptions
+            - label: 'Tarifs'
+              path: page/tarifs
         - label: 'Tennis Loisir'
           path: page/creneaux
           submenu:
@@ -38,11 +43,11 @@ main:
             - label: 'Prépa. physique avant saison'
               path: page/prepa-physique-avant-saison
 
-    - label: 'Compétition'
-      path: competition/championnat-d-ete
+    - label: 'Compétitions'
+      path: competition/championnat-ete
       submenu:
         - label: Championnats
-          path: competition/championnat-d-ete
+          path: competition/championnat-ete
           submenu:
             - label: 'Seniors Hommes'
               path: competition/seniors-hommes
@@ -56,9 +61,11 @@ main:
             - label: 'Jeunes'
               path: competition/jeunes
 
-            - label: 'Championnat d''été'
-              path: competition/championnat-d-ete
+            - label: 'Championnat Été'
+              path: competition/championnat-ete
 
+        - label: 'Coupe de Printemps'
+          path: competition/coupe-printemps
         - label: 'Tournois'
           path: page/tournois
 
@@ -69,7 +76,7 @@ main:
           path: page/evenements
 
         - label: 'Calendrier'
-          path: page/calendrier
+          path: calendrier/2018-2019
 
         - label: 'Galerie photos'
           path: page/galerie-photos

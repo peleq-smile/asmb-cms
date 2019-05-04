@@ -116,13 +116,14 @@ class PoolMeetingRepository extends Repository
 
         $qb = $this->getLoadQuery();
 
-        // Récupération du nom (court et long) du championnat
+        // Récupération de l'id + du nom (court et long) du championnat
         $qb->innerJoin(
             $this->getAlias(),
             'bolt_championship_pool',
             'pool',
             $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
         );
+        $qb->addSelect('championship.id as championship_id');
         $qb->addSelect('championship.name as championship_name');
         $qb->addSelect('championship.short_name as championship_short_name');
         $qb->innerJoin(
@@ -197,7 +198,8 @@ class PoolMeetingRepository extends Repository
                 $meeting->setVisitorTeamIsClub($result[$idx]['visitor_team_is_club']);
 
                 if ($meeting->getHomeTeamIsClub() || $meeting->getVisitorTeamIsClub()) {
-                    // Ajout à la volée du nom du championnat
+                    // Ajout à la volée de données sur le Championnat concerné
+                    $meeting->setChampionshipId((int) $result[$idx]['championship_id']);
                     $meeting->setChampionshipName($result[$idx]['championship_name']);
                     $meeting->setChampionshipShortName($result[$idx]['championship_short_name']);
 

@@ -9,7 +9,7 @@ use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
 use Bundle\Asmb\Competition\Exception\PoolTeamNotFoundException;
 use Bundle\Asmb\Competition\Form\FormType;
-use Bundle\Asmb\Competition\Helpers\PoolHelper;
+use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;

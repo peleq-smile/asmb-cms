@@ -54,3 +54,4 @@ app/config/extensions/menueditor.bacboslab.yml
 app/config/extensions/menu_backups/
 backup
 dev
+todo.*

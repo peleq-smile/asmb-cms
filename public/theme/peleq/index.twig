@@ -1,0 +1,56 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+    {% setcontent homepage = "homepage" limit 1 returnsingle %}
+
+    <div class="homepage">
+        <section class="section welcome">
+            <div class="container">
+                <div class="columns white-framed">
+                    <div class="column">
+                        <div class="content">
+                            <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
+                            <div class="teaser">{{ homepage.teaser }}</div>
+                            {{ homepage.content }}
+
+                            {% include 'partials/_record_meta.twig' with {'record': homepage } %}
+                        </div>
+                    </div>
+                    <div class="column">
+                        {% if homepage.teaser_image %}
+                            {{ homepage.teaser_image|showimage(300) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {# BLOCS ACCUEIL - Section du haut #}
+        {% setcontent topBlocks = 'block' where { home_flags: 'accueil-top' } %}
+        {% if topBlocks is not empty %}
+            <section class="section blocks">
+                <div class="container">
+                    {% for block in topBlocks %}
+                        {% include 'partials/block/_block.twig' with {'block': block, 'index': loop.index} %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {# Rencontres du moment #}
+        {% include 'partials/home/_meetings.twig' with {'record': homepage } %}
+
+        {# BLOCS ACCUEIL - Section du bas #}
+        {% setcontent bottomBlocks = 'block' where { home_flags: 'accueil-bottom' } %}
+        {% if bottomBlocks is not empty %}
+            <section class="section blocks">
+                <div class="container">
+                    {% for block in bottomBlocks %}
+                        {% set index = (topBlocks|length % 2) == 0 ? loop.index : loop.index0 %}
+                        {% include 'partials/block/_block.twig' with {'block': block, 'index': index} %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+{% endblock main %}

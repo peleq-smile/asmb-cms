@@ -5,7 +5,7 @@ namespace Bundle\Asmb\Competition\Parser;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
-use Bundle\Asmb\Competition\Helpers\PoolHelper;
+use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 
 /**
  * Service d'extraction des données FFT pour la récupération des rencontres dans une poule.

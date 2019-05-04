@@ -1,0 +1,153 @@
+.section-calendar {
+    .columns {
+        flex-wrap: wrap;
+
+        .column {
+            width: 20%;
+            flex: none;
+
+            .table {
+                &.is-narrow {
+                    td {
+                        padding: 0 5px;
+                    }
+                }
+
+                .cal-day {
+                    width: 25%;
+                    white-space: nowrap;
+                    text-transform: capitalize;
+
+                    &:not([title=""]) {
+                        cursor: help;
+                    }
+                }
+
+                .cal-event {
+                    width: 75%;
+                    text-align: center;
+                    vertical-align: middle;
+                }
+
+                tr.no-lessons {
+                    td {
+                        background: $grey-lighter;
+                    }
+                }
+
+                tr.is-sunday {
+                    td {
+                        background: $grey-lighter;
+
+                        &.cal-day {
+                            font-weight: bold;
+                        }
+                    }
+                }
+
+                tr.is-public-holiday {
+                    td {
+                        background: $grey-lighter;
+
+                        &.cal-day {
+                            font-weight: bold;
+                            color: $red;
+                        }
+                    }
+                }
+
+                tr.is-holidays {
+                    td {
+                        background: $grey-lighter;
+                        border-top: none;
+                        border-bottom: none;
+
+                        &.cal-day {
+                            background: $red;
+                            color: $white;
+                        }
+                    }
+                }
+
+                tr.is-today {
+                    td {
+                        &.cal-day {
+                            font-weight: bold;
+                            border-left: solid 5px $primary;
+                            border-right: solid 5px transparent;
+                            color: $primary;
+                            padding-left: 2px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .calendar-legend {
+        .column {
+            min-height: 8rem;
+
+            .event-type {
+                display: flex;
+                align-items: stretch;
+                height: 100%;
+                font-size: 0.9rem;
+
+                .color {
+                    display: inline-block;
+                    border: solid 1px $grey-lighter;
+                    width: 6% !important;
+                    height: 100%;
+                    margin-right: 5px;
+                }
+
+                .name {
+                    width: 94% !important;
+                }
+            }
+        }
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $tablet) and (max-width: $widescreen) {
+    .section-calendar {
+        .columns {
+            .column {
+                &:not(.first) {
+                    padding-left: 0;
+                }
+
+                .table {
+                    .cal-event {
+                        font-size: 0.8rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tablet) {
+    .section-calendar {
+        .columns {
+            .column {
+                width: 100%;
+            }
+        }
+
+        .calendar-legend {
+            .column {
+                min-height: unset;
+                padding: 0.5rem 1.5rem;
+
+                &:first-of-type {
+                    padding-top: 1.5rem;
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,7 @@
 general.phrase.add: "Ajouter"
 general.phrase.back: "Retour"
+general.phrase.prev: "Précédent"
+general.phrase.next: "Suivant"
 general.phrase.boolean.no: "Non"
 general.phrase.boolean.yes: "Oui"
 general.phrase.category_name: "Catégorie"

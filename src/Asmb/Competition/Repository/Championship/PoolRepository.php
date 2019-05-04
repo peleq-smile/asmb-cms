@@ -4,7 +4,7 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 
 use Bolt\Storage\Repository;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
-use Bundle\Asmb\Competition\Helpers\PoolHelper;
+use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 use Bundle\Asmb\Competition\Helpers\PoolTeamHelper;
 
