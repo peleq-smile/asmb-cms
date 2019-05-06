@@ -3,8 +3,8 @@
 namespace Bundle\Asmb\Competition\Controller\Backend;
 
 use Bolt\Translation\Translator as Trans;
-use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Form\FormType\PoolMeetingsEditType;
+use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Silex\ControllerCollection;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +17,22 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PoolMeetingsController extends AbstractController
 {
+    /** @var integer */
+    private $meetingsPastDays;
+    /** @var integer */
+    private $meetingsFutureDays;
+
+    /**
+     * AbstractController constructor.
+     *
+     * @param integer[] $meetingsParameters
+     */
+    public function __construct($meetingsParameters)
+    {
+        $this->meetingsPastDays = $meetingsParameters['meetings_past_days'];
+        $this->meetingsFutureDays = $meetingsParameters['meetings_future_days'];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -38,24 +54,20 @@ class PoolMeetingsController extends AbstractController
      */
     public function index(Request $request)
     {
-        $pastDays = (int) $this->getAsmbConfig('last_meetings_past_days');
-        $futureDays = (int) $this->getAsmbConfig('next_meetings_future_days');
-
         return $this->render(
             '@AsmbCompetition/pool-meetings/index.twig',
             [],
             [
-                'pastDays'     => $pastDays,
-                'futureDays'   => $futureDays,
-                'lastMeetings' => $this->getPastOrFutureMeetings(-1 * $pastDays),
-                'nextMeetings' => $this->getPastOrFutureMeetings($futureDays),
+                'pastDays'     => $this->meetingsPastDays,
+                'futureDays'   => $this->meetingsFutureDays,
+                'lastMeetings' => $this->getPastOrFutureMeetings(-1 * $this->meetingsPastDays),
+                'nextMeetings' => $this->getPastOrFutureMeetings($this->meetingsFutureDays),
             ]
         );
     }
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param                                           $championshipId
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -149,5 +161,30 @@ class PoolMeetingsController extends AbstractController
         }
 
         return false;
+    }
+
+    /**
+     * Retourne les rencontres du moment, dans le passé ou le futur selon que $pastOrFutureDays soit négatif (passé)
+     * ou positif (futur).
+     *
+     * @param int  $pastOrFutureDays
+     * @param bool $onlyActiveChampionship
+     * @param bool $withReportDates
+     *
+     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
+     */
+    protected function getPastOrFutureMeetings(
+        $pastOrFutureDays,
+        $onlyActiveChampionship = true,
+        $withReportDates = true
+    ) {
+        /** @var PoolMeetingRepository $poolMeetingRepository */
+        $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
+        $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;
+        $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
+        $meetingsOfTheMoment = $poolMeetingRepository
+            ->findClubMeetingsOfTheMoment($pastDays, $futureDays, $onlyActiveChampionship, $withReportDates);
+
+        return $meetingsOfTheMoment;
     }
 }

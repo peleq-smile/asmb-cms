@@ -51,6 +51,8 @@ class RefreshCommand extends BaseCommand
         $storage = $this->app['storage'];
 
         // REPOSITORIES
+        /** @var \Bundle\Asmb\Competition\Repository\ChampionshipRepository $championshipRepository */
+        $championshipRepository = $storage->getRepository('championship');
         /** @var PoolRepository $poolRepository */
         $poolRepository = $storage->getRepository('championship_pool');
         /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolRankingRepository */
@@ -95,8 +97,15 @@ class RefreshCommand extends BaseCommand
                 $output->writeln(sprintf("<error>ERREUR: {$e->getMessage()}</error>"));
             }
 
-            // On attend 2 secondes entre chaque poule, pour éviter de parser plusieurs pages en peu de temps sur
-            // la FFT :-)
+            if (!$input->getOption('quiet')) {
+                /** @var \Bundle\Asmb\Competition\Entity\Championship $championship */
+                $championship = $championshipRepository->find($pool->getChampionshipId());
+                $output->writeln(
+                    sprintf("<info>{$championship->getName()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour.</info>")
+                );
+            }
+
+            // On temporise entre chaque poule, pour éviter de parser plusieurs pages en peu de temps sur la FFT :-)
             sleep(2);
         }
     }

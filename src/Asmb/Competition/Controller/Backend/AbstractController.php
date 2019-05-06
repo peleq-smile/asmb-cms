@@ -23,18 +23,6 @@ abstract class AbstractController extends BackendBase
 {
     /** @var Pool[] */
     private $pools;
-    /** @var array */
-    private $config;
-
-    /**
-     * AbstractController constructor.
-     *
-     * @param $config
-     */
-    public function __construct($config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * Build add pool to a championship form.
@@ -161,31 +149,6 @@ abstract class AbstractController extends BackendBase
     }
 
     /**
-     * Retourne les rencontres du moment, dans le passé ou le futur selon que $pastOrFutureDays soit négatif (passé)
-     * ou positif (futur).
-     *
-     * @param int  $pastOrFutureDays
-     * @param bool $onlyActiveChampionship
-     * @param bool $withReportDates
-     *
-     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
-     */
-    protected function getPastOrFutureMeetings(
-        $pastOrFutureDays,
-        $onlyActiveChampionship = true,
-        $withReportDates = true
-    ) {
-        /** @var PoolMeetingRepository $poolMeetingRepository */
-        $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
-        $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;
-        $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
-        $meetingsOfTheMoment = $poolMeetingRepository
-            ->findClubMeetingsOfTheMoment($pastDays, $futureDays, $onlyActiveChampionship, $withReportDates);
-
-        return $meetingsOfTheMoment;
-    }
-
-    /**
      * Retrieve pools of championship with given id.
      *
      * @param integer $championshipId
@@ -243,17 +206,5 @@ abstract class AbstractController extends BackendBase
         $totalMeetingsCount = PoolHelper::getTotalMeetingsCount($teamsCount);
 
         return $totalMeetingsCount;
-    }
-
-    /**
-     * Retourne la valeur du paramètre de config demandé.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getAsmbConfig($key)
-    {
-        return $this->config[$key];
     }
 }

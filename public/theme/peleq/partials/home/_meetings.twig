@@ -1,5 +1,5 @@
-{% set lastMeetings = getLastMeetings() %}
-{% set nextMeetings = getNextMeetings() %}
+{% set lastMeetings = getLastMeetings(pastDays) %}
+{% set nextMeetings = getNextMeetings(futureDays) %}
 
 {% if lastMeetings is not empty or nextMeetings is not empty %}
 <section class="section matches">

@@ -46,8 +46,14 @@ main:
     - label: 'Compétitions'
       path: competition/championnat-ete
       submenu:
-        - label: Championnats
+        - label: 'Championnat d''été'
           path: competition/championnat-ete
+
+        - label: 'Coupe de printemps'
+          path: competition/coupe-printemps
+
+        - label: Championnats d'hiver
+          path: competition/seniors-hommes
           submenu:
             - label: 'Seniors Hommes'
               path: competition/seniors-hommes
@@ -61,11 +67,6 @@ main:
             - label: 'Jeunes'
               path: competition/jeunes
 
-            - label: 'Championnat Été'
-              path: competition/championnat-ete
-
-        - label: 'Coupe de Printemps'
-          path: competition/coupe-printemps
         - label: 'Tournois'
           path: page/tournois
 
@@ -106,7 +107,7 @@ footer_external_links:
       class: liens-utiles
       submenu:
         - label: 'Fédération Française de Tennis'
-          link: http://www.fft.fr/portail/default.asp
+          link: https://www.fft.fr
 
         - label: 'Comité Départemental'
           link: http://www.comite.fft.fr/loire-atlantique/02L00440_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
@@ -123,6 +124,5 @@ footer_external_links:
         - label: 'Championnat individuel'
           link: https://mon-espace-tennis.fft.fr/tournoi/82120115
 
-        - label: 'Tournois FFT'
-          link: http://www.ei.applipub-fft.fr/eipublic/competitionRecherche.do?dispatch=afficher
-
+        - label: 'Rechercher une compétition'
+          link: https://tenup.fft.fr/recherche/tournois/all?dispatch=afficher

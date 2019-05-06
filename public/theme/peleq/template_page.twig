@@ -9,7 +9,9 @@
                 <article role="article" class="content">
                     <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
 
-                    {% include 'partials/_record_meta.twig' with {'extended': false} %}
+                    {% if record.subtitle is defined and record.subtitle is not empty %}
+                        <h2 class="title">{{ record.subtitle }}</h2>
+                    {% endif %}
 
                     {{ record.teaser }}
 

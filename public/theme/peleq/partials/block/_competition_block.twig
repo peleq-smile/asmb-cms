@@ -1,0 +1,108 @@
+{# Make sure the index data is defined. #}
+{% if index is not defined %}
+    {% set index = 1 %}
+{% endif %}
+
+<div class="columns block {% if block.image %}block-with-image{% endif %} block-{{ (index is odd) ? 'odd':'even' }}">
+    <div class="column block-content">
+        {% if block.contentlink %}
+            <h2 class="title"><a href="{{ block.contentlink }}">{{ block.title }}</a></h2>
+        {% else %}
+            <h2 class="title">{{ block.title }}</h2>
+        {% endif %}
+
+        {% if block.subtitle %}
+            <h3 class="title">{{ block.subtitle }}</h3>
+        {% endif %}
+
+        {# Contenu du bloc #}
+        {% if block.subtitle2 %}
+            <h4 class="title">{{ block.subtitle2 }}</h4>
+        {% endif %}
+
+        {# Si les balles sont fournies, on l'affiche ici #}
+        {% if block.balls_provided and block.balls_provided != 'no' %}
+            <ul>
+                <li>{{ block.contenttype.fields.balls_provided.values[block.balls_provided] }}</li>
+            </ul>
+        {% endif %}
+
+        {% if block.location or block.schedule %}
+            <div class="columns is-gapless{% if block.location and block.schedule %} smaller{% endif %}">
+                {# Infos "Lieu de compétition" #}
+                {% if block.location %}
+                    <dl class="column location{% if block.schedule %} is-two-fifths{% endif %}">
+                        <dt>{{ block.contenttype.fields.location.label }}</dt>
+                        <dd>{{ block.location|nl2br }}</dd>
+                    </dl>
+                {% endif %}
+
+                {# Infos "Horaire des matchs" #}
+                {% if block.schedule %}
+                    <dl class="column schedule">
+                        <dt>{{ block.contenttype.fields.schedule.label }}</dt>
+                        <dd class="schedule">{{ block.schedule|raw|nl2br }}</dd>
+                    </dl>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if block.inscriptions is not empty or block.commitment_rights is not empty %}
+            <div class="columns is-gapless{% if block.inscriptions and block.commitment_rights %} smaller{% endif %}">
+                {% if block.inscriptions is not empty %}
+                    {# Infos "Inscriptions" #}
+                    <div class="column inscriptions{% if block.commitment_rights is not empty %} is-two-fifths{% endif %}">
+                        <p class="title">{{ block.contenttype.fields.inscriptions.label }}
+                            {% if block.inscriptions_closing_without_notice %}
+                                <span class="notice">({{ __('general.phrase.inscriptions_closing_without_notice') }})</span>
+                            {% endif %}
+                        </p>
+
+                        <ul>
+                        {% for item in block.inscriptions %}
+                            <li><span>{{ item.text|raw|nl2br }}</span></li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {% if block.commitment_rights is not empty %}
+                    {# Infos "Droits d'engagement" #}
+                    <div class="column commitment-rights">
+                        <p class="title">{{ block.contenttype.fields.commitment_rights.label }}</p>
+
+                        <ul>
+                        {% for item in block.commitment_rights %}
+                            <li><span>{{ item.text|raw|nl2br }}</span></li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if block.contentlink %}
+        <a href="{{ block.contentlink }}" class="button see-more"
+           title="{{ block.contentlink_label|default('En savoir plus...') }}">
+            {{ block.contentlink_label|default('En savoir plus...') }}
+        </a>
+    {% endif %}
+
+    {% if block.image %}
+        {% set height = block.image_height %}
+        {% set width = block.image_width %}
+
+        <div class="column block-image">
+            {% if block.contentlink %}
+                <a class="image" href="{{ block.contentlink }}"
+                   style="background: url('{{ asset(block.image, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
+                    <span class="see-more">&plus; d'info</span>
+                </a>
+            {% else %}
+                <div class="image"
+                     style="background: url('{{ asset(block.image, 'files') }}') no-repeat  center; background-size: cover; height: 100%; width: {{ width }}px;"></div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

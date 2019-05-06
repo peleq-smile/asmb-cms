@@ -17,28 +17,33 @@ trait TwigFunctionsTrait
     /**
      * Retourne les dernières rencontres du club.
      *
+     * @param integer $pastDays
+     *
      * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function getLastMeetings()
+    public function getLastMeetings($pastDays)
     {
-        $config = $this->getConfig();
-        $pastDays = -1 * $config['asmb']['competition']['last_meetings_past_days'];
+        $lastMeetings = [];
 
-        return $this->getLastOrNextMeetings($pastDays);
+        if ($pastDays > 0) {
+            $pastDays = -1 * $pastDays;
+            $lastMeetings = $this->getLastOrNextMeetings($pastDays);
+        }
+
+        return $lastMeetings;
     }
 
     /**
      * Retourne les prochaines rencontres du club.
      *
+     * @param integer $futureDays
+     *
      * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function getNextMeetings()
+    public function getNextMeetings($futureDays)
     {
-        $config = $this->getConfig();
-        $futureDays = $config['asmb']['competition']['next_meetings_future_days'];
-
         return $this->getLastOrNextMeetings($futureDays);
     }
 

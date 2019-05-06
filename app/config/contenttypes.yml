@@ -21,10 +21,48 @@ homepage:
             height: 150px
             postfix: |
                 Si ce champ est renseigné, son contenu s'affiche <b>avant</b> les blocs de l'accueil.
-
         teaser_image:
             label: 'Image de l''accroche'
             type: image
+        blocks_top:
+            label: 'Blocs du haut'
+            type: repeater
+            limit: 3
+            prefix: 'Ces blocs sont affichés <b>avant</b> les rencontres du moment.'
+            fields:
+                block:
+                    label: 'Bloc'
+                    type: select
+                    values: (blocks,competition_blocks)/title
+                    filter: { status: published }
+
+        meetings_past_days:
+            label: 'Nb jours passés'
+            prefix: Afficher les résultats des rencontres de ce nb de jours passés.
+            type: integer
+            default: 14
+            min: 0
+            max: 60
+
+        meetings_future_days:
+            label: 'Nb jours à venir'
+            prefix: Afficher les prochaines rencontres de ce nb de jours à venir.
+            type: integer
+            default: 7
+            min: 0
+            max: 30
+
+        blocks_bottom:
+            label: 'Blocs du bas'
+            type: repeater
+            limit: 3
+            prefix: 'Ces blocs sont affichés <b>après</b> les rencontres du moment.'
+            fields:
+                block:
+                    label: 'Bloc'
+                    type: select
+                    values: (blocks,competition_blocks)/title
+                    filter: { status: published }
 
         # Onglet Propriétés
         slug:
@@ -146,15 +184,168 @@ homepage:
     icon_many: "fa:home"
     icon_one: "fa:home"
 
+blocks:
+    name: Blocs
+    singular_name: Bloc
+    singular_slug: block
+    fields:
+        title:
+            type: text
+            label: 'Titre'
+            class: large
+            required: true
+            group: "Contenu"
+        subtitle:
+            type: text
+            label: 'Sous-titre'
+            class: large
+        image:
+            type: image
+            label: 'Image (décorative) du bloc'
+            attrib: title
+            extensions: [ gif, jpg, png ]
+            required: true
+        image_width:
+            type: integer
+            label: 'Largeur de l''image décorative'
+            options:
+                min: 200
+                max: 500
+                step: 10
+            required: true
+        image_height:
+            type: integer
+            label: 'Hauteur de l''image décorative'
+            options:
+                min: 300
+                max: 700
+                step: 10
+            required: true
+        content:
+            type: html
+            label: 'Contenu du bloc'
+            height: 300px
+            options:
+                ckeditor:
+                    fillEmptyBlocks: true
+            required: true
+        contentlink:
+            type: text
+            label: 'Lien'
+            placeholder: Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")
+            postfix: "Ajoute un lien sur ce bloc vers une page. Ce peut être un lien interne relatif (ex: <tt>page/contact</tt>) ou un lien externe absolu (ex: `https://www.fft.fr/`)."
+        contentlink_label:
+            type: text
+            label: 'Libellé du lien'
+        slug:
+            type: slug
+            uses: [ title ]
+    show_on_dashboard: true
+    viewless: true
+    default_status: published
+    record_template: partials/block/_block.twig
+    searchable: false
+    icon_many: "fa:cubes"
+    icon_one: "fa:cube"
 
-# Pages can be used for the more 'static' pages on your site. This content-type
-# has a 'templateselect' field, which allows you to override the record_template
-# setting for an individual page.
-# The taxonomy for this ContentType is defined as 'groups', which is a so-called
-# "grouping taxonomy". This way you can easily group sets of pages that logically
-# belong together. If your site has a 'services' section, in which you'd like to
-# list the different types of services a company provides, you can group these
-# together.
+competition_blocks:
+    name: Blocs compétition
+    singular_name: Bloc compétition
+    singular_slug: competition_block
+    fields:
+        title:
+            type: text
+            label: 'Titre de la compétition'
+            class: large
+            required: true
+            group: "Contenu"
+            postfix: 'Ex: "Tournoi ASMB 2019 de printemps", "TMC Dames ASMB 2019"'
+        image:
+            type: image
+            label: 'Image (décorative) du bloc'
+            attrib: title
+            extensions: [ gif, jpg, png ]
+            required: true
+        image_width:
+            type: integer
+            label: 'Largeur de l''image décorative'
+            options:
+                min: 200
+                max: 500
+                step: 10
+            required: true
+        image_height:
+            type: integer
+            label: 'Hauteur de l''image décorative'
+            options:
+                min: 300
+                max: 700
+                step: 10
+            required: true
+        subtitle:
+            type: text
+            label: 'Sous-titre'
+            class: large
+            required: true
+            placeholder: 'Dates de la compétition'
+            postfix: 'Ex:<br>Du 28 mars au 7 avril'
+        subtitle2:
+            type: text
+            label: 'Sous-titre 2'
+            class: large
+            placeholder: 'Catégorie(s) concernée(s)'
+            postfix: 'Ex:<br>Deux tournois en parallèle : 3ème et 4ème série'
+        balls_provided:
+            label: 'Infos sur balles à afficher'
+            type: select
+            values: { 'no': 'balles non fournies', 'yes_head': 'Balles HEAD fournies', 'yes': 'Balles fournies' }
+        location:
+            label: 'Lieu de compétition'
+            type: textarea
+            postfix: 'Ex:<br>Halle de tennis et courts extérieurs<br>du complexe Mangin Beaulieu<br>au 2 rue des Boires à Nantes'
+        schedule:
+            label: 'Horaires des matchs'
+            type: textarea
+            postfix: 'Ex:<br>En semaine, à partir de 17h30 et le week-end de 9h à 22h.<br>Des matchs pourront être programmés en journée la semaine pour ceux qui le peuvent.'
+
+        inscriptions:
+            label: 'Inscriptions'
+            type: repeater
+            fields:
+                text:
+                    label: 'Élément d''information'
+                    type: textarea
+
+        inscriptions_closing_without_notice:
+            label: 'Afficher "clôture sans préavis"'
+            type: checkbox
+
+        commitment_rights:
+            label: 'Droits d''engagement'
+            type: repeater
+            fields:
+                text:
+                    label: 'Élément d''information'
+                    type: textarea
+
+        contentlink:
+            type: text
+            label: 'Lien'
+            placeholder: Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")
+            postfix: "Ajoute un lien sur ce bloc vers une page. Ce peut être un lien interne relatif (ex: <tt>page/contact</tt>) ou un lien externe absolu (ex: `https://www.fft.fr/`)."
+        contentlink_label:
+            type: text
+            label: 'Libellé du lien'
+        slug:
+            type: slug
+            uses: [ title ]
+    show_on_dashboard: true
+    viewless: true
+    default_status: published
+    searchable: false
+    record_template: partials/block/_competition_block.twig
+    icon_many: "fa:cubes"
+    icon_one: "fa:cube"
 
 pages:
     name: Pages
@@ -182,6 +373,47 @@ pages:
     record_template: template_page.twig
     recordsperpage: 20
     taxonomy: [ tags ]
+
+evenements:
+    name: Évènements
+    singular_name: Évènement
+    fields:
+        title:
+            label: Titre
+            type: text
+            class: large
+            group: content
+        slug:
+            type: slug
+            uses: title
+        from_date:
+            label: Date et heure de l'évènement
+            type: datetime
+            required: true
+        to_date:
+            label: Date et heure de fin
+            type: datetime
+        location:
+            label: Lieu
+            type: text
+        image:
+            type: image
+        short_text:
+            label: Texte court
+            type: html
+            height: 200px
+            options:
+                ckeditor:
+                    removeButtons: Image,Table,SpecialChar
+        text:
+            label: Texte
+            type: html
+            height: 400px
+            options:
+                ckeditor:
+                    removeButtons: Image,Table,SpecialChar
+    record_template: template_page.twig
+
 
 competitions:
     name: Compétitions
@@ -317,342 +549,3 @@ type_evenement_calendriers:
             type: integer
             class: narrow
     icon_many: "fa:tag"
-
-# Entries can be used for things like 'news' or 'blogpostings'. They have a
-# 'teaser', which can be used for a short blurb on listing-pages, allowing
-# visitors to click-through to the rest of the entry. It also has fields for an
-# image and an optional video.
-# A relation is defined to the pages ContentType. This way you can refer to a
-# page from your news-item.
-# This ContentType defines 'categories' and 'tags' as taxonomies, allowing the
-# editor to use both to categorize a specific entry.
-# The 'sort' is set to '-datepublish', which means that newer entries will be
-# shown above older entries.
-
-#entries:
-#    name: Entries
-#    singular_name: Entry
-#    fields:
-#        title:
-#            type: text
-#            class: large
-#            group: content
-#        slug:
-#            type: slug
-#            uses: title
-#        teaser:
-#            type: html
-#            height: 150px
-#        body:
-#            type: html
-#            height: 300px
-#        image:
-#            type: image
-#            group: media
-#            placeholder: https://source.unsplash.com/1280x768/?business,workspace,interior/__random__
-#        video:
-#            type: video
-#    relations:
-#        pages:
-#          multiple: false
-#          order: title
-#          label: Select a page
-#    record_template: entry.twig
-#    listing_template: listing.twig
-#    listing_records: 10
-#    default_status: published
-#    sort: -datepublish
-#    recordsperpage: 20
-
-
-# The 'Showcases' is not particularly useful in most cases, but it does a good
-# job of showcasing most of the available fieldtypes. Feel free to delete it, or
-# copy some fields to your own ContentTypes.
-# Since no templates are defined for this ContentType, the default record_template,
-# listing_template, and related settings are used from config.yml
-#
-#showcases:
-#    name: Showcases
-#    slug: showcases
-#    singular_name: Showcase
-#    singular_slug: showcase
-#    fields:
-#        title:
-#            type: text
-#            class: large
-#            required: true
-#            pattern: ".{2,255}" # see: http://html5pattern.com/
-#            error: "The Title field is required, and must contain at least 2 characters"
-#            group: Text
-#        slug:
-#            type: slug
-#            uses: [ title ]
-#        html:
-#            type: html
-#            height: 150px
-#        textarea:
-#            type: textarea
-#            postfix: "<p><em>This is a plain text area. the contents will not be processed.</em></p>"
-#        markdown:
-#            type: markdown
-#            postfix: "<p><em>This field gets parsed as <a href='https://help.github.com/articles/markdown-basics'>Markdown</a>, when rendered on the site.</em></p>"
-#        geolocation:
-#            type: geolocation
-#            group: Media
-#        embed:
-#            type: embed
-#        video:
-#            type: video
-#        image:
-#            type: image
-#            attrib: title # Note: retrieve this in your template with {{ record.values.image.title }}
-#            extensions: [ gif, jpg, png ]
-#            placeholder: https://source.unsplash.com/1280x768/?animal,koala,kitten,puppy,cute/__random__
-#        imagelist:
-#            type: imagelist
-#        file:
-#            type: file
-#            group: files
-#        filelist:
-#            type: filelist
-#        checkbox:
-#            type: checkbox
-#            label: "This is a checkbox"
-#            group: other
-#        datetime:
-#            type: datetime
-#            default: "2000-01-01"
-#            variant: inline
-#        date:
-#            type: date
-#            default: "first day of last month"
-#            variant: inline
-#        integerfield:
-#            type: integer
-#            index: true
-#        floatfield:
-#            type: float
-#        selectfield:
-#            type: select
-#            values: [ foo, bar, baz ]
-#        multiselect:
-#            type: select
-#            values: [ A-tuin, Donatello, Rafael, Leonardo, Michelangelo, Koopa, Squirtle ]
-#            multiple: true
-#            postfix: "Select your favourite turtle(s)."
-#        selectentry:
-#            type: select
-#            values: entries/id,title
-#            postfix: "Select an entry"
-#            autocomplete: true
-#            sort: title
-#        repeater:
-#            type: repeater
-#            group: repeater
-#            limit: 3
-#            prefix: "<p>This allows you to create multiple sets of fields. Use the add button at the bottom to create a new empty set.</p>"
-#            fields:
-#                repeattitle:
-#                    type: text
-#                repeatimage:
-#                    type: image
-#                    extensions: [ gif, jpg, png ]
-#                repeatcontent:
-#                    type: html
-#    relations:
-#        entries:
-#            multiple: false
-#            label: "Choose an entry"
-#            order: -id
-#            format: "{{ item.title|escape }} (№ {{ item.id }})"
-#            postfix: "By selecting an Entry, you're creating a bi-directional relationship to that Entry."
-#        pages:
-#            multiple: true
-#            order: title
-#            label: Select zero or more pages
-#    taxonomy: [ categories, tags ]
-#    show_on_dashboard: true
-#    default_status: published
-#    searchable: true
-#    icon_many: "fa:gift"
-#    icon_one: "fa:gift"
-
-
-# The 'Blocks' ContentType is a so-called 'resource ContentType'. This means
-# that it can be used to manage smaller pieces of content, like the 'about us'
-# text, an 'our address' in the footer, or similar short blurbs of text.
-# For more info, see: https://docs.bolt.cm/howto/resource-contenttype
-
-blocks:
-    name: Blocs
-    singular_name: Bloc
-    singular_slug: block
-    fields:
-        title:
-            type: text
-            label: 'Titre'
-            class: large
-            group: "Contenu"
-        subtitle:
-            type: text
-            label: 'Sous-titre'
-            class: large
-        image:
-            type: image
-            label: 'Image (décorative) du bloc'
-            attrib: title
-            extensions: [ gif, jpg, png ]
-        image_width:
-            type: integer
-            label: 'Largeur de l''image décorative'
-            options:
-                min: 200
-                max: 500
-                step: 10
-        image_height:
-            type: integer
-            label: 'Hauteur de l''image décorative'
-            options:
-                min: 300
-                max: 600
-                step: 10
-        content:
-            type: html
-            label: 'Contenu du bloc'
-            height: 300px
-            options:
-                ckeditor:
-                    fillEmptyBlocks: true
-        contentlink:
-            type: text
-            label: 'Lien'
-            placeholder: Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")
-            postfix: "Ajoute un lien sur ce bloc vers une page. Ce peut être un lien interne relatif (ex: <tt>page/contact</tt>) ou un lien externe absolu (ex: `https://www.fft.fr/`)."
-        contentlink_label:
-            type: text
-            label: 'Libellé du lien'
-        slug:
-            type: slug
-            uses: [ title ]
-    show_on_dashboard: true
-    viewless: true
-    default_status: published
-    searchable: false
-    taxonomy: [ home_flags ]
-    icon_many: "fa:cubes"
-    icon_one: "fa:cube"
-
-evenements:
-    name: Évènements
-    singular_name: Évènement
-    fields:
-        title:
-            label: Titre
-            type: text
-            class: large
-            group: content
-        slug:
-            type: slug
-            uses: title
-        from_date:
-            label: Date et heure de l'évènement
-            type: datetime
-            required: true
-        to_date:
-            label: Date et heure de fin
-            type: datetime
-        location:
-            label: Lieu
-            type: text
-        image:
-            type: image
-        short_text:
-            label: Texte court
-            type: html
-            height: 200px
-            options:
-                ckeditor:
-                    removeButtons: Image,Table,SpecialChar
-        text:
-            label: Texte
-            type: html
-            height: 400px
-            options:
-                ckeditor:
-                    removeButtons: Image,Table,SpecialChar
-
-# Possible field types:
-#
-# text - varchar(256) - input type text.
-# integer - integer - Input field for integer numbers.
-# float - double - Input field for floating numbers, stored as 'Double'.
-# geolocation - text (65kb) - Input field for geolocation. Enter an address, and the location is geocoded to latitude/longitude coordinates
-# imagelist - text (65kb) - Input type for imagelists. Add multiple images with a description. Useful for image sliders, galleries, etcetera.
-# image - varchar(256) - image select/upload widget, stored as filename.
-# file - varchar(256) - file select/upload widget, stored as filename.
-# filelist - text (65kb) - Input type for a list of files. Including a description.
-# video - varchar(256) - Video embed widget, stored as filename.
-# html - text (65kb) - wysiwyg element.
-# textarea - varchar(32768) - Simple, plain < textarea > field.
-# markdown - varchar(32768) - Simple, plain < textarea > field, which is parsed as Markdown text.
-# datetime - datetime - date and time selector widget.
-# date - datetime - date selector widget.
-# select - varchar(256) - select with predefined values
-# templateselect - varchar(256) - select with template filenames
-# checkbox - integer - checkbox-field which is 1 (checked) or 0 (unchecked)
-
-# Using YAML repeated nodes
-#
-# YAML allows the defining of "repeated nodes". These allow you to define a 'node'
-# with a 'key: &name' and referenced later with '<<: *name'
-#
-# Bolt allows you to define this with the special entry of '__nodes:' that itself
-# won't create a ContentType, but will allow you to use it in actual ContentTypes
-# to prevent repeating yourself.
-#
-# To achieve this, first create a key '__nodes:'
-#__nodes:
-#    field_defaults: &field_defaults
-#        title:
-#            type: text
-#            class: large
-#            group: main
-#        slug:
-#            type: slug
-#            uses: title
-#    template_defaults: &template_defaults
-#        template:
-#            type: templateselect
-#            filter: '*.twig'
-#            group: meta
-#
-# Then, as an example, you could create a ContentType with default fields, with
-# an additional 'image' field.
-#
-#contenttype_abc:
-#    name: ContentType Abc
-#    fields:
-#        <<: *field_defaults
-#        image:
-#            type: image
-#            attrib: title
-#            extensions: [ gif, jpg, png ]
-#        <<: *template_defaults
-#    taxonomy: [ chapters ]
-#    recordsperpage: 10
-#
-# Alternatively, or additionally, you then can then create a ContentType with
-# default fields, and a 'select' field, and a different 'templateselect' option.
-#
-#contenttype_xyz:
-#    name: ContentType Xyz
-#    fields:
-#        <<: *field_defaults
-#        selectfield:
-#            type: select
-#            values: [ none, foo, bar ]
-#        template:
-#            type: templateselect
-#            filter: '*_xyz.twig'
-#    taxonomy: [ tags ]
-#    recordsperpage: 20

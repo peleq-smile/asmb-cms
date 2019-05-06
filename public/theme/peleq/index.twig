@@ -25,29 +25,32 @@
             </div>
         </section>
 
+
         {# BLOCS ACCUEIL - Section du haut #}
-        {% setcontent topBlocks = 'block' where { home_flags: 'accueil-top' } %}
-        {% if topBlocks is not empty %}
+        {% if homepage.blocks_top is not empty %}
             <section class="section blocks">
                 <div class="container">
-                    {% for block in topBlocks %}
-                        {% include 'partials/block/_block.twig' with {'block': block, 'index': loop.index} %}
+                    {% for item in homepage.blocks_top %}
+                        {% setcontent block = item.block %}
+                        {% include block.contenttype.record_template with {'block': block, 'index': loop.index} %}
                     {% endfor %}
                 </div>
             </section>
         {% endif %}
 
         {# Rencontres du moment #}
-        {% include 'partials/home/_meetings.twig' with {'record': homepage } %}
+        {% include 'partials/home/_meetings.twig'
+            with {'pastDays': homepage.meetings_past_days, 'futureDays': homepage.meetings_future_days}
+        %}
 
         {# BLOCS ACCUEIL - Section du bas #}
-        {% setcontent bottomBlocks = 'block' where { home_flags: 'accueil-bottom' } %}
-        {% if bottomBlocks is not empty %}
+        {% if homepage.blocks_bottom is not empty %}
             <section class="section blocks">
                 <div class="container">
-                    {% for block in bottomBlocks %}
-                        {% set index = (topBlocks|length % 2) == 0 ? loop.index : loop.index0 %}
-                        {% include 'partials/block/_block.twig' with {'block': block, 'index': index} %}
+                    {% for item in homepage.blocks_bottom %}
+                        {% setcontent block = item.block %}
+                        {% set index = (homepage.blocks_top|length % 2) == 0 ? loop.index : loop.index0 %}
+                        {% include block.contenttype.record_template with {'block': block, 'index': index} %}
                     {% endfor %}
                 </div>
             </section>

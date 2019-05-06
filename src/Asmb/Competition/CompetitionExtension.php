@@ -44,17 +44,35 @@ class CompetitionExtension extends SimpleExtension
     }
 
     /**
+     * Retourne les paramètres "nb de jours passés" et "nb de jours à venir" pour la remontée des rencontres du moment.
+     *
+     * @return integer[]
+     */
+    protected function getMeetingsParameters()
+    {
+        /** @var \Bolt\Storage\Query\Query $query */
+        $query = $this->container['query'];
+        /** @var \Bolt\Storage\Entity\Content $content */
+        $content = $query->getContent('homepage', ['returnsingle' => true]);
+
+        return [
+            'meetings_past_days' => $content->get('meetings_past_days'),
+            'meetings_future_days' => $content->get('meetings_future_days'),
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function registerBackendControllers()
     {
-        $config = $this->getConfig();
-        $asmbCompetitionConfig = $config['asmb']['competition'];
+        // On récupère le nb de jours passés et à venir contribués dans le contenu "Page d'accueil"
+        $meetingsParameters = $this->getMeetingsParameters();
 
         return [
-            '/extensions/competition/championship'  => new Controller\Backend\ChampionshipController($asmbCompetitionConfig),
-            '/extensions/competition/pool'          => new Controller\Backend\PoolController($asmbCompetitionConfig),
-            '/extensions/competition/pool/meetings' => new Controller\Backend\PoolMeetingsController($asmbCompetitionConfig),
+            '/extensions/competition/championship'  => new Controller\Backend\ChampionshipController(),
+            '/extensions/competition/pool'          => new Controller\Backend\PoolController(),
+            '/extensions/competition/pool/meetings' => new Controller\Backend\PoolMeetingsController($meetingsParameters),
         ];
     }
 
