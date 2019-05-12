@@ -27,7 +27,7 @@ main:
           path: page/creneaux
           submenu:
             - label: 'La carte'
-              path: page/la-carte-loisir
+              path: page/nos-cartes-loisir
             - label: 'Créneaux'
               path: page/creneaux
             - label: 'Réservations'

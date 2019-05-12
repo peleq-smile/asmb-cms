@@ -1,0 +1,107 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    <section class="section section-page">
+        <div class="container">
+            <div class="columns block {% if record.image %}block-with-image{% endif %}">
+                {% if record.image %}
+                    {% set height = record.image_height %}
+                    {% set width = record.image_width %}
+
+                    <div class="column block-image">
+                        <span class="image"
+                              style="background: url('{{ asset(record.image, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
+                        </span>
+                    </div>
+                {% endif %}
+
+                <div class="column block-content">
+                    <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+
+                    {% if record.subtitle %}
+                        <h2 class="title is-size-2 is-size-4-mobile">{{ record.subtitle }}</h2>
+                    {% endif %}
+
+                    {% if record.subtitle2 %}
+                        <h3>{{ record.subtitle2|nl2br }}</h3>
+                    {% endif %}
+
+                    <hr class="is-invisible">
+
+                    {# Si les balles sont fournies, on l'affiche ici #}
+                    {% if record.balls_provided and record.balls_provided != 'no' %}
+                        <ul>
+                            <li>{{ record.contenttype.fields.balls_provided.values[record.balls_provided] }}</li>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="columns">
+                {% if record.location %}
+                    <div class="column is-half">
+                        {# Infos "Lieu de compétition" #}
+                        <div class="box">
+                            <h4 class="is-size-3 is-size-4-mobile">{{ record.contenttype.fields.location.label }}</h4>
+                            <p>{{ record.location|nl2br }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if record.schedule %}
+                    <div class="column is-half">
+                        {# Infos "Horaire des matchs" #}
+                        <div class="box">
+                            <h4 class="is-size-3 is-size-4-mobile">{{ record.contenttype.fields.schedule.label }}</h4>
+                            <p>{{ record.schedule|raw|nl2br }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="columns">
+                {# Infos "Inscriptions" #}
+                {% if record.inscriptions is not empty %}
+                    <div class="column is-half">
+                        <div class="box inscriptions">
+                            <h4 class="is-size-3 is-size-4-mobile">
+                                {{ record.contenttype.fields.inscriptions.label }}
+                                {% if record.inscriptions_closing_without_notice %}
+                                    <span class="notice">({{ __('general.phrase.inscriptions_closing_without_notice') }})</span>
+                                {% endif %}
+                            </h4>
+                            <ul>
+                                {% for inscriptionBlock in record.inscriptions %}
+                                    {% if inscriptionBlock.block == 'link' %}
+                                        <li><a href="{{ inscriptionBlock.url }}" title="{{ inscriptionBlock.text }}"
+                                               target="_blank">{{ inscriptionBlock.text|raw }}</a></li>
+                                    {% else %}
+                                        <li class="{{ inscriptionBlock.block }}">{{ inscriptionBlock.text|raw }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {# Infos "Droits d'engagement" #}
+                {% if record.commitment_rights is not empty %}
+                    <div class="column is-half">
+                        <div class="box commitment-rights">
+                            <h4 class="is-size-3 is-size-4-mobile">{{ record.contenttype.fields.commitment_rights.label }}</h4>
+                            <ul>
+                                {% for item in record.commitment_rights %}
+                                    <li class="entry"><span>{{ item.text|raw|nl2br }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {{ include('partials/_recordfooter.twig', { 'record': record, 'extended': true }) }}
+        </div>
+    </section>
+
+{% endblock main %}

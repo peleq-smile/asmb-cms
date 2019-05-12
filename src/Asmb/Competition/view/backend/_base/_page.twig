@@ -1,6 +1,6 @@
 {##
- # OVERRIDE OF vendor/bolt/bolt/app/view/twig/_base/_page.twig DEFAULT BACKEND TEMPLATE.
- # AIM: add custom CSS
+ # SURCHARGE DU TEMPLATE BACKEND vendor/bolt/bolt/app/view/twig/_base/_page.twig
+ # RAISON: ajouter une feuille de style custom.
  #}
 
 {##
@@ -62,6 +62,7 @@
     <link rel="stylesheet" href="{{ asset('css/bolt.css', 'bolt') }}">
     {# START PELEQ CUSTOM #}
     <link rel="stylesheet" href="{{ asset('css/backend.css', 'theme') }}">
+    {# END PELEQ CUSTOM #}
 
     {% for script in page_scripts_inc -%}
         <script src="{{ script }}"></script>

@@ -32,7 +32,7 @@
                 <div class="container">
                     {% for item in homepage.blocks_top %}
                         {% setcontent block = item.block %}
-                        {% include block.contenttype.record_template with {'block': block, 'index': loop.index} %}
+                        {% include block.contenttype.record_template_block with {'block': block, 'index': loop.index} %}
                     {% endfor %}
                 </div>
             </section>
@@ -50,7 +50,7 @@
                     {% for item in homepage.blocks_bottom %}
                         {% setcontent block = item.block %}
                         {% set index = (homepage.blocks_top|length % 2) == 0 ? loop.index : loop.index0 %}
-                        {% include block.contenttype.record_template with {'block': block, 'index': index} %}
+                        {% include block.contenttype.record_template_block with {'block': block, 'index': index} %}
                     {% endfor %}
                 </div>
             </section>

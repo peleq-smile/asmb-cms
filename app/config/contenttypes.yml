@@ -7,6 +7,11 @@
 homepage:
     name: "Accueil"
     singular_name: "Accueil"
+    viewless: true
+    singleton: true
+    default_status: published
+    icon_many: "fa:home"
+    icon_one: "fa:home"
     fields:
         # Onglet Contenu
         title:
@@ -33,7 +38,7 @@ homepage:
                 block:
                     label: 'Bloc'
                     type: select
-                    values: (blocks,competition_blocks)/title
+                    values: (blocs,pages_infos_tournoi)/title
                     filter: { status: published }
 
         meetings_past_days:
@@ -61,7 +66,7 @@ homepage:
                 block:
                     label: 'Bloc'
                     type: select
-                    values: (blocks,competition_blocks)/title
+                    values: (blocs,pages_infos_tournoi)/title
                     filter: { status: published }
 
         # Onglet Propriétés
@@ -178,16 +183,19 @@ homepage:
             label: Page Facebook: URL du lien
             type: text
             required: true
-    viewless: true
-    singleton: true
-    default_status: published
-    icon_many: "fa:home"
-    icon_one: "fa:home"
 
-blocks:
-    name: Blocs
-    singular_name: Bloc
-    singular_slug: block
+blocs:
+    name: Blocs accueil
+    singular_name: Bloc accueil
+    singular_slug: bloc
+    show_on_dashboard: true
+    viewless: true
+    default_status: published
+    record_template: partials/blocs/_bloc.twig
+    record_template_block: partials/blocs/_bloc.twig
+    searchable: false
+    icon_many: "fa:cubes"
+    icon_one: "fa:cube"
     fields:
         title:
             type: text
@@ -240,29 +248,28 @@ blocks:
         slug:
             type: slug
             uses: [ title ]
-    show_on_dashboard: true
-    viewless: true
-    default_status: published
-    record_template: partials/block/_block.twig
-    searchable: false
-    icon_many: "fa:cubes"
-    icon_one: "fa:cube"
 
-competition_blocks:
-    name: Blocs compétition
-    singular_name: Bloc compétition
-    singular_slug: competition_block
+pages_infos_tournoi:
+    name: Pages infos tournoi
+    singular_name: Page infos tournoi
+    singular_slug: infos-tournoi
+    show_on_dashboard: true
+    default_status: published
+    searchable: false
+    record_template: partials/pages/_infos_tournoi.twig
+    record_template_block: partials/blocs/_infos_tournoi.twig
     fields:
+        # Onglet "Général"
         title:
             type: text
-            label: 'Titre de la compétition'
+            label: 'Titre du tournoi'
             class: large
             required: true
-            group: "Contenu"
+            group: "Général"
             postfix: 'Ex: "Tournoi ASMB 2019 de printemps", "TMC Dames ASMB 2019"'
         image:
             type: image
-            label: 'Image (décorative) du bloc'
+            label: 'Image (décorative)'
             attrib: title
             extensions: [ gif, jpg, png ]
             required: true
@@ -284,21 +291,24 @@ competition_blocks:
             required: true
         subtitle:
             type: text
-            label: 'Sous-titre'
+            label: 'Dates de la compétition'
             class: large
             required: true
-            placeholder: 'Dates de la compétition'
             postfix: 'Ex:<br>Du 28 mars au 7 avril'
         subtitle2:
-            type: text
-            label: 'Sous-titre 2'
-            class: large
-            placeholder: 'Catégorie(s) concernée(s)'
+            type: textarea
+            label: 'Catégorie(s) concernée(s)'
             postfix: 'Ex:<br>Deux tournois en parallèle : 3ème et 4ème série'
+        slug:
+            type: slug
+            uses: [ title ]
+
+        # Onglet "Détails"
         balls_provided:
-            label: 'Infos sur balles à afficher'
+            label: 'Infos balles fournies/non fournies'
             type: select
             values: { 'no': 'balles non fournies', 'yes_head': 'Balles HEAD fournies', 'yes': 'Balles fournies' }
+            group: "Détails"
         location:
             label: 'Lieu de compétition'
             type: textarea
@@ -307,19 +317,35 @@ competition_blocks:
             label: 'Horaires des matchs'
             type: textarea
             postfix: 'Ex:<br>En semaine, à partir de 17h30 et le week-end de 9h à 22h.<br>Des matchs pourront être programmés en journée la semaine pour ceux qui le peuvent.'
-
-        inscriptions:
-            label: 'Inscriptions'
-            type: repeater
-            fields:
-                text:
-                    label: 'Élément d''information'
-                    type: textarea
-
         inscriptions_closing_without_notice:
             label: 'Afficher "clôture sans préavis"'
             type: checkbox
-
+        inscriptions:
+            label: 'Informations sur les inscriptions'
+            type: block
+            required: true
+            fields:
+                entry:
+                    label: 'Titre'
+                    fields:
+                        text:
+                            type: text
+                link:
+                    label: 'Lien / mailto'
+                    fields:
+                        text:
+                            label: 'Intitulé du lien'
+                            type: text
+                            placeholder: 'Ex: Sur Ten''Up (site FFT)'
+                        url:
+                            label: 'Url / adresse e-mail'
+                            type: text
+                            placeholder: 'Ex: https://tenup.fft.fr/tournoi/82191691 ou mailto:fredviotte@gmail.com'
+                simple_text:
+                    label: 'Simple texte'
+                    fields:
+                        text:
+                            type: text
         commitment_rights:
             label: 'Droits d''engagement'
             type: repeater
@@ -328,28 +354,13 @@ competition_blocks:
                     label: 'Élément d''information'
                     type: textarea
 
-        contentlink:
-            type: text
-            label: 'Lien'
-            placeholder: Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")
-            postfix: "Ajoute un lien sur ce bloc vers une page. Ce peut être un lien interne relatif (ex: <tt>page/contact</tt>) ou un lien externe absolu (ex: `https://www.fft.fr/`)."
-        contentlink_label:
-            type: text
-            label: 'Libellé du lien'
-        slug:
-            type: slug
-            uses: [ title ]
-    show_on_dashboard: true
-    viewless: true
-    default_status: published
-    searchable: false
-    record_template: partials/block/_competition_block.twig
-    icon_many: "fa:cubes"
-    icon_one: "fa:cube"
-
 pages:
+    singular_slug: page
     name: Pages
     singular_name: Page
+    record_template: template_page.twig
+    recordsperpage: 20
+    taxonomy: [ tags ]
     fields:
         title:
             type: text
@@ -370,13 +381,12 @@ pages:
         template:
             type: templateselect
             filter: 'template_*.twig'
-    record_template: template_page.twig
-    recordsperpage: 20
-    taxonomy: [ tags ]
 
 evenements:
+    singular_slug: evenement
     name: Évènements
     singular_name: Évènement
+    record_template: template_page.twig
     fields:
         title:
             label: Titre
@@ -412,12 +422,14 @@ evenements:
             options:
                 ckeditor:
                     removeButtons: Image,Table,SpecialChar
-    record_template: template_page.twig
-
 
 competitions:
-    name: Compétitions
-    singular_name: Compétition
+    singular_slug: competition
+    name: Résultats compétition par équipe
+    singular_name: Page de résultats/calendrier compétition par équipe
+    icon_many: "fa:trophy"
+    record_template: competitions.twig
+    taxonomy: [ tags ]
     fields:
         name:
             label: 'Nom de la page'
@@ -439,14 +451,14 @@ competitions:
             values: ['Hommes','Dames','+35','Jeunes']
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
-    icon_many: "fa:trophy"
-    record_template: competitions.twig
-    taxonomy: [ tags ]
 
 calendriers:
-    name: Calendriers
-    singular_name: Calendrier
+    singular_slug: calendrier
+    name: Pages calendrier
+    singular_name: Page calendrier
     show_in_menu: Calendriers
+    taxonomy: [ tags ]
+    icon_many: "fa:calendar"
     fields:
         name:
             group: 'Général'
@@ -521,16 +533,15 @@ calendriers:
                 evt_with_lesson:
                     label: "Cours collectif durant l'événement"
                     type: checkbox
-    taxonomy: [ tags ]
-    icon_many: "fa:calendar"
 
 type_evenement_calendriers:
-    name: Types événement
-    singular_name: Type événement
+    name: Types événement calendrier
+    singular_name: Type événement calendrier
     viewless: true
     searchable: false
     show_in_menu: Calendriers
     default_status: published
+    icon_many: "fa:tag"
     fields:
         name:
             label: "Libellé"
@@ -548,4 +559,3 @@ type_evenement_calendriers:
             postfix: "Ordre d'apparition dans la légende des calendriers"
             type: integer
             class: narrow
-    icon_many: "fa:tag"

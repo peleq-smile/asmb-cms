@@ -1,0 +1,60 @@
+{# Make sure the index data is defined. #}
+{% if index is not defined %}
+    {% set index = 1 %}
+{% endif %}
+
+<div class="columns block {% if block.image %}block-with-image{% endif %} block-{{ (index is odd) ? 'odd':'even' }}">
+    <div class="column block-content">
+        {% if block.contentlink %}
+            <h2 class="title"><a href="{{ block.contentlink }}">{{ block.title }}</a></h2>
+        {% else %}
+            <h2 class="title">{{ block.title }}</h2>
+        {% endif %}
+
+        {% if block.subtitle %}
+            <h3 class="title">{{ block.subtitle }}</h3>
+        {% endif %}
+
+        {% if block.subtitle2 %}
+            <h4>{{ block.subtitle2|nl2br }}</h4>
+        {% endif %}
+
+
+        <div class="columns">
+            <div class="column inscriptions">
+                <p class="title">{{ block.contenttype.fields.inscriptions.label }}
+                    {% if block.inscriptions_closing_without_notice %}
+                        <span class="notice">({{ __('general.phrase.inscriptions_closing_without_notice') }})</span>
+                    {% endif %}
+                </p>
+                <ul>
+                    {% for inscriptionBlock in block.inscriptions %}
+                        {% if inscriptionBlock.block == 'link' %}
+                            <li><a href="{{ inscriptionBlock.url }}" title="{{ inscriptionBlock.text }}"
+                                   target="_blank">{{ inscriptionBlock.text|raw }}</a></li>
+                        {% else %}
+                            <li class="{{ inscriptionBlock.block }}">{{ inscriptionBlock.text|raw }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <a href="{{ block.link }}" class="button see-more"
+           title="{{ block.contentlink_label|default(__('general.phrase.more-details')) }}">
+            {{ block.contentlink_label|default(__('general.phrase.more-details')) }}
+        </a>
+    </div>
+
+    {% if block.image %}
+        {% set height = block.image_height %}
+        {% set width = block.image_width %}
+
+        <div class="column block-image">
+            <a class="image" href="{{ block.link }}"
+               style="background: url('{{ asset(block.image, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
+                <span class="see-more">{{ __('general.phrase.more-infos') }}</span>
+            </a>
+        </div>
+    {% endif %}
+</div>

@@ -36,12 +36,90 @@
                 vertical-align: middle;
             }
         }
+
+        .columns.block {
+            margin-bottom: 4rem;
+
+            h3 {
+                color: $secondary;
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            &.block-with-image {
+                .block-content {
+                    margin: 3rem 1.5rem 1rem 1.5rem;
+                }
+            }
+        }
+
+        .box {
+            height: 100%;
+            font-size: 1.2rem;
+
+            h4 {
+                margin-bottom: 2rem;
+
+                .notice {
+                    font-size: 1rem;
+                    font-style: italic;
+                }
+            }
+
+            &.inscriptions, &.commitment-rights {
+                ul li {
+                    &:before {
+                        visibility: hidden;
+                        vertical-align: top;
+                    }
+                    &.entry:before {
+                        content: '\f0a4';
+                        font-weight: normal;
+                        visibility: visible;
+                    }
+
+                    & > span {
+                        display: inline-block;
+                        max-width: 90%;
+                    }
+                }
+            }
+        }
     }
 }
 
 /*****************/
 /** RESPONSIVE  **/
 /*****************/
+@media screen and (max-width: $tablet) {
+    .section-page {
+        .container {
+            .columns.block {
+                margin-bottom: 1rem;
+
+                &.block-with-image {
+                    .block-content {
+                        margin: 0;
+                    }
+
+                    .block-image {
+                        display: none;
+                    }
+                }
+            }
+
+            .column.is-half {
+                &:not(:first-child) {
+                    padding-top: 0;
+                }
+            }
+        }
+    }
+}
 @media screen and (min-width: $desktop) {
     .section-page {
         .container {
@@ -49,6 +127,32 @@
                 margin: 4rem auto;
                 box-shadow: 2rem 2rem 0 0 $secondary-xlight, -2rem -2rem 0 0rem $primary;
                 max-width: 60%;
+            }
+
+            .columns.block {
+                flex-direction: row-reverse;
+
+                .block-image {
+                    flex-grow: 0;
+                    background-color: $secondary;
+                    margin-left: $block-with-image-gap + 1rem;
+                    padding: 3rem 0;
+                    max-width: 60%;
+
+                    .image {
+                        right: $block-with-image-gap;
+                        display: flex;
+                        text-align: center;
+                        max-width: 100% !important;
+                        max-height: 100% !important;
+                        border: white solid 8px;
+                        overflow: hidden;
+                    }
+                }
+
+                h3 {
+                    margin-top: 4rem;
+                }
             }
         }
     }

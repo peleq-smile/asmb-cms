@@ -22,6 +22,8 @@
         h4 {
             font-weight: bold;
             color: $dark;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
 
             &.title {
                 font-size: 1.7rem;
@@ -96,9 +98,17 @@
             }
 
             .inscriptions, .commitment-rights {
-                ul li:before {
-                    content: '\f0a4';
-                    font-weight: normal;
+                margin-top: 1rem;
+                
+                ul li {
+                    &:before {
+                        visibility: hidden;
+                    }
+                    &.entry:before {
+                        content: '\f0a4';
+                        font-weight: normal;
+                        visibility: visible;
+                    }
                 }
             }
 
@@ -106,7 +116,7 @@
                 .title {
                     font-size: 1.2rem;
                     font-weight: bold;
-                    margin-bottom: 0.5rem;
+                    margin-bottom: 1rem;
                     line-height: 1;
                     color: $text;
 
@@ -162,7 +172,7 @@
     }
 
     .columns.block {
-        h4.title {
+        h4 {
             font-size: 1.1rem !important;
         }
         .block-content {
@@ -297,7 +307,7 @@
                         background: linear-gradient($block-with-image-lg);
                         color: $dark;
                         margin: auto;
-                        padding: 20%;
+                        padding: 10%;
                     }
 
                     &:hover {

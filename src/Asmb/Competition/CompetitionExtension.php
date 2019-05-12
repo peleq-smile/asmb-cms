@@ -6,6 +6,7 @@ use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
+use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 use Bundle\Asmb\Competition\Database\Schema\Table;
 use Bundle\Asmb\Competition\Extension\TwigFiltersTrait;
 use Bundle\Asmb\Competition\Extension\TwigFunctionsTrait;
@@ -27,6 +28,7 @@ class CompetitionExtension extends SimpleExtension
 
     use TwigFiltersTrait;
     use TwigFunctionsTrait;
+    use TwigBackendTrait;
 
     /**
      * {@inheritdoc}
@@ -84,7 +86,7 @@ class CompetitionExtension extends SimpleExtension
         // TODO créer permission ?
 
         $menu = MenuEntry::create('competition-menu', 'competition')
-            ->setLabel(Trans::__('general.phrase.competition'))
+            ->setLabel(Trans::__('general.phrase.manage-competition'))
             ->setIcon('fa:trophy')
             ->setPermission('contentaction');
 
@@ -164,35 +166,6 @@ class CompetitionExtension extends SimpleExtension
         return [
             'templates' => ['namespace' => 'AsmbCompetition'],
         ];
-    }
-
-    /**
-     * @return string
-     */
-    private function getEnd()
-    {
-        $backendPrefix = $this->container['config']->get('general/branding/path');
-        $end = $this->container['config']->getWhichEnd();
-
-        switch ($end) {
-            case 'backend':
-                return 'backend';
-                break;
-            case 'async':
-                // we have async request
-                // if the request begin with "/admin" (general/branding/path)
-                // it has been made on backend else somewhere else
-                $url = '/' . ltrim($_SERVER['REQUEST_URI'], $this->container['paths']['root']);
-                $adminUrl = '/' . trim($backendPrefix, '/');
-                if (strpos($url, $adminUrl) === 0) {
-                    return 'backend';
-                }
-                break;
-            default:
-                break;
-        }
-
-        return $end;
     }
 
     /**
