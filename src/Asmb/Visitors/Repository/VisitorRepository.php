@@ -18,7 +18,7 @@ class VisitorRepository extends Repository
      *
      * @var int
      */
-    static public $expirationTime = 300;
+    static public $expirationTime = 120;
 
     /**
      * Add or update given visitor into visitors table.

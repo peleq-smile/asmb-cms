@@ -10,20 +10,9 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="pull-right mb-md">
-                    <div class="btn-group">
-                        {# Ajout d'une compétition #}
-                        <a class="btn btn-default" href="{{ path('championshipedit', {'id': null}) }}">
-                            <i class="fa fa-fw fa-plus"></i>
-                            {{ __('panel.championship-actions.button.add') }}
-                        </a>
 
-                        {# Accès à l'édition des dates/heures des prochaines rencontres #}
-                        <a class="btn btn-tertiary" href="{{ path('poolmeetingsedit') }}">
-                            <i class="fa fa-fw fa-edit"></i>
-                            {{ __('panel.championship-actions.button.edit-datetime') }}
-                        </a>
-                    </div>
+                <div class="pull-right mb-md">
+                    {{ include('@AsmbCompetition/championship/_index-actions.twig') }}
                 </div>
 
                 {{ include('@AsmbCompetition/championship/_list.twig') }}

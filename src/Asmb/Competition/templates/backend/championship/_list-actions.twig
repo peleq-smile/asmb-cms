@@ -6,15 +6,19 @@
             <i class="fa fa-list-alt"></i> {{ __('page.list-championship.show-results.title') }}
         </a>
 
-        <a class="btn btn-secondary"
-           href="{{ path('championshipedit', {'id': championship.id}) }}">
-            <i class="fa fa-edit"></i> {{ __('page.list-championship.edit-pool-teams.title') }}
-        </a>
+        {% if isallowed('competition:edit') %}
+            <a class="btn btn-secondary"
+               href="{{ path('championshipedit', {'id': championship.id}) }}">
+                <i class="fa fa-edit"></i> {{ __('page.list-championship.edit-pool-teams.title') }}
+            </a>
+        {% endif %}
 
-        <button type="submit" class="btn btn-danger confirm"
-                data-confirm="{{ __('general.phrase.confirm-delete-championship', { '%name%': championship.name ~ ' ' ~ championship.year }) }}">
+        {% if isallowed('competition:edit') %}
+            <button type="submit" class="btn btn-danger confirm"
+                    data-confirm="{{ __('general.phrase.confirm-delete-championship', { '%name%': championship.name ~ ' ' ~ championship.year }) }}">
             <span class="pull-left"><i
                         class="fa fa-trash"></i><span class="hidden">{{ __('general.phrase.delete') }}</span></span>
-        </button>
+            </button>
+        {% endif %}
     </form>
 </div>

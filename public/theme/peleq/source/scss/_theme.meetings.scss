@@ -161,3 +161,33 @@ table {
         }
     }
 }
+@media screen and (min-width: $desktop) {
+    .matches {
+        .container {
+            .columns {
+                position: relative;
+                .column.one-column {
+                    z-index: 2;
+                    position: relative;
+                    margin-left: 25%;
+                }
+
+                i.fa-trophy {
+                    font-size: 200px;
+                    color: $primary;
+                    position: absolute;
+                    top: 33%;
+                    z-index: 1;
+                    opacity: 0.25;
+
+                    &:first-of-type {
+                        left: 15%;
+                    }
+                    &:last-of-type {
+                        right: 15%;
+                    }
+                }
+            }
+        }
+    }
+}

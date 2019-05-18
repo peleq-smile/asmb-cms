@@ -11,7 +11,25 @@ $danger: #a94442;
 $white: #ffffff;
 $even: #f2f4f3;
 
+$navSecondaryWidth: 240px;
 $widescreen: 1280px;
+
+//---- Override general BO styles for wide screen
+@media only screen and (min-width: $widescreen) {
+    #navpage-secondary {
+        width: $navSecondaryWidth;
+
+        & > ul {
+            width: $navSecondaryWidth;
+        }
+    }
+    #navpage-content {
+        left: $navSecondaryWidth;
+    }
+    #navpage-wrapper.nav-secondary-collapsed-hoverable #navpage-secondary:hover {
+        width: $navSecondaryWidth;
+    }
+}
 
 //---- Styles
 .row.small-gap {
@@ -252,5 +270,29 @@ $widescreen: 1280px;
         input[type=time] {
             min-width: 63px;
         }
+    }
+}
+
+//TODOpeleq retirer car utilisation de Gdocs ?
+//-- Styles BO pour le guide de contribution
+.guide {
+    max-width: $widescreen;
+    margin: auto;
+    padding: 2rem;
+
+    h1 {
+        font-size: 5rem;
+    }
+    h2 {
+        font-size: 3rem;
+    }
+    h3 {
+        font-size: 2rem;
+    }
+    h4 {
+        font-size: 1.5rem;
+    }
+    h5 {
+        font-size: 1.25rem;
     }
 }
