@@ -243,6 +243,8 @@ class PoolMeetingRepository extends Repository
                 $poolMeeting->setId($existingPoolMeeting->getId());
                 // Si une heure existe, on la conserve
                 $poolMeeting->setTime($existingPoolMeeting->getTime());
+                // Si une date de report existe, on la conserve
+                $poolMeeting->setReportDate($existingPoolMeeting->getReportDate());
             }
             $this->save($poolMeeting, true);
         }
