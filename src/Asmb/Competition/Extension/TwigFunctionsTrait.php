@@ -3,8 +3,6 @@
 namespace Bundle\Asmb\Competition\Extension;
 
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
-use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
-use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;

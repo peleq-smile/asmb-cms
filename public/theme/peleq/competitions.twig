@@ -7,7 +7,10 @@
 
     {% set MAX_PER_ROW = 4 %}
 
+    {% set lastUpdatedAt = null %}
+
     <section class="section section-competition">
+
         <div class="container">
             <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
 
@@ -28,8 +31,6 @@
                             {% endif %}
 
                             <div class="column is-{{ MAX_PER_ROW-1 }}">
-                                {# TODO retirer, pour debug #}
-                                {#idx={{ idx }} ; idx % MAX_PER_ROW={{ (idx % MAX_PER_ROW) }} ; pools|length + idx={{ pools|length + idx }}#}
                                 {% if loop.first or prevCategoryName != categoryName %}
                                     <h2 class="title">{{ categoryName }}</h2>
                                     {% set prevCategoryName = categoryName %}
@@ -43,9 +44,17 @@
                                 }) }}
                             </div>
                             {% set idx = idx+1 %}
+
+                            {# Date de dernière mise à jour#}
+                            {% if lastUpdatedAt == null or lastUpdatedAt < pool.updated_at %}
+                                {% set lastUpdatedAt = pool.updated_at %}
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endfor %}
+
+                {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': lastUpdatedAt|date('d/m/Y'), '%time%': lastUpdatedAt|date('H\\hi')}) %}
+                <span class="last-updated-at">{{ __('page.view-pool.fetch-ranking-and-meetings.updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>
             </div>
         </div>
     </section>

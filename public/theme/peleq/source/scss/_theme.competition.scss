@@ -18,7 +18,8 @@
         flex-wrap: wrap;
         align-content: stretch;
         background: $white;
-        padding-bottom: 1.5rem;
+        padding-bottom: 2rem;
+        position: relative;
 
         .column {
             margin-bottom: 0;
@@ -68,6 +69,14 @@
                     }
                 }
             }
+        }
+
+        .last-updated-at {
+            position: absolute;
+            bottom: 0;
+            right: 0.5rem;
+            font-size: 0.7rem;
+            font-style: italic;
         }
     }
 }

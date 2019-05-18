@@ -126,12 +126,15 @@ class PoolMeetingRepository extends Repository
         $qb->addSelect('championship.id as championship_id');
         $qb->addSelect('championship.name as championship_name');
         $qb->addSelect('championship.short_name as championship_short_name');
+
         $qb->innerJoin(
             'pool',
             'bolt_championship',
             'championship',
             $qb->expr()->eq('pool.championship_id', 'championship.id')
         );
+        // On profite de la jointure sur la Pool pour récupérer la date de dernière mise à jour de chaque poule
+        $qb->addSelect('pool.updated_at as updated_at');
 
         if ($onlyActiveChampionship) {
             // Filtre sur les poules des championnats ACTIFS uniquement
@@ -208,6 +211,12 @@ class PoolMeetingRepository extends Repository
                         $date = Carbon::createFromFormat('Y-m-d', $result[$idx]['final_date']);
                         $date->setTime(0, 0, 0);
                         $meeting->setDate($date);
+                    }
+
+                    // Mise à jour de la date de dernière mise à jour à partir de cette de la poule
+                    $updatedAt = $result[$idx]['updated_at'];
+                    if ($updatedAt) {
+                        $meeting->setUpdatedAt(Carbon::createFromFormat('Y-m-d H:i:s', $updatedAt));
                     }
 
                     // On ne veut que les rencontres qui concernent le club

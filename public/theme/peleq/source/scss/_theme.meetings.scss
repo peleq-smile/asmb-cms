@@ -14,8 +14,20 @@
         }
 
         .box {
+            position: relative;
             background-color: $bg-light;
             height: calc(100% - 4.5rem);
+
+            .last-updated-at {
+                position: absolute;
+                bottom: 61px;
+                right: -80px;
+                font-size: 0.7rem;
+                transform: rotate(-90deg);
+                width: 140px;
+                height: 18px;
+                color: $bg-light;
+            }
         }
 
         .table {

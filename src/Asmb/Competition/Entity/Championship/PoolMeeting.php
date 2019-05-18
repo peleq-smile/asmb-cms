@@ -48,6 +48,8 @@ class PoolMeeting extends Entity
     protected $championship_name;
     /** @var string */
     protected $championship_short_name;
+    /** @var \DateTime */
+    protected $updated_at;
 
     /**
      * @return mixed
@@ -319,5 +321,21 @@ class PoolMeeting extends Entity
     public function setChampionshipShortName($championshipShortName)
     {
         $this->championship_short_name = $championshipShortName;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
     }
 }

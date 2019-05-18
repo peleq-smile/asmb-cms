@@ -1,3 +1,5 @@
+{% set lastUpdatedAt = null %}
+
 <h3 class="title">{{ title }}</h3>
 <div class="box">
     <table class="table is-fullwidth">
@@ -9,8 +11,8 @@
                     </tbody>
                 {% endif %}
 
-        {# On récupère le contenu "Competition" pour ajouter un lien vers la page #}
-        {% setcontent competitions = 'competition' where { competition_id: meeting.championship_id } %}
+                {# On récupère le contenu "Competition" pour ajouter un lien vers la page #}
+                {% setcontent competitions = 'competition' where { competition_id: meeting.championship_id } %}
 
                 <thead>
                 <tr>
@@ -52,6 +54,15 @@
                 <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                 <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
             </tr>
+
+            {% if lastUpdatedAt == null or lastUpdatedAt < meeting.updated_at %}
+                {% set lastUpdatedAt = meeting.updated_at %}
+            {% endif %}
         {% endfor %}
     </table>
+
+    {% if showLastUpdatedAt %}
+        {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': lastUpdatedAt|date('d/m'), '%time%': lastUpdatedAt|date('H\\hi')}) %}
+        <span class="last-updated-at">{{ __('page.view-pool.fetch-ranking-and-meetings.updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>
+    {% endif %}
 </div>
