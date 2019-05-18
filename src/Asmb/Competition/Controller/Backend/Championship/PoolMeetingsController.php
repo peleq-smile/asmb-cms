@@ -1,8 +1,9 @@
 <?php
 
-namespace Bundle\Asmb\Competition\Controller\Backend;
+namespace Bundle\Asmb\Competition\Controller\Backend\Championship;
 
 use Bolt\Translation\Translator as Trans;
+use Bundle\Asmb\Competition\Controller\Backend\AbstractController;
 use Bundle\Asmb\Competition\Form\FormType\PoolMeetingsEditType;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Silex\ControllerCollection;

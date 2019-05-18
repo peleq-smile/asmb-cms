@@ -38,7 +38,7 @@ homepage:
                 block:
                     label: 'Bloc'
                     type: select
-                    values: (blocs,pages_infos_tournoi)/title
+                    values: (blocs,infos_tournoi)/title
                     filter: { status: published }
 
         meetings_past_days:
@@ -66,7 +66,7 @@ homepage:
                 block:
                     label: 'Bloc'
                     type: select
-                    values: (blocs,pages_infos_tournoi)/title
+                    values: (blocs,infos_tournoi)/title
                     filter: { status: published }
 
         # Onglet Propriétés
@@ -96,12 +96,12 @@ homepage:
             required: true
 
         header_location_text:
-            label: 'Adresse postale'
+            label: 'Adresse postale du club'
             type: text
             required: true
 
         header_location_url:
-            label: 'Url vers la page du plan d''accès'
+            label: 'Url vers la page d''accès au club'
             type: text
             required: true
             postfix: |
@@ -145,12 +145,12 @@ homepage:
                 Peut contenir des balises HTML.
 
         footer_contact_location_link_text:
-            label: Plan d'accès au club - Libellé du lien
+            label: Accès au club - Libellé du lien
             type: text
             required: true
 
         footer_contact_location_link_url:
-            label: Plan d'accès au club - URL du lien
+            label: Accès au club - URL du lien
             type: text
             required: true
 
@@ -185,8 +185,8 @@ homepage:
             required: true
 
 blocs:
-    name: Blocs accueil
-    singular_name: Bloc accueil
+    name: Blocs simples
+    singular_name: Bloc simple
     singular_slug: bloc
     show_on_dashboard: true
     viewless: true
@@ -202,7 +202,7 @@ blocs:
             label: 'Titre'
             class: large
             required: true
-            group: "Contenu"
+            group: 'Contenu'
         subtitle:
             type: text
             label: 'Sous-titre'
@@ -249,13 +249,161 @@ blocs:
             type: slug
             uses: [ title ]
 
-pages_infos_tournoi:
-    name: Pages infos tournoi
-    singular_name: Page infos tournoi
+calendriers:
+    singular_slug: calendrier
+    name: Calendriers
+    singular_name: Calendrier
+    show_in_menu: Calendriers
+    taxonomy: [ tags ]
+    icon_many: "fa:calendar"
+    fields:
+        name:
+            group: 'Général'
+            label: 'Nom'
+            type: text
+            class: large
+        slug:
+            type: slug
+            uses: name
+        year:
+            label: 'Année de début'
+            type: text
+            class: narrow
+            pattern: "20[1-3][0-9]"
+            error: Merci de saisir une année valide
+            postfix: Le calendrier va de Septembre de l'année A à Juin de l'année A+1
+            placeholder: "Ex: 2019"
+        lessons_from_date:
+            label: 'Date de début des cours collectifs'
+            type: date
+            required: true
+            postfix: 'Les cours débutent en principe un lundi'
+        lessons_to_date:
+            label: 'Date de fin des cours collectifs'
+            postfix: 'Les cours terminent en principe un samedi'
+            type: date
+            required: true
+        holidays:
+            label: 'Dates des petites vacances scolaires'
+            prefix: 'Pour la zone B (Nantes)'
+            type: repeater
+            initial: 4
+            limit: 4
+            fields:
+                name:
+                    label: "Nom"
+                    type: text
+                    required: true
+                holidays_from_date:
+                    label: "Début"
+                    type: date
+                    required: true
+                holidays_to_date:
+                    label: "Fin"
+                    type: date
+                    required: true
+
+        events:
+            group: 'Événements'
+            label: 'Événement'
+            type: repeater
+            fields:
+                evt_title:
+                    label: 'Nom'
+                    type: text
+                evt_type:
+                    label: 'Type'
+                    type: select
+                    required: true
+                    values: type_evenement_calendriers/name
+                    sort: name
+                    autocomplete: true
+                evt_from_date:
+                    label: "Début"
+                    type: date
+                    required: true
+                evt_duration:
+                    label: "Durée (en jours)"
+                    type: integer
+                    required: true
+                    default: 1
+                evt_with_lesson:
+                    label: "Cours collectif durant l'événement"
+                    type: checkbox
+
+type_evenement_calendriers:
+    name: Types d'événement calendrier
+    singular_name: Type d'événement calendrier
+    viewless: true
+    searchable: false
+    show_in_menu: Calendriers
+    default_status: published
+    icon_many: "fa:tag"
+    fields:
+        name:
+            label: "Libellé"
+            type: text
+            class: large
+            group: content
+        color:
+            label: "Couleur"
+            type: text
+            class: large
+            pattern: "#[0-9a-f]{6}"
+            placeholder: "Ex: #aecf00"
+        position:
+            label: "Position"
+            postfix: "Ordre d'apparition dans la légende des calendriers"
+            type: integer
+            class: narrow
+
+evenements:
+    singular_slug: evenement
+    name: Évènements
+    singular_name: Évènement
+    record_template: template_page.twig
+    fields:
+        title:
+            label: Titre
+            type: text
+            class: large
+            group: content
+        slug:
+            type: slug
+            uses: title
+        from_date:
+            label: Date et heure de l'évènement
+            type: datetime
+            required: true
+        to_date:
+            label: Date et heure de fin
+            type: datetime
+        location:
+            label: Lieu
+            type: text
+        image:
+            type: image
+        short_text:
+            label: Texte court
+            type: html
+            height: 200px
+            options:
+                ckeditor:
+                    removeButtons: Image,Table,SpecialChar
+        text:
+            label: Texte
+            type: html
+            height: 400px
+            options:
+                ckeditor:
+                    removeButtons: Image,Table,SpecialChar
+
+infos_tournoi:
+    name: Infos tournoi
+    singular_name: Infos tournoi
     singular_slug: infos-tournoi
     show_on_dashboard: true
     default_status: published
-    searchable: false
     record_template: partials/pages/_infos_tournoi.twig
     record_template_block: partials/blocs/_infos_tournoi.twig
     fields:
@@ -382,51 +530,10 @@ pages:
             type: templateselect
             filter: 'template_*.twig'
 
-evenements:
-    singular_slug: evenement
-    name: Évènements
-    singular_name: Évènement
-    record_template: template_page.twig
-    fields:
-        title:
-            label: Titre
-            type: text
-            class: large
-            group: content
-        slug:
-            type: slug
-            uses: title
-        from_date:
-            label: Date et heure de l'évènement
-            type: datetime
-            required: true
-        to_date:
-            label: Date et heure de fin
-            type: datetime
-        location:
-            label: Lieu
-            type: text
-        image:
-            type: image
-        short_text:
-            label: Texte court
-            type: html
-            height: 200px
-            options:
-                ckeditor:
-                    removeButtons: Image,Table,SpecialChar
-        text:
-            label: Texte
-            type: html
-            height: 400px
-            options:
-                ckeditor:
-                    removeButtons: Image,Table,SpecialChar
-
 competitions:
+    name: Pages compétition
+    singular_name: Page compétition
     singular_slug: competition
-    name: Résultats compétition par équipe
-    singular_name: Page de résultats/calendrier compétition par équipe
     icon_many: "fa:trophy"
     record_template: competitions.twig
     taxonomy: [ tags ]
@@ -451,111 +558,3 @@ competitions:
             values: ['Hommes','Dames','+35','Jeunes']
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
-
-calendriers:
-    singular_slug: calendrier
-    name: Pages calendrier
-    singular_name: Page calendrier
-    show_in_menu: Calendriers
-    taxonomy: [ tags ]
-    icon_many: "fa:calendar"
-    fields:
-        name:
-            group: 'Général'
-            label: 'Nom'
-            type: text
-            class: large
-        slug:
-            type: slug
-            uses: name
-        year:
-            label: 'Année de début'
-            type: text
-            class: narrow
-            pattern: "20[1-3][0-9]"
-            error: Merci de saisir une année valide
-            postfix: Le calendrier va de Septembre de l'année A à Juin de l'année A+1
-            placeholder: "Ex: 2019"
-        lessons_from_date:
-            label: 'Date de début des cours collectifs'
-            type: date
-            required: true
-            postfix: 'Les cours débutent en principe un lundi'
-        lessons_to_date:
-            label: 'Date de fin des cours collectifs'
-            postfix: 'Les cours terminent en principe un samedi'
-            type: date
-            required: true
-        holidays:
-            label: 'Dates des petites vacances scolaires'
-            prefix: 'Pour la zone B (Nantes)'
-            type: repeater
-            initial: 4
-            limit: 4
-            fields:
-                name:
-                    label: "Nom"
-                    type: text
-                    required: true
-                holidays_from_date:
-                    label: "Début"
-                    type: date
-                    required: true
-                holidays_to_date:
-                    label: "Fin"
-                    type: date
-                    required: true
-
-        events:
-            group: 'Événements'
-            label: 'Événement'
-            type: repeater
-            fields:
-                evt_title:
-                    label: 'Nom'
-                    type: text
-                evt_type:
-                    label: 'Type'
-                    type: select
-                    required: true
-                    values: type_evenement_calendriers/name
-                    sort: name
-                    autocomplete: true
-                evt_from_date:
-                    label: "Début"
-                    type: date
-                    required: true
-                evt_duration:
-                    label: "Durée (en jours)"
-                    type: integer
-                    required: true
-                    default: 1
-                evt_with_lesson:
-                    label: "Cours collectif durant l'événement"
-                    type: checkbox
-
-type_evenement_calendriers:
-    name: Types événement calendrier
-    singular_name: Type événement calendrier
-    viewless: true
-    searchable: false
-    show_in_menu: Calendriers
-    default_status: published
-    icon_many: "fa:tag"
-    fields:
-        name:
-            label: "Libellé"
-            type: text
-            class: large
-            group: content
-        color:
-            label: "Couleur"
-            type: text
-            class: large
-            pattern: "#[0-9a-f]{6}"
-            placeholder: "Ex: #aecf00"
-        position:
-            label: "Position"
-            postfix: "Ordre d'apparition dans la légende des calendriers"
-            type: integer
-            class: narrow

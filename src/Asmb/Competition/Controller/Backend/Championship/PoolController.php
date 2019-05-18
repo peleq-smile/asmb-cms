@@ -1,13 +1,12 @@
 <?php
 
-namespace Bundle\Asmb\Competition\Controller\Backend;
+namespace Bundle\Asmb\Competition\Controller\Backend\Championship;
 
-use Bolt\Exception\InvalidRepositoryException;
 use Bolt\Translation\Translator as Trans;
+use Bundle\Asmb\Competition\Controller\Backend\AbstractController;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
-use Bundle\Asmb\Competition\Exception\PoolTeamNotFoundException;
 use Bundle\Asmb\Competition\Form\FormType;
 use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
@@ -23,6 +22,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PoolController extends AbstractController
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getRoleRoute(Request $request)
+    {
+        return 'competition:edit';
+    }
+
     /**
      * {@inheritdoc}
      */

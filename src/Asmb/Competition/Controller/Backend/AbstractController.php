@@ -2,6 +2,7 @@
 
 namespace Bundle\Asmb\Competition\Controller\Backend;
 
+use Silex\Application;
 use Bolt\Controller\Backend\BackendBase;
 use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
@@ -23,6 +24,53 @@ abstract class AbstractController extends BackendBase
 {
     /** @var Pool[] */
     private $pools;
+
+    /**
+     * Retourne la route par défaut utiliser pour la gestion des permissions.
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return string
+     */
+    protected function getRoleRoute(Request $request)
+    {
+        $roleRoute = 'competition';
+
+        $controllerParameter = $request->get('_controller');
+        if (isset($controllerParameter[1])) {
+            $action = $controllerParameter[1];
+
+            switch ($action) {
+                case 'add':
+                case 'edit':
+                case 'delete':
+                    $roleRoute = 'competition:edit';
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return $roleRoute;
+    }
+
+    /**
+     * Middleware function to check whether a user is logged on.
+     *
+     * @param Request     $request   The Symfony Request
+     * @param Application $app       The application/container
+     * @param string      $roleRoute An overriding value for the route name in permission checks
+     *
+     * @return null|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function before(Request $request, Application $app, $roleRoute = null)
+    {
+        if (null === $roleRoute) {
+            $roleRoute = $this->getRoleRoute($request);
+        }
+
+        return parent::before($request, $app, $roleRoute);
+    }
 
     /**
      * Build add pool to a championship form.

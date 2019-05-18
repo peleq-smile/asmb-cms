@@ -31,15 +31,16 @@ class CalendarExtension extends SimpleExtension
         $calendar = CalendarHelper::buildAnnualCalendar($year, $lessonsFromDate, $lessonsToDate);
 
         // On y ajoute les événements à afficher
-        /** @var \Bolt\Storage\Field\Collection\RepeatingFieldCollection $events */
-        $events = $calendarRecord->get('events');
-        /** @var \Bolt\Storage\Field\Collection\LazyFieldCollection $event */
-        foreach ($events->getValues() as $event) {
-            $evtTitle = $event->get('evt_title');
+        /** @var \Bolt\Storage\Field\Collection\RepeatingFieldCollection|array $events */
+        $events = $calendarRecord->get('events'); // On n'obtient pas la même chose en mode "preview" qu'en mode réel...
+        $values = is_array($events) ? $events : $events->getValues();
+        /** @var \Bolt\Storage\Field\Collection\LazyFieldCollection|array $event */
+        foreach ($values as $event) {
+            $evtTitle = $this->getElementData($event, 'evt_title');
             /** @var Carbon $evtFromDate */
-            $evtFromDate = $event->get('evt_from_date');
-            $evtDuration = $event->get('evt_duration');
-            $evtWithLesson = (bool) $event->get('evt_with_lesson');
+            $evtFromDate = $this->getCarbonDate($this->getElementData($event, 'evt_from_date'));
+            $evtDuration = $this->getElementData($event, 'evt_duration');
+            $evtWithLesson = (bool) ($this->getElementData($event, 'evt_with_lesson'));
 
             $evtMonthLabel = CalendarHelper::buildCalendarDateMonthLabel($evtFromDate);
             $evtDayLabel = CalendarHelper::buildCalendarDateDayLabel($evtFromDate);
@@ -74,15 +75,54 @@ class CalendarExtension extends SimpleExtension
     /**
      * Retourne la couleur de l'événement donné, selon son type.
      *
-     * @param \Bolt\Storage\Field\Collection\LazyFieldCollection $event
+     * @param \Bolt\Storage\Field\Collection\LazyFieldCollection|array $event
      *
      * @return string
      */
-    protected function getEventTypeColor(LazyFieldCollection $event)
+    protected function getEventTypeColor($event)
     {
         $eventTypes = $this->getEventTypes();
 
-        return $eventTypes[$event->get('evt_type')]['color'];
+        $eventType = $this->getElementData($event, 'evt_type');
+
+        return $eventTypes[$eventType]['color'];
+    }
+
+    /**
+     * Retourne la valeur de la donnée demandée pour l'élément donné.
+     * Gère le cas où $element est un objet (mode "vue normale") ou un tableau (mode "prévisualisation").
+     *
+     * @param \Bolt\Storage\Field\Collection\LazyFieldCollection|array $element
+     * @param string                                                   $dataKey
+     *
+     * @return mixed
+     */
+    protected function getElementData($element, $dataKey)
+    {
+        if (is_array($element)) {
+            $dataValue = isset($element[$dataKey]) ? $element[$dataKey] : null;
+        } else {
+            $dataValue = $element->get($dataKey);
+        }
+
+        return $dataValue;
+    }
+
+    /**
+     * Transforme la date donnée en objet Carbon s'il s'agit d'une chaîne.
+     *
+     * @param Carbon|string $date
+     *
+     * @return Carbon
+     */
+    protected function getCarbonDate($date)
+    {
+        if (is_string($date)) {
+            $stringDate = $date;
+            $date = Carbon::createFromFormat('Y-m-d', $stringDate);
+        }
+
+        return $date;
     }
 
     /**
@@ -118,15 +158,15 @@ class CalendarExtension extends SimpleExtension
     /**
      * Gère le découpage d'un événement sur plusieurs mois.
      *
-     * @param LazyFieldCollection $event
-     * @param array               $calendar
+     * @param LazyFieldCollection|array $event
+     * @param array                     $calendar
      */
-    protected function handleSplitEvent(LazyFieldCollection $event, &$calendar)
+    protected function handleSplitEvent($event, &$calendar)
     {
-        $evtDuration = $event->get('evt_duration');
+        $evtDuration = $this->getElementData($event, 'evt_duration');
 
         if ($evtDuration > 1) {
-            $evtFromDate = $event->get('evt_from_date');
+            $evtFromDate = $this->getCarbonDate($this->getElementData($event, 'evt_from_date'));
             $evtToDate = clone $evtFromDate;
             $evtToDate->addDay($evtDuration - 1);
             $evtMonthLabel = CalendarHelper::buildCalendarDateMonthLabel($evtFromDate);
@@ -141,7 +181,7 @@ class CalendarExtension extends SimpleExtension
                 $evtNextMonthDayLabel = CalendarHelper::buildCalendarDateDayLabel($evtFirstDayOfNextMonth);
 
                 $calendar[$evtMonthEndLabel][$evtNextMonthDayLabel]['event'] = [
-                    'name'     => $event->get('evt_title'),
+                    'name'     => $this->getElementData($event, 'evt_title'),
                     'color'    => $this->getEventTypeColor($event),
                     'duration' => $evtDurationOnNextMonth,
                 ];
@@ -160,12 +200,14 @@ class CalendarExtension extends SimpleExtension
      */
     protected function handleHolidays($calendarRecord, &$calendar)
     {
+        $values = is_array($calendarRecord->get('holidays')) ?  $calendarRecord->get('holidays') : $calendarRecord->get('holidays')->getValues();
+
         /** @var \Bolt\Storage\Field\Collection\LazyFieldCollection $holidays */
-        foreach ($calendarRecord->get('holidays')->getValues() as $holidays) {
+        foreach ($values as $holidays) {
             /** @var Carbon $fromDate */
-            $fromDate = $holidays->get('holidays_from_date');
+            $fromDate = $this->getCarbonDate($this->getElementData($holidays, 'holidays_from_date'));
             /** @var Carbon $toDate */
-            $toDate = $holidays->get('holidays_to_date');
+            $toDate = $this->getCarbonDate($this->getElementData($holidays, 'holidays_to_date'));
 
             do {
                 $date = $fromDate;
@@ -173,7 +215,7 @@ class CalendarExtension extends SimpleExtension
                 $dayLabel = CalendarHelper::buildCalendarDateDayLabel($date); // ex: "01 lun"
 
                 $calendar[$monthLabel][$dayLabel]['classNames'][] = 'is-holidays';
-                $calendar[$monthLabel][$dayLabel]['title'] = $holidays->get('name');
+                $calendar[$monthLabel][$dayLabel]['title'] = $this->getElementData($holidays, 'name');
 
                 $date->addDay();
             } while ($date <= $toDate);

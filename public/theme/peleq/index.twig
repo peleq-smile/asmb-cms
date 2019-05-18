@@ -4,35 +4,43 @@
     {% setcontent homepage = "homepage" limit 1 returnsingle %}
 
     <div class="homepage">
-        <section class="section welcome">
-            <div class="container">
-                <div class="columns white-framed">
-                    <div class="column">
-                        <div class="content">
-                            <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
-                            <div class="teaser">{{ homepage.teaser }}</div>
-                            {{ homepage.content }}
 
-                            {% include 'partials/_record_meta.twig' with {'record': homepage } %}
+        {# BLOCS ACCUEIL - Bloc de bienvenue #}
+        {% if homepage.teaser is not empty %}
+            <section class="section welcome">
+                <div class="container">
+                    <div class="columns white-framed">
+                        <div class="column{% if homepage.teaser_image is not empty %} is-three-quarters-desktop{% endif %}">
+                            <div class="content">
+                                <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
+                                <div class="teaser">{{ homepage.teaser }}</div>
+                                {{ homepage.content }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="column">
-                        {% if homepage.teaser_image %}
-                            {{ homepage.teaser_image|showimage(300) }}
+                        {% if homepage.teaser_image is not empty %}
+                            <div class="column">
+                                {% if homepage.teaser_image %}
+                                    {{ homepage.teaser_image|showimage(300) }}
+                                {% endif %}
+                            </div>
                         {% endif %}
                     </div>
                 </div>
-            </div>
-        </section>
-
+            </section>
+        {% endif %}
 
         {# BLOCS ACCUEIL - Section du haut #}
+        {% set index = 1 %}
         {% if homepage.blocks_top is not empty %}
             <section class="section blocks">
                 <div class="container">
                     {% for item in homepage.blocks_top %}
                         {% setcontent block = item.block %}
-                        {% include block.contenttype.record_template_block with {'block': block, 'index': loop.index} %}
+                        {# On vérifie que block est bien instancié, il peut s'agir d'un contenu dépublié... #}
+                        {% if block != false %}
+                            {% include block.contenttype.record_template_block with {'block': block, 'index': index} %}
+                            {% set index = index+1 %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             </section>
@@ -49,8 +57,11 @@
                 <div class="container">
                     {% for item in homepage.blocks_bottom %}
                         {% setcontent block = item.block %}
-                        {% set index = (homepage.blocks_top|length % 2) == 0 ? loop.index : loop.index0 %}
-                        {% include block.contenttype.record_template_block with {'block': block, 'index': index} %}
+                        {# On vérifie que block est bien instancié, il peut s'agir d'un contenu dépublié... #}
+                        {% if block != false %}
+                            {% include block.contenttype.record_template_block with {'block': block, 'index': index} %}
+                            {% set index = index+1 %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             </section>

@@ -72,9 +72,9 @@ class CompetitionExtension extends SimpleExtension
         $meetingsParameters = $this->getMeetingsParameters();
 
         return [
-            '/extensions/competition/championship'  => new Controller\Backend\ChampionshipController(),
-            '/extensions/competition/pool'          => new Controller\Backend\PoolController(),
-            '/extensions/competition/pool/meetings' => new Controller\Backend\PoolMeetingsController($meetingsParameters),
+            '/extensions/championship'               => new Controller\Backend\ChampionshipController(),
+            '/extensions/championship/pool'          => new Controller\Backend\Championship\PoolController(),
+            '/extensions/championship/pool/meetings' => new Controller\Backend\Championship\PoolMeetingsController($meetingsParameters),
         ];
     }
 
@@ -83,19 +83,23 @@ class CompetitionExtension extends SimpleExtension
      */
     protected function registerMenuEntries()
     {
-        // TODO créer permission ?
+        $permission = 'competition';
 
-        $menu = MenuEntry::create('competition-menu', 'competition')
+        /** @var \Bolt\Users $usersService */
+        $menu = MenuEntry::create('competition-menu', 'championship')
+            ->setRoute('championship')
             ->setLabel(Trans::__('general.phrase.manage-competition'))
             ->setIcon('fa:trophy')
-            ->setPermission('contentaction');
+            ->setPermission($permission);
 
-        $submenuChampionship = MenuEntry::create('championship-submenu', 'championship')
+        $submenuChampionship = MenuEntry::create('championship-submenu')
             ->setLabel(Trans::__('general.phrase.championship'))
-            ->setIcon('fa:users');
+            ->setIcon('fa:users')
+            ->setPermission($permission);
         $submenuMeetingsOfTheMoment = MenuEntry::create('meetings-of-the-moment-submenu', 'pool/meetings')
             ->setLabel(Trans::__('general.phrase.meetings-of-the-moment'))
-            ->setIcon('fa:calendar');
+            ->setIcon('fa:calendar')
+            ->setPermission($permission);
 
         $menu->add($submenuChampionship);
         $menu->add($submenuMeetingsOfTheMoment);

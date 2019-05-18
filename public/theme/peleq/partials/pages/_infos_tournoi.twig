@@ -8,10 +8,11 @@
                 {% if record.image %}
                     {% set height = record.image_height %}
                     {% set width = record.image_width %}
+                    {% set imageFile = (record.image is iterable) ? record.image.file : record.image %}
 
                     <div class="column block-image">
                         <span class="image"
-                              style="background: url('{{ asset(record.image, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
+                              style="background: url('{{ asset(imageFile, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
                         </span>
                     </div>
                 {% endif %}
@@ -24,7 +25,7 @@
                     {% endif %}
 
                     {% if record.subtitle2 %}
-                        <h3>{{ record.subtitle2|nl2br }}</h3>
+                        <h3>{{ record.subtitle2|raw|nl2br }}</h3>
                     {% endif %}
 
                     <hr class="is-invisible">
@@ -99,8 +100,6 @@
                     </div>
                 {% endif %}
             </div>
-
-            {{ include('partials/_recordfooter.twig', { 'record': record, 'extended': true }) }}
         </div>
     </section>
 

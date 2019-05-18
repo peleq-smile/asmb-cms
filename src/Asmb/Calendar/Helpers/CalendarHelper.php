@@ -3,8 +3,6 @@
 namespace Bundle\Asmb\Calendar\Helpers;
 
 use Carbon\Carbon;
-use DateInterval;
-use DateTime;
 
 /**
  * Calendar helper.
@@ -95,6 +93,7 @@ class CalendarHelper
      */
     public static function buildCalendarDateMonthLabel(Carbon $date)
     {
+
         $monthLabel = $date->formatLocalized('%B');
 
         return $monthLabel;

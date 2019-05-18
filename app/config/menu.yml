@@ -36,7 +36,7 @@ main:
               path: page/recherche-partenaire
 
         - label: 'Enseignement'
-          path: page/enseignement
+          path: page/pour-plus-d-entrainement
           submenu:
             - label: 'Pour plus d''entraînement'
               path: page/pour-plus-d-entrainement
@@ -52,7 +52,7 @@ main:
         - label: 'Coupe de printemps'
           path: competition/coupe-printemps
 
-        - label: Championnats d'hiver
+        - label: 'Championnats d''hiver'
           path: competition/seniors-hommes
           submenu:
             - label: 'Seniors Hommes'
