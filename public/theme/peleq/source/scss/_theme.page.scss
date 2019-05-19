@@ -70,22 +70,28 @@
                     margin-right: 0;
 
                     h2.title {
-                        color: $text;
+                        color: $text !important;
                         font-size: 3rem;
                         font-weight: bold;
                     }
 
                     h3.title {
-                        color: $primary;
+                        color: $primary !important;
                         font-size: 2.5rem;
                         font-weight: normal;
                     }
 
                     h4.title {
                         margin-top: 3rem;
-                        color: $secondary;
+                        color: $secondary !important;
                         font-size: 1.5rem;
                         font-weight: bold;
+                    }
+
+                    .title {
+                        span {
+                            display: inline-block;
+                        }
                     }
                 }
             }
