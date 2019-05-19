@@ -368,6 +368,10 @@ evenements:
             type: text
             class: large
             group: content
+        subtitle:
+            type: text
+            label: 'Sous-titre'
+            class: large
         slug:
             type: slug
             uses: title
@@ -381,6 +385,11 @@ evenements:
         location:
             label: Lieu
             type: text
+        block:
+            label: 'Bloc'
+            type: select
+            values: (blocs)/title
+            filter: { status: published }
         image:
             type: image
         short_text:
@@ -520,9 +529,6 @@ pages:
         image:
             type: image
             placeholder: https://source.unsplash.com/1280x768/?business,workplace/__random__
-        teaser:
-            type: html
-            height: 150px
         body:
             type: html
             height: 300px

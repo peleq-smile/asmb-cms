@@ -5,18 +5,6 @@
     <section class="section section-page">
         <div class="container">
             <div class="columns block {% if record.image %}block-with-image{% endif %}">
-                {% if record.image %}
-                    {% set height = record.image_height %}
-                    {% set width = record.image_width %}
-                    {% set imageFile = (record.image is iterable) ? record.image.file : record.image %}
-
-                    <div class="column block-image">
-                        <span class="image"
-                              style="background: url('{{ asset(imageFile, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
-                        </span>
-                    </div>
-                {% endif %}
-
                 <div class="column block-content">
                     <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
 
@@ -37,6 +25,18 @@
                         </ul>
                     {% endif %}
                 </div>
+
+                {% if record.image %}
+                    {% set height = record.image_height %}
+                    {% set width = record.image_width %}
+                    {% set imageFile = (record.image is iterable) ? record.image.file : record.image %}
+
+                    <div class="column block-image">
+                        <span class="image"
+                              style="background: url('{{ asset(imageFile, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
+                        </span>
+                    </div>
+                {% endif %}
             </div>
 
             <div class="columns">
