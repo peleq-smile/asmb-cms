@@ -152,8 +152,8 @@ class PoolMeetingRepository extends Repository
 
         // Si $pastDays est >0, alors on veut les derniers résultats donc des rencontres avec le score.
         if ($pastDays > 0) {
-            $qb->andWhere("{$this->getAlias()}.result IS NOT NULL");
-            $qb->andWhere("{$this->getAlias()}.result <> :noneResult");
+            $qb->andHaving("{$this->getAlias()}.result IS NOT NULL OR final_date <> CURDATE()");
+            $qb->andHaving("{$this->getAlias()}.result <> :noneResult OR final_date <> CURDATE()");
             $qb->setParameter(':noneResult', PoolMeetingHelper::RESULT_NONE);
         }
         if ($futureDays > 0) {

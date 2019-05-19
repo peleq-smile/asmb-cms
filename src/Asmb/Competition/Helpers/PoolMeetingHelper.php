@@ -37,7 +37,7 @@ class PoolMeetingHelper
             $now = new Carbon();
             $yesterday = $now->addDay(-1);
             if ($meeting->getDate() < $yesterday) {
-                $score = ' - ';
+                $score = '&nbsp;&nbsp; - &nbsp;&nbsp;';
             }
         }
 
