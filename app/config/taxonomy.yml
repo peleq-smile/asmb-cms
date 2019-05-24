@@ -23,7 +23,10 @@ tags:
     options:
         calendrier: Calendrier
         competition: Compétition
+        documents-divers: Document divers
         histoire-tennis: Histoire du tennis
+        infos-pratiques: Infos pratiques
+        reglement: Règlement intérieur
     has_sortorder: true
 
 #tags:

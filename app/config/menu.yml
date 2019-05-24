@@ -8,10 +8,10 @@ main:
           label: 'Terrains'
         - path: page/le-bureau
           label: 'Le Bureau'
-        - path: page/statistiques
-          label: 'Adhérents / statistiques'
-        - path: page/reglement
-          label: 'Règlement'
+        - path: page/quelques-chiffres
+          label: 'Quelques chiffres'
+        - path: page/reglement-interieur-2018-2019
+          label: 'Règlement intérieur'
 
     - label: 'Jouer'
       path: page/inscriptions
@@ -32,16 +32,9 @@ main:
               path: page/creneaux
             - label: 'Réservations'
               path: page/reservations
-            - label: 'Rechercher un partenaire'
-              path: page/recherche-partenaire
 
-        - label: 'Enseignement'
-          path: page/pour-plus-d-entrainement
-          submenu:
-            - label: 'Pour plus d''entraînement'
-              path: page/pour-plus-d-entrainement
-            - label: 'Prépa. physique avant saison'
-              path: page/prepa-physique-avant-saison
+        - label: 'Plus d''entraînement'
+          path: page/plus-d-entrainement
 
     - label: 'Compétitions'
       path: competition/championnat-ete
@@ -79,15 +72,18 @@ main:
         - label: 'Calendrier'
           path: calendrier/2018-2019
 
-        - label: 'Galerie photos'
-          path: page/galerie-photos
+#        - label: 'Galerie photos'
+#          path: page/galerie-photos
 
 
-    - label: 'Articles'
-      path: page/infos-pratiques
+    - label: 'Documentations'
+      path: tags/infos-pratiques
       submenu:
         - label: 'Infos pratiques'
-          path: page/infos-pratiques
+          path: tags/infos-pratiques
+
+        - label: 'Documents divers'
+          path: tags/documents-divers
 
         - label: 'Histoire du Tennis'
           path: page/le-jeu-de-paume
