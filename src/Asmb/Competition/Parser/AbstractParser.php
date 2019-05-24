@@ -37,16 +37,18 @@ abstract class AbstractParser
      * Parse et retourne les données sous forme d'un tableau d'objet.
      *
      * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
-     * @param int                                               $pageCount
+     * @param int|null                                          $pageCount
      *
      * @return array
      */
-    final public function parse(Pool $pool, $pageCount = 1)
+    final public function parse(Pool $pool, $pageCount = null)
     {
-        $parsedData = [];
+        $allPagesParsedData = [];
 
         if (null !== $pool->getFftId()) {
-            for ($page = 0; $page < $pageCount ; $page++) {
+            $page = 0;
+
+            while (true) {
                 $url = $this->buildUrlToParse($pool->getFftId(), $page);
 
                 try {
@@ -56,11 +58,17 @@ abstract class AbstractParser
                 }
 
                 $this->xpath = new DomXPath($this->document);
-                $parsedData = array_merge($parsedData, $this->doParse($pool));
+                $parsedData = $this->doParse($pool);
+                $allPagesParsedData = array_merge($allPagesParsedData, $parsedData);
+                $page++;
+
+                if (empty($parsedData) || (null !== $pageCount && $page >= $pageCount)) {
+                    break;
+                }
             }
         }
 
-        return $parsedData;
+        return $allPagesParsedData;
     }
 
     /**

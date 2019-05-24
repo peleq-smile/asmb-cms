@@ -74,19 +74,14 @@ class RefreshCommand extends BaseCommand
             try {
                 // Données CLASSEMENT
                 // Récupération des données depuis la Gestion Sportive de la FFT
-                $poolRankingParsed = $poolRankingParser->parse($pool);
+                $poolRankingParsed = $poolRankingParser->parse($pool, 1);
 
                 // Sauvegarde des classements en base
                 $poolRankingRepository->saveAll($poolRankingParsed, $pool->getId());
 
                 // Données RENCONTRES
-                // On commence par compter le nombre de page à parser
-                $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
-                $totalMeetingsCount = PoolHelper::getTotalMeetingsCount($teamsCount);
-                $pageCount = ceil($totalMeetingsCount / PoolMeetingsParser::MAX_PER_PAGE);
-
-                // On parse
-                $poolMeetingsParsed = $poolMeetingsParser->parse($pool, $pageCount);
+                // On parse les différentes pages des rencontres
+                $poolMeetingsParsed = $poolMeetingsParser->parse($pool);
                 // On sauvegarde en base
                 $poolMeetingRepository->saveAll($poolMeetingsParsed, $pool->getId());
 

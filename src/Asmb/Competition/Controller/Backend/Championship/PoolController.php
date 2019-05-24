@@ -285,18 +285,14 @@ class PoolController extends AbstractController
             // Récupération des données depuis la Gestion Sportive de la FFT
             /** @var \Bundle\Asmb\Competition\Parser\PoolRankingParser $poolRankingParser */
             $poolRankingParser = $this->app['pool_ranking_parser'];
-            $poolRankingParsed = $poolRankingParser->parse($pool);
+            $poolRankingParsed = $poolRankingParser->parse($pool, 1);
             // Sauvegarde des classements en base
             $this->savePoolRanking($pool, $poolRankingParsed);
 
             // Données RENCONTRES
-            // Récupération des données depuis la Gestion Sportive de la FFT
-            // On commence par compter le nombre de page à parser
-            $pageCount = ceil($this->getTotalMeetingsCount($pool) / PoolMeetingsParser::MAX_PER_PAGE);
-
             /** @var \Bundle\Asmb\Competition\Parser\PoolMeetingsParser $poolMatchesParser */
             $poolMeetingsParser = $this->app['pool_meetings_parser'];
-            $poolMeetingsParsed = $poolMeetingsParser->parse($pool, $pageCount);
+            $poolMeetingsParsed = $poolMeetingsParser->parse($pool);
             // Sauvegarde des rencontres en base
             $this->saveMeetings($pool, $poolMeetingsParsed);
 
