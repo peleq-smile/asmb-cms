@@ -1,0 +1,169 @@
+{% extends 'partials/_master.twig' %}
+
+{% set membersTotal = record.total_members_count|default(1) %}
+{% set hoursInAweek = 7*24 %}
+
+{% block main %}
+
+    <section class="section section-page">
+        <div class="container">
+
+            <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+
+            <div class="section-stats">
+                <div class="tile is-ancestor">
+                    <div class="tile is-parent">
+                        <div class="tile is-child box">
+                            {% include 'partials/stats/_progress_ring.twig' with {
+                                'image': 'membres.png',
+                                'text': membersTotal ,
+                                'legend': __('page.stats.members'),
+                                'class': 'big'
+                            } %}
+                        </div>
+                    </div>
+                    <div class="tile is-vertical is-3">
+                        <div class="tile">
+                            <div class="tile is-parent is-vertical">
+                                <div class="tile is-child box">
+                                    {% include 'partials/stats/_progress_ring.twig' with {
+                                        'percent': (record.men_members_count/membersTotal)*100,
+                                        'text': record.men_members_count,
+                                        'legend': __('page.stats.adult-men'),
+                                    } %}
+                                </div>
+                                <div class="tile is-child box">
+                                    {% include 'partials/stats/_progress_ring.twig' with {
+                                        'percent': (record.boys_members_count/membersTotal)*100,
+                                        'text': record.boys_members_count,
+                                        'legend': __('page.stats.young-boys'),
+                                    } %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tile is-vertical is-3">
+                        <div class="tile">
+                            <div class="tile is-parent is-vertical">
+                                <div class="tile is-child box">
+                                    {% include 'partials/stats/_progress_ring.twig' with {
+                                        'percent': (record.women_members_count/membersTotal)*100,
+                                        'text': record.women_members_count,
+                                        'legend': __('page.stats.adult-women'),
+                                    } %}
+                                </div>
+                                <div class="tile is-child box">
+                                    {% include 'partials/stats/_progress_ring.twig' with {
+                                        'percent': (record.girls_members_count/membersTotal)*100,
+                                        'text': record.girls_members_count,
+                                        'legend': __('page.stats.young-girls'),
+                                    } %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-stats even">
+                <div class="tile is-ancestor is-parent">
+                    <div class="tile is-child box">
+                        {% include 'partials/stats/_progress_ring.twig' with {
+                            'image': 'eleve.png',
+                            'percent': (record.students_count/membersTotal)*100,
+                            'text': record.students_count ,
+                            'legend': __('page.stats.students'),
+                        } %}
+                    </div>
+                    <div class="tile is-child box">
+                        {% include 'partials/stats/_progress_ring.twig' with {
+                            'image': 'heures.png',
+                            'percent': (record.weekly_lessons_hours_count/hoursInAweek)*100,
+                            'text': record.weekly_lessons_hours_count,
+                            'legend': __('page.stats.weekly-hours'),
+                        } %}
+                    </div>
+                    <div class="tile is-child box">
+                        {% include 'partials/stats/_progress_ring.twig' with {
+                            'image': 'cartes_loisir.png',
+                            'percent': (record.leasure_cards_count/membersTotal)*100,
+                            'text': record.leasure_cards_count,
+                            'legend': __('page.stats.leisure-cards'),
+                        } %}
+                    </div>
+                </div>
+            </div>
+
+
+            {% if record.winter_teams is not empty %}
+                {% set winterTeamCountTotal = 0 %}
+                {% for teamStats in record.winter_teams %}
+                    {% set winterTeamCountTotal = winterTeamCountTotal + teamStats.get('team_count') %}
+                {% endfor %}
+
+                {% if winterTeamCountTotal > 0 %}
+                    <hr class="is-invisible">
+                    <h2 class="title text-default">{{ __('page.stats.winter-teams') }}</h2>
+                    <div class="section-stats">
+                        <div class="tile is-ancestor is-parent">
+                            {% for teamStats in record.winter_teams %}
+                                <div class="tile is-child box">
+                                    {% include 'partials/stats/_progress_ring.twig' with {
+                                        'percent': (teamStats.get('team_count')/winterTeamCountTotal)*100,
+                                        'text': teamStats.get('team_count'),
+                                        'legend': teamStats.get('team_category'),
+                                    } %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+
+            {% if record.summer_teams is not empty %}
+                {% set summerTeamCountTotal = 0 %}
+                {% for teamStats in record.summer_teams %}
+                    {% set summerTeamCountTotal = summerTeamCountTotal + teamStats.get('team_count') %}
+                {% endfor %}
+
+                {% if summerTeamCountTotal > 0 %}
+                    <hr class="is-invisible">
+                    <h2 class="title text-default">{{ __('page.stats.summer-teams') }}</h2>
+                    <div class="section-stats {% if winterTeamCountTotal > 0 %}even{% endif %}">
+                        <div class="tile is-ancestor is-parent">
+                            {% for teamStats in record.summer_teams %}
+                                <div class="tile is-child box">
+                                    {% include 'partials/stats/_progress_ring.twig' with {
+                                        'percent': (teamStats.get('team_count')/summerTeamCountTotal)*100,
+                                        'text': teamStats.get('team_count'),
+                                        'legend': teamStats.get('team_category'),
+                                    } %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
+
+    <script>
+        function animateAllProgressRings() {
+            const $progressRings = $('.progress-ring-circle');
+
+            $progressRings.each(function () {
+                const $progressRing = $(this);
+                const percent = $progressRing.data('percent');
+                const circumference = $progressRing.data('circumference');
+                const offset = circumference - percent / 100 * circumference;
+
+                $progressRing.css('strokeDashoffset', offset.toString());
+            });
+        }
+
+        window.addEventListener("load", function () {
+            animateAllProgressRings();
+        });
+    </script>
+
+{% endblock main %}

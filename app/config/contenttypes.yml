@@ -564,3 +564,92 @@ competitions:
             values: ['Hommes','Dames','+35','Jeunes']
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
+
+statistiques:
+    name: Pages de statistiques
+    singular_name: Page de statistiques
+    singular_slug: statistiques
+    icon_many: "fa:bar-chart"
+    record_template: statistiques.twig
+    taxonomy: [ tags ]
+    fields:
+        name:
+            label: 'Nom de la page'
+            type: text
+            class: large
+            group: content
+        title:
+            label: 'Titre affiché sur la page'
+            type: text
+            class: large
+        slug:
+            type: slug
+            uses: title
+        total_members_count:
+            label: 'Nb adhérents total'
+            type: integer
+            min: 1
+            max: 1000
+        men_members_count:
+            label: 'Nb adultes hommes adhérents'
+            type: integer
+            min: 1
+            max: 1000
+        women_members_count:
+            label: 'Nb adultes femmes adhérentes'
+            type: integer
+            min: 1
+            max: 1000
+        boys_members_count:
+            label: 'Nb jeunes garçons adhérents'
+            type: integer
+            min: 1
+            max: 1000
+        girls_members_count:
+            label: 'Nb jeunes filles adhérentes'
+            type: integer
+            min: 1
+            max: 1000
+        students_count:
+            label: 'Nb élèves'
+            type: integer
+            min: 1
+            max: 1000
+        weekly_lessons_hours_count:
+            label: 'Nb heures de cours collectifs par semaine'
+            type: integer
+            min: 1
+            max: 1000
+        leasure_cards_count:
+            label: 'Nb adhérents carte loisir seule'
+            type: integer
+            min: 1
+            max: 1000
+        winter_teams:
+            label: 'Équipes Hiver'
+            type: repeater
+            fields:
+                team_category:
+                    label: 'Type d''équipe'
+                    type: text
+                    required: true
+                team_count:
+                    label: 'Nb d''équipes pour la catégorie'
+                    type: integer
+                    min: 0
+                    max: 100
+                    required: true
+        summer_teams:
+            label: 'Équipes Été'
+            type: repeater
+            fields:
+                team_category:
+                    label: 'Type d''équipe'
+                    type: text
+                    required: true
+                team_count:
+                    label: 'Nb d''équipes pour la catégorie'
+                    type: integer
+                    min: 0
+                    max: 100
+                    required: true

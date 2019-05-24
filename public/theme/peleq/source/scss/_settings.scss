@@ -31,6 +31,7 @@ $secondary-xlight: #e4c676;
 // Text colors
 $text: $dark;
 $text-invert: findColorInvert($text) !default
+$text-light: #f0f0f0;
 
 // Fonts
 $font-sans-serif    : 'Raleway', 'Roboto', sans-serif;     // Base font
@@ -39,7 +40,8 @@ $font-serif         : 'Comfortaa', 'Bitter', serif;          // Headings
 // 3. Set the derived variables
 
 // Option 1: https://color.adobe.com/ims-construction-colors-color-theme-10555392/
-$primary: $medium;
+//$primary: #b44814;
+$primary: #026094;
 $info: $dark;
 $link: $secondary;
 $success: $light;
@@ -60,6 +62,7 @@ $body-weight: $weight-light;
 $column-gap: 1.5rem;
 
 // Header
+//$header-hero-linear-gradient: rgba(180, 72, 20, 0.8);
 $header-hero-linear-gradient: rgba(2, 96, 148, 0.8);
 $header-height-navbar: 136px;
 $header-height-navbar-sticky: 86px;

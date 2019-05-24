@@ -6,6 +6,9 @@
 .text-secondary {
     color: $secondary;
 }
+.text-default {
+    color: $text !important;
+}
 
 .text-center {
     text-align: center !important;

@@ -2,16 +2,16 @@ main:
     - label: 'Le Club'
       path: page/edito
       submenu:
-        - path: page/edito
-          label: 'Édito'
-        - path: page/terrains
-          label: 'Terrains'
-        - path: page/le-bureau
-          label: 'Le Bureau'
-        - path: page/quelques-chiffres
-          label: 'Quelques chiffres'
-        - path: page/reglement-interieur-2018-2019
-          label: 'Règlement intérieur'
+        - label: 'Édito'
+          path: page/edito
+        - label: 'Terrains'
+          path: page/terrains
+        - label: 'Le Bureau'
+          path: page/le-bureau
+        - label: 'Quelques chiffres'
+          path: statistiques/quelques-chiffres
+        - label: 'Règlement intérieur'
+          path: page/reglement-interieur-2018-2019
 
     - label: 'Jouer'
       path: page/inscriptions

@@ -1,0 +1,46 @@
+{% set PI = 3.14 %}
+{% set circleStrokeWidth = 6 %}
+{% set circleRadius = 38 %}
+{% set circleCircumference = (2*PI*circleRadius + 1)|round %}
+
+{% if percent is not defined %}
+    {% set percent = 100 %}
+{% else %}
+    {% set percent = percent|round %}
+{% endif %}
+
+<div class="container-progress-ring{% if class is defined %} {{ class }}{% endif %}">
+    <svg viewbox="0 0 100 100">
+        <circle class="progress-ring-bg" r="{{ circleRadius + circleStrokeWidth }}" cx="50"
+                cy="50"/>
+        <circle
+                stroke="white"
+                stroke-width="{{ circleStrokeWidth }}"
+                r="{{ circleRadius }}"
+                cx="50"
+                cy="50"
+        />
+        <circle
+                class="progress-ring-circle"
+                fill="transparent"
+                stroke-width="{{ circleStrokeWidth }}"
+                stroke-dasharray="{{ circleCircumference }} {{ circleCircumference }}"
+                stroke-dashoffset="{{ circleCircumference }}"
+                r="{{ circleRadius }}"
+                cx="50"
+                cy="50"
+                data-percent="{{ percent }}"
+                data-circumference="{{ circleCircumference }}"
+        />
+        {% if image is defined %}
+            <image xlink:href="{{ asset('images/stats/' ~ image, 'theme') }}" x="35" y="25" width="30" height="30"/>
+            <text x="50" y="65" text-anchor="middle" dy="5" font-size="20">{{ text }}</text>
+        {% else %}
+            <text x="50" y="52" text-anchor="middle" dy="5" font-size="20">{{ text }}</text>
+        {% endif %}
+    </svg>
+    {% if legend is defined %}
+        <div class="stats-legend">{{ legend|raw }}</div>
+    {% endif %}
+</div>
+
