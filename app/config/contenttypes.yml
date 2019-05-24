@@ -32,7 +32,7 @@ homepage:
         blocks_top:
             label: 'Blocs du haut'
             type: repeater
-            limit: 3
+            limit: 4
             prefix: 'Ces blocs sont affichés <b>avant</b> les rencontres du moment.'
             fields:
                 block:
@@ -60,7 +60,7 @@ homepage:
         blocks_bottom:
             label: 'Blocs du bas'
             type: repeater
-            limit: 3
+            limit: 4
             prefix: 'Ces blocs sont affichés <b>après</b> les rencontres du moment.'
             fields:
                 block:
