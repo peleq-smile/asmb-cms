@@ -52,7 +52,7 @@ header {
                         transition: all .2s ease-in-out;
 
                         &:hover {
-                            transform: scale(1.2);
+                            transform: scale(1.1);
                         }
                     }
 
@@ -289,7 +289,7 @@ header {
 
                     .navbar-brand {
                         order: 1;
-                        margin: 0 auto 0 0.2rem;
+                        margin: 0 auto 0 0.5rem;
 
                         img {
                             height: 80px;

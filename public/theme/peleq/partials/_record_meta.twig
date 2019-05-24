@@ -11,9 +11,8 @@
 </p>
 {% if extended|default() %}
 <p class="meta">
-    {{ __('general.phrase.written-by-on', {
-        '%name%': record.user.displayname|default(__('Unknown')),
-        '%date%': record.datepublish|localedatetime("%A %B %e, %Y")
+    {{ __('general.phrase.written-on', {
+        '%date%': record.datepublish|localedatetime("%e %B %Y")
     }) }}
 </p>
 {% endif %}

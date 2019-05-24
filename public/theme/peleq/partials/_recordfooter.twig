@@ -1,16 +1,19 @@
 {# This file is inserted as the 'footer' of each listed record. #}
 {% if extended|default() and record.taxonomy is not null %}
 
-    {% set previous = record.previous('id') %}
-    {% set next = record.next('id') %}
+    {% set previous = false %}
+    {% set next = false %}
 
-    {% if previous and not record.taxonomy == previous.taxonomy %}
-        {% set previous = false %}
-    {% endif %}
+    {# On utilise 1 seule taxonomie : "tags" et on prend la 1ère pour trouver d'autres contenus de même taxonomie #}
+    {% setcontent otherRecords = record.contenttype.slug where { tags: record.taxonomy|first|first, id: '!' ~ record.id } %}
 
-    {% if next and not record.taxonomy == next.taxonomy %}
-        {% set next = false %}
-    {% endif %}
+    {% for otherRecord in otherRecords %}
+        {% if otherRecord.sortorder > record.sortorder %}
+            {% set next = (not next or next.sortorder >= otherRecord.sortorder) ? otherRecord : next %}
+        {% else %}
+            {% set previous = (not previous or previous.sortorder <= otherRecord.sortorder) ? otherRecord : previous %}
+        {% endif %}
+    {% endfor %}
 
     {% if previous or next %}
         <nav class="pagination" role="navigation" aria-label="pagination">

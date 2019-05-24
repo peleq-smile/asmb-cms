@@ -39,12 +39,7 @@
                     {# display something introduction-like.. #}
                     <p>{{ record.excerpt(300, false, search|default('')) }}</p>
 
-                    <p class="meta">
-                        {{ __('general.phrase.written-by-on', {
-                            '%name%': record.user.displayname|default(__('Unknown')),
-                            '%date%': record.datepublish|localedatetime("%e %B %Y")
-                        }) }}
-                    </p>
+                    {% include 'partials/_record_meta.twig' with {'record': record, 'extended': true} %}
                 </div>
             </div>
             {% if record.image is not empty %}

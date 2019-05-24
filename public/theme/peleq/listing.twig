@@ -11,27 +11,27 @@
 
     {# If used for listing a taxonomy, we add a heading.: #}
     {% if taxonomytype is defined %}
-        <div class="content">
-            <h1 class="title is-size-2 is-size-4-mobile">
-                {{ __('general.phrase.overview-for') }}
-                {% if taxonomy.options[slug] is defined %}
-                    {{ taxonomy.options[slug] }}
-                {% else %}
-                    {{ slug }}
-                {% endif %}
-            </h1>
-
-            {# Taxonomies are fetched unordered by design except if 'has_sortorder'
-                is set to true. This way we keep 'grouping' intact in the listing. #}
-            {% if not taxonomy.has_sortorder %}
-            {# If we specified an order in config.yml, sort them here, accordingly: #}
-            {% set records = records|order(config.get('general/listing_sort')) %}
+        <h1 class="title is-size-1 is-size-3-mobile">
+            {% if taxonomy.options[slug] is defined %}
+                {{ taxonomy.options[slug] }}
+            {% else %}
+                {{ slug }}
             {% endif %}
-        </div>
-    {% else %}
-        <h1 class="title is-size-2 is-size-4-mobile">{{contenttype}}</h1>
-    {% endif %}
+        </h1>
 
+        {# Taxonomies are fetched unordered by design except if 'has_sortorder'
+            is set to true. This way we keep 'grouping' intact in the listing. #}
+        {% if not taxonomy.has_sortorder %}
+        {# If we specified an order in config.yml, sort them here, accordingly: #}
+        {% set records = records|order(config.get('general/listing_sort')) %}
+        {% endif %}
+    {% else %}
+        <h1 class="title is-size-1 is-size-3-mobile">{{contenttype}}</h1>
+    {% endif %}
+    </div>
+</section>
+<section class="section section-listing">
+    <div class="container">
     {% for record in records %}
         <article role="article" class="media columns">
             <div class="media-content column is-7">
@@ -48,7 +48,6 @@
                     {% endif %}
 
                     {% include 'partials/_record_meta.twig' with {'extended': true} %}
-
                 </div>
             </div>
             {% if record.image is not empty %}
@@ -63,11 +62,7 @@
     {% else %}
         <article role="article">
             <div class="content">
-                <h2 class="title">{{ __('general.phrase.no-content-found') }}</h2>
-
-                <p>
-                    {{ __("Unfortunately, no content could be found. Try another page, or go to the <a href=\"%paths_root%\">homepage</a>.", {'%paths_root%': path('homepage')} ) }}
-                </p>
+                <h2 class="title">{{ __('general.phrase.no-content-found') }}.</h2>
             </div>
         </article>
     {% endfor %}

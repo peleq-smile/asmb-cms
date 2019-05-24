@@ -19,21 +19,21 @@
                     <th colspan="4">
                         {% if competitions is not empty %}
                             <span class="is-hidden-touch">
-                                {{ meeting|formattedDate }}
-                                <em> &bullet; <a href="{{ competitions|first.link }}"> <i class="fas fa-chevron-circle-right"></i></i> {{ meeting.championship_name }}<i class=""></i></a></em>
+                                {{ meeting|formattedDate }}<em><a href="{{ competitions|first.link }}">
+                                    <i class="fas fa-chevron-circle-right"></i> {{ meeting.championship_name }}</a>
+                                </em>
                             </span>
                             <span class="is-hidden-desktop">
-                                {{ meeting|formattedDate(true) }}
-                                <em> &bullet; <a href="{{ competitions|first.link }}"> <i class="fas fa-chevron-circle-right"></i> {{ meeting.championship_short_name }}</a></em>
+                                {{ meeting|formattedDate(true) }}<em><a href="{{ competitions|first.link }}">
+                                    <i class="fas fa-chevron-circle-right"></i> {{ meeting.championship_short_name }}</a>
+                                </em>
                             </span>
                         {% else %}
                             <span class="is-hidden-touch">
-                                {{ meeting|formattedDate }}
-                                <em> &bullet; {{ meeting.championship_name }}</em>
+                                {{ meeting|formattedDate }}<em>{{ meeting.championship_name }}</em>
                             </span>
                             <span class="is-hidden-desktop">
-                                {{ meeting|formattedDate(true) }}
-                                <em> &bullet; {{ meeting.championship_short_name }}</em>
+                                {{ meeting|formattedDate(true) }}<em>{{ meeting.championship_short_name }}</em>
                             </span>
                         {% endif %}
                     </th>
