@@ -75,10 +75,13 @@
                         font-weight: bold;
                     }
 
-                    h3.title {
-                        color: $primary !important;
-                        font-size: 2.5rem;
-                        font-weight: normal;
+                    h3 {
+                        margin-top: 0;
+                        .title {
+                            color: $primary !important;
+                            font-size: 2.5rem;
+                            font-weight: normal;
+                        }
                     }
 
                     h4.title {
@@ -92,6 +95,10 @@
                         span {
                             display: inline-block;
                         }
+                    }
+
+                    p {
+                        margin-bottom: 0.6rem;
                     }
                 }
             }
@@ -187,10 +194,6 @@
                         border: white solid 8px;
                         overflow: hidden;
                     }
-                }
-
-                h3 {
-                    margin-top: 4rem;
                 }
             }
         }

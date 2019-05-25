@@ -10,6 +10,7 @@
 
             <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
 
+            {# Section sur les adhérents #}
             <div class="section-stats">
                 <div class="tile is-ancestor">
                     <div class="tile is-parent">
@@ -64,6 +65,8 @@
                     </div>
                 </div>
             </div>
+
+            {# Section sur le nb d'élèves / cartes loisirs / heures de cours #}
             <div class="section-stats even">
                 <div class="tile is-ancestor is-parent">
                     <div class="tile is-child box">
@@ -93,7 +96,7 @@
                 </div>
             </div>
 
-
+            {# Section sur les équipes Hiver #}
             {% if record.winter_teams is not empty %}
                 {% set winterTeamCountTotal = 0 %}
                 {% for teamStats in record.winter_teams %}
@@ -119,7 +122,7 @@
                 {% endif %}
             {% endif %}
 
-
+            {# Section sur les équipe Été #}
             {% if record.summer_teams is not empty %}
                 {% set summerTeamCountTotal = 0 %}
                 {% for teamStats in record.summer_teams %}
@@ -148,9 +151,7 @@
     </section>
 
     <script>
-        function animateAllProgressRings() {
-            const $progressRings = $('.progress-ring-circle');
-
+        function animateProgressRings($progressRings) {
             $progressRings.each(function () {
                 const $progressRing = $(this);
                 const percent = $progressRing.data('percent');
@@ -162,7 +163,36 @@
         }
 
         window.addEventListener("load", function () {
-            animateAllProgressRings();
+            var $sections = $('.section-stats .tile.box'),
+                pendingSectionsToAnimateCount = $sections.length;
+
+            // On anime les différents cercles de progression lorsqu'on défile jusqu'à la box le contenant
+            $(document).bind('scroll', function (ev) {
+                var scrollOffset = $(document).scrollTop();
+
+                $sections.each(function () {
+                    var $section = $(this);
+                    // On ajoute au containerOffset un delta supplémentaire pour la prise en compte du scroll
+                    // (pour ne pas déclencher dès le 1er pixel de la section, mais plutôt environ à mi-hauteur
+                    const containerOffset = ($section.offset().top - window.innerHeight + $section.height()/1.5);
+
+                    if (scrollOffset > containerOffset) {
+                        const $progressRings = $('.progress-ring-circle', $section);
+                        animateProgressRings($progressRings);
+
+                        if (! $section.data('hasBeenAnimated') === true) {
+                            $section.data('hasBeenAnimated', true);
+                            pendingSectionsToAnimateCount--;
+                        }
+
+                        // On fait en sorte de ne plus animer les cercles de progression à nouveau
+                        if (pendingSectionsToAnimateCount < 1) {
+                            // Si tous ont été animés, on se détache de l'événement de défilement
+                            $(document).unbind('scroll');
+                        }
+                    }
+                });
+            });
         });
     </script>
 
