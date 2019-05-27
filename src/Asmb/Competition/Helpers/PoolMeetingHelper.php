@@ -17,6 +17,7 @@ class PoolMeetingHelper
     const RESULT_FLAG_VICTORY = 'V';
     const RESULT_FLAG_DEFEAT  = 'D';
     const RESULT_FLAG_DRAW    = 'N';
+    const RESULT_WO           = 'wo';
 
     /**
      * Extrait et retourne le score à partir de la rencontre donnée.

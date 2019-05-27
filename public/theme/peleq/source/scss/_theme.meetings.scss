@@ -132,6 +132,10 @@ table {
         &.draw {
             background: $draw;
         }
+
+        &.with-wo {
+            cursor: help;
+        }
     }
 }
 

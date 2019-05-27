@@ -26,6 +26,7 @@ trait TwigFiltersTrait
 
         if (!empty($score) && $decorated) {
             $stateClass = '';
+            $scoreTitle = '';
 
             if (PoolMeetingHelper::isClubVictory($meeting)) {
                 $stateClass = ' victory';
@@ -34,7 +35,25 @@ trait TwigFiltersTrait
             } elseif (PoolMeetingHelper::isClubDraw($meeting)) {
                 $stateClass = ' draw';
             }
-            $score = new \Twig_Markup('<span class="score' . $stateClass . '">' . $score . '</span>', 'utf-8');
+
+            // Cas d'un forfait ?
+            $woLength = strlen(PoolMeetingHelper::RESULT_WO);
+
+            if (PoolMeetingHelper::RESULT_WO === substr($meeting->getResult(), -1 * $woLength)) {
+                // Cas d'un forfait
+                $stateClass .= ' with-wo';
+                $scoreTitle = Trans::__('general.phrase.with-wo');
+            }
+
+            if ($scoreTitle) {
+                $score = new \Twig_Markup(
+                    '<span class="score' . $stateClass . '" title="' . $scoreTitle . '">' . $score . '</span>', 'utf-8'
+                );
+            } else {
+                $score = new \Twig_Markup(
+                    '<span class="score' . $stateClass . '">' . $score . '</span>', 'utf-8'
+                );
+            }
         }
 
         return $score;
@@ -48,10 +67,12 @@ trait TwigFiltersTrait
      *
      * @return string
      */
-    public function getMatchesSheetLink(PoolMeeting $meeting, $withThisContent = null)
+    public
+    function getMatchesSheetLink(
+        PoolMeeting $meeting,
+        $withThisContent = '<i class="fa fa-eye"></i>'
+    )
     {
-        $link = '';
-
         $paramsFdmFft = $meeting->getParamsFdmFft();
         if (isset($paramsFdmFft['efm_iid'], $paramsFdmFft['pha_iid'], $paramsFdmFft['pou_iid'], $paramsFdmFft['ren_iid'])) {
             // TODO : en faire un param global
@@ -62,15 +83,11 @@ trait TwigFiltersTrait
 
             $title = Trans::__('general.phrase.go-to-matches-sheet');
             $linkContent = '<a href="' . $url . '" class="btn btn-xs btn-link" target="_blank" title="' . $title . '">';
+            $linkContent .= $withThisContent . '</a>';
 
-            if ($withThisContent) {
-                $linkContent .= $withThisContent . '</a>';
-            } else {
-                $linkContent .= '<i class="fa fa-eye"></i></a>';
-            }
-
-            $link = new \Twig_Markup($linkContent, 'utf-8');
         }
+
+        $link = (isset($linkContent)) ? new \Twig_Markup($linkContent, 'utf-8') : '';
 
         return $link;
     }

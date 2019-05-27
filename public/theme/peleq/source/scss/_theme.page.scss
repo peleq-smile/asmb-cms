@@ -8,13 +8,16 @@
         }
 
         img {
-            display: block;
-            margin: 2rem auto;
-            padding: 0;
             border: solid 5px $white;
             height: auto !important;
             width: auto !important;
-            max-height: 400px;
+
+            &.decorated {
+                display: block;
+                margin: 2rem auto;
+                padding: 0;
+                max-height: 400px;
+            }
         }
 
         ul {
@@ -171,7 +174,7 @@
 @media screen and (min-width: $desktop) {
     .section-page {
         .container {
-            img {
+            img.decorated {
                 margin: 4rem auto;
                 box-shadow: 2rem 2rem 0 0 $secondary-xlight, -2rem -2rem 0 0rem $primary;
                 max-width: 60%;
