@@ -76,6 +76,43 @@ mark {
     height: 2rem;
 }
 
+//--- Scroll up and down
+.scrollup {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    display: none;
+    color: white;
+    background-color: $secondary;
+    opacity: 0.6;
+    font-size: 1.4rem;
+    text-align: center;
+    line-height: 50px;
+    z-index: 100;
+}
+
+.scrollto {
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    display: none;
+    color: white;
+    background-color: $dark;
+    opacity: 0.75;
+    font-size: 1.5rem;
+    text-align: center;
+    line-height: 80px;
+    z-index: 100;
+
+    &:hover {
+        color: $secondary;
+    }
+}
+
 /*****************/
 /** RESPONSIVE  **/
 /*****************/
@@ -83,10 +120,65 @@ mark {
     #main-content .container {
         max-width: 94%;
     }
+
+    .scrollto {
+        span {
+            position: absolute;
+            background: $dark;
+            white-space: nowrap;
+            top: 0;
+            left: 90px;
+            padding: 0 15px;
+            opacity: 0;
+            transition: opacity 0.5s;
+
+            &:before {
+                content: "";
+                position: absolute;
+                right: 100%;
+                top: 26px;
+                width: 0;
+                height: 0;
+                border-top: 13px solid transparent;
+                border-right: 8px solid $dark;
+                border-bottom: 13px solid transparent;
+            }
+        }
+
+        &:hover {
+            span {
+                opacity: 1;
+
+                &:before {
+                    display: block;
+                }
+            }
+        }
+    }
 }
 
 @media screen and (max-width: $desktop) {
     .columns.white-framed {
         padding: 0;
+    }
+
+    .scrollup {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1rem;
+    }
+
+    .scrollto {
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        font-size: 1.1rem;
+
+        span {
+            display: none;
+        }
     }
 }

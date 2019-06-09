@@ -1,17 +1,17 @@
 # This file defines the different types of taxonomies in Bolt. See the
 # documentation for details: https://docs.bolt.cm/contenttypes/taxonomies
 
-home_flags:
-    name: Indicateurs accueil
-    singular_name: Indicateur accueil
-    slug: home_flags
-    singular_slug: home_flag
-    behaves_like: grouping
-    multiple: false
-    options:
-        accueil-top: Affiché sur l'accueil - section du haut
-        accueil-bottom: Afficher sur l'accueil - section du bas
-    has_sortorder: true
+#home_flags:
+#    name: Indicateurs accueil
+#    singular_name: Indicateur accueil
+#    slug: home_flags
+#    singular_slug: home_flag
+#    behaves_like: grouping
+#    multiple: false
+#    options:
+#        accueil-top: Affiché sur l'accueil - section du haut
+#        accueil-bottom: Afficher sur l'accueil - section du bas
+#    has_sortorder: true
 
 tags:
     name: Tags

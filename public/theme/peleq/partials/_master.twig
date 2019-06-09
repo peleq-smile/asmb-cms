@@ -42,11 +42,13 @@
 
         {{ widgets('main_bottom') }}
     </div>
+
+    <a href="#header" class="scrollup" title="{{ __('general.phrase.back-to-top') }}"><i class="fa fa-arrow-up"></i></a>
 {% endblock body %}
 
 {{ include('partials/_footer.twig') }}
 
-<script src="{{ asset('js/lib/jquery-3.3.1.slim.min.js', 'theme') }}"></script>
+<script src="{{ asset('js/lib/jquery-3.3.1.min.js', 'theme') }}"></script>
 <script src="{{ asset('js/lib/jquery.touchSwipe.min.js', 'theme') }}"></script>
 
 <!-- jQuery Custom Scroller CDN -->

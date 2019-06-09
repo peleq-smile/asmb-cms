@@ -4,37 +4,31 @@ main:
       submenu:
         - label: 'Édito'
           path: page/edito
-        - label: 'Terrains'
-          path: page/terrains
-        - label: 'Le Bureau'
+        - label: 'Infrastructures'
+          path: page/infrastructures
+        - label: 'Le bureau'
           path: page/le-bureau
-        - label: 'Quelques chiffres'
-          path: statistiques/quelques-chiffres
+        - label: 'Les chiffres'
+          path: statistiques/les-chiffres
         - label: 'Règlement intérieur'
-          path: page/reglement-interieur-2018-2019
+          path: page/reglement-interieur
 
     - label: 'Jouer'
       path: page/inscriptions
       submenu:
-        - label: 'Inscriptions & tarifs'
+        - label: 'Inscriptions'
           path: page/inscriptions
-          submenu:
-            - label: 'Inscriptions'
-              path: page/inscriptions
-            - label: 'Tarifs'
-              path: page/tarifs
+        - label: 'Formules et tarifs'
+          path: page/tarifs
         - label: 'Tennis Loisir'
-          path: page/creneaux
+          path: page/nos-cartes-loisir
           submenu:
             - label: 'La carte'
               path: page/nos-cartes-loisir
-            - label: 'Créneaux'
+            - label: 'Les créneaux'
               path: page/creneaux
-            - label: 'Réservations'
-              path: page/reservations
-
-        - label: 'Plus d''entraînement'
-          path: page/plus-d-entrainement
+            - label: 'Réservation'
+              path: page/reservation
 
     - label: 'Compétitions'
       path: competition/championnat-ete
@@ -66,7 +60,7 @@ main:
     - label: 'Actualités'
       path: page/evenements
       submenu:
-        - label: 'Évènements'
+        - label: 'Événements'
           path: page/evenements
 
         - label: 'Calendrier'
@@ -76,7 +70,7 @@ main:
 #          path: page/galerie-photos
 
 
-    - label: 'Documentations'
+    - label: 'Publications'
       path: tags/infos-pratiques
       submenu:
         - label: 'Infos pratiques'

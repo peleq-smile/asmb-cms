@@ -102,11 +102,20 @@ document.addEventListener('DOMContentLoaded', function () {
     var docHeight = $(document).height(),
         $main = $('#main-content');
 
+    var $scrollup = $('.scrollup'),
+        $scrollto = $('.scrollto'),
+        $targetElt = $($scrollto.data('target'));
+
+    if ($targetElt.length > 0) {
+        var targetEltTop = $targetElt.offset().top,
+            targetEltBottom = targetEltTop + $targetElt.height();
+    }
+
     var handleScroll = function () {
         if (docHeight - $(window).height() > deltaWpAndFh) {
             var scrollTop = $(window).scrollTop();
 
-            // Handle when start to scrolling from top
+            // Gestion de l'en-tête "sticky"
             if (scrollTop > headerTopHeight) {
                 $header.addClass('sticky');
                 $main.addClass('under-sticky');
@@ -114,13 +123,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 $header.removeClass('sticky');
                 $main.removeClass('under-sticky');
             }
+
+            // Gestion du raccourci "Scroll to Top"
+            if (scrollTop > docHeight / 4) {
+                $scrollup.fadeIn();
+            } else {
+                $scrollup.fadeOut();
+            }
+
+            // Gestion du raccourci générique "Go to"
+            if ($targetElt.length > 0) {
+                if (scrollTop > headerTopHeight && (targetEltBottom < scrollTop || targetEltTop > (scrollTop + $(window).height()))) {
+                    // Le bloc visé n'est pas à l'écran => on affiche le lien de raccourci 'scroll to'
+                    $scrollto.fadeIn();
+                } else {
+                    // Le bloc visé est à l'écran, on cache le lien
+                    $scrollto.fadeOut();
+                }
+            }
         }
     };
 
-    // After windows loading : handle scroll
-    handleScroll();
+    var handleStopAnimation = function () {
+        $('html, body').bind('scroll mousedown DOMMouseScroll mousewheel keyup', function () {
+            $('html, body').stop();
+        });
+    };
 
+    // On "bind" la gestion du scroll sur l'événement scroll de la fenêtre
     $(window).scroll(handleScroll);
+    $(window).scroll(handleStopAnimation);
+
+    $scrollup.on('click', function () {
+        $('html, body').animate({scrollTop: 0}, 500);
+        return false;
+    });
+
+    if ($targetElt.length > 0) {
+        $scrollto.on('click', function () {
+            $('html, body').animate({scrollTop: (targetEltTop - 100)}, 500);
+            return false;
+        });
+    }
 });
 
 /*!

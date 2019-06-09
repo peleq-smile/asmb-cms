@@ -2,7 +2,7 @@
 {% set nextMeetings = getNextMeetings(futureDays) %}
 
 {% if lastMeetings is not empty or nextMeetings is not empty %}
-<section class="section matches">
+<section id="actual-meetings" class="section matches">
     <div class="container">
         <h2 class="title">{{ __("home.meetings_of_the_moment.title") }}</h2>
 
@@ -40,4 +40,5 @@
         </div>
     </div>
 </section>
+<a href="#actual-meetings" class="scrollto" data-target="#actual-meetings"><i class="fa fa-trophy"></i><span>{{ __("home.meetings_of_the_moment.go_to") }}</span></a>
 {% endif %}

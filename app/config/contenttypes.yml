@@ -357,55 +357,55 @@ type_evenement_calendriers:
             type: integer
             class: narrow
 
-evenements:
-    singular_slug: evenement
-    name: Évènements
-    singular_name: Évènement
-    record_template: template_page.twig
-    fields:
-        title:
-            label: Titre
-            type: text
-            class: large
-            group: content
-        subtitle:
-            type: text
-            label: 'Sous-titre'
-            class: large
-        slug:
-            type: slug
-            uses: title
-        from_date:
-            label: Date et heure de l'évènement
-            type: datetime
-            required: true
-        to_date:
-            label: Date et heure de fin
-            type: datetime
-        location:
-            label: Lieu
-            type: text
-        block:
-            label: 'Bloc'
-            type: select
-            values: (blocs)/title
-            filter: { status: published }
-        image:
-            type: image
-        short_text:
-            label: Texte court
-            type: html
-            height: 200px
-            options:
-                ckeditor:
-                    removeButtons: Image,Table,SpecialChar
-        text:
-            label: Texte
-            type: html
-            height: 400px
-            options:
-                ckeditor:
-                    removeButtons: Image,Table,SpecialChar
+#evenements:
+#    singular_slug: evenement
+#    name: Évènements
+#    singular_name: Évènement
+#    record_template: template_page.twig
+#    fields:
+#        title:
+#            label: Titre
+#            type: text
+#            class: large
+#            group: content
+#        subtitle:
+#            type: text
+#            label: 'Sous-titre'
+#            class: large
+#        slug:
+#            type: slug
+#            uses: title
+#        from_date:
+#            label: Date et heure de l'évènement
+#            type: datetime
+#            required: true
+#        to_date:
+#            label: Date et heure de fin
+#            type: datetime
+#        location:
+#            label: Lieu
+#            type: text
+#        block:
+#            label: 'Bloc'
+#            type: select
+#            values: (blocs)/title
+#            filter: { status: published }
+#        image:
+#            type: image
+#        short_text:
+#            label: Texte court
+#            type: html
+#            height: 200px
+#            options:
+#                ckeditor:
+#                    removeButtons: Image,Table,SpecialChar
+#        text:
+#            label: Texte
+#            type: html
+#            height: 400px
+#            options:
+#                ckeditor:
+#                    removeButtons: Image,Table,SpecialChar
 
 infos_tournoi:
     name: Infos tournoi
@@ -520,16 +520,23 @@ pages:
     taxonomy: [ tags ]
     fields:
         title:
+            label: 'Titre'
             type: text
             class: large
-            group: content
+            group: Contenu
         slug:
             type: slug
             uses: title
+        block:
+            label: 'Bloc'
+            type: select
+            values: (blocs)/title
+            filter: { status: published }
         image:
             type: image
             placeholder: https://source.unsplash.com/1280x768/?business,workplace/__random__
         body:
+            label: 'Texte de la page'
             type: html
             height: 300px
         template:
@@ -548,7 +555,7 @@ competitions:
             label: 'Nom de la page'
             type: text
             class: large
-            group: content
+            group: 'Général'
         title:
             label: 'Titre affiché sur la page'
             type: text
@@ -577,7 +584,7 @@ statistiques:
             label: 'Nom de la page'
             type: text
             class: large
-            group: content
+            group: 'Contenu'
         title:
             label: 'Titre affiché sur la page'
             type: text
