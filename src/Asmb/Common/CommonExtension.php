@@ -4,6 +4,7 @@ namespace Bundle\Asmb\Common;
 
 use Bolt\Extension\SimpleExtension;
 use Bundle\Asmb\Common\Extension\TwigBackendTrait;
+use Bundle\Asmb\Common\Extension\TwigFiltersTrait;
 
 /**
  * Asmb Common bundle extension loader.
@@ -13,6 +14,7 @@ use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 class CommonExtension extends SimpleExtension
 {
     use TwigBackendTrait;
+    use TwigFiltersTrait;
 
     /**
      * {@inheritdoc}

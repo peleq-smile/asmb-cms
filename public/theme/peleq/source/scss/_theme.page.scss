@@ -7,6 +7,10 @@
             color: $primary;
         }
 
+        h3 {
+            color: $secondary;
+        }
+
         img {
             border: solid 5px $white;
             height: auto !important;
@@ -111,6 +115,10 @@
             height: 100%;
             font-size: 1.2rem;
 
+            &.is-child {
+                line-height: 1;
+            }
+
             h4 {
                 margin-bottom: 2rem;
 
@@ -136,6 +144,19 @@
                     & > span {
                         display: inline-block;
                         max-width: 90%;
+                    }
+                }
+            }
+
+            &.tile {
+                img {
+                    display: block;
+                    padding: 0;
+                    margin: auto;
+
+                    & + span {
+                        padding: 0 5px;
+                        display: block;
                     }
                 }
             }
@@ -166,6 +187,17 @@
             .column.is-half {
                 &:not(:first-child) {
                     padding-top: 0;
+                }
+            }
+
+            .box {
+                &.tile {
+                    img {
+                        & + span {
+                            padding: 0 5px;
+                            text-align: center;
+                        }
+                    }
                 }
             }
         }

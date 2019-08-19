@@ -408,9 +408,9 @@ type_evenement_calendriers:
 #                    removeButtons: Image,Table,SpecialChar
 
 infos_tournoi:
+    singular_slug: infos-tournoi
     name: Infos tournoi
     singular_name: Infos tournoi
-    singular_slug: infos-tournoi
     show_on_dashboard: true
     default_status: published
     record_template: partials/pages/_infos_tournoi.twig
@@ -564,13 +564,19 @@ competitions:
             type: slug
             uses: title
         competition_id:
+            label: 'ID (Bolt) de la compétition'
             type: integer
-            label: ID (Bolt) de la compétition
+            group: 'Infos compétition (par équipe)'
         competition_categories:
             type: select
             values: ['Hommes','Dames','+35','Jeunes']
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
+        tournoi_url_json:
+            label: 'URL vers le JSON (pour les tournois)'
+            type: text
+            class: large
+            group: 'Infos tournoi'
 
 statistiques:
     name: Pages de statistiques
@@ -592,6 +598,9 @@ statistiques:
         slug:
             type: slug
             uses: title
+        comment:
+            type: textarea
+            class: large
         total_members_count:
             label: 'Nb adhérents total'
             type: integer
@@ -632,6 +641,28 @@ statistiques:
             type: integer
             min: 1
             max: 1000
+            # à supprimer, mais vérifier la base avant. je suis revenue sur la 1ère idée pour les stats. ajouter une section + les tournois !
+#        teams:
+#            label: 'Équipes'
+#            type: block
+#            fields:
+#                team_section:
+#                    label: 'Section stats équipes'
+#                    fields:
+#                        title:
+#                            label: 'Titre section'
+#                            type: text
+#                team_stats:
+#                    label: 'Stat équipes'
+#                    fields:
+#                        type:
+#                            type: text
+#                            label: 'Type d''équipe'
+#                        count:
+#                            type: integer
+#                            label: 'Nb d''équipes pour ce type'
+#                            min: 0
+#                            max: 100
         winter_teams:
             label: 'Équipes Hiver'
             type: repeater
@@ -639,13 +670,23 @@ statistiques:
                 team_category:
                     label: 'Type d''équipe'
                     type: text
-                    required: true
                 team_count:
                     label: 'Nb d''équipes pour la catégorie'
                     type: integer
                     min: 0
                     max: 100
-                    required: true
+        spring_teams:
+            label: 'Équipes Printemps'
+            type: repeater
+            fields:
+                team_category:
+                    label: 'Type d''équipe'
+                    type: text
+                team_count:
+                    label: 'Nb d''équipes pour la catégorie'
+                    type: integer
+                    min: 0
+                    max: 100
         summer_teams:
             label: 'Équipes Été'
             type: repeater
@@ -653,10 +694,41 @@ statistiques:
                 team_category:
                     label: 'Type d''équipe'
                     type: text
-                    required: true
                 team_count:
                     label: 'Nb d''équipes pour la catégorie'
                     type: integer
                     min: 0
                     max: 100
-                    required: true
+
+documents_divers:
+    singular_slug: document-divers
+    name: Documents divers
+    singular_name: Document divers
+    record_template: template_documents.twig
+    icon_many: "fa:folder-open"
+    fields:
+        title:
+            label: 'Titre'
+            type: text
+            class: large
+            group: Contenu
+        slug:
+            type: slug
+            uses: title
+        text:
+            label: 'Texte'
+            type: html
+            height: 200px
+        documents_group:
+            label: 'Regroupement de documents'
+            type: repeater
+            fields:
+                text:
+                    label: 'Texte'
+                    type: html
+                    height: 100px
+                documents:
+                    labels: 'Documents'
+                    type: filelist
+                    extensions: [ png, pdf ]
+                    upload: documents_divers

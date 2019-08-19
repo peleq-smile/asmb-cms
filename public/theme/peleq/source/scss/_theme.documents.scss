@@ -1,0 +1,27 @@
+.section-documents {
+    h2 {
+        color: $primary;
+        margin-top: 3rem;
+    }
+
+    h3 {
+        color: $secondary;
+        margin-top: 3rem;
+    }
+
+    .filelist {
+        .column.is-half-desktop {
+            padding-bottom: 0;
+        }
+
+        .box {
+            a {
+                color: $primary;
+
+                &:hover {
+                    color: $secondary;
+                }
+            }
+        }
+    }
+}

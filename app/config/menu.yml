@@ -54,18 +54,21 @@ main:
             - label: 'Jeunes'
               path: competition/jeunes
 
-        - label: 'Tournois'
-          path: page/tournois
+#        - label: 'Tournois'
+#          path: competition/tournoi-interne-fevrier-2019
+#          submenu:
+#            - label: 'Tournoi interne février 2019'
+#              path: competition/tournoi-interne-fevrier-2019
 
-    - label: 'Actualités'
-      path: page/evenements
-      submenu:
-        - label: 'Événements'
-          path: page/evenements
-
-        - label: 'Calendrier'
-          path: calendrier/2018-2019
-
+#    - label: 'Actualités'
+#      path: page/evenements
+#      submenu:
+#        - label: 'Événements'
+#          path: page/evenements
+#
+#        - label: 'Calendrier'
+#          path: calendrier/2018-2019
+#
 #        - label: 'Galerie photos'
 #          path: page/galerie-photos
 
@@ -77,7 +80,7 @@ main:
           path: tags/infos-pratiques
 
         - label: 'Documents divers'
-          path: tags/documents-divers
+          path: document-divers/tous
 
         - label: 'Histoire du Tennis'
           path: page/le-jeu-de-paume
@@ -91,6 +94,8 @@ main:
             - label: 'Tennis Moderne'
               path: page/tennis-moderne
 
+    - label: 'Calendrier'
+      path: calendrier/2019-2020
 
 footer_external_links:
     - label: 'Liens externes'

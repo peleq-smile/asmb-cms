@@ -145,7 +145,13 @@ class CalendarExtension extends SimpleExtension
             /** @var \Bolt\Storage\Query\Query $query */
             $query = $this->container['query'];
             /** @var \Bolt\Storage\Query\QueryResultset $queryResultSet */
-            $queryResultSet = $query->getContent('type_evenement_calendriers', ['order' => 'position']);
+            $queryResultSet = $query->getContent(
+                'type_evenement_calendriers',
+                [
+                    'status' => 'published',
+                    'order'  => 'position',
+                ]
+            );
             /** @var \Bolt\Storage\Entity\Content $content */
             foreach ($queryResultSet as $content) {
                 $this->eventTypes[$content->getId()] = $content->getValues();

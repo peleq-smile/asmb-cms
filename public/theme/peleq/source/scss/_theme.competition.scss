@@ -3,6 +3,9 @@
         margin: 1rem 0 0.5rem 0;
         color: $text;
     }
+}
+
+.section-championship {
     .pool-name {
         color: $primary;
         font-weight: bold;
@@ -81,11 +84,50 @@
     }
 }
 
+.section-tournament {
+    .box {
+        padding: 0;
+        border-left: solid 2px $dark;
+
+        .box-header {
+            padding: 0 0.5rem 0.5rem 0.5rem;
+            //background-color: $primary;
+            color: $secondary;
+            //border-bottom: solid 1px $primary;
+        }
+
+        .box-content {
+            padding: 0 0.5rem;
+            line-height: 1;
+
+            span {
+                display: block;
+
+                &.ranking {
+                    font-style: italic;
+                }
+            }
+        }
+
+        .box-footer {
+            padding: 0.5rem 0.5rem 0 0.5rem;
+            //border-top: solid 1px $primary;
+            //background-color: $secondary;
+            color: $primary;
+            font-weight: bold;
+        }
+
+        &:before {
+            
+        }
+    }
+}
+
 /*****************/
 /** RESPONSIVE  **/
 /*****************/
 @media screen and (min-width: $tablet) and (max-width: $widescreen) {
-    .section-competition {
+    .section-championship {
         .columns {
             .column {
                 padding: 0.75rem;
@@ -103,7 +145,7 @@
 }
 
 @media screen and (max-width: $tablet) {
-    .section-competition {
+    .section-championship {
         .columns {
             .column {
                 padding: 0.5rem 1.5rem;

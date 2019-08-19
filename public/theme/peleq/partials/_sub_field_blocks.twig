@@ -27,6 +27,29 @@
     </div>
 {% endblock %}
 
+{# Sub-block for 'imagelist' fields #}
+{% block filelist_field %}
+    <div class="filelist columns is-multiline is-desktop">
+        {% for file in value %}
+            <div class="column is-half-desktop">
+                <div class="box">
+                    <div class="columns is-gapless">
+                        {% set fileExtension = file.filename|fileExtension %}
+                        {% set fileIcon = (fileExtension == 'pdf') ? 'far fa-file-pdf':'far fa-file-image' %}
+                        <span class="column is-1 file-extension is-uppercase" title="{{ file.filename|fileExtension }}">
+                        <i class="{{ fileIcon }}"></i>
+                    </span>
+                        <a class="column is-9" href="{{ asset(file.filename, 'files') }}" target="_blank" alt="{{ file.filename }}">
+                            {{ file.title }}
+                        </a>
+                        <span class="column is-2 file-size">{{ file.filename|fileSize }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
 {# Block for "basic" fields like HTML, Markdown, Textarea and Text #}
 {% block common_fields %}
 
@@ -80,9 +103,14 @@
         {{ block('imagelist_field') }}
     {% endif %}
 
+    {# Imagelist fields #}
+    {% if fieldtype == "filelist" and value is not empty %}
+        {{ block('filelist_field') }}
+    {% endif %}
+
     {# No special case defined for this type of field. We just output them, if it's
        a simple scalar, and 'dump' them otherwise. #}
-    {% if fieldtype in [ 'filelist', 'datetime', 'date', 'integer', 'float' ] and value is not empty  %}
+    {% if fieldtype in [ 'datetime', 'date', 'integer', 'float' ] and value is not empty %}
         <p><strong>{{ record.contenttype.fields[key].label|default(key) }}: </strong>
         {% if value is iterable %}
             {{ dump(value) }}

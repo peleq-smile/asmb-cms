@@ -22,12 +22,13 @@ tags:
     multiple: false
     options:
         calendrier: Calendrier
-        competition: Compétition
+        competition: Compétition par équipe
         documents-divers: Document divers
         histoire-tennis: Histoire du tennis
         infos-pratiques: Infos pratiques
         reglement: Règlement intérieur
         statistiques: Statistiques
+        tournoi: Tournoi
     has_sortorder: true
 
 #tags:
