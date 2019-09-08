@@ -125,8 +125,6 @@ header {
         }
 
         &.hero-image {
-            background: linear-gradient($header-hero-linear-gradient), url(../images/header-bg.png) no-repeat center bottom;
-            background-size: cover;
             max-height: 620px;
         }
     }
@@ -312,10 +310,6 @@ header {
                         height: 100%;
                         text-align: center;
 
-                        &:hover {
-                            background: none;
-                        }
-
                         .fas {
                             padding: 1.5rem 1rem;
                         }
@@ -378,10 +372,17 @@ header {
                                 }
 
                                 a.navbar-item {
-                                    color: $light;
+                                    color: $link;
+
+                                    &.is-active {
+                                        background: none !important;
+                                    }
+                                    &:hover {
+                                        background-color: $navbar-item-hover-background-color-mobile;
+                                    }
                                 }
 
-                                & >  a.navbar-item {
+                                & > a.navbar-item {
                                     padding: 0.5rem 2.5rem 0.5rem 1.5rem;
                                 }
 
@@ -391,11 +392,15 @@ header {
                                     color: $light;
                                     background: $navbar-vertical-bg-dropdown-lvl1;
 
+                                    & > a.navbar-item {
+                                        color: $light;
+                                    }
+
                                     a.navbar-item, a.navbar-link {
                                         padding-left: 3.5rem;
 
-                                        &.is-active {
-                                            background: none;
+                                        &:hover {
+                                            background-color: $navbar-item-hover-background-color-mobile;
                                         }
                                     }
 

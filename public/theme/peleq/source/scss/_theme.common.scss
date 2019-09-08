@@ -76,6 +76,11 @@ mark {
     height: 2rem;
 }
 
+.empty-content {
+    min-height: 3rem;
+    padding: 2rem;
+}
+
 //--- Scroll up and down
 .scrollup {
     width: 50px;
@@ -119,6 +124,10 @@ mark {
 @media screen and (min-width: $desktop) {
     #main-content .container {
         max-width: 94%;
+    }
+
+    .empty-content {
+        min-height: 20rem;
     }
 
     .scrollto {

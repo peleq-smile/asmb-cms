@@ -10,6 +10,6 @@
 
 ## Compétitions
 
-### Page de résultats des compétitions par équipes
+### Page de résultats des compétitions par équipe
 
 ### Page de résultats des tournois
