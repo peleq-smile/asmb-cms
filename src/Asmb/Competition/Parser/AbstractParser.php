@@ -37,34 +37,33 @@ abstract class AbstractParser
      * Parse et retourne les données sous forme d'un tableau d'objet.
      *
      * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
-     * @param int|null                                          $pageCount
+     * @param int|null                                          $page
      *
      * @return array
      */
-    final public function parse(Pool $pool, $pageCount = null)
+    final public function parse(Pool $pool, $page = null)
     {
         $allPagesParsedData = [];
 
         if (null !== $pool->getFftId()) {
-            $page = 0;
-
             while (true) {
                 $url = $this->buildUrlToParse($pool->getFftId(), $page);
 
                 try {
                     $this->document->loadHTMLFile($url);
                 } catch (ContextErrorException $e) {
-                    // que faire ?
+                    // There is some error but we don't care, it works.
                 }
 
                 $this->xpath = new DomXPath($this->document);
+
                 $parsedData = $this->doParse($pool);
                 $allPagesParsedData = array_merge($allPagesParsedData, $parsedData);
-                $page++;
 
-                if (empty($parsedData) || (null !== $pageCount && $page >= $pageCount)) {
+                if (null === $page || empty($parsedData)) {
                     break;
                 }
+                $page++;
             }
         }
 
@@ -81,7 +80,11 @@ abstract class AbstractParser
      */
     protected function buildUrlToParse($fftId, $page)
     {
-        return str_replace(['$fftId$','$page$'], [$fftId, $page], $this->getUrl());
+        if (null !== $page) {
+            return str_replace(['$fftId$','$page$'], [$fftId, $page], $this->getUrl());
+        }
+
+        return str_replace('$fftId$', $fftId, $this->getUrl());
     }
 
     /**
