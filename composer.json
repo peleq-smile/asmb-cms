@@ -5,11 +5,12 @@
     "license": "MIT",
     "require": {
         "php": "^5.5.9 || ^7.0",
-        "bolt/bolt": "^3.5",
+        "bolt/bolt": "^3.6",
         "passwordlib/passwordlib": "^1.0@beta",
-        "bolt/configuration-notices": "^1.0",
-        "bolt/simple-deploy": "^1.0@beta"
+        "bolt/configuration-notices": "^1.0"
     },
+    "minimum-stability": "beta",
+    "prefer-stable": true,
     "scripts": {
         "post-install-cmd": [
             "Bolt\\Composer\\ScriptHandler::installAssets"
@@ -23,5 +24,10 @@
             "Bolt\\Composer\\ScriptHandler::installThemesAndFiles",
             "nut extensions:setup"
         ]
+    },
+    "autoload": {
+        "psr-4": {
+            "Bundle\\": "src/"
+        }
     }
 }
