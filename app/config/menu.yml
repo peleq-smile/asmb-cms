@@ -42,11 +42,11 @@ main:
             - label: 'Seniors Dames'
               path: competition/seniors-dames-2019-2020
 
-            - label: 'Seniors Plus'
-              path: competition/seniors-plus-2019-2020
-
-            - label: 'Jeunes'
-              path: competition/jeunes-2019-2020
+#            - label: 'Seniors Plus'
+#              path: competition/seniors-plus-2019-2020
+#
+#            - label: 'Jeunes'
+#              path: competition/jeunes-2019-2020
 
         - label: 'Championnat d''été'
           path: competition/championnat-ete-2019
