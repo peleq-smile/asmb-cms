@@ -20,6 +20,18 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RefreshCommand extends BaseCommand
 {
+    protected $isQuietMode = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
+
+        $this->isQuietMode = (bool) $input->getOption('quiet');
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -68,20 +80,21 @@ class RefreshCommand extends BaseCommand
         /** @var \Bundle\Asmb\Competition\Parser\PoolMeetingsParser $poolMatchesParser */
         $poolMeetingsParser = $this->app['pool_meetings_parser'];
 
+
         // Récupération des poules qui ont besoin d'être mises à jour
         $pools = $poolRepository->findAllToRefresh();
         foreach ($pools as $pool) {
             try {
                 // Données CLASSEMENT
                 // Récupération des données depuis la Gestion Sportive de la FFT
-                $poolRankingParsed = $poolRankingParser->parse($pool, 1);
+                $poolRankingParsed = $poolRankingParser->parse($pool);
 
                 // Sauvegarde des classements en base
                 $poolRankingRepository->saveAll($poolRankingParsed, $pool->getId());
 
                 // Données RENCONTRES
                 // On parse les différentes pages des rencontres
-                $poolMeetingsParsed = $poolMeetingsParser->parse($pool);
+                $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 1);
                 // On sauvegarde en base
                 $poolMeetingRepository->saveAll($poolMeetingsParsed, $pool->getId());
 
@@ -92,11 +105,11 @@ class RefreshCommand extends BaseCommand
                 $output->writeln(sprintf("<error>ERREUR: {$e->getMessage()}</error>"));
             }
 
-            if (!$input->getOption('quiet')) {
+            if (!$this->isQuietMode) {
                 /** @var \Bundle\Asmb\Competition\Entity\Championship $championship */
                 $championship = $championshipRepository->find($pool->getChampionshipId());
                 $output->writeln(
-                    sprintf("<info>{$championship->getName()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour.</info>")
+                    sprintf("<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour.</info>")
                 );
             }
 
