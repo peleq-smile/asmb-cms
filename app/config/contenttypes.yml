@@ -87,7 +87,12 @@ homepage:
 
         header_baseline:
             label: 'Accroche du site'
-            type: text
+            type: textarea
+            required: false
+
+        header_banner:
+            label: 'Image du bandeau'
+            type: image
             required: true
 
         header_fft_number:
@@ -332,8 +337,8 @@ calendriers:
                     type: checkbox
 
 type_evenement_calendriers:
-    name: Types d'événement calendrier
-    singular_name: Type d'événement calendrier
+    name: Types événement calendrier
+    singular_name: Type événement calendrier
     viewless: true
     searchable: false
     show_in_menu: Calendriers
@@ -345,12 +350,14 @@ type_evenement_calendriers:
             type: text
             class: large
             group: content
+            required: true
         color:
             label: "Couleur"
             type: text
             class: large
             pattern: "#[0-9a-f]{6}"
             placeholder: "Ex: #aecf00"
+            required: true
         position:
             label: "Position"
             postfix: "Ordre d'apparition dans la légende des calendriers"
