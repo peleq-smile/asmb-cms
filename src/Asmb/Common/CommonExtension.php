@@ -37,10 +37,10 @@ class CommonExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerBackendControllers()
+    protected function registerFrontendControllers()
     {
         return [
-            '/extensions/guide' => new Controller\Backend\GuideController(),
+            '/acces-bureau' => new Controller\AuthenticationController(),
         ];
     }
 }
