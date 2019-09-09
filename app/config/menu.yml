@@ -33,26 +33,41 @@ main:
     - label: 'Compétitions'
       path: competition/championnat-ete
       submenu:
-        - label: 'Championnat d''été'
-          path: competition/championnat-ete
-
-        - label: 'Coupe de printemps'
-          path: competition/coupe-printemps
-
-        - label: 'Championnats d''hiver'
-          path: competition/seniors-hommes
+        - label: 'Championnat d''hiver'
+          path: competition/seniors-hommes-2019-2020
           submenu:
             - label: 'Seniors Hommes'
-              path: competition/seniors-hommes
+              path: competition/seniors-hommes-2019-2020
 
             - label: 'Seniors Dames'
-              path: competition/seniors-dames
+              path: competition/seniors-dames-2019-2020
 
             - label: 'Seniors Plus'
-              path: competition/seniors-plus
+              path: competition/seniors-plus-2019-2020
 
             - label: 'Jeunes'
-              path: competition/jeunes
+              path: competition/jeunes-2019-2020
+
+        - label: 'Championnat d''été'
+          path: competition/championnat-ete-2019
+
+        - label: 'Coupe de printemps'
+          path: competition/coupe-printemps-2019
+
+        - label: '[Archives] Chpt Hiver 2018/2019'
+          path: competition/seniors-hommes-2018-2019
+          submenu:
+          - label: 'Seniors Hommes'
+            path: competition/seniors-hommes-2018-2019
+
+          - label: 'Seniors Dames'
+            path: competition/seniors-dames-2018-2019
+
+          - label: 'Seniors Plus'
+            path: competition/seniors-plus-2018-2019
+
+          - label: 'Jeunes'
+            path: competition/jeunes-2018-2019
 
 #        - label: 'Tournois'
 #          path: competition/tournoi-interne-fevrier-2019
