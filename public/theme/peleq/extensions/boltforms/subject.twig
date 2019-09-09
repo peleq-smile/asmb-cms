@@ -1,0 +1,13 @@
+{#
+ # Passed in variables:
+ #   subject  — The configured subject
+ #   data     — Posted data
+ #   metadata — Form meta data
+ #}
+{% spaceless %}
+    {% if data.subject|length < 80 %}
+        {{ subject }} {{ data.subject|striptags|raw }}
+    {% else %}
+        {{ subject }} {{ data.subject|striptags|raw|slice(0,80) ~ '...' }}
+    {% endif %}
+{% endspaceless %}
