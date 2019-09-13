@@ -38,10 +38,12 @@ class VisitorRepository extends Repository
 
         if (false === $existingVisitor) {
             // New visitor : insert case
+            $visitor->setIsActive(true);
             $this->insert($visitor);
         } else {
             // Already registered visitor : update case
             $existingVisitor->setDatetime($visitor->getDatetime());
+            $existingVisitor->setIsActive(true);
             $this->update($existingVisitor);
         }
 
@@ -59,10 +61,18 @@ class VisitorRepository extends Repository
         $expirationDateTime->modify('-' . self::$expirationTime . 'seconds');
         $expirationDateTime = $expirationDateTime->format('Y-m-d H:i:s');
 
+        //        $query = $this->getEntityManager()->createQueryBuilder()
+        //            ->delete($this->getTableName())
+        //            ->where('datetime < :expirationDate')
+        //            ->setParameter(':expirationDate', $expirationDateTime);
+
         $query = $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->getTableName())
+            ->update($this->getTableName())
+            ->set('isActive', ':isActive')
             ->where('datetime < :expirationDate')
-            ->setParameter(':expirationDate', $expirationDateTime);
+            ->setParameter(':expirationDate', $expirationDateTime)
+            ->setParameter(':isActive', 0);
+
         $query->execute();
     }
 }

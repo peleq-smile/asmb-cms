@@ -24,6 +24,10 @@ class Visitor extends Entity
      * @var \Datetime
      */
     protected $datetime;
+    /**
+     * @var boolean
+     */
+    protected $isActive;
 
     /**
      * Visitor constructor.
@@ -44,6 +48,14 @@ class Visitor extends Entity
     public function getIp()
     {
         return $this->ip;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->isActive;
     }
 
     /**
@@ -84,5 +96,13 @@ class Visitor extends Entity
     public function setDatetime($datetime)
     {
         $this->datetime = $datetime;
+    }
+
+    /**
+     * @param boolean $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
     }
 }

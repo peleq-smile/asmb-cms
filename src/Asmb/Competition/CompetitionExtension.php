@@ -11,6 +11,7 @@ use Bundle\Asmb\Competition\Database\Schema\Table;
 use Bundle\Asmb\Competition\Extension\TwigFiltersTrait;
 use Bundle\Asmb\Competition\Extension\TwigFunctionsTrait;
 use Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser;
+use Bundle\Asmb\Competition\Parser\JaTennisJsonParser;
 use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
 use Bundle\Asmb\Competition\Parser\PoolRankingParser;
 use Bundle\Asmb\Competition\Parser\PoolTeamsParser;
@@ -150,6 +151,11 @@ class CompetitionExtension extends SimpleExtension
         $app['pool_teams_parser'] = $app->share(
             function ($app) {
                 return new PoolTeamsParser();
+            }
+        );
+        $app['ja_tennis_parser'] = $app->share(
+            function ($app) {
+                return new JaTennisJsonParser();
             }
         );
     }

@@ -21,6 +21,7 @@ class Visitor extends BaseTable
         $this->table->addColumn('ip',            'string',   ['length' => 45, 'notnull' => true]);
         $this->table->addColumn('httpUserAgent', 'string',   ['length' => 255]);
         $this->table->addColumn('datetime',      'datetime', []);
+        $this->table->addColumn('isActive',      'boolean',  ['default' => true]);
     }
 
     /**

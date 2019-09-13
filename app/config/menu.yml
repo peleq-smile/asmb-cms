@@ -69,7 +69,10 @@ main:
           - label: 'Jeunes'
             path: competition/jeunes-2018-2019
 
-#        - label: 'Tournois'
+        - label: '[Archives] Tournoi février 2019'
+          path: competition/tournoi-interne-fevrier-2019
+#
+#       - label: 'Tournois'
 #          path: competition/tournoi-interne-fevrier-2019
 #          submenu:
 #            - label: 'Tournoi interne février 2019'

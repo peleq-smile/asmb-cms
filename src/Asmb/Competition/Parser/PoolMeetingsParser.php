@@ -12,7 +12,7 @@ use Bundle\Asmb\Competition\Helpers\CalendarHelper;
  *
  * @copyright 2019
  */
-class PoolMeetingsParser extends AbstractParser
+class PoolMeetingsParser extends AbstractGsParser
 {
     /**
      * Requete pour la récupération du tableau des rencontres de chaque équipe

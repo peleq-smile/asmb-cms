@@ -10,7 +10,7 @@ use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
  *
  * @copyright 2019
  */
-class PoolTeamsParser extends AbstractParser
+class PoolTeamsParser extends AbstractGsParser
 {
     /**
      * Requete pour la récupération du tableau de classement de chaque équipe

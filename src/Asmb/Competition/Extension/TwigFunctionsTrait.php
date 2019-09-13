@@ -6,6 +6,7 @@ use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Déclaration de fonctions Twig.
@@ -147,6 +148,131 @@ trait TwigFunctionsTrait
     }
 
     /**
+     * @param \Bolt\Legacy\Content $competitionRecord
+     *
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function renderTournament($competitionRecord)
+    {
+        // Récupération de l'url donnée dans le contenu "Compétition"
+        $jsonFileUrl = $competitionRecord->get('tournoi_url_json');
+
+        // Chemin vers le fichier .html dont on veut vérifier l'existence / générer le contenu / récupérer le contenu
+        $htmlFilePath = $this->getHtmlFilePath($jsonFileUrl);
+        $htmlFile = $this->getFile($htmlFilePath);
+
+        if ($htmlFile->exists()) {
+            $tournamentContent = $htmlFile->read();
+        } else {
+            $jsonFileAbsoluteUrl = $this->getFileUrl($jsonFileUrl);
+
+            $parser = $this->getJaTennisParser();
+            $parser->setJsonFileUrl($jsonFileAbsoluteUrl);
+            $parsedData = $parser->parse();
+
+            $context = [
+                'parsedData' => $parsedData,
+                'display'    => 'results', // ou 'planning'
+                'date'       => '',
+            ];
+
+            /** @var $twig \Twig\Environment */
+            $twig = $this->container['twig'];
+            $tournamentContent = $twig->render('@AsmbCompetition/tournament/ja_tennis_tournament.twig', $context);
+
+            // On génère le .html pour la prochaine fois
+            $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
+            $htmlFile->setPath($htmlFilePath);
+            // TODO : faire une commande qui va venir supprimer le fichier à heure fixe des tournois en cours !!
+            if (! isset($parsedData['error'])) {
+                $htmlFile->write($tournamentContent);
+            }
+        }
+
+        return $tournamentContent;
+    }
+
+    /**
+     * @return \Bundle\Asmb\Competition\Parser\JaTennisJsonParser
+     */
+    protected function getJaTennisParser()
+    {
+        return $this->container['ja_tennis_parser'];
+    }
+
+    /**
+     * Retourne le chemin du fichier .html à vérifier l'existence / à générer.
+     *
+     * @param string $jsonFileUrl
+     *
+     * @return string
+     */
+    protected function getHtmlFilePath($jsonFileUrl)
+    {
+        $basename = basename($jsonFileUrl);
+
+        // On voudra générer un .html dans "files/tournois/html" et avec l'extension .html au lieu de .json
+        $htmlFilePath = 'tournois/html/' . str_replace('.json', '.html', $basename);
+
+        return $htmlFilePath;
+    }
+
+    /**
+     * Retourne l'url absolue du fichier dont le chemin est passé en paramètre, selon qu'il soit relatif ou non.
+     *
+     * @param $uri
+     *
+     * @return string
+     */
+    protected function getFileUrl($uri)
+    {
+        if (0 === strpos($uri, '/')) {
+            $scheme = $this->getUrlGenerator()->getContext()->getScheme();
+            $host = $this->getUrlGenerator()->getContext()->getHost();
+            $url = "$scheme://$host$uri";
+        } else {
+            $url = $uri;
+        }
+
+        return $url;
+    }
+
+    /**
+     * Retourne le fichier dont le chemin est passé en paramètre.
+     *
+     * @param string $filePath
+     *
+     * @return \Bolt\Filesystem\Handler\File
+     */
+    protected function getFile($filePath)
+    {
+        /** @var \Bolt\Filesystem\Manager $fileManager */
+        $fileManager = $this->container['filesystem'];
+        /** @var \Bolt\Filesystem\Handler\File $file */
+        $path = ltrim(str_replace('files', '', $filePath), '/');
+        $file = $fileManager->getFilesystem('files')->getFile($path);
+
+        return $file;
+    }
+
+    /**
+     * @return \Symfony\Component\Routing\Generator\UrlGeneratorInterface
+     */
+    protected function getUrlGenerator()
+    {
+        /** @var \Bolt\Application $app */
+        $app = $this->getContainer();
+
+        /** @var UrlGeneratorInterface $urlGenerator */
+        $urlGenerator = $app['url_generator'];
+
+        return $urlGenerator;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function registerTwigFunctions()
@@ -154,10 +280,10 @@ trait TwigFunctionsTrait
         return [
             'getLastMeetings'          => 'getLastMeetings',
             'getNextMeetings'          => 'getNextMeetings',
-            //            'getChampionship'          => 'getChampionship', //TODO retirer ?
             'getPoolsPerCategoryName'  => 'getPoolsPerCategoryName',
             'getPoolRankingPerPoolId'  => 'getPoolRankingPerPoolId',
             'getPoolMeetingsPerPoolId' => 'getPoolMeetingsPerPoolId',
+            'renderTournament'         => 'renderTournament',
         ];
     }
 

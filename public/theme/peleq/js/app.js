@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
+    initAsmbCommonNavJs();
+
+    var $sectionTournament = $('#main-content .section-tournament');
+    if ($sectionTournament.length) {
+        handleJaTennisTournoiNav($sectionTournament);
+    }
+});
+
+// Initialisation du JS commun de navigation du site ASMB
+function initAsmbCommonNavJs() {
     // Get all "navbar-burger" elements
     var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
@@ -51,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     var $othersActive = $navbarMenu.find('.navbar-dropdown.is-active');
                     // Another entry is active, let's check if this is a parent of item to active
 
-                    $othersActive.each(function() {
+                    $othersActive.each(function () {
                         var isParentActive = $(this).find($clickedItem).length;
                         if (isParentActive == 0) {
                             $(this).removeClass('is-active');
@@ -165,7 +175,114 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         });
     }
-});
+}
+
+// JS pour les tournois JA-Tennis
+function handleJaTennisTournoiNav($sectionTournament) {
+    var $plaPart = $('.planning-container', $sectionTournament), // PLANNING
+        $jouPart = $('.players-container', $sectionTournament), // JOUEURS
+        $tabPart = $('.tables-container', $sectionTournament), // TABLEAUX
+        $resPart = $('.results-container', $sectionTournament); // RESULTATS
+
+    function updateView(hash, param = null) {
+        switch (hash) {
+            case '#pla':
+                // On retire le flag 'is-active' du sous-menu
+                $('.planning-nav a', $sectionTournament).removeClass('is-active');
+
+                // Affichage du jour approprié
+                if (param != null && param != '-') {
+                    $('.planning-day', $plaPart).hide();
+                    $('#planning-day-' + param, $plaPart).show();
+
+                    // On met à jour le select du menu principal du tournoi
+                    $('#select-planning option[value="' + param + '"]', $sectionTournament).prop('selected', true);
+                    // On met à jour le flag 'is-active' du sous-menu
+                    $('.planning-nav a[data-param="' + param + '"]', $sectionTournament).addClass('is-active');
+                } else {
+                    // On met à jour le select du menu principal du tournoi
+                    $('#select-planning option[value="-"]', $sectionTournament).prop('selected', true);
+                    // Pas de paramètre : on montre tout le planning !
+                    $('.planning-day', $plaPart).show();
+                }
+
+                $plaPart.show();
+                $jouPart.hide();
+                $tabPart.hide();
+                $resPart.hide();
+
+                // On reset la navigation principale
+                $('#select-table option[value="-"]', $sectionTournament).prop('selected', true);
+                break;
+            case '#jou':
+                $plaPart.hide();
+                $jouPart.show();
+                $tabPart.hide();
+                $resPart.hide();
+
+                // On reset la navigation principale
+                $('#select-table option[value="-"]', $sectionTournament).prop('selected', true);
+                $('#select-planning option[value="-"]', $sectionTournament).prop('selected', true);
+                break;
+            case '#tab':
+                if (param != null && param != '-') {
+                    $plaPart.hide();
+                    $jouPart.hide();
+                    $tabPart.hide(); // On masque tout avant de ne montrer que le tableau sélectionné
+                    $tabPart.filter('[id="' + param + '"]').show();
+                    $resPart.hide();
+
+                    // On reset la navigation principale
+                    $('#select-planning option[value="-"]', $sectionTournament).prop('selected', true);
+                }
+                break;
+            default:
+                $plaPart.hide();
+                $jouPart.hide();
+                $tabPart.hide();
+                $resPart.show();
+
+                // On reset la navigation principale
+                $('#select-table option[value="-"]', $sectionTournament).prop('selected', true);
+                $('#select-planning option[value="-"]', $sectionTournament).prop('selected', true);
+                break;
+        }
+
+        // On met à jour l'url
+        // TODO ?????
+
+        return false;
+    }
+
+    // Au chargement de la page, on va cherche le hash dans l'url
+    var hash = $(location).attr('hash');
+    updateView(hash);
+
+    // Puis on gère les évènements de navigation pour mettre à jour la vue
+    // -- Clic sur un lien de la navigation principale
+    $('nav a', $sectionTournament).on('click', function (event) {
+        var hash = $(event.target).data('hash');
+        updateView(hash);
+    });
+
+    // -- Sélection dans un des menus du la navigation principale
+    $('nav select', $sectionTournament).on('change', function (event) {
+        var target = $(event.target),
+            hash = target.data('hash'),
+            param = target.find('option:selected').val();
+
+        updateView(hash, param);
+    });
+
+    // -- Clic sur un lien de la sous-navigation "planning"
+    $('.planning-nav a', $sectionTournament).on('click', function (event) {
+        var target = $(event.target),
+            hash = target.data('hash'),
+            param = target.data('param');
+
+        updateView(hash, param);
+    });
+}
 
 /*!
  * baguetteBox.js

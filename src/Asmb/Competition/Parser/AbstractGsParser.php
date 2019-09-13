@@ -15,7 +15,7 @@ use Symfony\Component\Debug\Exception\ContextErrorException;
  * @property string url
  * @copyright 2019
  */
-abstract class AbstractParser
+abstract class AbstractGsParser
 {
     const MAX_PER_PAGE = 10;
 

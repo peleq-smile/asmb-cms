@@ -111,7 +111,8 @@ class VisitorsExtension extends SimpleExtension
     {
         try {
             $visitorRepo = $this->getStorageEntityManager()->getRepository('visitor');
-            $count = $visitorRepo->count();
+            $visitors = $visitorRepo->findBy(['isActive' => 1]);
+            $count = count($visitors);
         } catch (InvalidRepositoryException $e) {
             $count = 0;
         }

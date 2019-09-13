@@ -21,14 +21,15 @@ tags:
     behaves_like: grouping
     multiple: false
     options:
+        archive-competition: "[Archives] Compétitions"
         calendrier: Calendrier
-        competition: Compétition par équipe
         documents-divers: Document divers
         histoire-tennis: Histoire du tennis
         infos-pratiques: Infos pratiques
         reglement: Règlement intérieur
         statistiques: Statistiques
-        tournoi: Tournoi
+        #tournoi: Tournoi
+      
     has_sortorder: true
 
 #tags:
