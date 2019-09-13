@@ -132,6 +132,14 @@ homepage:
             label: 'Url Facebook'
             type: text
 
+        header_instagram_text:
+            label: 'Libellé Instagram'
+            type: text
+
+        header_instagram_url:
+            label: 'Url Instagram'
+            type: text
+
         header_book_url:
             label: 'Url de réservation'
             type: text
@@ -580,7 +588,7 @@ competitions:
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
         tournoi_url_json:
-            label: 'URL vers le JSON (pour les tournois)'
+            label: 'URL vers le JSON (pour les tournois) ou chemin relatif à public/files'
             type: text
             class: large
             group: 'Infos tournoi'
