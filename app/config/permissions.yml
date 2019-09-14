@@ -18,20 +18,20 @@
 # - 'anonymous': this role is automatically assigned at all times, even when
 #   no user is logged in at all.
 roles:
-    editor:
-        description: Ce rôle permet d'éditer certains contenus.
-        label: Contributeur
-    chief-editor:
-        description: Ce rôle permet d'éditer tout type de contenu et de gérer les compétitions.
-        label: Éditeur
     admin:
-        description: Ce rôle permet d'administrer les utilisateurs, notamment.
+        description: "Ce rôle permet d'administrer les utilisateurs, notamment."
         label: Administrateur
+#    chief-editor:
+#        description: "Ce rôle permet d'éditer tout type de contenu et de gérer les compétitions."
+#        label: Éditeur
+    editor:
+        description: "Ce rôle permet d'éditer tout type de contenu et de gérer les compétitions."
+        label: Contributeur
     developer:
-        description: Ce rôle permet de modifier les paramètres système, notamment.
+        description: "Ce rôle permet de modifier les paramètres système, notamment."
         label: Dévelopeur
     guest:
-        description: Ce rôle permet d'accéder en lecture aux contenus du site dans le BO.
+        description: "Ce rôle permet d'accéder en lecture aux contenus du site dans le BO."
         label: Lecteur
 
 # Role hierarchy settings
@@ -39,14 +39,19 @@ roles-hierarchy:
     # This will restrict users from being able to add, edit, enable, disable
     # and delete users with the same or higher role than their own.
     # For example:
-    # Users with a role of developer can only be added, edited, enabled, disabled
-    # and deleted by [ root, admin ] roles.
+    # 1/ Users with a role of developer can only be added, edited, enabled, disabled
+    # and deleted by [ root, developer ] roles.
+    # 2/ Users with a role of admin can only be added, edited, enabled, disabled
+    # and deleted by [ root, admin, developer ] roles.
     manipulate:
-        admin: [ ]
-        developer: [ admin ]
-        chief-editor: [ admin, developer ]
-        editor: [ admin, developer, chief-editor ]
-        guest: [ admin, developer, chief-editor ]
+        admin: [ admin, developer ]
+        developer: [ developer ]
+        editor: [ admin, developer ]
+        guest: [ admin, developer ]
+
+#        chief-editor: [ admin, developer ]
+#        editor: [ admin, developer, chief-editor ]
+#        guest: [ admin, developer, chief-editor ]
 
 
 # Now we'll define some permissions. Each permission comes with a list of roles
@@ -62,21 +67,21 @@ roles-hierarchy:
 # inside the code, so they don't appear here.
 global:
     about: [ everyone ] # view the 'About Bolt' page
-    checks: [ admin, developer ]
-    clearcache: [ admin, developer ]
+    checks: [ developer ]
+    clearcache: [ admin, developer, editor ]
     contentaction: [ editor, admin, developer ]
     dashboard: [ everyone ]
-    dbcheck: [ admin, developer ]
-    dbupdate: [ admin, developer ]
-    dbupdate_result: [ admin, developer ]
+    dbcheck: [ developer ]
+    dbupdate: [ developer ]
+    dbupdate_result: [ developer ]
     extensions: [ developer ]
     extensions:config: [ developer ]
     fileedit: [ admin, developer ]
     files:config: [ developer ]
     files:hidden: [ developer ]
     files:theme: [ developer ]
-    files:uploads: [ admin, developer, chief-editor, editor ]
-    files: [ admin, developer, chief-editor, editor ]
+    files:uploads: [ admin, developer, editor ]
+    files: [ admin, developer, editor ]
     prefill: [ developer ]
     profile: [ everyone ] # edit own profile
     settings: [ admin, developer, everyone ]
@@ -88,8 +93,8 @@ global:
     maintenance-mode: [ everyone ] # view the frontend when in maintenance mode
     omnisearch: [ everyone ]
     # Access to the various logs
-    changelog: [ admin, developer ]
-    systemlog: [ admin, developer ]
+    changelog: [ developer ]
+    systemlog: [ developer ]
     # The following permissions are particularly important: login and postLogin
     # determine who may see and use the login form. If you set them to anything
     # but 'anonymous', only users will be able to log in that are logged in
@@ -102,7 +107,7 @@ global:
 
     # Permissions custom pour ASMB
     competition: [ everyone ]
-    competition:edit: [ admin, developer, chief-editor ]
+    competition:edit: [ admin, developer ]
 
 # For content type related actions, permissions can be set individually for
 # each content type. For this, we define three groups of permission sets.
@@ -154,10 +159,10 @@ global:
 #                     in ways that may not be immediately obvious.
 # - view: allows viewing records in the backend
 contenttype-all:
-    edit: [ developer, admin, chief-editor ]
-    create: [ developer, admin, chief-editor ]
-    publish: [ developer, admin, chief-editor ]
-    depublish: [ developer, admin, chief-editor ]
+    edit: [ developer, admin, editor ]
+    create: [ developer, admin, editor ]
+    publish: [ developer, admin, editor ]
+    depublish: [ developer, admin, editor ]
     delete: [ developer, admin ]
     change-ownership: [ developer, admin ]
 
@@ -169,13 +174,13 @@ contenttype-default:
 
 contenttypes:
     competitions:
-        edit: [ developer, admin, chief-editor, owner ]
+        edit: [ developer, admin, owner ]
     calendriers:
-        edit: [ developer, admin, chief-editor ]
-        create: [ developer, admin, chief-editor ]
-        delete: [ developer, admin, chief-editor ]
+        edit: [ developer, admin, editor ]
+        create: [ developer, admin, editor ]
+        delete: [ developer, admin, editor ]
     type_evenement_calendriers:
-        edit: [ developer, admin, chief-editor ]
+        edit: [ developer, admin, editor ]
         create: [ developer, admin ]
 
 
