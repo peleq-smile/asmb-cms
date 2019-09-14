@@ -37,10 +37,10 @@ main:
           path: competition/seniors-hommes-2019-2020
           submenu:
             - label: 'Seniors Hommes'
-              path: competition/seniors-hommes-2019-2020
+              path: competition/championnat-hiver-seniors-hommes-2019-2020
 
             - label: 'Seniors Dames'
-              path: competition/seniors-dames-2019-2020
+              path: competition/championnat-hiver-seniors-dames-2019-2020
 
 #            - label: 'Seniors Plus'
 #              path: competition/seniors-plus-2019-2020

@@ -344,6 +344,39 @@ calendriers:
                     label: "Cours collectif durant l'événement"
                     type: checkbox
 
+documents_divers:
+    singular_slug: document-divers
+    name: Documents divers
+    singular_name: Document divers
+    record_template: template_documents.twig
+    icon_many: "fa:folder-open"
+    fields:
+        title:
+            label: 'Titre'
+            type: text
+            class: large
+            group: Contenu
+        slug:
+            type: slug
+            uses: title
+        text:
+            label: 'Texte'
+            type: html
+            height: 200px
+        documents_group:
+            label: 'Regroupement de documents'
+            type: repeater
+            fields:
+                text:
+                    label: 'Texte'
+                    type: html
+                    height: 100px
+                documents:
+                    labels: 'Documents'
+                    type: filelist
+                    extensions: [ png, pdf ]
+                    upload: documents_divers
+
 type_evenement_calendriers:
     name: Types événement calendrier
     singular_name: Type événement calendrier
@@ -588,10 +621,15 @@ competitions:
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
         tournoi_url_json:
-            label: 'URL vers le JSON (pour les tournois) ou chemin relatif à public/files'
+            label: 'URL vers le JSON ou chemin relatif au dossier public/ du serveur'
             type: text
             class: large
             group: 'Infos tournoi'
+        tournoi_is_active:
+            label: 'En cours / actif'
+            type: checkbox
+            #postfix: |
+            #    'Cocher cette case permet de provoquer un rafraîchissement régulier des données.'
 
 statistiques:
     name: Pages de statistiques
@@ -714,36 +752,3 @@ statistiques:
                     type: integer
                     min: 0
                     max: 100
-
-documents_divers:
-    singular_slug: document-divers
-    name: Documents divers
-    singular_name: Document divers
-    record_template: template_documents.twig
-    icon_many: "fa:folder-open"
-    fields:
-        title:
-            label: 'Titre'
-            type: text
-            class: large
-            group: Contenu
-        slug:
-            type: slug
-            uses: title
-        text:
-            label: 'Texte'
-            type: html
-            height: 200px
-        documents_group:
-            label: 'Regroupement de documents'
-            type: repeater
-            fields:
-                text:
-                    label: 'Texte'
-                    type: html
-                    height: 100px
-                documents:
-                    labels: 'Documents'
-                    type: filelist
-                    extensions: [ png, pdf ]
-                    upload: documents_divers
