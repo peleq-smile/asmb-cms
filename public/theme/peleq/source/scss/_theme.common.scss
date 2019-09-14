@@ -38,6 +38,21 @@
     .pagination {
         justify-content: center;
     }
+
+    .messages-container {
+        padding: 2rem;
+        text-align: center;
+
+        .alert-danger {
+            color: $lost;
+        }
+        .alert-success {
+            color: $win;
+        }
+        .close {
+            display: none;
+        }
+    }
 }
 
 .columns.white-framed {

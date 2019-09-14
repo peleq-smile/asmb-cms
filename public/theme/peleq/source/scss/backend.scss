@@ -235,64 +235,18 @@ $widescreen: 1280px;
             margin-top: -2px;
         }
     }
-    //
-    //.completeness-block {
-    //    .btn {
-    //        color: white;
-    //        font-size: 1.5rem;
-    //    }
-    //
-    //    .badge {
-    //        line-height: 24px;
-    //        padding: 0 15px;
-    //
-    //        &.bg-danger {
-    //            background-color: $danger;
-    //        }
-    //        &.bg-success {
-    //            background-color: $success;
-    //        }
-    //        &.bg-warning {
-    //            background-color: $warning;
-    //        }
-    //    }
-    //}
 }
 
 @media screen and (max-width: $widescreen) {
     .competition-page-main {
         .table-teams, .table-meetings {
             & * {
-                font-size: 0.8em;
+                font-size: 0.9em;
             }
         }
 
         input[type=time] {
             min-width: 63px;
         }
-    }
-}
-
-//TODOpeleq retirer car utilisation de Gdocs ?
-//-- Styles BO pour le guide de contribution
-.guide {
-    max-width: $widescreen;
-    margin: auto;
-    padding: 2rem;
-
-    h1 {
-        font-size: 5rem;
-    }
-    h2 {
-        font-size: 3rem;
-    }
-    h3 {
-        font-size: 2rem;
-    }
-    h4 {
-        font-size: 1.5rem;
-    }
-    h5 {
-        font-size: 1.25rem;
     }
 }
