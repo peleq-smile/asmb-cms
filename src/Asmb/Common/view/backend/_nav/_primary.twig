@@ -27,13 +27,14 @@
     </li>
 
     {# START CUSTOM PELEQ #}
+    {% if config.get('general/guide_url') %}
     <li>
-        {% set guideUrl = 'https://docs.google.com/document/d/1ApRVGGFZWK8MWsG9MngC3uhQEVYc8c_XEgmm6QEfcwA?usp=sharing' %}
-        <a href="{{ guideUrl }}" target="_blank" class="hidden-xs" title="{{ __('general.phrase.contribution-help') }}">
+        <a href="{{ config.get('general/guide_url') }}" target="_blank" class="hidden-xs" title="{{ __('general.phrase.contribution-help') }}">
             <i class="fa fa-medkit"></i>
             {{ __('general.phrase.guide') }}
         </a>
     </li>
+    {% endif %}
     {# END CUSTOM PELEQ#}
 
     <li>
