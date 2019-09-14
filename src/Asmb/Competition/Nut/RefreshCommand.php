@@ -94,7 +94,7 @@ class RefreshCommand extends BaseCommand
 
                 // Données RENCONTRES
                 // On parse les différentes pages des rencontres
-                $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 1);
+                $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 0);
                 // On sauvegarde en base
                 $poolMeetingRepository->saveAll($poolMeetingsParsed, $pool->getId());
 

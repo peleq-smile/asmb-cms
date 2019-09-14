@@ -290,9 +290,9 @@ class PoolController extends AbstractController
             $this->savePoolRanking($pool, $poolRankingParsed);
 
             // Données RENCONTRES
-            /** @var \Bundle\Asmb\Competition\Parser\PoolMeetingsParser $poolMatchesParser */
+            /** @var \Bundle\Asmb\Competition\Parser\PoolMeetingsParser $poolMeetingsParser */
             $poolMeetingsParser = $this->app['pool_meetings_parser'];
-            $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 1);
+            $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 0);
             // Sauvegarde des rencontres en base
             $this->saveMeetings($pool, $poolMeetingsParsed);
 
