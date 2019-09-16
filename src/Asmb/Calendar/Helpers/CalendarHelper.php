@@ -54,6 +54,8 @@ class CalendarHelper
         $calendarEndDate = Carbon::createFromFormat('Y-m-d', "$nextYear-6-30");
 
         do {
+            $event = []; // par défaut : pas d'événement
+
             $date = $calendarStartDate;
             $monthLabel = self::buildCalendarDateMonthLabel($date); // ex: "septembre"
             $dayLabel = self::buildCalendarDateDayLabel($date); // ex: "01 lun"
@@ -62,8 +64,14 @@ class CalendarHelper
             if ($date->isSunday()) {
                 $classNames[] = 'is-sunday';
             }
-            if (self::isFrenchPublicHolidays($date)) {
+            $publicHolidaysData = self::getFrenchPublicHolidaysFromDate($date);
+            if (!empty($publicHolidaysData)) {
                 $classNames[] = 'is-public-holiday';
+                $event = [
+                    'name'     => $publicHolidaysData['name'],
+                    'color'    => '',
+                    'duration' => 1,
+                ];
             }
             if ($date->lt($lessonsFromDate) || $date->gt($lessonsToDate)) {
                 $classNames[] = 'no-lessons';
@@ -73,7 +81,7 @@ class CalendarHelper
             }
 
             $annualCalendar[$monthLabel][$dayLabel] = [
-                'event'             => [], // par défaut : pas d'événement
+                'event'             => $event,
                 'classNames'        => $classNames,
             ];
 
@@ -115,19 +123,20 @@ class CalendarHelper
         return $dayLabel;
     }
 
+
     /**
-     * Vérifie si la date donnée est un jour férié.
+     * Retourne les éventuelles infos de jour férié à partir de la date donnée.
      *
      * @param \Carbon\Carbon $date
      *
-     * @return bool
+     * @return array
      */
-    protected static function isFrenchPublicHolidays(Carbon $date)
+    protected static function getFrenchPublicHolidaysFromDate(Carbon $date)
     {
-        $frenchPublicHolidays = self::getFrenchPublicHolidays($date->year);
+        $frenchPublicHolidays = self::getFrenchPublicHolidaysFromYear($date->year);
         $frenchPublicHolidaysKey = $date->format('m-d');
 
-        return isset($frenchPublicHolidays[$frenchPublicHolidaysKey]);
+        return isset($frenchPublicHolidays[$frenchPublicHolidaysKey]) ? $frenchPublicHolidays[$frenchPublicHolidaysKey] : [];
     }
 
     /**
@@ -137,19 +146,20 @@ class CalendarHelper
      *
      * @return mixed
      */
-    protected static function getFrenchPublicHolidays($year)
+    protected static function getFrenchPublicHolidaysFromYear($year)
     {
         if (!isset(self::$frenchPublicHolidaysByYear[$year])) {
             // Jours fériés fixes en France
             self::$frenchPublicHolidaysByYear[$year] = [
-                '01-01' => Carbon::create($year, 1, 1, 0, 0, 0),
-                '05-01' => Carbon::create($year, 5, 1, 0, 0, 0),
-                '05-08' => Carbon::create($year, 5, 8, 0, 0, 0),
-                '07-14' => Carbon::create($year, 7, 14, 0, 0, 0),
-                '08-15' => Carbon::create($year, 8, 15, 0, 0, 0),
-                '11-01' => Carbon::create($year, 11, 1, 0, 0, 0),
-                '11-11' => Carbon::create($year, 11, 11, 0, 0, 0),
-                '12-25' => Carbon::create($year, 12, 25, 0, 0, 0),
+                // TODOpeleq traduire ?!
+                '01-01' => ['date' => Carbon::create($year, 1, 1, 0, 0, 0), 'name' => 'Jour de l\'An'],
+                '05-01' => ['date' => Carbon::create($year, 5, 1, 0, 0, 0), 'name' => 'Fête du travail'],
+                '05-08' => ['date' => Carbon::create($year, 5, 8, 0, 0, 0), 'name' => 'Victoire 45'],
+                '07-14' => ['date' => Carbon::create($year, 7, 14, 0, 0, 0), 'name' => 'Fête Nat.'],
+                '08-15' => ['date' => Carbon::create($year, 8, 15, 0, 0, 0), 'name' => 'Assomption'],
+                '11-01' => ['date' => Carbon::create($year, 11, 1, 0, 0, 0), 'name' => 'Toussaint'],
+                '11-11' => ['date' => Carbon::create($year, 11, 11, 0, 0, 0), 'name' => 'Armistice 18'],
+                '12-25' => ['date' => Carbon::create($year, 12, 25, 0, 0, 0), 'name' => 'Noël'],
             ];
 
             // Jours fériés basés sur Pâques
@@ -160,9 +170,15 @@ class CalendarHelper
             $easterThursday = clone $easterDate;
             $easterThursday->addDays(39);
 
+            $pentecostMonday = clone $easterDate;
+            $pentecostMonday->addDays(50);
+
             // Ajout du Lundi de Pâques et du Jeudi de l'ascension
-            self::$frenchPublicHolidaysByYear[$year][$easterMonday->format('m-d')] = $easterMonday;
-            self::$frenchPublicHolidaysByYear[$year][$easterThursday->format('m-d')] = $easterThursday;
+            self::$frenchPublicHolidaysByYear[$year][$easterMonday->format('m-d')] = ['date' => $easterMonday, 'name' => 'Pâques'];
+            self::$frenchPublicHolidaysByYear[$year][$easterThursday->format('m-d')] = ['date' => $easterThursday, 'name' => 'Ascension'];
+
+            // Ajout du Lundi de Pentecôte
+            self::$frenchPublicHolidaysByYear[$year][$pentecostMonday->format('m-d')] = ['date' => $pentecostMonday, 'name' => 'Pentecôte'];
 
             ksort(self::$frenchPublicHolidaysByYear[$year]);
         }

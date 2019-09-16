@@ -25,7 +25,8 @@
                                         <td class="cal-day" title="{{ dayData.title|default('') }}">{{ dayLabel }}</td>
                                         {% if dayData.event is not empty %}
                                             <td class="cal-event"{% if dayData.event.duration > 1 %} rowspan="{{ dayData.event.duration }}"{% endif %}
-                                                style="background: {{ dayData.event.color }}">
+                                                {% if dayData.event.color %} style="background: {{ dayData.event.color }}"{% endif %}
+                                            >
                                                 {{ dayData.event.name }}
                                             </td>
                                             {% set skipCalEventTd = dayData.event.duration-1 %}

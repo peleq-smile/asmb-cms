@@ -49,7 +49,7 @@
                     td {
                         background: $grey-lighter;
 
-                        &.cal-day {
+                        &.cal-day, &.cal-event:not([rowspan]):not([style]) {
                             font-weight: bold;
                             color: $red;
                         }
