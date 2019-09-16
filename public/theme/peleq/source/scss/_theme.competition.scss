@@ -180,6 +180,14 @@
                         width: 10rem;
                         text-align: left;
 
+                        a.player-link {
+                            text-decoration: none;
+
+                            &:hover {
+                                background: $secondary-xlight;
+                            }
+                        }
+
                         .name {
                             font-weight: bold;
                         }

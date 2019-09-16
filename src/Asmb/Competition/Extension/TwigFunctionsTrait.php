@@ -6,6 +6,7 @@ use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
+use Carbon\Carbon;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -173,10 +174,40 @@ trait TwigFunctionsTrait
             $parser->setJsonFileUrl($jsonFileAbsoluteUrl);
             $parsedData = $parser->parse();
 
+            // Règle d'affichage du tournoi:
+            // - Tournoi terminé : on affiche la page de résultat
+            // - Tournoi à venir : on affiche la page de planning avec le 1er jour du tournoi
+            // - Tournoi en cours : on affiche la page du jour J ou du prochain jour de tournoi
+
+            $now = Carbon::now();
+
+            $beginDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['begin']);
+            $beginDate->setTime(0, 0, 0);
+            $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
+            $endDate->setTime(0, 0, 0);
+
+            $display = '#res';
+            $planningDayFormatted = '';
+            if ($now <= $beginDate) {
+                // Tournoi à venir ou 1er du tournoi : on affiche le planning du 1er jour
+                $planningDayFormatted = $parser->getFormattedCleanedDate($beginDate);
+                $display = '#pla';
+            } elseif ($now <= $endDate) {
+                // Tournoi en cours : on affiche le planning du jour (si des matchs ont lieu) ou le prochain jour
+                $planningDay = $now;
+
+                while (!isset($parsedData['planning'][$parser->getFormattedDate($planningDay)]) && $planningDay <= $endDate) {
+                    $planningDay->addDay(1);
+                }
+
+                $planningDayFormatted = $parser->getFormattedCleanedDate($planningDay);
+                $display = '#pla';
+            }
+
             $context = [
                 'parsedData' => $parsedData,
-                'display'    => 'results', // ou 'planning'
-                'date'       => '',
+                'display'    => $display,
+                'plaDay'     => $planningDayFormatted,
             ];
 
             /** @var $twig \Twig\Environment */
@@ -186,8 +217,9 @@ trait TwigFunctionsTrait
             // On génère le .html pour la prochaine fois
             $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
             $htmlFile->setPath($htmlFilePath);
-            // TODO : faire une commande qui va venir supprimer le fichier à heure fixe des tournois en cours !!
-            if (! isset($parsedData['error'])) {
+            if (!isset($parsedData['error']) && '#res' === $display) {
+                // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
+                // non à jour.
                 $htmlFile->write($tournamentContent);
             }
         }

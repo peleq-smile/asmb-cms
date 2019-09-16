@@ -182,7 +182,8 @@ function handleJaTennisTournoiNav($sectionTournament) {
     var $plaPart = $('.planning-container', $sectionTournament), // PLANNING
         $jouPart = $('.players-container', $sectionTournament), // JOUEURS
         $tabPart = $('.tables-container', $sectionTournament), // TABLEAUX
-        $resPart = $('.results-container', $sectionTournament); // RESULTATS
+        $resPart = $('.results-container', $sectionTournament), // RESULTATS
+        $unJouParts = $('.one-player-container', $sectionTournament); // UN JOUEUR
 
     function updateView(hash, param = null) {
         switch (hash) {
@@ -210,15 +211,23 @@ function handleJaTennisTournoiNav($sectionTournament) {
                 $jouPart.hide();
                 $tabPart.hide();
                 $resPart.hide();
+                $unJouParts.hide();
 
                 // On reset la navigation principale
                 $('#select-table option[value="-"]', $sectionTournament).prop('selected', true);
                 break;
             case '#jou':
                 $plaPart.hide();
-                $jouPart.show();
                 $tabPart.hide();
                 $resPart.hide();
+                $jouPart.hide();
+                $unJouParts.hide();
+
+                if (param != null) {
+                    $('#jou-' + param).show();
+                } else {
+                    $jouPart.show();
+                }
 
                 // On reset la navigation principale
                 $('#select-table option[value="-"]', $sectionTournament).prop('selected', true);
@@ -229,8 +238,9 @@ function handleJaTennisTournoiNav($sectionTournament) {
                     $plaPart.hide();
                     $jouPart.hide();
                     $tabPart.hide(); // On masque tout avant de ne montrer que le tableau sélectionné
-                    $tabPart.filter('[id="' + param + '"]').show();
                     $resPart.hide();
+                    $unJouParts.hide();
+                    $tabPart.filter('[id="' + param + '"]').show();
 
                     // On reset la navigation principale
                     $('#select-planning option[value="-"]', $sectionTournament).prop('selected', true);
@@ -240,6 +250,7 @@ function handleJaTennisTournoiNav($sectionTournament) {
                 $plaPart.hide();
                 $jouPart.hide();
                 $tabPart.hide();
+                $unJouParts.hide();
                 $resPart.show();
 
                 // On reset la navigation principale
@@ -256,7 +267,9 @@ function handleJaTennisTournoiNav($sectionTournament) {
 
     // Au chargement de la page, on va cherche le hash dans l'url
     var hash = $(location).attr('hash');
-    updateView(hash);
+    if (hash) {
+        updateView(hash);
+    }
 
     // Puis on gère les évènements de navigation pour mettre à jour la vue
     // -- Clic sur un lien de la navigation principale
@@ -276,6 +289,15 @@ function handleJaTennisTournoiNav($sectionTournament) {
 
     // -- Clic sur un lien de la sous-navigation "planning"
     $('.planning-nav a', $sectionTournament).on('click', function (event) {
+        var target = $(event.target),
+            hash = target.data('hash'),
+            param = target.data('param');
+
+        updateView(hash, param);
+    });
+
+    // Clici sur un lien vers un joueur
+    $('a.player-link', $sectionTournament).on('click', function (event) {
         var target = $(event.target),
             hash = target.data('hash'),
             param = target.data('param');

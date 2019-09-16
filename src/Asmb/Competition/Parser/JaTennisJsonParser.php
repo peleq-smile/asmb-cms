@@ -153,6 +153,7 @@ class JaTennisJsonParser
                     }
 
                     $this->playersData[$playerData['id']] = [
+                        'jid'  => $playerData['id'],
                         'name' => $name,
                         'rank' => $playerData['rank'],
                         'year' => isset($playerData['birth']) ? substr($playerData['birth'], 0, 4) : '',
@@ -324,14 +325,18 @@ class JaTennisJsonParser
     /**
      * Reformate la date donnée en renvoyant la date uniquement
      *
-     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s"
+     * @param string|Carbon $inputDateTime Date au format "Y-m-d\TH:i:s" ou objet Carbon
      *
      * @return string
      */
-    protected function getFormattedDate($inputDateTime)
+    public function getFormattedDate($inputDateTime)
     {
         // Exemple de date en entrée: 2019-02-21T20:30:00
-        $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
+        if ($inputDateTime instanceof Carbon) {
+            $carbonDate = $inputDateTime;
+        } else {
+            $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
+        }
         if ($carbonDate->daysInMonth == 1) {
             $outputFormat = '%a %eer';
         } else {
@@ -339,6 +344,30 @@ class JaTennisJsonParser
         }
 
         return $carbonDate->formatLocalized($outputFormat); // Donne par ex: jeu. 21
+    }
+
+    /**
+     * Reformate la date donnée en renvoyant la date uniquement
+     *
+     * @param Carbon $inputDate
+     *
+     * @return string
+     */
+    public function getFormattedCleanedDate(Carbon $inputDate)
+    {
+        if ($inputDate->daysInMonth == 1) {
+            $outputFormat = '%a %eer';
+        } else {
+            $outputFormat = '%a %e';
+        }
+
+        $cleanedDate = str_replace(
+            ['.', ' ', '1er'],
+            ['', '', '1'],
+            $inputDate->formatLocalized($outputFormat)
+        ); // Donne par ex: jeu21
+
+        return $cleanedDate;
     }
 
     /**
@@ -393,12 +422,12 @@ class JaTennisJsonParser
             $this->planningData[$date][$place] = [
                 'table'   => $boxPlayer1['table'],
                 'player1' => [
-                    'id'   => $boxPlayer1['jid'],
+                    'jid'  => $boxPlayer1['jid'],
                     'name' => $boxPlayer1['name'],
                     'rank' => $boxPlayer1['rank'],
                 ],
                 'player2' => [
-                    'id'   => $boxPlayer2['jid'],
+                    'jid'  => $boxPlayer2['jid'],
                     'name' => $boxPlayer2['name'],
                     'rank' => $boxPlayer2['rank'],
                 ],
@@ -423,6 +452,7 @@ class JaTennisJsonParser
                 // On connaît le vainqueur
                 $this->resultsData[$tableName] = [
                     'winner' => [
+                        'jid'   => $finalBox['jid'],
                         'name'  => $finalBox['name'],
                         'rank'  => $finalBox['rank'],
                         'score' => $finalBox['score'],
@@ -436,6 +466,7 @@ class JaTennisJsonParser
                 }
                 if (isset($boxFinalist)) {
                     $this->resultsData[$tableName]['finalist'] = [
+                        'jid'  => $boxFinalist['jid'],
                         'name' => $boxFinalist['name'],
                         'rank' => $boxFinalist['rank'],
                     ];
@@ -445,10 +476,12 @@ class JaTennisJsonParser
                 $this->resultsData[$tableName] = [
                     'finalists' => [
                         [
+                            'jid'  => $finalBox['prevBtm']['jid'],
                             'name' => $finalBox['prevBtm']['name'],
                             'rank' => $finalBox['prevBtm']['rank'],
                         ],
                         [
+                            'jid'  => $finalBox['prevTop']['jid'],
                             'name' => $finalBox['prevTop']['name'],
                             'rank' => $finalBox['prevTop']['rank'],
                         ],
