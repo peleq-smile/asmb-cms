@@ -63,42 +63,50 @@
 
             <div class="columns">
                 {# Infos "Inscriptions" #}
-                {% if record.inscriptions is not empty %}
-                    <div class="column is-half">
-                        <div class="box inscriptions">
-                            <h4 class="is-size-3 is-size-4-mobile">
-                                {{ record.contenttype.fields.inscriptions.label }}
-                                {% if record.inscriptions_closing_without_notice %}
-                                    <span class="notice">({{ __('general.phrase.inscriptions_closing_without_notice') }})</span>
-                                {% endif %}
-                            </h4>
-                            <ul>
-                                {% for inscriptionBlock in record.inscriptions %}
-                                    {% if inscriptionBlock.block == 'link' %}
-                                        <li><a href="{{ inscriptionBlock.url }}" title="{{ inscriptionBlock.text }}"
-                                               target="_blank">{{ inscriptionBlock.text|raw }}</a></li>
-                                    {% else %}
-                                        <li class="{{ inscriptionBlock.block }}">{{ inscriptionBlock.text|raw }}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
+                <div class="column is-half">
+                    <div class="box inscriptions">
+                        <h4 class="is-size-3 is-size-4-mobile">
+                            {{ __('general.phrase.inscriptions') }}
+                            {% if record.inscriptions_closing_without_notice %}
+                                <span class="notice">({{ __('general.phrase.inscriptions_closing_without_notice') }})</span>
+                            {% endif %}
+                        </h4>
+                        <ul>
+                            {% if record.inscription_online_text and record.inscription_online_url %}
+                                <li class="entry"><a href="{{ record.inscription_online_url }}" target="_blank"
+                                                     title="{{ record.inscription_online_text|raw }}">{{ record.inscription_online_text|raw }}</a>
+                                </li>
+                            {% endif %}
+
+                            {% if record.inscription_contact_text %}
+                                <li class="entry">{{ record.inscription_contact_text }} :</li>
+                            {% endif %}
+                            {% if record.inscription_contact_mail %}
+                                <li>par email à <a href="mailto:{{ record.inscription_contact_mail }}">{{ record.inscription_contact_mail }}</a></li>
+                            {% endif %}
+                            {% if record.inscription_contact_phone %}
+                                <li>{{ record.inscription_contact_mail ? 'ou ' }}par téléphone au {{ record.inscription_contact_phone }}</li>
+                            {% endif %}
+                        </ul>
                     </div>
-                {% endif %}
+                </div>
 
                 {# Infos "Droits d'engagement" #}
-                {% if record.commitment_rights is not empty %}
-                    <div class="column is-half">
-                        <div class="box commitment-rights">
-                            <h4 class="is-size-3 is-size-4-mobile">{{ record.contenttype.fields.commitment_rights.label }}</h4>
-                            <ul>
-                                {% for item in record.commitment_rights %}
-                                    <li class="entry"><span>{{ item.text|raw|nl2br }}</span></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                <div class="column is-half">
+                    <div class="box commitment-rights">
+                        <h4 class="is-size-3 is-size-4-mobile">{{ __('general.phrase.commitment_rights') }}</h4>
+                        <ul>
+                            {% if record.commitment_rights_price %}
+                            <li class="entry"><span>{{ record.commitment_rights_price|raw|nl2br }}</span></li>
+                            {% endif %}
+
+                            {% if record.commitment_rights_elements_to_provide %}
+                                <li class="entry">{{ __('general.phrase.commitment_rights_elements_to_provide') }} :</li>
+                                <li><span>{{ record.commitment_rights_elements_to_provide|raw|nl2br }}</span></li>
+                            {% endif %}
+                        </ul>
                     </div>
-                {% endif %}
+                </div>
             </div>
         </div>
     </section>
