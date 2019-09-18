@@ -35,10 +35,11 @@ csrf: true
 # inside your theme, you would use similar to:
 #
 templates:
-#    form: extensions/boltforms/form.twig
-    email: extensions/boltforms/email.twig
-    subject: extensions/boltforms/subject.twig
-#    files: extensions/boltforms/file_browser.twig
+    ajax: extensions/boltforms/asset/_ajax.twig
+    email: extensions/boltforms/email/email.twig
+#    form: extensions/boltforms/form/form.twig
+    subject: extensions/boltforms/email/subject.twig
+    # See \Bolt\Extension\Bolt\BoltForms\BoltFormsExtension::getDefaultConfig for other templates...
 
 ## reCAPTCHa set up
 #
@@ -96,11 +97,11 @@ templates:
 # Contact Form
 contact:
     submission:
-        ajax: false                   # Use AJAX for form submission and handling
+        ajax: true                          # Use AJAX for form submission and handling
     notification:
         enabled: true
-        debug: true
-        debug_address: debug@asmbtennis.fr # Email address used when debug mode is enabled
+        debug: false
+        debug_address: debug@asmbtennis.fr  # Email address used when debug mode is enabled
         debug_smtp: true
         subject: "[Site ASMB - Contact]"
         from_name: name                     # Email addresses and names can be either the
@@ -108,7 +109,7 @@ contact:
         replyto_email: email                #
         replyto_name: name                  # NOTE: Email addresses must be valid
         to_name: Webmaster ASMB             #
-        to_email: debug@asmbtennis.fr       #
+        to_email: contact@asmbtennis.fr     #
     feedback:
         success: Votre message a bien été envoyé.
         error: Votre message n'a pas pu être envoyé. Merci de corriger la/les erreur(s) avant de soumettre à nouveau le formulaire.
@@ -118,7 +119,7 @@ contact:
             options:
                 required: true
                 label: Nom
-                constraints: [ NotBlank, { Length: { 'min': 3, 'max': 128 } } ]
+                constraints: [ NotBlank ]
                 attr:
                     placeholder: 'Merci d''indiquer vos nom et prénom'
         email:

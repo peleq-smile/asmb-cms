@@ -12,6 +12,9 @@
                     {{ record.body }}
 
                     {{ boltforms('contact') }}
+                    <div id="contact-back" class="is-pulled-right" style="display: none">
+                        <a href="{{ absolute_url('/') }}" class="button is-primary">« {{ __('general.phrase.back-to-home') }}</a>
+                    </div>
                 </div>
                 <div class="column column-image">
                     {% if record.image is not empty %}

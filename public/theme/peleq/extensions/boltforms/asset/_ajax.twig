@@ -1,0 +1,41 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select all forms
+        var forms = document.querySelectorAll("div.boltform form");
+        Array.prototype.forEach.call(forms, function(el) {
+
+            el.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                var XHR = new XMLHttpRequest();
+                // Bind the FormData object and the form element
+                var data = new FormData(el);
+                // Define what happens on successful data submission
+                XHR.addEventListener("load", function() {
+                    boltFormSuccess(el, this);
+                });
+                // Define what happens in case of error
+                XHR.addEventListener("error", function() {
+                    boltFormError(el, this);
+                });
+
+                // Set up our request
+                XHR.open("POST", el.action);
+
+                // The data sent is what the user provided in the form
+                XHR.send(data);
+            });
+        });
+    });
+
+    // Callback before form submission. Override at will
+    var boltFormError = function() {
+        alert("Error!");
+    };
+    // Callback after form submission. Override at will
+    var boltFormSuccess = function(form, request) {
+        var backBtnElt = document.getElementById('contact-back');
+        backBtnElt.style.display = 'block';
+        form.parentNode.outerHTML = request.response;
+    };
+</script>

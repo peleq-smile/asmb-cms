@@ -6,12 +6,19 @@
 
         .column-image {
             text-align: center;
+            display: inline-flex;
+            vertical-align: middle;
 
             i {
                 font-size: 10rem;
-                padding-top: 6rem;
                 color: $secondary;
+                display: block;
+                margin: auto;
             }
+        }
+
+        #contact-back {
+            margin-top: 5rem;
         }
     }
 }
@@ -32,11 +39,15 @@
 @media screen and (max-width: $tablet) {
     .section-contact .columns {
         .column-image {
+            display: block;
+
             i {
                 font-size: 5rem;
-                padding-top: 0;
-                padding-bottom: 2rem;
             }
+        }
+
+        #contact-back {
+            margin-top: 2rem;
         }
     }
 }
