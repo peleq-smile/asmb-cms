@@ -14,7 +14,7 @@
         <p>{{ __('page.edit-pool-meetings.text') }}</p>
 
         {% if meetings is not empty %}
-            <table class="mt-md col-md-6 table table-meetings-by-date">
+            <table class="mt-md col-md-6 table table-meetings-by-date table-condensed">
                 {% for meeting in meetings %}
                     {% if (previousDate is not defined or previousDate != meeting.date)
                         or (previousChpName is not defined or previousChpName != meeting.championship_name) %}
