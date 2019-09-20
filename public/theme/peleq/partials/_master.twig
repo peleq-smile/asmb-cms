@@ -3,13 +3,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    {# make sure we always display a proper title: The record's title if there is one, appended with the
-       sitename. If there is no title, we append the sitename with the payoff, if there is one. #}
-    <title>
-        {%- if record.title is defined %}{{ record.title|striptags }} | {% endif -%}
-        {{ config.get('general/sitename') -}}
-        {% if record.title is not defined and config.get('general/payoff') %} | {{ config.get('general/payoff') }}{% endif -%}
-    </title>
+
+    {% if record is not defined and homepage is defined %}
+        {% set record = homepage %}
+    {% endif %}
+
+    {# On prend en priorité la donnée "meta_title" si elle existe, puis la donnée "title" ensuite. #}
+    {% set headTitle = '' %}
+    {% if record.meta_title is defined and record.meta_title is not empty %}
+        {% set headTitle = record.meta_title ~ ' | ' %}
+    {% elseif record.title is defined and record.title is not empty %}
+        {% set headTitle = record.title ~ ' | ' %}
+    {% endif %}
+    {% set headTitle = headTitle ~ config.get('general/sitename') %}
+    <title>{{ headTitle -}}</title>
+
+    {% if record.meta_description is defined and record.meta_description is not empty %}
+        <meta name="description" content="{{ record.meta_description }}">
+    {% endif %}
+
+    {% if record.meta_robots is defined and record.meta_robots is not empty %}
+        <meta name="robots" content="{{ record.meta_robots }}">
+    {% endif %}
+
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}"/>
 
     <link href="https://fonts.googleapis.com/css?family=Bitter|Roboto:400,400i,700" rel="stylesheet">

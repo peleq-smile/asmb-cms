@@ -26,9 +26,11 @@ homepage:
             height: 150px
             postfix: |
                 Si ce champ est renseigné, son contenu s'affiche <b>avant</b> les blocs de l'accueil.
+
         teaser_image:
             label: 'Image de l''accroche'
             type: image
+
         blocks_top:
             label: 'Blocs du haut'
             type: repeater
@@ -196,6 +198,27 @@ homepage:
             label: Page Facebook: URL du lien
             type: text
             required: true
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
 blocs:
     name: Blocs simples
@@ -343,6 +366,27 @@ calendriers:
                 evt_with_lesson:
                     label: "Cours collectif durant l'événement"
                     type: checkbox
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
 documents_divers:
     singular_slug: document-divers
@@ -376,6 +420,27 @@ documents_divers:
                     type: filelist
                     extensions: [ png, pdf ]
                     upload: documents_divers
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
 type_evenement_calendriers:
     name: Types événement calendrier
@@ -404,56 +469,6 @@ type_evenement_calendriers:
             postfix: "Ordre d'apparition dans la légende des calendriers"
             type: integer
             class: narrow
-
-#evenements:
-#    singular_slug: evenement
-#    name: Évènements
-#    singular_name: Évènement
-#    record_template: template_page.twig
-#    fields:
-#        title:
-#            label: Titre
-#            type: text
-#            class: large
-#            group: content
-#        subtitle:
-#            type: text
-#            label: 'Sous-titre'
-#            class: large
-#        slug:
-#            type: slug
-#            uses: title
-#        from_date:
-#            label: Date et heure de l'évènement
-#            type: datetime
-#            required: true
-#        to_date:
-#            label: Date et heure de fin
-#            type: datetime
-#        location:
-#            label: Lieu
-#            type: text
-#        block:
-#            label: 'Bloc'
-#            type: select
-#            values: (blocs)/title
-#            filter: { status: published }
-#        image:
-#            type: image
-#        short_text:
-#            label: Texte court
-#            type: html
-#            height: 200px
-#            options:
-#                ckeditor:
-#                    removeButtons: Image,Table,SpecialChar
-#        text:
-#            label: Texte
-#            type: html
-#            height: 400px
-#            options:
-#                ckeditor:
-#                    removeButtons: Image,Table,SpecialChar
 
 infos_tournoi:
     singular_slug: infos-tournoi
@@ -569,6 +584,28 @@ infos_tournoi:
             type: 'textarea'
             postfix: 'Ex: "<br>• Nom, prénom, classement, téléphone, email<br>• Indisponibilités durant toute la période du tournoi, heure à partir de laquelle vous pouvez jouer en semaine le soir.<br>"'
 
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
 pages:
     singular_slug: page
     name: Pages
@@ -600,6 +637,27 @@ pages:
         template:
             type: templateselect
             filter: 'template_*.twig'
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
 competitions:
     name: Pages compétition
@@ -640,6 +698,27 @@ competitions:
             type: checkbox
             #postfix: |
             #    'Cocher cette case permet de provoquer un rafraîchissement régulier des données.'
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
 statistiques:
     name: Pages de statistiques
@@ -704,28 +783,6 @@ statistiques:
             type: integer
             min: 1
             max: 1000
-            # à supprimer, mais vérifier la base avant. je suis revenue sur la 1ère idée pour les stats. ajouter une section + les tournois !
-#        teams:
-#            label: 'Équipes'
-#            type: block
-#            fields:
-#                team_section:
-#                    label: 'Section stats équipes'
-#                    fields:
-#                        title:
-#                            label: 'Titre section'
-#                            type: text
-#                team_stats:
-#                    label: 'Stat équipes'
-#                    fields:
-#                        type:
-#                            type: text
-#                            label: 'Type d''équipe'
-#                        count:
-#                            type: integer
-#                            label: 'Nb d''équipes pour ce type'
-#                            min: 0
-#                            max: 100
         winter_teams:
             label: 'Équipes Hiver'
             type: repeater
@@ -762,3 +819,24 @@ statistiques:
                     type: integer
                     min: 0
                     max: 100
+        # Ajout onglet "SEO"
+        meta_title:
+            label: 'Meta "title"'
+            type: text
+            required: false
+            group: 'SEO'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+        meta_description:
+            label: 'Meta "description"'
+            type: textarea
+            required: false
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+        meta_robots:
+            label: 'Meta "robots"'
+            required: true
+            type: select
+            values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+            default: 'index, follow'
+            postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'

@@ -18,7 +18,7 @@
     "name": "bolt/extensions",
     "prefer-stable": true,
     "provide": {
-        "bolt/bolt": "3.6.0"
+        "bolt/bolt": "3.6.10"
     },
     "repositories": {
         "packagist": false,
@@ -28,7 +28,8 @@
         }
     },
     "require": {
-        "bolt/boltforms": "^4.2"
+        "bolt/boltforms": "^4.2",
+        "bolt/sitemap": "^2.5"
     },
     "scripts": {
         "post-autoload-dump": "Bolt\\Composer\\EventListener\\PackageEventListener::dump",
