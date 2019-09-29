@@ -16,22 +16,22 @@ use Carbon\Carbon;
 class PoolMeetingRepository extends Repository
 {
     /**
-     * Return meetings of given pool id, grouped by day then by position.
-     * Sample of returned array :
+     * Retourne les rencontres des poules d'ids donnés, groupé par id de poule puis par jour de rencontre.
+     * Exemple de tableau retourné :
      * [
-     *     10 => [ // With 10 = Id of pool
-     *         1 => [ // With 1 = day 1
-     *             <Id of match> => PoolMeeting entity instance,
-     *             <Id of match> => PoolMeeting entity instance,
+     *     10 => [ // Avec 10 = Id de la poule
+     *         1 => [ // Avec 1 = jour 1
+     *             <Id of match> => entité PoolMeeting,
+     *             <Id of match> => entité PoolMeeting,
      *             ...
      *         ],
-     *         2 => [ // With 2 = day 2
-     *             <Id of match> => PoolMeeting entity instance,
+     *         2 => [ // Avec 2 = day 2
+     *             <Id of match> => entité PoolMeeting,
      *             ...
      *         ],
      *         ...
      *     ],
-     *     12 => [...] // With 12 = Id of pool
+     *     12 => [...] // Avec 12 = Id de la poule
      * ]
      *
      * @param array $poolIds
@@ -54,8 +54,10 @@ class PoolMeetingRepository extends Repository
             $this->getAlias(),
             'bolt_championship_pool_team',
             'pt_home',
-            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_home.pool_id')
-            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_home.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
+            )
         );
         // ÉQUIPE VISITEUR
         $qb->addSelect("pt_visitor.name as visitor_team_name");
@@ -64,8 +66,10 @@ class PoolMeetingRepository extends Repository
             $this->getAlias(),
             'bolt_championship_pool_team',
             'pt_visitor',
-            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_visitor.pool_id')
-            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'pt_visitor.name_fft')
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_visitor.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'pt_visitor.name_fft')
+            )
         );
 
         $result = $qb->execute()->fetchAll();
@@ -169,9 +173,12 @@ class PoolMeetingRepository extends Repository
             $this->getAlias(),
             'bolt_championship_pool_team',
             'pt_home',
-            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_home.pool_id')
-            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_home.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
+            )
         );
+
         // ÉQUIPE VISITEUR
         $qb->addSelect("pt_visitor.name as visitor_team_name");
         $qb->addSelect("pt_visitor.is_club as visitor_team_is_club");
@@ -179,8 +186,10 @@ class PoolMeetingRepository extends Repository
             $this->getAlias(),
             'bolt_championship_pool_team',
             'pt_visitor',
-            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_visitor.pool_id')
-            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'pt_visitor.name_fft')
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_visitor.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'pt_visitor.name_fft')
+            )
         );
 
         $qb->orderBy('championship_name');
@@ -256,5 +265,72 @@ class PoolMeetingRepository extends Repository
             }
             $this->save($poolMeeting, true);
         }
+    }
+
+    /**
+     * @param \Carbon\Carbon      $fromDate
+     * @param \Carbon\Carbon|null $toDate
+     *
+     * @return PoolMeeting[]
+     */
+    public function findHomeMeetingsBetweenDate(Carbon $fromDate, Carbon $toDate)
+    {
+        $homeMeetings = [];
+
+        $qb = $this->getLoadQuery();
+
+        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolTeamRepository */
+        // Filtre sur les rencontres du club à domicile + récupération du "nom interne"
+        $qb->addSelect('team_home.name as team_home_name');
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'team_home',
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'team_home.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'team_home.name_fft'),
+                $qb->expr()->eq('team_home.is_club', true)
+            )
+        );
+
+        // Récupération du nom interne de l'équipe extérieure
+        $qb->addSelect('team_visitor.name as team_visitor_name');
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'team_visitor',
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'team_visitor.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'team_visitor.name_fft')
+            )
+        );
+
+        // Prise en compte de la date de report en priorité, sinon la date définie dans la GS
+        $qb->addSelect("IFNULL({$this->getAlias()}.report_date, {$this->getAlias()}.date) as final_date");
+
+        $qb->where($qb->expr()->isNotNull("{$this->getAlias()}.time"));
+
+        $qb->having($qb->expr()->gte('final_date', ':fromDate'));
+        $qb->setParameter('fromDate', $fromDate);
+
+        $qb->having($qb->expr()->lte('final_date', ':toDate'));
+        $qb->setParameter('toDate', $toDate);
+
+        $qb->orderBy('final_date');
+        $qb->addOrderBy('time');
+
+        $result = $qb->execute()->fetchAll();
+
+        if ($result) {
+            $homeMeetings = $this->hydrateAll($result, $qb);
+            /** @var PoolMeeting $homeMeeting */
+            foreach ($homeMeetings as $idx => $homeMeeting) {
+                $homeMeeting->setHomeTeamIsClub(true);
+                $homeMeeting->setHomeTeamName($result[$idx]['team_home_name']);
+                $homeMeeting->setVisitorTeamName($result[$idx]['team_visitor_name']);
+            }
+        }
+
+        return $homeMeetings;
     }
 }

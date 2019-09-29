@@ -3,6 +3,7 @@
 namespace Bundle\Asmb\Competition\Entity\Championship;
 
 use Bolt\Storage\Entity\Entity;
+use Carbon\Carbon;
 
 /**
  * Entité pour représenter une rencontre entre 2 équipes.
@@ -20,11 +21,11 @@ class PoolMeeting extends Entity
     protected $visitor_team_name_fft;
     /** @var int */
     protected $day;
-    /** @var \DateTime */
+    /** @var Carbon */
     protected $date;
-    /** @var \DateTime */
+    /** @var Carbon */
     protected $report_date;
-    /** @var \DateTime */
+    /** @var Carbon */
     protected $time;
     /** @var string */
     protected $result;
@@ -48,7 +49,7 @@ class PoolMeeting extends Entity
     protected $championship_name;
     /** @var string */
     protected $championship_short_name;
-    /** @var \DateTime */
+    /** @var Carbon */
     protected $updated_at;
 
     /**
@@ -116,7 +117,7 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @return \DateTime
+     * @return Carbon
      */
     public function getDate()
     {
@@ -124,7 +125,7 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @param \DateTime $date
+     * @param Carbon $date
      */
     public function setDate($date)
     {
@@ -324,7 +325,7 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @return \DateTime
+     * @return Carbon
      */
     public function getUpdatedAt()
     {
@@ -332,10 +333,22 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @param \DateTime $updatedAt
+     * @param Carbon $updatedAt
      */
     public function setUpdatedAt($updatedAt)
     {
         $this->updated_at = $updatedAt;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getFinalDate()
+    {
+        if (null !== $this->report_date) {
+            return $this->report_date;
+        }
+
+        return $this->date;
     }
 }

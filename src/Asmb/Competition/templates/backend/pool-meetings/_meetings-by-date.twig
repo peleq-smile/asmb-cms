@@ -31,7 +31,7 @@
                 {% set scoreHtml = meeting|score(true) %}
 
                 <tr>
-                    <td class="text-center">{{ meeting.time ? meeting.time|date('h:i') : '-' }}</td>
+                    <td class="text-center">{{ meeting.time ? meeting.time|date('h:i') : '?' }}</td>
                     <td class="text-right{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                     <td class="text-center">{{ scoreHtml ? scoreHtml : '-' }}</td>
                     <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>

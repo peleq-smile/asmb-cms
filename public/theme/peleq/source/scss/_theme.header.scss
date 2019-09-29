@@ -106,6 +106,13 @@ header {
                             }
                         }
                     }
+
+                    .bordered-top {
+                        border-top: dashed 1px $secondary-xlight;
+                    }
+                    .bordered-bottom {
+                        border-bottom: dashed 1px $secondary-xlight;
+                    }
                 }
 
                 .navbar-reservation {

@@ -44,8 +44,10 @@ class PoolRankingRepository extends Repository
             $this->getAlias(),
             'bolt_championship_pool_team',
             $poolTeamAlias,
-            $qb->expr()->eq($this->getAlias() . '.pool_id', "$poolTeamAlias.pool_id")
-            . ' AND ' . $qb->expr()->eq($this->getAlias() . '.team_name_fft', "$poolTeamAlias.name_fft")
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', "$poolTeamAlias.pool_id"),
+                $qb->expr()->eq($this->getAlias() . '.team_name_fft', "$poolTeamAlias.name_fft")
+            )
         );
 
         $result = $qb->execute()->fetchAll();

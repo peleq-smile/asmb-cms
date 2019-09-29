@@ -340,6 +340,37 @@
     }
 }
 
+.section-home-meetings {
+    .box {
+        padding: 0;
+        margin-top: 1.5rem;
+
+        h2 {
+            margin-top: 0;
+        }
+    }
+    .date {
+        display: inline-block;
+        width: 70px;
+        font-size: 1.3rem;
+    }
+    .home-meeting {
+        margin-top: -3px;
+
+        .time {
+            display: inline-block;
+            width: 62px;
+            color: $win;
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+    }
+
+    .columns .columns {
+        border-bottom: solid 1px $secondary-xlight;
+    }
+}
+
 /*****************/
 /** RESPONSIVE  **/
 /*****************/
@@ -379,6 +410,26 @@
                         }
                     }
                 }
+            }
+        }
+    }
+
+    .section-home-meetings {
+        .home-meeting {
+            .meeting {
+                display: block;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $desktop) {
+    .section-home-meetings {
+        .home-meeting {
+            white-space: nowrap;
+
+            .meeting {
+                display: inline-block;
             }
         }
     }
@@ -460,6 +511,13 @@
                 color: $primary;
                 font-weight: bold;
             }
+        }
+    }
+
+    .section-home-meetings {
+        .box {
+            margin-left: 0;
+            margin-right: 0;
         }
     }
 }

@@ -310,6 +310,7 @@ trait TwigFunctionsTrait
     protected function registerTwigFunctions()
     {
         return [
+            'getHomeMeetings'          => 'getHomeMeetings',
             'getLastMeetings'          => 'getLastMeetings',
             'getNextMeetings'          => 'getNextMeetings',
             'getPoolsPerCategoryName'  => 'getPoolsPerCategoryName',
@@ -348,5 +349,81 @@ trait TwigFunctionsTrait
         $pools = $poolRepository->findByChampionshipId($championshipId);
 
         return $pools;
+    }
+
+    /**
+     * @param \Bolt\Legacy\Content $competitionRecord
+     *
+     * @return array
+     * @throws \Bolt\Exception\InvalidRepositoryException
+     */
+    public function getHomeMeetings($competitionRecord)
+    {
+        $homeMeetings = [
+            'sat'      => [], // Rencontres du samedi
+            'sun'      => [], // Rencontres du dimanche
+            'satSlots' => [], // Créneaux du samedi pour lesquels il existe au moins 1 rencontre
+            'sunSlots' => [], // Créneaux du dimanche pour lesquels il existe au moins 1 rencontre
+        ];
+
+        $fromDate = Carbon::createFromFormat('Y-m-d', $competitionRecord->get('home_meetings_from_date'));
+        $toDate = Carbon::createFromFormat('Y-m-d', $competitionRecord->get('home_meetings_to_date'));
+
+        if (Carbon::SUNDAY === $fromDate->dayOfWeek) {
+            $fromDate->addDay(-1);
+        } elseif (Carbon::SATURDAY !== $fromDate->dayOfWeek) {
+            $fromDate->next(Carbon::SATURDAY);
+        }
+        // Maintenant, notre date de départ $fromDate est forcément un samedi
+
+        if (Carbon::SUNDAY !== $toDate->dayOfWeek) {
+            $toDate->next(Carbon::SUNDAY);
+        }
+        // Maintenant, notre date de fin $toDate est forcément un dimanche
+
+        $saturdayDate = clone $fromDate;
+        while ($saturdayDate->lt($toDate)) {
+            $homeMeetings['sat'][$saturdayDate->format('d/m')] = [];
+            $homeMeetings['sun'][$saturdayDate->addDay()->format('d/m')] = [];
+
+            $saturdayDate->next(Carbon::SATURDAY);
+        }
+
+        /** @var PoolMeetingRepository $poolMeetingRepository */
+        $poolMeetingRepository = $this->getStorage()->getRepository('championship_pool_meeting');
+        $homeMeetingsFromDate = $poolMeetingRepository->findHomeMeetingsBetweenDate($fromDate, $toDate);
+
+        foreach ($homeMeetingsFromDate as $homeMeeting) {
+            $formattedDate = $homeMeeting->getFinalDate()->format('d/m');
+            $formattedTime = $homeMeeting->getTime()->format('H:i');
+
+            /**
+             * On considère qu'il peut y avoir 3 "créneaux" de rencontres :
+             * - [AM] matin
+             * - [MD] midi (/début d'après-midi)
+             * - [PM] après-midi
+             * Selon l'horaire de la rencontre, on affecte l'affecte à tel ou tel créneau
+             */
+            if ($formattedTime < '10:00') {
+                $slot = 'AM';
+            } elseif ($formattedTime < '15:00') {
+                $slot = 'MD';
+            } else {
+                $slot = 'PM';
+            }
+
+            if (Carbon::SATURDAY === $homeMeeting->getFinalDate()->dayOfWeek) {
+                $homeMeetings['sat'][$formattedDate][$slot] = $homeMeeting;
+                // On marque le créneau comme utilisé par au moins 1 rencontre (info utile pour gérer l'affichage sur le FO)
+                $homeMeetings['satSlots'][$slot] = true;
+            } elseif (Carbon::SUNDAY === $homeMeeting->getFinalDate()->dayOfWeek) {
+                $homeMeetings['sun'][$formattedDate][$slot] = $homeMeeting;
+                // On marque le créneau comme utilisé par au moins 1 rencontre (info utile pour gérer l'affichage sur le FO)
+                $homeMeetings['sunSlots'][$slot] = true;
+            } // else: c'est la merde...
+
+        }
+
+        return $homeMeetings;
     }
 }
