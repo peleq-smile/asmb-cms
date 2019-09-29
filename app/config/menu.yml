@@ -21,58 +21,48 @@ main:
         - label: 'Formules et tarifs'
           path: page/tarifs
         - label: 'Tennis Loisir'
-          path: page/nos-cartes-loisir
+          path: page/tennis-loisir-carte
           submenu:
             - label: 'La carte'
-              path: page/nos-cartes-loisir
+              path: page/tennis-loisir-carte
             - label: 'Les créneaux'
-              path: page/creneaux
+              path: page/tennis-loisir-creneaux
             - label: 'Réservation'
-              path: page/reservation
+              path: page/tennis-loisir-reservation
 
     - label: 'Compétitions'
-      path: competition/championnat-ete
+      path: competition/championnat-hiver-regional-2019-2020
       submenu:
-        - label: 'Championnat d''hiver'
-          path: competition/seniors-hommes-2019-2020
+        - label: 'Championnat d''Hiver'
+          path: competition/championnat-hiver-regional-2019-2020
           submenu:
-            - label: 'Seniors Hommes'
-              path: competition/championnat-hiver-seniors-hommes-2019-2020
+            - label: 'Championnat Régional'
+              path: competition/championnat-hiver-regional-2019-2020
 
-            - label: 'Seniors Dames'
-              path: competition/championnat-hiver-seniors-dames-2019-2020
-
-#            - label: 'Seniors Plus'
-#              path: competition/seniors-plus-2019-2020
+            - label: 'Championnat Départemental +35 ans'
+              path: competition/championnat-hiver-departemental-35-ans-2019-2020
 #
 #            - label: 'Jeunes'
-#              path: competition/jeunes-2019-2020
+#              path: competition/championnat-hiver-jeunes-2019-2020
 
-        - label: 'Championnat d''été'
+        - label: 'Championnat d''Été'
           path: competition/championnat-ete-2019
 
-        - label: 'Coupe de printemps'
+        - label: 'Coupe de Printemps'
           path: competition/coupe-printemps-2019
 
+        - label: 'Rencontres à domicile'
+          path: competition/rencontres-a-domicile
+          class: bordered-top bordered-bottom
+
         - label: '[Archives] Chpt Hiver 2018/2019'
-          path: competition/seniors-hommes-2018-2019
-          submenu:
-          - label: 'Seniors Hommes'
-            path: competition/seniors-hommes-2018-2019
-
-          - label: 'Seniors Dames'
-            path: competition/seniors-dames-2018-2019
-
-          - label: 'Seniors Plus'
-            path: competition/seniors-plus-2018-2019
-
-          - label: 'Jeunes'
-            path: competition/jeunes-2018-2019
+          path: competition/championnat-hiver-2018-2019
+          class: separated
 
         - label: '[Archives] Tournoi février 2019'
           path: competition/tournoi-interne-fevrier-2019
-#
-#       - label: 'Tournois'
+
+#        - label: 'Tournois'
 #          path: competition/tournoi-interne-fevrier-2019
 #          submenu:
 #            - label: 'Tournoi interne février 2019'

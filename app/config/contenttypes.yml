@@ -667,18 +667,15 @@ competitions:
     record_template: competitions.twig
     taxonomy: [ tags ]
     fields:
-        name:
-            label: 'Nom de la page'
+        title:
+            label: 'Titre de la page'
             type: text
             class: large
             group: 'Général'
-        title:
-            label: 'Titre affiché sur la page'
-            type: text
-            class: large
         slug:
             type: slug
             uses: title
+
         competition_id:
             label: 'ID (Bolt) de la compétition'
             type: integer
@@ -688,6 +685,15 @@ competitions:
             values: ['Hommes','Dames','+35','Jeunes']
             label: Afficher uniquement les données de cette/ces catégorie(s)
             multiple: true
+
+        home_meetings_from_date:
+            label: 'Date de début'
+            type: date
+            group: 'Infos rencontres à domicile'
+        home_meetings_to_date:
+            label: 'Date de fin'
+            type: date
+
         tournoi_url_json:
             label: 'URL vers le JSON ou chemin relatif au dossier public/ du serveur'
             type: text
@@ -698,6 +704,9 @@ competitions:
             type: checkbox
             #postfix: |
             #    'Cocher cette case permet de provoquer un rafraîchissement régulier des données.'
+
+
+
         # Ajout onglet "SEO"
         meta_title:
             label: 'Meta "title"'
