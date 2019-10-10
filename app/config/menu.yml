@@ -53,14 +53,13 @@ main:
 
         - label: 'Rencontres à domicile'
           path: competition/rencontres-a-domicile
-          class: bordered-top bordered-bottom
 
         - label: '[Archives] Chpt Hiver 2018/2019'
           path: competition/championnat-hiver-2018-2019
           class: separated
 
-        - label: '[Archives] Tournoi février 2019'
-          path: competition/tournoi-interne-fevrier-2019
+#        - label: '[Archives] Tournoi février 2019'
+#          path: competition/tournoi-interne-fevrier-2019
 
 #        - label: 'Tournois'
 #          path: competition/tournoi-interne-fevrier-2019
