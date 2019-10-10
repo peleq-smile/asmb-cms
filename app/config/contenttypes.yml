@@ -78,8 +78,13 @@ homepage:
             uses: title
 
         # Onglet En-tête du site : personnalisation de certains éléments de l'en-tête
-        header_title:
+        logo_file:
             group: en-tête du site
+            label: 'Logo du site'
+            type: image
+            required: true
+
+        header_title:
             label: 'Titre'
             type: text
             required: true

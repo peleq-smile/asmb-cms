@@ -53,9 +53,9 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div id="navbar-container" class="container">
             <div class="navbar-brand">
+
                 <a href="{{ path('homepage') }}" title="Accueil">
-                    <img class="img-responsive" width="120" height="120"
-                         src="{{ asset('logo.png', 'files') }}" alt="{{ config.get('general/sitename') }}">
+                    <img class="img-responsive" src="{{ asset(homepage.logo_file, 'files') }}" alt="{{ config.get('general/sitename') }}">
                 </a>
             </div>
             <div id="navbar-menu" class="navbar-menu">

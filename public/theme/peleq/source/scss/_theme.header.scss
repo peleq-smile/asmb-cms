@@ -47,19 +47,19 @@ header {
                 .navbar-brand {
                     padding: 0.5rem 0;
                     a {
-                        display: flex;
-                        height: 100%;
                         transition: all .2s ease-in-out;
+                        line-height: 120px;
 
                         &:hover {
-                            transform: scale(1.1);
+                            transform: scale(1.15);
                         }
                     }
 
                     img {
-                        height: 120px;
-                        width: 120px;
                         transition: all 0.4s linear;
+                        max-width: none;
+                        width: 160px;
+                        vertical-align: middle;
                     }
                 }
 
@@ -106,13 +106,6 @@ header {
                             }
                         }
                     }
-
-                    .bordered-top {
-                        border-top: dashed 1px $secondary-xlight;
-                    }
-                    .bordered-bottom {
-                        border-bottom: dashed 1px $secondary-xlight;
-                    }
                 }
 
                 .navbar-reservation {
@@ -156,9 +149,12 @@ header {
 
         .container {
             .navbar-brand {
-                img {
-                    height: 70px;
-                    width: 70px;
+                a {
+                    line-height: 70px;
+
+                    img {
+                        width: 100px;
+                    }
                 }
             }
         }
@@ -253,9 +249,13 @@ header {
                 padding-right: 2.1em;
             }
         }
+    }
+}
 
+@media screen and (min-width: $desktop) and (max-width: $widescreen) {
+    header {
         .hero {
-            // Pour les résolutions un peu limite, on force un affichage de bandeau "is-small"
+            // Pour les résolutions un peu limite sur ordi, on force un affichage de bandeau "is-small"
             .hero-body {
                 padding-top: 1.5rem !important;
                 padding-bottom: 1.5rem !important;
@@ -304,9 +304,12 @@ header {
                         order: 1;
                         margin: 0 auto 0 0.5rem;
 
-                        img {
-                            height: 80px;
-                            width: 80px;
+                        a {
+                            line-height: 80px;
+
+                            img {
+                                width: 80px;
+                            }
                         }
                     }
                     .navbar-reservation {
@@ -460,6 +463,10 @@ header {
             .hero-body {
                 padding: 3rem 1.5rem;
 
+                &.is-medium {
+                    padding-bottom: 4.5rem;
+                }
+
                 h1.title {
                     font-size: 1.6rem;
                     white-space: nowrap;
@@ -481,6 +488,10 @@ header {
                     margin-top: 1rem;
                 }
             }
+
+            &.is-medium .hero-body {
+                padding-bottom: 4.5rem;
+            }
         }
 
         &.sticky {
@@ -496,6 +507,17 @@ header {
                         top: 0.6rem;
                     }
                 }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $widescreen) {
+    header {
+        .hero.is-medium {
+            .hero-body {
+                padding-top: 7rem !important;
+                padding-bottom: 7rem !important;
             }
         }
     }
