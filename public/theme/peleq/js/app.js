@@ -114,7 +114,8 @@ function initAsmbCommonNavJs() {
 
     var $scrollup = $('.scrollup'),
         $scrollto = $('.scrollto'),
-        $targetElt = $($scrollto.data('target'));
+        $targetElt = $($scrollto.data('target')),
+        gapBeforeTargetElt = isTouchScreenDevice ? 0 : 110;
 
     if ($targetElt.length > 0) {
         var targetEltTop = $targetElt.offset().top,
@@ -171,7 +172,7 @@ function initAsmbCommonNavJs() {
 
     if ($targetElt.length > 0) {
         $scrollto.on('click', function () {
-            $('html, body').animate({scrollTop: (targetEltTop - 100)}, 500);
+            $('html, body').animate({scrollTop: (targetEltTop - gapBeforeTargetElt)}, 500);
             return false;
         });
     }
@@ -259,16 +260,18 @@ function handleJaTennisTournoiNav($sectionTournament) {
                 break;
         }
 
-        // On met à jour l'url
-        // TODO ?????
-
         return false;
     }
 
     // Au chargement de la page, on va cherche le hash dans l'url
-    var hash = $(location).attr('hash');
-    if (hash) {
-        updateView(hash);
+    var hash = $(location).attr('hash'), param = null;
+    if (hash) {	    
+	// Gérer le cas des paramètres dans l'URL
+	if (hash.length > 4) {
+	    param = hash.substring(5);
+	    hash = hash.substring(0, 4);
+	} 
+        updateView(hash, param);
     }
 
     // Puis on gère les évènements de navigation pour mettre à jour la vue
@@ -285,6 +288,9 @@ function handleJaTennisTournoiNav($sectionTournament) {
             param = target.find('option:selected').val();
 
         updateView(hash, param);
+
+        // Mise à jour du hash de l'url
+        window.location.hash = hash + ":" + param;
     });
 
     // -- Clic sur un lien de la sous-navigation "planning"
@@ -296,14 +302,28 @@ function handleJaTennisTournoiNav($sectionTournament) {
         updateView(hash, param);
     });
 
-    // Clici sur un lien vers un joueur
+    // Clic sur un lien vers un joueur
     $('a.player-link', $sectionTournament).on('click', function (event) {
         var target = $(event.target),
             hash = target.data('hash'),
             param = target.data('param');
 
         updateView(hash, param);
+        $('html, body').animate({scrollTop: $sectionTournament.offset().top}, 200);
     });
+
+    // Gestion des retours arrière/en avant avec le navigateur
+    window.onpopstate = function(event) {
+        var hash = $(location).attr('hash'), param = null;
+        if (hash) {	    
+	    // Gérer le cas des paramètres dans l'URL
+	    if (hash.length > 4) {
+	        param = hash.substring(5);
+	        hash = hash.substring(0, 4);
+	    } 
+            updateView(hash, param);
+        }
+    };
 }
 
 /*!
@@ -4982,4 +5002,4 @@ Prism.hooks.add('complete', function completeHook(env) {
 		});
 	});
 
-})();
+})();	
