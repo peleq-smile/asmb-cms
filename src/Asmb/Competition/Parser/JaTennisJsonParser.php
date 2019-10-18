@@ -346,7 +346,32 @@ class JaTennisJsonParser
                         'date'    => $boxData['date'], // ici, la date joliement formatée !
                     ];
                 } else {
+                    // cas où le match n'a pas eu lieu : on regarde dans chacune des 2 boîtes précédentes 
+                    if (isset($boxData['prevBtm']['jid'])) {
+                        $this->playersData[$boxData['prevBtm']['jid']]['matches'][$tableName][$box['date']] = [
+                            'player'  => [
+                                'jid'  => $boxData['prevTop']['jid'] ?? '',
+                                'name' => $boxData['prevTop']['name'] ?? '',
+                                'rank' => $boxData['prevTop']['rank'] ?? '',
+                            ],
+                            'victory' => null,
+                            'score'   => '',
+                            'date'    => $boxData['date'], // ici, la date joliement formatée !
+                        ];                        
+                    }
                     
+                    if (isset($boxData['prevTop']['jid'])) {
+                        $this->playersData[$boxData['prevTop']['jid']]['matches'][$tableName][$box['date']] = [
+                            'player'  => [
+                                'jid'  => $boxData['prevBtm']['jid'] ?? '',
+                                'name' => $boxData['prevBtm']['name'] ?? '',
+                                'rank' => $boxData['prevBtm']['rank'] ?? '',
+                            ],
+                            'victory' => null,
+                            'score'   => '',
+                            'date'    => $boxData['date'], // ici, la date joliement formatée !
+                        ];
+                    }
                 }
             }
         }
