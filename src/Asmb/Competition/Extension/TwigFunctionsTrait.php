@@ -174,6 +174,14 @@ trait TwigFunctionsTrait
             $parser->setJsonFileUrl($jsonFileAbsoluteUrl);
             $parsedData = $parser->parse();
 
+            if (isset($parsedData['error'])) {
+                // pour debug, afficher $parsedData['trace'] en plus !
+                return 'Une erreur est survenue dans le traitement des données du tournoi :<br>'
+                    .$parsedData['error'];
+                    /*'<div style="text-align: left !important;">'
+                    .$parsedData['trace'].'</div>';*/
+            } 
+
             // Règle d'affichage du tournoi:
             // - Tournoi terminé : on affiche la page de résultat
             // - Tournoi à venir : on affiche la page de planning avec le 1er jour du tournoi
@@ -220,7 +228,7 @@ trait TwigFunctionsTrait
             if (!isset($parsedData['error']) && '#res' === $display) {
                 // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
                 // non à jour.
-                $htmlFile->write($tournamentContent);
+                //$htmlFile->write($tournamentContent);
             }
         }
 
