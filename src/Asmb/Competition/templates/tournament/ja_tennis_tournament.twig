@@ -258,7 +258,7 @@
                                         </span>
                                     </div>
                                     <div class="column">
-                                        <span>{{ match.victory ? 'Victoire':'Défaite' }}</span>
+                                        <span>{{ match.victory is null ? 'à jouer' : match.victory ? 'Victoire':'Défaite' }}</span>
                                     </div>
                                     <div class="column">
                                         <span class="score">{{ match.score }}</span>
