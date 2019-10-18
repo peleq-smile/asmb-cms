@@ -84,6 +84,18 @@ class JaTennisJsonParser
     }
     
     /**
+     * Ajoute 1 mois à la date entrante pour corriger le bug de JA Tennis sur les exports.
+     * 
+     * @return string
+     */
+    protected function add1month($inputDate)
+    {
+        $outputDate = str_replace(['-10-','-09-'], ['-11-','-10-'], $inputDate);
+        
+        return $outputDate;
+    }
+    
+    /**
      * Parse et retourne les données d'infos générales du tournoi.
      *
      * @return array
@@ -92,19 +104,16 @@ class JaTennisJsonParser
     {
         $info = $this->jsonData['info'];
         
-        // JA Tennis semble décaler les date d'1 mois, on rectifie ici       
-        $beginDate = Carbon::createFromFormat('Y-m-d', $info['begin']);
-        $beginDate->modify('+1 month'); // Ex: "2019-09-21" devient "2019-10-21"
-        $info['begin'] = $beginDate->format('Y-m-d');
-        
-        $endDate = Carbon::createFromFormat('Y-m-d', $info['end']);
-        $endDate->modify('+1 month');
-        $info['end'] = $endDate->format('Y-m-d');
+        // JA Tennis décale les date d'1 mois, on rectifie ici       
+        // Ex: "2019-09-21" devient "2019-10-21"
+        $info['begin'] = $this->add1month($info['begin']);
+        $info['end'] = $this->add1month($info['end']);
         
         // Ajout de la date de dernière màj des données
         // Ex: "2019-09-18T01:08:00"
-        $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->jsonData['jat']['generate']);
+        $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->add1month($this->jsonData['jat']['generate']));
         $generateTimeFormatted = $this->getFormattedTime($this->jsonData['jat']['generate']);
+  
         $info['updatedAt'] = $generateDate->format('d/m/Y') . " à $generateTimeFormatted";
         
         return $info;
@@ -212,9 +221,7 @@ class JaTennisJsonParser
         foreach ($boxes as $idxBox => &$box) {
             // JA Tennis semble décaler les date d'1 mois, on doit rectifier ça ici
             if (isset($box['date'])) {
-                $boxDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $box['date']);
-                $boxDate->modify('+1 month');
-                $box['date'] = $boxDate->format('Y-m-d\TH:i:s');
+                $box['date'] = $this->add1month($box['date']);
             }
             
             if (isset($box['score'])) {
