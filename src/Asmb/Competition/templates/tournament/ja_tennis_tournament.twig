@@ -74,6 +74,14 @@
             </div>
         </div>
     {% endfor %}
+    
+    {# Date de der màj #}
+    {% if parsedData.info.updatedAt is defined %}
+        <div>
+            <br><br>
+            <em class="has-text-grey-light is-size-7">Dernière mise à jour le {{ parsedData.info.updatedAt }}</em>       
+        </div>
+    {% endif %}
 {% endif %}
 
 {% macro planningView(planning, planningDisplay, planningDay) %}
@@ -110,17 +118,30 @@
                         <div class="columns is-gapless is-mobile is-multiline">
                             <div class="column is-one-fifth-mobile">{{ time }}</div>
                             <div class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
-                            <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">
-                                <a class="player-link text-secondary" href="#jou:{{ planningByPlaceData.player1.jid }}"
-                                   data-hash="#jou" data-param="{{ planningByPlaceData.player1.jid }}"
-                                >{{ planningByPlaceData.player1.name }}</a>
+                            <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">                                
+                                {% if planningByPlaceData.player1.name is not empty %}
+                                    <a class="player-link text-secondary" href="#jou:{{ planningByPlaceData.player1.jid }}"
+                                       data-hash="#jou" data-param="{{ planningByPlaceData.player1.jid }}"
+                                    >{{ planningByPlaceData.player1.name }}</a>
+                                {% elseif planningByPlaceData.player1.qualif is not empty %}
+                                    <strong class="score is-size-6"> Q{{ planningByPlaceData.player1.qualif }}</strong>
+                                {% else %}
+                                    <span>?</span>
+                                {% endif %}
+                           
                                 <em>{{ planningByPlaceData.player1.rank }}</em>
                             </div>
                             <div class="column score">{{ planningByPlaceData.score }}</div>
-                            <div class="column  is-one-quarter-desktop">
-                                <a class="player-link text-secondary" href="#jou:{{ planningByPlaceData.player2.jid }}"
-                                   data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
-                                >{{ planningByPlaceData.player2.name }}</a>
+                            <div class="column is-one-quarter-desktop">
+                                {% if planningByPlaceData.player2.name is not empty %}
+                                    <a class="player-link text-secondary" href="#jou:{{ planningByPlaceData.player2.jid }}"
+                                       data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
+                                    >{{ planningByPlaceData.player2.name }}</a>
+                                {% elseif planningByPlaceData.player2.qualif is not empty %}
+                                    <strong class="score is-size-6"> Q{{ planningByPlaceData.player2.qualif }}</strong>
+                                {% else %}
+                                    <span>?</span>
+                                {% endif %}
                                 <em>{{ planningByPlaceData.player2.rank }}</em>
                             </div>
                         </div>
@@ -190,9 +211,7 @@
                     <span class="is-hidden-desktop">(+ club)</span>
                 </span>
                 <span class="column is-hidden-mobile">Sexe</span>
-                <span class="column">Année</span>
                 <span class="column">Class.</span>
-                <span class="column is-hidden-mobile">Club</span>
             </div>
             {% for playersData in players %}
                 <div class="columns is-gapless is-mobile is-multiline">
@@ -203,9 +222,7 @@
                         {% if playersData.club is not empty %}<br>({{ playersData.club }}){% endif %}
                     </span>
                     <span class="column is-hidden-mobile">{{ playersData.sexe }}</span>
-                    <span class="column">{{ playersData.year }}</span>
                     <span class="column">{{ playersData.rank }}</span>
-                    <span class="column is-hidden-mobile">{{ playersData.club }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -222,10 +239,6 @@
                                 class="is-size-5 text-secondary">{{ player.name }}</strong></div>
                     <div class="column is-one-fifth is-size-6">Classement :</div>
                     <div class="column is-four-fifths is-size-6"><em class="rank">{{ player.rank }}</em></div>
-                    <div class="column is-one-fifth is-size-6">Année de naissance :</div>
-                    <div class="column is-four-fifths is-size-6">{{ player.year }}</div>
-                    <div class="column is-one-fifth is-size-6">Club :</div>
-                    <div class="column is-four-fifths is-size-6">{{ player.club }}</div>
                     <div class="column is-one-fifth is-size-6">Matchs :</div>
                     <div class="column is-four-fifths">
                         {% for tableName, matchesByTable in player.matches %}
@@ -271,8 +284,10 @@
                                data-hash="#jou" data-param="{{ tableData.jid }}"
                             >{{ tableData.name }}</a>
                             <em>{{ tableData.rank }}</em> </span><br>
+                    {% elseif tableData.qualif is defined %}
+                        <strong class="name score is-size-6"> Q{{ tableData.qualif }}</strong><br>
                     {% else %}
-                        <span class="name"> ???</span><br>
+                        <span class="name"> ?</span><br>
                     {% endif %}
 
                     {% if tableData.date is defined %}
