@@ -67,7 +67,7 @@ class JaTennisJsonParser
 
             // On extrait les différentes données depuis le JSON vers un tableau PHP exploitable
             $parsedData = [
-                'info'     => $this->jsonData['info'],
+                'info'     => $this->getInfoData(),
                 'tables'   => $this->getTablesData(),
                 'planning' => $this->getSortedPlanningData(),
                 'result'   => $this->getResultData(),
@@ -75,11 +75,39 @@ class JaTennisJsonParser
             ];
         } catch (\Exception $e) {
             $parsedData = [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ];
         }
 
         return $parsedData;
+    }
+    
+    /**
+     * Parse et retourne les données d'infos générales du tournoi.
+     *
+     * @return array
+     */
+    protected function getInfoData()
+    {
+        $info = $this->jsonData['info'];
+        
+        // JA Tennis semble décaler les date d'1 mois, on rectifie ici       
+        $beginDate = Carbon::createFromFormat('Y-m-d', $info['begin']);
+        $beginDate->modify('+1 month'); // Ex: "2019-09-21" devient "2019-10-21"
+        $info['begin'] = $beginDate->format('Y-m-d');
+        
+        $endDate = Carbon::createFromFormat('Y-m-d', $info['end']);
+        $endDate->modify('+1 month');
+        $info['end'] = $endDate->format('Y-m-d');
+        
+        // Ajout de la date de dernière màj des données
+        // Ex: "2019-09-18T01:08:00"
+        $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->jsonData['jat']['generate']);
+        $generateTimeFormatted = $this->getFormattedTime($this->jsonData['jat']['generate']);
+        $info['updatedAt'] = $generateDate->format('d/m/Y') . " à $generateTimeFormatted";
+        
+        return $info;
     }
 
     /**
@@ -102,7 +130,7 @@ class JaTennisJsonParser
                         $indexesRegister = $this->buildIndexesRegistry($boxes, $nbOut);
 
                         $name = $dataEvent['name'];
-                        if (isset($draw['name'], $draw['maxRank']) && $draw['minRank'] !== $draw['maxRank']) {
+                        if (isset($draw['name'])) {
                             $name .= ' &bull; ' . $draw['name'];
                         }
                         $boxesData = [];
@@ -168,7 +196,7 @@ class JaTennisJsonParser
     }
 
     /**
-     * Parcours toutes les "boîtes" d'un évènement afin de construire un registre d'index, afin de connaître,
+     * Parcourt toutes les "boîtes" d'un évènement afin de construire un registre d'index, afin de connaître,
      * pour chaque boîte, quelles sont les boîtes précédentes haute et basse.
      *
      * @param array $boxes
@@ -176,12 +204,19 @@ class JaTennisJsonParser
      *
      * @return array
      */
-    protected function buildIndexesRegistry(array $boxes, $nbOut)
+    protected function buildIndexesRegistry(array &$boxes, $nbOut)
     {
         $indexesRegister = [];
         $cursorIdx = 0; // Curseur d'index transverse
 
-        foreach ($boxes as $idxBox => $box) {
+        foreach ($boxes as $idxBox => &$box) {
+            // JA Tennis semble décaler les date d'1 mois, on doit rectifier ça ici
+            if (isset($box['date'])) {
+                $boxDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $box['date']);
+                $boxDate->modify('+1 month');
+                $box['date'] = $boxDate->format('Y-m-d\TH:i:s');
+            }
+            
             if (isset($box['score'])) {
                 // Présence d'un score dans cette boîte = on récupère les index des boîtes précédentes (btm et top)
                 $indexesRegister[$idxBox] = [
@@ -238,6 +273,12 @@ class JaTennisJsonParser
             if (isset($box['score'])) {
                 $boxData['score'] = $box['score'];
             }
+            if (isset($box['qualifIn']) && $box['qualifIn'] >= 1) {
+                $boxData['qualif'] = $box['qualifIn'];
+            }
+            if (isset($box['qualifOut']) && $box['qualifOut'] >= 1) {
+                $boxData['qualif'] = $box['qualifOut'];
+            }
             if (isset($indexesRegister[$boxIdx]['idxBtm'])) {
                 $boxData['prevBtm'] = $this->parseBox(
                     $tableName,
@@ -280,27 +321,33 @@ class JaTennisJsonParser
             }
 
             // On ajoute les données de match sur les joueurs
-            if (isset($jId, $box['date'], $looserPlayer)) {
-                // $box['date'] en tant que clé va permet de trier par ordre de date
-                // cas victoire
-                $this->playersData[$jId]['matches'][$tableName][$box['date']] = [
-                    'player'  => $looserPlayer,
-                    'victory' => true, // cas victoire ici
-                    'score'   => isset($boxData['score']) ? $boxData['score'] : '',
-                    'date'    => $boxData['date'], // ici, la date joliement formatée !
-                ];
+            if (isset($box['date'])) {
+                if (isset($jId, $looserPlayer)) {
+                    // cas où le match a eu lieu
+                    
+                    // $box['date'] en tant que clé va permettre de trier par ordre de date
+                    // cas victoire
+                    $this->playersData[$jId]['matches'][$tableName][$box['date']] = [
+                        'player'  => $looserPlayer,
+                        'victory' => true, // cas victoire ici
+                        'score'   => isset($boxData['score']) ? $boxData['score'] : '',
+                        'date'    => $boxData['date'], // ici, la date joliement formatée !
+                    ];
 
-                // cas défaite
-                $this->playersData[$looserPlayer['jid']]['matches'][$tableName][$box['date']] = [
-                    'player'  => [
-                        'jid'  => $boxData['jid'],
-                        'name' => $boxData['name'],
-                        'rank' => $boxData['rank'],
-                    ],
-                    'victory' => false, // cas défaite ici
-                    'score'   => isset($boxData['score']) ? $boxData['score'] : '',
-                    'date'    => $boxData['date'], // ici, la date joliement formatée !
-                ];
+                    // cas défaite
+                    $this->playersData[$looserPlayer['jid']]['matches'][$tableName][$box['date']] = [
+                        'player'  => [
+                            'jid'  => $boxData['jid'],
+                            'name' => $boxData['name'],
+                            'rank' => $boxData['rank'],
+                        ],
+                        'victory' => false, // cas défaite ici
+                        'score'   => isset($boxData['score']) ? $boxData['score'] : '',
+                        'date'    => $boxData['date'], // ici, la date joliement formatée !
+                    ];
+                } else {
+                    
+                }
             }
         }
 
@@ -333,10 +380,11 @@ class JaTennisJsonParser
     {
         // Exemple de date en entrée: 2019-02-21T20:30:00
         if ($inputDateTime instanceof Carbon) {
-            $carbonDate = $inputDateTime;
+            $carbonDate = $inputDateTime;          
         } else {
             $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
         }
+        
         if ($carbonDate->daysInMonth == 1) {
             $outputFormat = '%a %eer';
         } else {
@@ -354,7 +402,7 @@ class JaTennisJsonParser
      * @return string
      */
     public function getFormattedCleanedDate(Carbon $inputDate)
-    {
+    {        
         if ($inputDate->daysInMonth == 1) {
             $outputFormat = '%a %eer';
         } else {
@@ -408,7 +456,7 @@ class JaTennisJsonParser
         $score = isset($box['score']) ? $box['score'] : '';
 
         if (!isset($this->planningData[$date][$place])) {
-            if (isset($box['playerId']) && $box['playerId'] === $boxBtm['jid']) {
+            if (isset($box['playerId']) && isset($boxBtm['jid']) && $box['playerId'] === $boxBtm['jid']) {
                 // Ici, le vainqueur de la rencontre est dans la boîte du bas
                 $boxPlayer1 = $boxBtm;
                 $boxPlayer2 = $boxTop;
@@ -422,14 +470,16 @@ class JaTennisJsonParser
             $this->planningData[$date][$place] = [
                 'table'   => $boxPlayer1['table'],
                 'player1' => [
-                    'jid'  => $boxPlayer1['jid'],
-                    'name' => $boxPlayer1['name'],
-                    'rank' => $boxPlayer1['rank'],
+                    'jid'    => $boxPlayer1['jid'] ?? '',
+                    'name'   => $boxPlayer1['name'] ?? '',
+                    'rank'   => $boxPlayer1['rank'] ?? '',
+                    'qualif' => $boxPlayer1['qualif'] ?? '',
                 ],
                 'player2' => [
-                    'jid'  => $boxPlayer2['jid'],
-                    'name' => $boxPlayer2['name'],
-                    'rank' => $boxPlayer2['rank'],
+                    'jid'    => $boxPlayer2['jid'] ?? '',
+                    'name'   => $boxPlayer2['name'] ?? '',
+                    'rank'   => $boxPlayer2['rank'] ?? '',
+                    'qualif' => $boxPlayer2['qualif'] ?? '',
                 ],
                 'score'   => $score,
             ];
