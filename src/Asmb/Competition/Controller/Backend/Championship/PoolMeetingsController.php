@@ -76,7 +76,7 @@ class PoolMeetingsController extends AbstractController
     {
         $futureDays = 2 * 365; // On récupère les prochaines rencontres... sur 2 ans !
 
-        $meetings = $this->getPastOrFutureMeetings($futureDays, false, false);
+        $meetings = $this->getPastOrFutureMeetings($futureDays, false, true);
 
         $editForm = $this->buildEditForm($request, $meetings);
         if ($this->handleEditFormSubmit($request, $editForm)) {
