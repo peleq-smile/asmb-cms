@@ -47,7 +47,9 @@
 {% block body %}
     <header id="header" role="banner" class="header">
         {{ include('partials/_header_top.twig') }}
-        {{ include('partials/_header.twig') }}
+        {% if app.request.get('_route') == "homepage" %}
+            {{ include('partials/_header.twig') }}
+        {% endif %}
     </header>
 
     <div id="main-content">

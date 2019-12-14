@@ -313,7 +313,7 @@ class PoolMeetingRepository extends Repository
         $qb->having($qb->expr()->gte('final_date', ':fromDate'));
         $qb->setParameter('fromDate', $fromDate);
 
-        $qb->having($qb->expr()->lte('final_date', ':toDate'));
+        $qb->andHaving($qb->expr()->lte('final_date', ':toDate'));
         $qb->setParameter('toDate', $toDate);
 
         $qb->orderBy('final_date');

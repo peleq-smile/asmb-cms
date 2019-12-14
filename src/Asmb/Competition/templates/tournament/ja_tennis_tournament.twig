@@ -29,10 +29,12 @@
                     </select>
                 </div>
             </li>
+            {% if parsedData.result is not empty %}
             <li class="column control">
                 <label class="label is-invisible">&nbsp;</label>
                 <a href="{{ app.request.uri }}#res" data-hash="#res" class="button">Résultats</a>
             </li>
+            {% endif %}
             <li class="column control">
                 <label class="label is-invisible">&nbsp;</label>
                 <a href="{{ app.request.uri }}#jou" data-hash="#jou" class="button">Liste des joueurs</a>
@@ -115,6 +117,7 @@
 
                 {% for time, planningByTimeData in planningByDayData %}
                     {% for place, planningByPlaceData in planningByTimeData %}
+                        {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
                         <div class="columns is-gapless is-mobile is-multiline">
                             <div class="column is-one-fifth-mobile">{{ time }}</div>
                             <div class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
@@ -145,6 +148,7 @@
                                 <em>{{ planningByPlaceData.player2.rank }}</em>
                             </div>
                         </div>
+                        {% endif %}
                     {% endfor %}
                 {% endfor %}
             </div>

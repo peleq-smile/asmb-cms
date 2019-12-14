@@ -500,7 +500,7 @@ class JaTennisJsonParser
 
             // Pas encore de donnée sur cette rencontre, à cette date + heure + lieu : on ajoute le 1er joueur
             $this->planningData[$date][$place] = [
-                'table'   => $boxPlayer1['table'],
+                'table'   => $boxPlayer1['table'] ?? '',
                 'player1' => [
                     'jid'    => $boxPlayer1['jid'] ?? '',
                     'name'   => $boxPlayer1['name'] ?? '',

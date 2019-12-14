@@ -196,6 +196,7 @@ trait TwigFunctionsTrait
 
             $display = '#res';
             $planningDayFormatted = '';
+
             if ($now <= $beginDate) {
                 // Tournoi à venir ou 1er du tournoi : on affiche le planning du 1er jour
                 $planningDayFormatted = $parser->getFormattedCleanedDate($beginDate);

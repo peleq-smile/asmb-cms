@@ -376,7 +376,7 @@ pre[class*="language-"] {
           align-items: center;
   background: -webkit-gradient(linear, left top, right top, color-stop(50%, white), to(#f0f0f0));
   background: linear-gradient(to right, white 50%, #f0f0f0);
-  padding: 2.5rem 4rem; }
+  /*padding: 2.5rem 4rem;*/ }
   .columns.white-framed .column img {
     border: solid 8px #026094;
     display: block;
@@ -647,7 +647,7 @@ mark {
 #main-content .section-tournament {
   text-align: center; }
   #main-content .section-tournament .box .container {
-    max-width: 50%; }
+    max-width: 60%; }
   #main-content .section-tournament nav {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -720,7 +720,7 @@ mark {
           #main-content .section-tournament .tables-container .table-container .table-container-part .item p .name {
             font-weight: bold; }
           #main-content .section-tournament .tables-container .table-container .table-container-part .item p .date {
-            color: #e8e2d1;
+            color: #d1a633;
             font-weight: bold; }
         #main-content .section-tournament .tables-container .table-container .table-container-part .item-parent {
           position: relative;
@@ -796,7 +796,7 @@ mark {
     #main-content .section-tournament .results-container .winner-name, #main-content .section-tournament .results-container .winner-rank, #main-content .section-tournament .results-container .score {
       font-weight: bold; }
     #main-content .section-tournament .results-container .winner-name {
-      color: #6e9c6d; }
+      color: #6e9c6d !important; }
   #main-content .section-tournament .planning-container .planning-nav {
     margin: 2rem auto; }
     #main-content .section-tournament .planning-container .planning-nav li {
@@ -826,8 +826,8 @@ mark {
       border-bottom: solid 2px #026094; }
     #main-content .section-tournament .planning-container .columns .column {
       padding: 0 2px !important; }
-  #main-content .section-tournament .planning-container .is-winner {
-    color: #6e9c6d;
+  #main-content .section-tournament .planning-container .is-winner a {
+    color: #6e9c6d !important;
     font-weight: bold; }
   #main-content .section-tournament .one-player-container {
     text-align: left; }
@@ -1064,7 +1064,7 @@ header .header-top {
 
 header .hero .title {
   text-shadow: 4px 8px 16px #0a0a0a;
-  line-height: 1.5em; }
+  line-height: 1.2em; }
 
 header .hero .subtitle {
   margin-top: 1rem; }
@@ -1304,7 +1304,8 @@ header.sticky .navbar {
       padding-bottom: 4.5rem; }
     header .hero .hero-body h1.title {
       font-size: 1.6rem;
-      white-space: nowrap; }
+      white-space: nowrap;
+			margin-bottom: 1rem; }
       header .hero .hero-body h1.title strong {
         margin-left: -6px; }
       header .hero .hero-body h1.title span {
@@ -1322,8 +1323,8 @@ header.sticky .navbar {
 
 @media screen and (min-width: 1280px) {
   header .hero.is-medium .hero-body {
-    padding-top: 7rem !important;
-    padding-bottom: 7rem !important; } }
+    padding-top: 1rem !important;  /* 7rem */
+    padding-bottom: 1rem !important; } } /* 7rem */
 
 #footer {
   background-color: #2c2d32;
@@ -2275,7 +2276,7 @@ p.meta {
   .hero .hero-body h1.title {
     font-size: 2.6rem; }
   .hero .hero-body h2.subtitle {
-    margin-top: 2rem;
+    margin-top: 0rem;   /* 2rem */
     font-size: 1.1rem;
     font-family: "Raleway", "Roboto", sans-serif; }
   @media screen and (min-width: 769px), print {

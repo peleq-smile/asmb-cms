@@ -49,7 +49,7 @@
             {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
 
             <tr>
-                <td class="hour" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '?' }}</td>
+                <td class="hour" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
                 <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                 <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                 <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
