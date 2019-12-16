@@ -677,6 +677,11 @@ competitions:
             type: text
             class: large
             group: 'Général'
+        short_title:
+            label: 'Titre court'
+            type: text
+            postfix: |
+                Titre affiché sur le bloc présent sur l'accueil
         slug:
             type: slug
             uses: title

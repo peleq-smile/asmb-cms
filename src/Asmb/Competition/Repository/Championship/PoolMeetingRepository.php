@@ -118,6 +118,7 @@ class PoolMeetingRepository extends Repository
         $clubMeetingsOfTheMoment = [];
 
         $qb = $this->getLoadQuery();
+        $qb->addSelect("{$this->getAlias()}.time as time");
 
         // Récupération de l'id + du nom (court et long) du championnat
         $qb->innerJoin(
@@ -126,9 +127,9 @@ class PoolMeetingRepository extends Repository
             'pool',
             $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
         );
-        $qb->addSelect('championship.id as championship_id');
-        $qb->addSelect('championship.name as championship_name');
-        $qb->addSelect('championship.short_name as championship_short_name');
+        $qb->addSelect('pool.category_name as category_name');
+        // On profite de la jointure sur la Pool pour récupérer la date de dernière mise à jour de chaque poule
+        $qb->addSelect('pool.updated_at as updated_at');
 
         $qb->innerJoin(
             'pool',
@@ -136,8 +137,9 @@ class PoolMeetingRepository extends Repository
             'championship',
             $qb->expr()->eq('pool.championship_id', 'championship.id')
         );
-        // On profite de la jointure sur la Pool pour récupérer la date de dernière mise à jour de chaque poule
-        $qb->addSelect('pool.updated_at as updated_at');
+        $qb->addSelect('championship.id as championship_id');
+        $qb->addSelect('championship.name as championship_name');
+        $qb->addSelect('championship.short_name as championship_short_name');
 
         if ($onlyActiveChampionship) {
             // Filtre sur les poules des championnats ACTIFS uniquement
@@ -192,8 +194,7 @@ class PoolMeetingRepository extends Repository
             )
         );
 
-        $qb->orderBy('championship_name');
-        $qb->addOrderBy('final_date');
+        $qb->orderBy('final_date');
         $qb->addOrderBy('time');
 
         $result = $qb->execute()->fetchAll();
@@ -213,6 +214,9 @@ class PoolMeetingRepository extends Repository
                     $meeting->setChampionshipId((int) $result[$idx]['championship_id']);
                     $meeting->setChampionshipName($result[$idx]['championship_name']);
                     $meeting->setChampionshipShortName($result[$idx]['championship_short_name']);
+
+                    // Ajout à la volée de données sur la Poule concernée
+                    $meeting->setCategoryName($result[$idx]['category_name']);
 
                     // Mise à jour de la date avec la date de report éventuelle
                     if ($withReportDates && null !== $result[$idx]['final_date']) {

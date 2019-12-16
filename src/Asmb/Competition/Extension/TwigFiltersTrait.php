@@ -107,11 +107,12 @@ trait TwigFiltersTrait
         $dayOfMonth = (int) $meetingDate->format('d');
 
         $formatDay = $short ? '%a' : '%A';
+        $formatMonth = $short ? '%b' : '%B';
 
         if (1 === $dayOfMonth) {
-            $formattedDate = $meetingDate->formatLocalized("$formatDay %eer %B");
+            $formattedDate = $meetingDate->formatLocalized("$formatDay %eer $formatMonth");
         } else {
-            $formattedDate = $meetingDate->formatLocalized("$formatDay %e %B");
+            $formattedDate = $meetingDate->formatLocalized("$formatDay %e $formatMonth");
         }
 
         return ucfirst($formattedDate);

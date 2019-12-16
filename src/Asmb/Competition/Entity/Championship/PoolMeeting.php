@@ -49,6 +49,12 @@ class PoolMeeting extends Entity
     protected $championship_name;
     /** @var string */
     protected $championship_short_name;
+    /** @var string */
+    protected $category_name;
+    /** @var string */
+    protected $competition_record_title;
+    /** @var string */
+    protected $competition_record_slug;
     /** @var Carbon */
     protected $updated_at;
 
@@ -322,6 +328,54 @@ class PoolMeeting extends Entity
     public function setChampionshipShortName($championshipShortName)
     {
         $this->championship_short_name = $championshipShortName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategoryName()
+    {
+        return $this->category_name;
+    }
+
+    /**
+     * @param string $categoryName
+     */
+    public function setCategoryName($categoryName)
+    {
+        $this->category_name = $categoryName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompetitionRecordTitle()
+    {
+        return $this->competition_record_title;
+    }
+
+    /**
+     * @param string $competitionRecordTitle
+     */
+    public function setCompetitionRecordTitle($competitionRecordTitle)
+    {
+        $this->competition_record_title = $competitionRecordTitle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompetitionRecordSlug()
+    {
+        return $this->competition_record_slug;
+    }
+
+    /**
+     * @param string $competitionRecordSlug
+     */
+    public function setCompetitionRecordSlug($competitionRecordSlug)
+    {
+        $this->competition_record_slug = $competitionRecordSlug;
     }
 
     /**
