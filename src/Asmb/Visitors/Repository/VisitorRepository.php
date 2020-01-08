@@ -61,17 +61,10 @@ class VisitorRepository extends Repository
         $expirationDateTime->modify('-' . self::$expirationTime . 'seconds');
         $expirationDateTime = $expirationDateTime->format('Y-m-d H:i:s');
 
-        //        $query = $this->getEntityManager()->createQueryBuilder()
-        //            ->delete($this->getTableName())
-        //            ->where('datetime < :expirationDate')
-        //            ->setParameter(':expirationDate', $expirationDateTime);
-
         $query = $this->getEntityManager()->createQueryBuilder()
-            ->update($this->getTableName())
-            ->set('isActive', ':isActive')
+            ->delete($this->getTableName())
             ->where('datetime < :expirationDate')
-            ->setParameter(':expirationDate', $expirationDateTime)
-            ->setParameter(':isActive', 0);
+            ->setParameter(':expirationDate', $expirationDateTime);
 
         $query->execute();
     }

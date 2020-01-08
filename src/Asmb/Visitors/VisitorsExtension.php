@@ -43,24 +43,16 @@ class VisitorsExtension extends SimpleExtension
      */
     protected function registerAssets()
     {
-        // Widget qui màj le compteur de visiteurs
-        $widgetUpdateVisitorsCount = new \Bolt\Asset\Widget\Widget();
-        $widgetUpdateVisitorsCount->setZone('frontend');
-        $widgetUpdateVisitorsCount->setLocation('footer');
-        $widgetUpdateVisitorsCount->setPriority(1);
-        $widgetUpdateVisitorsCount->setCacheDuration(Repository\VisitorRepository::$expirationTime);
-        $widgetUpdateVisitorsCount->setCallback([$this, 'updateCurrentVisitorsCount']);
-
         // Widget qui affiche le nombre de visiteurs
         $widgetGetVisitors = new \Bolt\Asset\Widget\Widget();
         $widgetGetVisitors->setClass('getvisitors');
         $widgetGetVisitors->setZone('frontend');
         $widgetGetVisitors->setLocation('footer');
-        $widgetGetVisitors->setPriority(2);
-        $widgetUpdateVisitorsCount->setCacheDuration(Repository\VisitorRepository::$expirationTime);
+        $widgetGetVisitors->setCacheDuration(1); // 1 second
         $widgetGetVisitors->setCallback([$this, 'getCurrentVisitorsCountHtml']);
+        $widgetGetVisitors->setDefer(true);
 
-        return [$widgetUpdateVisitorsCount, $widgetGetVisitors];
+        return [$widgetGetVisitors];
     }
 
     /**
@@ -89,6 +81,7 @@ class VisitorsExtension extends SimpleExtension
         $html = '';
 
         $count = $this->getCurrentVisitorsCount();
+
         if ($count > 0) {
             $label = 'visiteurs';
 
@@ -99,7 +92,7 @@ class VisitorsExtension extends SimpleExtension
             $html = "EN LIGNE :<br>$count $label";
         }
 
-        return $html;
+        die($html);
     }
 
     /**
@@ -109,6 +102,8 @@ class VisitorsExtension extends SimpleExtension
      */
     protected function getCurrentVisitorsCount()
     {
+        $this->updateCurrentVisitorsCount();
+
         try {
             $visitorRepo = $this->getStorageEntityManager()->getRepository('visitor');
             $visitors = $visitorRepo->findBy(['isActive' => 1]);
@@ -116,7 +111,6 @@ class VisitorsExtension extends SimpleExtension
         } catch (InvalidRepositoryException $e) {
             $count = 0;
         }
-
         return $count;
     }
 
@@ -142,4 +136,3 @@ class VisitorsExtension extends SimpleExtension
         return $app['storage'];
     }
 }
-
