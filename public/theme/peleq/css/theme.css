@@ -862,6 +862,8 @@ mark {
     font-size: 1.2rem; }
 
 .section-home-meetings .columns .columns {
+  clear: both;
+  flex-direction: column;
   border-bottom: solid 1px #e8e2d1; }
 
 /*****************/

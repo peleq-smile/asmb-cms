@@ -367,6 +367,8 @@
     }
 
     .columns .columns {
+        clear: both;
+        flex-direction: column;
         border-bottom: solid 1px $secondary-xlight;
     }
 }

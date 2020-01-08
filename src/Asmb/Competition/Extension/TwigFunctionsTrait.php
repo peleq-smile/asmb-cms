@@ -414,6 +414,15 @@ trait TwigFunctionsTrait
         $fromDate = Carbon::createFromFormat('Y-m-d', $competitionRecord->get('home_meetings_from_date'));
         $toDate = Carbon::createFromFormat('Y-m-d', $competitionRecord->get('home_meetings_to_date'));
 
+        // Pour la date de départ, on compare avec la date actuelle, afin de ne pas
+        // afficher les rencontres antérieures au mois en cours
+        $firstDayOfCurrentMonth = Carbon::now();
+        $firstDayOfCurrentMonth->day(1);
+
+        if ($firstDayOfCurrentMonth->greaterThan($fromDate)) {
+            $fromDate = $firstDayOfCurrentMonth;
+        }
+
         if (Carbon::SUNDAY === $fromDate->dayOfWeek) {
             $fromDate->addDay(-1);
         } elseif (Carbon::SATURDAY !== $fromDate->dayOfWeek) {
