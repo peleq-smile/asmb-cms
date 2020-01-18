@@ -72,6 +72,14 @@ trait TwigFunctionsTrait
         /** @var \Bolt\Application $app */
         $app = $this->getContainer();
         foreach ($meetingsOfTheMoment as $meeting) {
+            // On ignore les rencontres dont l'une des équipes contient "Exempt"
+            if (
+                stripos($meeting->getHomeTeamName(), 'exempt') !== false ||
+                stripos($meeting->getVisitorTeamName(), 'exempt') !== false
+            ) {
+                continue;
+            }
+
             /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
             $competitionPage = $app['query']->getContent(
                 'competition',
