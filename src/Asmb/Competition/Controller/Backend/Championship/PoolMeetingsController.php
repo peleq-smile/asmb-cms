@@ -42,8 +42,11 @@ class PoolMeetingsController extends AbstractController
         $c->match('/', 'index')
             ->bind('poolmeetings');
 
-        $c->match('/edit', 'edit')
-            ->bind('poolmeetingsedit');
+        $c->match('/edit', 'editFuture')
+            ->bind('poolmeetingseditfuture');
+
+        $c->match('/edit/past', 'editPast')
+            ->bind('poolmeetingseditpast');
 
         return $c;
     }
@@ -72,7 +75,7 @@ class PoolMeetingsController extends AbstractController
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function edit(Request $request)
+    public function editFuture(Request $request)
     {
         $futureDays = 2 * 365; // On récupère les prochaines rencontres... sur 2 ans !
 
@@ -99,7 +102,36 @@ class PoolMeetingsController extends AbstractController
     }
 
     /**
-     * Construction du formulaire d'édition des horaires des rencontres à venir du club.
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function editPast(Request $request)
+    {
+        $pastDays = -31; // On récupère les dernières rencontres sur 1 mois
+
+        $meetings = $this->getPastOrFutureMeetings($pastDays, false, true);
+
+        $editForm = $this->buildEditForm($request, $meetings);
+        if ($this->handleEditFormSubmit($request, $editForm)) {
+            return $this->redirectToRoute('poolmeetingseditpast');
+        }
+
+        $context = [
+            'editForm' => $editForm->createView(),
+        ];
+
+        return $this->render(
+            '@AsmbCompetition/pool-meetings/edit.twig',
+            $context,
+            [
+                'meetings' => $meetings,
+            ]
+        );
+    }
+
+    /**
+     * Construction du formulaire d'édition des horaires des rencontres du club passées en paramètre.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param array                                     $meetings

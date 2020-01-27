@@ -11,18 +11,16 @@
         {% import '@bolt/_macro/_macro.twig' as macro %}
 
         <div class="row">
-            <div class="col-md-7">
-                <p>{{ __('page.index-pool-meetings.meetings-of-the-moment.text1') }}</p>
-
-                <p>{{ __('general.phrase.go-to') }} <a href="{{ path('editcontent', {'contenttypeslug': homepage.contenttype.slug, 'id': homepage.id}) }}#meetings_past_days">{{ __('page.index-pool-meetings.meetings-of-the-moment.home-text') }}</a></p>
-
-                <p>{{ __('page.index-pool-meetings.meetings-of-the-moment.text2') }}</p>
+            <div class="pull-right mb-md">
+                {{ include('@AsmbCompetition/pool-meetings/_index-actions.twig') }}
             </div>
-            <div class="col-md-5">
-                <div class="pull-right mb-md">
-                    {{ include('@AsmbCompetition/pool-meetings/_index-actions.twig') }}
-                </div>
-            </div>
+        </div>
+        <div class="row">
+            <p>{{ __('page.index-pool-meetings.meetings-of-the-moment.text1') }}</p>
+
+            <p>{{ __('general.phrase.go-to') }} <a href="{{ path('editcontent', {'contenttypeslug': homepage.contenttype.slug, 'id': homepage.id}) }}#meetings_past_days">{{ __('page.index-pool-meetings.meetings-of-the-moment.home-text') }}</a></p>
+
+            <p>{{ __('page.index-pool-meetings.meetings-of-the-moment.text2') }}</p>
         </div>
 
         <div class="row">
