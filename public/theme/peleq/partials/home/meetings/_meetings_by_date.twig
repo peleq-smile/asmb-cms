@@ -36,7 +36,7 @@
                     </th>
                 </tr>
                 </thead>
-                
+
                 {% set previousDate = meeting.date %}
                 <tbody>
             {% endif %}
@@ -45,8 +45,15 @@
             {% set scoreHtml = meeting|score(true)|default(' - ') %}
             {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
 
+
+            {% if meeting.is_reported and meeting.reported_date is null %}
+                {% set hour = '-' %}
+            {% else %}
+                {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
+            {% endif %}
+
             <tr>
-                <td class="hour" title="{{ __('home.meetings.time') }}">{{ meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' }}</td>
+                <td class="hour" title="{{ __('home.meetings.time') }}">{{ hour }}</td>
                 <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                 <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                 <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>

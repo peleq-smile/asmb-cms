@@ -36,23 +36,30 @@ trait TwigFiltersTrait
                 $stateClass = ' draw';
             }
 
-            // Cas d'un forfait ?
-            $woLength = strlen(PoolMeetingHelper::RESULT_WO);
-
-            if (PoolMeetingHelper::RESULT_WO === substr($meeting->getResult(), -1 * $woLength)) {
-                // Cas d'un forfait
-                $stateClass .= ' with-wo';
-                $scoreTitle = Trans::__('general.phrase.with-wo');
-            }
-
-            if ($scoreTitle) {
+            // Cas report sans date connue ?
+            if ($meeting->getIsReported() && null === $meeting->getReportDate()) {
                 $score = new \Twig_Markup(
-                    '<span class="score' . $stateClass . '" title="' . $scoreTitle . '">' . $score . '</span>', 'utf-8'
+                    '<span class="score"><em>' . Trans::__('general.phrase.reported') . '</em></span>', 'utf-8'
                 );
             } else {
-                $score = new \Twig_Markup(
-                    '<span class="score' . $stateClass . '">' . $score . '</span>', 'utf-8'
-                );
+                // Cas d'un forfait ?
+                $woLength = strlen(PoolMeetingHelper::RESULT_WO);
+
+                if (PoolMeetingHelper::RESULT_WO === substr($meeting->getResult(), -1 * $woLength)) {
+                    // Cas d'un forfait
+                    $stateClass .= ' with-wo';
+                    $scoreTitle = Trans::__('general.phrase.with-wo');
+                }
+
+                if ($scoreTitle) {
+                    $score = new \Twig_Markup(
+                        '<span class="score' . $stateClass . '" title="' . $scoreTitle . '">' . $score . '</span>', 'utf-8'
+                    );
+                } else {
+                    $score = new \Twig_Markup(
+                        '<span class="score' . $stateClass . '">' . $score . '</span>', 'utf-8'
+                    );
+                }
             }
         }
 

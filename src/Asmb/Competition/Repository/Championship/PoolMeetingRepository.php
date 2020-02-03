@@ -266,6 +266,8 @@ class PoolMeetingRepository extends Repository
                 $poolMeeting->setTime($existingPoolMeeting->getTime());
                 // Si une date de report existe, on la conserve
                 $poolMeeting->setReportDate($existingPoolMeeting->getReportDate());
+                // Si l'indicateur "reporté" existe, on le conserve
+                $poolMeeting->setIsReported($existingPoolMeeting->getIsReported());
             }
             $this->save($poolMeeting, true);
         }

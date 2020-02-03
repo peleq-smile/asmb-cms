@@ -36,12 +36,37 @@ class PoolMeetingsEditType extends AbstractType
                     'required' => false,
                 ]
             );
+
+            // On vérifie si la rencontre est annoncée comme reportée et s'il
+            // manque la date. Dans ce cas, on ajoute une classe CSS pour focus
+            if ($meeting->getIsReported() && null === $meeting->getReportDate()) {
+                $attr = [
+                    'style' => 'color: white; background: #a94442;'
+                ];
+            } elseif ($meeting->getIsReported() && null !== $meeting->getReportDate()) {
+                $attr = [
+                    'style' => 'color: white; background: #3c763d;'
+                ];
+            } else {
+                $attr = [];
+            }
+
             $builder->add(
                 'pool_meeting' . $meeting->getId() . '_report_date',
                 Type\DateType::class,
                 [
                     'data'     => $meeting->getReportDate(),
                     'widget'   => 'single_text',
+                    'required' => false,
+                    'attr'     =>  $attr
+                ]
+            );
+            $builder->add(
+                'pool_meeting' . $meeting->getId() . '_is_reported',
+                Type\CheckboxType::class,
+                [
+                    'label'    => Trans::__('general.phrase.reported'),
+                    'data'     => $meeting->getIsReported(),
                     'required' => false,
                 ]
             );

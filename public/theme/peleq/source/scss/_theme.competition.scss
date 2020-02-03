@@ -9,8 +9,7 @@
     .pool-name {
         color: $primary;
         font-weight: bold;
-        line-height: 30px;
-        font-size: 1.1rem;
+        white-space: nowrap;
 
         &:hover {
             color: $dark;

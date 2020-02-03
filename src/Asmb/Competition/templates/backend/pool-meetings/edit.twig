@@ -14,7 +14,7 @@
         <p>{{ __('page.edit-pool-meetings.text') }}</p>
 
         {% if meetings is not empty %}
-            <table class="mt-md col-md-6 table table-meetings-by-date table-condensed">
+            <table class="mt-md col-md-8 table table-meetings-by-date table-condensed">
                 {% for meeting in meetings %}
                     {% if (previousDate is not defined or previousDate != meeting.date)
                         or (previousChpName is not defined or previousChpName != meeting.championship_name) %}
@@ -27,6 +27,7 @@
                     <tr>
                         <th colspan="4" class="text-left"><span class="lead"><strong>{{ meeting|formattedDate }}</strong> <em>({{ meeting.championship_name }})</em></span></th>
                         <th class="text-center">{{ __('general.phrase.report-date') }}</th>
+                        <th class="text-center">&nbsp;</th>
                     </tr>
                     </thead>
                     {% set previousDate = meeting.date %}
@@ -42,6 +43,9 @@
                     <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
                     <td class="text-center">
                         {{ form_widget(context.editForm['pool_meeting' ~ meeting.id ~ '_report_date']) }}
+                    </td>
+                    <td class="text-center">
+                        {{ form_widget(context.editForm['pool_meeting' ~ meeting.id ~ '_is_reported']) }}
                     </td>
                 </tr>
                 {% endfor %}

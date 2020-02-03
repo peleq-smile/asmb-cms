@@ -85,7 +85,7 @@ class PoolMeetingsController extends AbstractController
         if ($this->handleEditFormSubmit($request, $editForm)) {
             // We don't want to POST again data, so we redirect to current in GET route in case of submitted form
             // with success
-            return $this->redirectToRoute('poolmeetingsedit');
+            return $this->redirectToRoute('poolmeetingseditfuture');
         }
 
         $context = [
@@ -175,6 +175,13 @@ class PoolMeetingsController extends AbstractController
                         $meeting->setReportDate($reportDate);
                     } else {
                         $meeting->setReportDate(null);
+                    }
+
+                    $isReported = $formData['pool_meeting' . $meeting->getId() . '_is_reported'];
+                    if ($isReported || null !== $reportDate) {
+                        $meeting->setIsReported(true);
+                    } else {
+                        $meeting->setIsReported(false);
                     }
 
                     $repository->save($meeting, true);
