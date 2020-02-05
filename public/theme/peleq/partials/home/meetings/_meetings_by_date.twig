@@ -44,13 +44,7 @@
 
             {% set scoreHtml = meeting|score(true)|default(' - ') %}
             {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
-
-
-            {% if meeting.is_reported and meeting.reported_date is null %}
-                {% set hour = '-' %}
-            {% else %}
-                {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
-            {% endif %}
+            {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
 
             <tr>
                 <td class="hour" title="{{ __('home.meetings.time') }}">{{ hour }}</td>
