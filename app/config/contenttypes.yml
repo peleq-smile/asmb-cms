@@ -763,27 +763,27 @@ statistiques:
             type: textarea
             class: large
         total_members_count:
-            label: 'Nb adhérents total'
+            label: 'Nb licencié-e-s total'
             type: integer
             min: 1
             max: 1000
         men_members_count:
-            label: 'Nb adultes hommes adhérents'
+            label: 'Nb adultes hommes licenciés'
             type: integer
             min: 1
             max: 1000
         women_members_count:
-            label: 'Nb adultes femmes adhérentes'
+            label: 'Nb adultes femmes licenciées'
             type: integer
             min: 1
             max: 1000
         boys_members_count:
-            label: 'Nb jeunes garçons adhérents'
+            label: 'Nb jeunes garçons licenciés'
             type: integer
             min: 1
             max: 1000
         girls_members_count:
-            label: 'Nb jeunes filles adhérentes'
+            label: 'Nb jeunes filles licenciées'
             type: integer
             min: 1
             max: 1000
@@ -814,20 +814,8 @@ statistiques:
                     type: integer
                     min: 0
                     max: 100
-        spring_teams:
-            label: 'Équipes Printemps'
-            type: repeater
-            fields:
-                team_category:
-                    label: 'Type d''équipe'
-                    type: text
-                team_count:
-                    label: 'Nb d''équipes pour la catégorie'
-                    type: integer
-                    min: 0
-                    max: 100
         summer_teams:
-            label: 'Équipes Été'
+            label: 'Équipes Printemps/Été'
             type: repeater
             fields:
                 team_category:
