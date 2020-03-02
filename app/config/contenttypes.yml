@@ -225,6 +225,12 @@ homepage:
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]
+
 blocs:
     name: Blocs simples
     singular_name: Bloc simple
@@ -252,7 +258,7 @@ blocs:
             type: image
             label: 'Image (décorative) du bloc'
             attrib: title
-            extensions: [ gif, jpg, png ]
+            extensions: [ jpg, png ]
             required: true
         image_width:
             type: integer
@@ -393,6 +399,12 @@ calendriers:
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]
+
 documents_divers:
     singular_slug: document-divers
     name: Documents divers
@@ -447,6 +459,12 @@ documents_divers:
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]
+
 type_evenement_calendriers:
     name: Types événement calendrier
     singular_name: Type événement calendrier
@@ -496,7 +514,7 @@ infos_tournoi:
             type: image
             label: 'Image (décorative)'
             attrib: title
-            extensions: [ gif, jpg, png ]
+            extensions: [ jpg, png ]
             required: true
         image_width:
             type: integer
@@ -611,6 +629,12 @@ infos_tournoi:
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]
+
 pages:
     singular_slug: page
     name: Pages
@@ -664,6 +688,12 @@ pages:
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
 
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]
+
 competitions:
     name: Pages compétition
     singular_name: Page compétition
@@ -686,11 +716,14 @@ competitions:
             type: slug
             uses: title
 
-        competition_id:
+        championship_id:
             label: 'ID (Bolt) de la compétition'
+            required: false
             type: integer
-            group: 'Infos compétition (par équipe)'
-        competition_categories:
+            group: 'Infos Championnat'
+            postfix: |
+                Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/championship">Compétition > Championnats</a>
+        championship_categories:
             type: select
             values: ['Hommes','Dames','+35','Jeunes']
             label: Afficher uniquement les données de cette/ces catégorie(s)
@@ -699,23 +732,27 @@ competitions:
         home_meetings_from_date:
             label: 'Date de début'
             type: date
-            group: 'Infos rencontres à domicile'
+            group: 'Infos Rencontres à domicile'
+            required: false
         home_meetings_to_date:
             label: 'Date de fin'
             type: date
+            required: false
 
-        tournoi_url_json:
+        tournament_id:
+            group: 'Infos Tournoi'
+            label: 'ID (Bolt) du tournoi'
+            required: false
+            type: integer
+            postfix: |
+                Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/tournament">Compétition > Tournois</a>
+        tournament_url_json:
             label: 'URL vers le JSON ou chemin relatif au dossier public/ du serveur'
+            required: false
             type: text
             class: large
-            group: 'Infos tournoi'
-        tournoi_is_active:
-            label: 'En cours / actif'
-            type: checkbox
-            #postfix: |
-            #    'Cocher cette case permet de provoquer un rafraîchissement régulier des données.'
-
-
+            postfix: |
+                Ancienne méthode de récupération des résultats de tournois. Ne plus utiliser.
 
         # Ajout onglet "SEO"
         meta_title:
@@ -738,6 +775,12 @@ competitions:
             values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]
 
 statistiques:
     name: Pages de statistiques
@@ -847,3 +890,9 @@ statistiques:
             values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
             default: 'index, follow'
             postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+        meta_image:
+            label: 'Meta image (exploitée par Facebook)'
+            required: true
+            type: image
+            extensions: [ jpg, png ]

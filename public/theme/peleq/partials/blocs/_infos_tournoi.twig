@@ -19,6 +19,9 @@
             <h4 class="is-size-5">{{ block.subtitle2|nl2br }}</h4>
         {% endif %}
 
+        {% if block.description %}
+            <div>{{ block.description|nl2br }}</div>
+        {% endif %}
 
         <div class="columns">
             <div class="column inscriptions">

@@ -18,6 +18,12 @@
 
                     <hr class="is-invisible">
 
+                    {% if record.description %}
+                        <div>{{ record.description|raw|nl2br }}</div>
+
+                        <hr class="is-invisible">
+                    {% endif %}
+
                     {# Si les balles sont fournies, on l'affiche ici #}
                     {% if record.balls_provided and record.balls_provided != 'no' %}
                         <ul>
