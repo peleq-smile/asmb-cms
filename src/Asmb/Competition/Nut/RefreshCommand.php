@@ -4,7 +4,7 @@ namespace Bundle\Asmb\Competition\Nut;
 
 use Bolt\Nut\BaseCommand;
 use Bundle\Asmb\Competition\Helpers\PoolHelper;
-use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
+use Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
 use Exception;
 use Symfony\Component\Console\Input\InputArgument;
@@ -75,9 +75,9 @@ class RefreshCommand extends BaseCommand
         $poolTeamRepository = $storage->getRepository('championship_pool_team');
 
         // PARSERS
-        /** @var \Bundle\Asmb\Competition\Parser\PoolRankingParser $poolRankingParser */
+        /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser $poolRankingParser */
         $poolRankingParser = $this->app['pool_ranking_parser'];
-        /** @var \Bundle\Asmb\Competition\Parser\PoolMeetingsParser $poolMatchesParser */
+        /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser $poolMatchesParser */
         $poolMeetingsParser = $this->app['pool_meetings_parser'];
 
 

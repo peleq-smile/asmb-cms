@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\Asmb\Competition\Parser;
+namespace Bundle\Asmb\Competition\Parser\Tournament;
 
 use Carbon\Carbon;
 use JsonSchema\Exception\RuntimeException;
@@ -11,20 +11,12 @@ use JsonSchema\Exception\RuntimeException;
  * @author    Perrine Léquipé <perrine.lequipe@smile.fr>
  * @copyright 2019
  */
-class JaTennisJsonParser
+class JaTennisJsonParser extends AbstractParser
 {
     /** @var string */
     protected $jsonFileUrl;
     /** @var array */
     protected $jsonData;
-    /** @var array */
-    protected $playersData;
-    /** @var array */
-    protected $tablesData;
-    /** @var array */
-    protected $planningData;
-    /** @var array */
-    protected $resultsData;
 
     /**
      * JaTennisJsonParser constructor.
@@ -67,11 +59,11 @@ class JaTennisJsonParser
 
             // On extrait les différentes données depuis le JSON vers un tableau PHP exploitable
             $parsedData = [
-                'info'     => $this->getInfoData(),
-                'tables'   => $this->getTablesData(),
+                'info' => $this->getInfoData(),
+                'tables' => $this->getTablesData(),
                 'planning' => $this->getSortedPlanningData(),
-                'result'   => $this->getResultData(),
-                'players'  => $this->getSortedByNamePlayersData(),
+                'result' => $this->getResultData(),
+                'players' => $this->getSortedByNamePlayersData(),
             ];
         } catch (\Exception $e) {
             $parsedData = [
@@ -82,19 +74,19 @@ class JaTennisJsonParser
 
         return $parsedData;
     }
-    
+
     /**
      * Ajoute 1 mois à la date entrante pour corriger le bug de JA Tennis sur les exports.
-     * 
+     *
      * @return string
      */
     protected function add1month($inputDate)
     {
-        $outputDate = str_replace(['-10-','-09-'], ['-11-','-10-'], $inputDate);
-        
+        $outputDate = str_replace(['-10-', '-09-'], ['-11-', '-10-'], $inputDate);
+
         return $outputDate;
     }
-    
+
     /**
      * Parse et retourne les données d'infos générales du tournoi.
      *
@@ -102,21 +94,23 @@ class JaTennisJsonParser
      */
     protected function getInfoData()
     {
-        $info = $this->jsonData['info'];
-        
-        // JA Tennis décale les date d'1 mois, on rectifie ici       
-        // Ex: "2019-09-21" devient "2019-10-21"
-        $info['begin'] = $this->add1month($info['begin']);
-        $info['end'] = $this->add1month($info['end']);
-        
-        // Ajout de la date de dernière màj des données
-        // Ex: "2019-09-18T01:08:00"
-        $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->add1month($this->jsonData['jat']['generate']));
-        $generateTimeFormatted = $this->getFormattedTime($this->jsonData['jat']['generate']);
-  
-        $info['updatedAt'] = $generateDate->format('d/m/Y') . " à $generateTimeFormatted";
-        
-        return $info;
+        if (null === $this->infoData) {
+            $this->infoData = $this->jsonData['info'];
+
+            // JA Tennis décale les date d'1 mois, on rectifie ici
+            // Ex: "2019-09-21" devient "2019-10-21"
+            $this->infoData['begin'] = $this->add1month($this->infoData['begin']);
+            $this->infoData['end'] = $this->add1month($this->infoData['end']);
+
+            // Ajout de la date de dernière màj des données
+            // Ex: "2019-09-18T01:08:00"
+            $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->add1month($this->jsonData['jat']['generate']));
+            $generateTimeFormatted = $this->getFormattedTime($this->jsonData['jat']['generate']);
+
+            $this->infoData['updatedAt'] = $generateDate->format('d/m/Y') . " à $generateTimeFormatted";
+        }
+
+        return $this->infoData;
     }
 
     /**
@@ -143,6 +137,9 @@ class JaTennisJsonParser
                             $name .= ' &bull; ' . $draw['name'];
                         }
                         $boxesData = [];
+                        // L'export JSON de JA Tennis place les $nbOut boîtes sortantes en tête de l'entrée "boxes".
+                        // On ne parcourt donc ici que les $nbOut premières boîtes, le parsing du reste se faisant
+                        // ensuite récursivement.
                         for ($idx = 0; $idx < $nbOut; $idx++) {
                             $boxesData[] = $this->parseBox($name, $boxes, $idx, $indexesRegister);
                         }
@@ -157,8 +154,8 @@ class JaTennisJsonParser
                         krsort($boxesData);
 
                         $this->tablesData[] = [
-                            'id'    => $draw['id'],
-                            'name'  => $name,
+                            'id' => $draw['id'],
+                            'name' => $name,
                             'boxes' => $boxesData,
                         ];
                     }
@@ -190,11 +187,11 @@ class JaTennisJsonParser
                     }
 
                     $this->playersData[$playerData['id']] = [
-                        'jid'  => $playerData['id'],
+                        'jid' => $playerData['id'],
                         'name' => $name,
                         'rank' => $playerData['rank'],
                         'year' => isset($playerData['birth']) ? substr($playerData['birth'], 0, 4) : '',
-                        'sexe' => $playerData['sexe'],
+                        'cat' => $playerData['sexe'],
                         'club' => isset($playerData['club']) ? $playerData['club'] : '',
                     ];
                 }
@@ -209,7 +206,7 @@ class JaTennisJsonParser
      * pour chaque boîte, quelles sont les boîtes précédentes haute et basse.
      *
      * @param array $boxes
-     * @param int   $nbOut
+     * @param int $nbOut
      *
      * @return array
      */
@@ -223,7 +220,7 @@ class JaTennisJsonParser
             if (isset($box['date'])) {
                 $box['date'] = $this->add1month($box['date']);
             }
-            
+
             if (isset($box['score'])) {
                 // Présence d'un score dans cette boîte = on récupère les index des boîtes précédentes (btm et top)
                 $indexesRegister[$idxBox] = [
@@ -250,9 +247,9 @@ class JaTennisJsonParser
      * ]
      *
      * @param string $tableName Ex: "Messieurs senior NC à 30/2"
-     * @param array  $boxes
+     * @param array $boxes
      * @param        $boxIdx
-     * @param array  $indexesRegister
+     * @param array $indexesRegister
      *
      * @return array
      */
@@ -297,7 +294,7 @@ class JaTennisJsonParser
                     && $boxData['prevBtm']['name'] !== $boxData['name']
                 ) {
                     $looserPlayer = [
-                        'jid'  => $boxData['prevBtm']['jid'],
+                        'jid' => $boxData['prevBtm']['jid'],
                         'name' => $boxData['prevBtm']['name'],
                         'rank' => $boxData['prevBtm']['rank'],
                     ];
@@ -315,7 +312,7 @@ class JaTennisJsonParser
                     && $boxData['prevTop']['name'] !== $boxData['name']
                 ) {
                     $looserPlayer = [
-                        'jid'  => $boxData['prevTop']['jid'],
+                        'jid' => $boxData['prevTop']['jid'],
                         'name' => $boxData['prevTop']['name'],
                         'rank' => $boxData['prevTop']['rank'],
                     ];
@@ -324,62 +321,15 @@ class JaTennisJsonParser
 
             // On a une date : on enregistre des données sur le planning ici
             if (isset($box['date'], $boxData['prevBtm'], $boxData['prevTop'])) {
-                $this->addPlanningData($box, $boxData['prevBtm'], $boxData['prevTop']);
+                $this->updatePlanningData($box, $boxData['prevBtm'], $boxData['prevTop']);
             }
 
             // On ajoute les données de match sur les joueurs
             if (isset($box['date'])) {
-                if (isset($jId, $looserPlayer)) {
-                    // cas où le match a eu lieu
-                    
-                    // $box['date'] en tant que clé va permettre de trier par ordre de date
-                    // cas victoire
-                    $this->playersData[$jId]['matches'][$tableName][$box['date']] = [
-                        'player'  => $looserPlayer,
-                        'victory' => true, // cas victoire ici
-                        'score'   => isset($boxData['score']) ? $boxData['score'] : '',
-                        'date'    => $boxData['date'], // ici, la date joliement formatée !
-                    ];
+                $jId = $jId ?? null;
+                $looserPlayer = $looserPlayer ?? null;
+                $this->addMatchesDataOnPlayersData($jId, $looserPlayer, $tableName, $box['date'], $boxData);
 
-                    // cas défaite
-                    $this->playersData[$looserPlayer['jid']]['matches'][$tableName][$box['date']] = [
-                        'player'  => [
-                            'jid'  => $boxData['jid'],
-                            'name' => $boxData['name'],
-                            'rank' => $boxData['rank'],
-                        ],
-                        'victory' => false, // cas défaite ici
-                        'score'   => isset($boxData['score']) ? $boxData['score'] : '',
-                        'date'    => $boxData['date'], // ici, la date joliement formatée !
-                    ];
-                } else {
-                    // cas où le match n'a pas eu lieu : on regarde dans chacune des 2 boîtes précédentes 
-                    if (isset($boxData['prevBtm']['jid'])) {
-                        $this->playersData[$boxData['prevBtm']['jid']]['matches'][$tableName][$box['date']] = [
-                            'player'  => [
-                                'jid'  => $boxData['prevTop']['jid'] ?? '',
-                                'name' => $boxData['prevTop']['name'] ?? '',
-                                'rank' => $boxData['prevTop']['rank'] ?? '',
-                            ],
-                            'victory' => null,
-                            'score'   => '',
-                            'date'    => $boxData['date'], // ici, la date joliement formatée !
-                        ];                        
-                    }
-                    
-                    if (isset($boxData['prevTop']['jid'])) {
-                        $this->playersData[$boxData['prevTop']['jid']]['matches'][$tableName][$box['date']] = [
-                            'player'  => [
-                                'jid'  => $boxData['prevBtm']['jid'] ?? '',
-                                'name' => $boxData['prevBtm']['name'] ?? '',
-                                'rank' => $boxData['prevBtm']['rank'] ?? '',
-                            ],
-                            'victory' => null,
-                            'score'   => '',
-                            'date'    => $boxData['date'], // ici, la date joliement formatée !
-                        ];
-                    }
-                }
             }
         }
 
@@ -402,82 +352,13 @@ class JaTennisJsonParser
     }
 
     /**
-     * Reformate la date donnée en renvoyant la date uniquement
-     *
-     * @param string|Carbon $inputDateTime Date au format "Y-m-d\TH:i:s" ou objet Carbon
-     *
-     * @return string
-     */
-    public function getFormattedDate($inputDateTime)
-    {
-        // Exemple de date en entrée: 2019-02-21T20:30:00
-        if ($inputDateTime instanceof Carbon) {
-            $carbonDate = $inputDateTime;          
-        } else {
-            $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
-        }
-        
-        if ($carbonDate->daysInMonth == 1) {
-            $outputFormat = '%a %eer';
-        } else {
-            $outputFormat = '%a %e';
-        }
-
-        return $carbonDate->formatLocalized($outputFormat); // Donne par ex: jeu. 21
-    }
-
-    /**
-     * Reformate la date donnée en renvoyant la date uniquement
-     *
-     * @param Carbon $inputDate
-     *
-     * @return string
-     */
-    public function getFormattedCleanedDate(Carbon $inputDate)
-    {        
-        if ($inputDate->daysInMonth == 1) {
-            $outputFormat = '%a %eer';
-        } else {
-            $outputFormat = '%a %e';
-        }
-
-        $cleanedDate = str_replace(
-            ['.', ' ', '1er'],
-            ['', '', '1'],
-            $inputDate->formatLocalized($outputFormat)
-        ); // Donne par ex: jeu21
-
-        return $cleanedDate;
-    }
-
-    /**
-     * Reformate la date donnée en renvoyant l'heure uniquement.
-     *
-     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s"
-     *
-     * @return string
-     */
-    protected function getFormattedTime($inputDateTime)
-    {
-        // Exemple de date en entrée: 2019-02-21T20:30:00
-        $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
-        if ($carbonDate->minute > 0) {
-            $outputFormat = '%Hh%M';
-        } else {
-            $outputFormat = '%Hh';
-        }
-
-        return $carbonDate->formatLocalized($outputFormat); // Donne par ex: "19h" ou "20h30"
-    }
-
-    /**
      * Ajoute une donnée de planning à partir des éléments fournis.
      *
      * @param array $box
      * @param array $boxBtm
      * @param array $boxTop
      */
-    protected function addPlanningData(array $box, array $boxBtm, array $boxTop)
+    protected function updatePlanningData(array $box, array $boxBtm, array $boxTop)
     {
         if (null === $this->planningData) {
             $this->planningData = [];
@@ -488,116 +369,9 @@ class JaTennisJsonParser
         $score = isset($box['score']) ? $box['score'] : '';
 
         if (!isset($this->planningData[$date][$place])) {
-            if (isset($box['playerId']) && isset($boxBtm['jid']) && $box['playerId'] === $boxBtm['jid']) {
-                // Ici, le vainqueur de la rencontre est dans la boîte du bas
-                $boxPlayer1 = $boxBtm;
-                $boxPlayer2 = $boxTop;
-            } else {
-                // Sinon le vainqueur est dans la boîte du haut ou bien le score n'est pas encore connu.
-                $boxPlayer1 = $boxTop;
-                $boxPlayer2 = $boxBtm;
-            }
-
-            // Pas encore de donnée sur cette rencontre, à cette date + heure + lieu : on ajoute le 1er joueur
-            $this->planningData[$date][$place] = [
-                'table'   => $boxPlayer1['table'] ?? '',
-                'player1' => [
-                    'jid'    => $boxPlayer1['jid'] ?? '',
-                    'name'   => $boxPlayer1['name'] ?? '',
-                    'rank'   => $boxPlayer1['rank'] ?? '',
-                    'qualif' => $boxPlayer1['qualif'] ?? '',
-                ],
-                'player2' => [
-                    'jid'    => $boxPlayer2['jid'] ?? '',
-                    'name'   => $boxPlayer2['name'] ?? '',
-                    'rank'   => $boxPlayer2['rank'] ?? '',
-                    'qualif' => $boxPlayer2['qualif'] ?? '',
-                ],
-                'score'   => $score,
-            ];
+            $jId = isset($box['playerId']) ? $box['playerId'] : null;
+            $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
         }
-    }
-
-    /**
-     * Ajoute des données de résultat à partir de la "boîte" finale donnée pour le tableau donné.
-     *
-     * @param string $tableName Nom du tableau
-     * @param array  $finalBox  Dernière "boîte" du tableau
-     *
-     * @return void
-     */
-    protected function addResultDataFromFinalBox($tableName, $finalBox)
-    {
-        // On teste s'il on connaît au moins les finalistes, sans cela => pas de résultat
-        if (isset($finalBox['prevBtm']['name'], $finalBox['prevTop']['name'])) {
-            if (isset($finalBox['name'], $finalBox['rank'], $finalBox['score'])) {
-                // On connaît le vainqueur
-                $this->resultsData[$tableName] = [
-                    'winner' => [
-                        'jid'   => $finalBox['jid'],
-                        'name'  => $finalBox['name'],
-                        'rank'  => $finalBox['rank'],
-                        'score' => $finalBox['score'],
-                    ],
-                ];
-
-                if ($finalBox['prevBtm']['name'] !== $finalBox['name']) {
-                    $boxFinalist = $finalBox['prevBtm'];
-                } elseif ($finalBox['prevTop']['name'] !== $finalBox['name']) {
-                    $boxFinalist = $finalBox['prevTop'];
-                }
-                if (isset($boxFinalist)) {
-                    $this->resultsData[$tableName]['finalist'] = [
-                        'jid'  => $boxFinalist['jid'],
-                        'name' => $boxFinalist['name'],
-                        'rank' => $boxFinalist['rank'],
-                    ];
-                }
-            } else {
-                // On a seulement les finalistes
-                $this->resultsData[$tableName] = [
-                    'finalists' => [
-                        [
-                            'jid'  => $finalBox['prevBtm']['jid'],
-                            'name' => $finalBox['prevBtm']['name'],
-                            'rank' => $finalBox['prevBtm']['rank'],
-                        ],
-                        [
-                            'jid'  => $finalBox['prevTop']['jid'],
-                            'name' => $finalBox['prevTop']['name'],
-                            'rank' => $finalBox['prevTop']['rank'],
-                        ],
-                    ],
-                ];
-            }
-        }
-    }
-
-    /**
-     * Retourne les données sur les planning par jour du tournoi, triées correctement.
-     *
-     * @return array
-     */
-    protected function getSortedPlanningData()
-    {
-        $sortedPlanningData = [];
-
-        if (null !== $this->planningData) {
-            // On trie puis reformatte les dates/heures
-            ksort($this->planningData);
-
-            $sortedPlanningData = [];
-            foreach ($this->planningData as $dateTime => $planningDataByPlace) {
-                ksort($planningDataByPlace);
-                foreach ($planningDataByPlace as $place => $planningData) {
-                    $formattedDate = $this->getFormattedDate($dateTime);
-                    $formattedTime = $this->getFormattedTime($dateTime);
-                    $sortedPlanningData[$formattedDate][$formattedTime][$place] = $planningData;
-                }
-            }
-        }
-
-        return $sortedPlanningData;
     }
 
     /**

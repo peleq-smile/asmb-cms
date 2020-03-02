@@ -1,0 +1,175 @@
+{% form_theme form 'form_bolt_layout.twig' %}
+
+{{ form_start(form, {attr: {id: form.vars.name}}) }}
+<div class="panel panel-default">
+    <div class="panel-body table-container">
+        <div class="table-container-centered">
+            <div class="table-container-part">
+                <div class="item">
+                    <div class="item-parent">
+                        {{ _self.displayBox(form, box, '') }}
+                    </div>
+
+                    {% if box.boxTop is not null and box.boxBtm is not null %}
+                        <div class="item-children">
+                            {{ _self.displayChild(box.boxTop) }}
+                            {{ _self.displayChild(box.boxBtm) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row form-group">
+    <div class="col-md-12">
+        <div class="pull-left">
+            <a href="{{ path('tournamenttable', {'tableId': table.id}) }}" class="btn btn-default">
+                <i class="fa fa-chevron-circle-left"></i> {{ __('general.phrase.back') }}
+            </a>
+        </div>
+        <div class="pull-right">
+            {{ form_widget(form['save']) }}
+        </div>
+    </div>
+</div>
+{{ form_end(form) }}
+
+<script>
+    function onScoreTyping($scoreInput) {
+        let scoreValue = $scoreInput.val(),
+            nbChar = scoreValue.length;
+
+        if (nbChar > 0 && $.isNumeric(scoreValue[0])) {
+            // Le 1er caractère saisi est un chiffre : on peut ajouter automatiquement les slashs
+            scoreValue = scoreValue.replace(/(\d)(\d)/, '$1/$2 ')
+                .replace(/(\d)(\d)/, '$1/$2 ')
+                .replace(/(\d)(\d)/, '$1/$2 ')
+                .trim();
+            $scoreInput.val(scoreValue);
+        }
+    }
+
+    function onRankingTyping($rankingInput) {
+        let rankingValue = $rankingInput.val(),
+            nbChar = rankingValue.length;
+
+        if (rankingValue && $.isNumeric(rankingValue)) {
+            if (nbChar == 3) { //ex: 305, 155, -26, -46
+                $rankingInput.val(rankingValue[0] + rankingValue[1] + '/' + rankingValue[2]);
+            } else if ($.inArray(rankingValue, ['56','46','36','26','16']) >= 0) {
+                $rankingInput.val(rankingValue[0] + '/' + rankingValue[1]);
+            }
+        }
+    }
+
+    $(function () {
+        $('#tournament_box_edit_score').bind('change', function (event) {
+            onScoreTyping($(event.target));
+        });
+
+        $('#tournament_box_edit_player_rank').bind('change', function (event) {
+            onRankingTyping($(event.target));
+        });
+    });
+</script>
+
+{% macro displayBox(form, box, prefixElement) %}
+    <div class="box large">
+        {% if box.boxTop is not null and box.boxBtm is not null %}
+            {# Date/heure de la rencontre #}
+            <label for="{{ form[prefixElement ~ 'date'].vars.id }}"
+                   class="control-label">{{ __('page.edit-tournament.box.datetime') }}</label>
+            <div class="row-no-gutters clearfix">
+                <div class="pull-left">{{ form_widget(form[prefixElement ~ 'date']) }}</div>
+                <div class="pull-left">{{ form_widget(form[prefixElement ~ 'time']) }}</div>
+            </div>
+
+            {# Choix du vainqueur #}
+            <label for="{{ form[prefixElement ~ 'winner'].vars.id }}"
+                   class="control-label">{{ __('page.edit-tournament.box.winner') }}</label>
+            {{ form_widget(form[prefixElement ~ 'winner']) }}
+
+            {# Saisie score #}
+            <label for="{{ form[prefixElement ~ 'score'].vars.id }}"
+                   class="control-label">{{ __('page.edit-tournament.box.score') }}</label>
+            {{ form_widget(form[prefixElement ~ 'score']) }}
+
+            {# ID qualifié(e) sortant(e) #}
+            <div class="row-no-gutters">
+                <label for="{{ form[prefixElement ~ 'qualif_out'].vars.id }}"
+                       class="control-label">{{ __('page.edit-tournament.box.out') }}</label>
+                <div class="col-md-6">
+                    {{ form_widget(form[prefixElement ~ 'qualif_out']) }}
+                </div>
+            </div>
+        {% else %}
+            {# ID qualifié(e) entrant(e)) #}
+            <div class="row-no-gutters">
+                <label for="{{ form[prefixElement ~ 'qualif_in'].vars.id }}"
+                       class="control-label">{{ __('page.edit-tournament.box.in') }}</label>
+                <div class="col-md-6">
+                    {{ form_widget(form[prefixElement ~ 'qualif_in']) }}
+                </div>
+            </div>
+            {# Saisie info joueur possible #}
+            <div class="block-player">
+                <div class="row-no-gutters">
+                    <div class="col-md-12">
+                        <label for="{{ form[prefixElement ~ 'player_name'].vars.id }}"
+                               class="control-label">{{ __('page.edit-tournament.box.player') }}</label>
+                        {{ form_widget(form[prefixElement ~ 'player_name']) }}
+                    </div>
+                </div>
+
+                <div class="row-no-gutters">
+                    <div class="col-md-8">
+                        {{ form_widget(form[prefixElement ~ 'player_club']) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_widget(form[prefixElement ~ 'player_rank']) }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro displayChild(box) %}
+    <div class="item-child">
+        <div class="item">
+            <div class="box">
+                <a class="btn btn-xs btn-default pull-right"
+                   href="{{ path('tournamentboxedit', {'boxId': box.id}) }}">
+                    <i class="fa fa-edit"></i>
+                </a>
+
+                <div class="mt-md">
+                    {% if box.datetime is not empty %}
+                        <span class="date">{{ box.datetime|localizeddatetime }}</span><br>
+                    {% endif %}
+
+                    {% if box.player_name is not empty %}
+                        <span class="name">
+                                <strong>{{ box.player_name }}</strong><br>
+                                <em>{{ box.player_rank }}</em>
+                                {% if box.player_club is not empty %}
+                                    <em>{{ box.player_club }}</em>
+                                {% endif %}
+                            </span><br>
+                    {% elseif box.qualif_in is not empty %}
+                        <strong class="qualif-in"> Q{{ box.qualif_in }}</strong><br>
+                    {% elseif box.qualif_out is not empty %}
+                        <strong> Q{{ box.qualif_out }}</strong><br>
+                    {% endif %}
+
+                    {% if box.score is not empty %}
+                        <span class="score">{{ box.score }}</span><br>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

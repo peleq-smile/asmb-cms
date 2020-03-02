@@ -3,10 +3,12 @@
 namespace Bundle\Asmb\Competition\Extension;
 
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
+use Bundle\Asmb\Competition\Parser\Tournament\AbstractParser;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
 use Carbon\Carbon;
+use Cocur\Slugify\Slugify;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -55,6 +57,7 @@ trait TwigFunctionsTrait
      *
      * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
      * @throws \Bolt\Exception\InvalidRepositoryException
+     * @noinspection PhpUndefinedMethodInspection
      */
     protected function getLastOrNextMeetings($pastOrFutureDays)
     {
@@ -84,9 +87,9 @@ trait TwigFunctionsTrait
             $competitionPage = $app['query']->getContent(
                 'competition',
                 [
-                    'competition_id'         => $meeting->getChampionshipId(),
-                    'competition_categories' => '%' . $meeting->getCategoryName() . '%',
-                    'returnsingle'           => true
+                    'championship_id' => $meeting->getChampionshipId(),
+                    'championship_categories' => '%' . $meeting->getCategoryName() . '%',
+                    'returnsingle' => true
                 ]
             );
 
@@ -96,7 +99,7 @@ trait TwigFunctionsTrait
                 $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
                 $meeting->setCompetitionRecordSlug($competitionPage->getSlug());
 
-                if (! isset($groupedMeetings[$meetingDate . '-' . $competitionPage->getId()])) {
+                if (!isset($groupedMeetings[$meetingDate . '-' . $competitionPage->getId()])) {
                     $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()] = [$meeting];
                 } else {
                     $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()][] = $meeting;
@@ -131,14 +134,14 @@ trait TwigFunctionsTrait
      * sur les catégories à prendre en compte.
      *
      * @param integer $championshipId
-     * @param array   $categoryNames
+     * @param array $categoryNames
      *
      * @return array
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
     public function getPoolsPerCategoryName($championshipId, array $categoryNames)
     {
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
+        /** @var PoolRepository $poolRepository */
         $poolRepository = $this->getStorage()->getRepository('championship_pool');
         $poolsPerCategoryName = $poolRepository->findByChampionshipIdGroupByCategoryName(
             $championshipId,
@@ -152,7 +155,7 @@ trait TwigFunctionsTrait
      * Retourne le classement des équipes des poules du championnat d'id donné.
      *
      * @param integer $championshipId
-     * @param array   $categoryNames
+     * @param array $categoryNames
      *
      * @return \Bundle\Asmb\Competition\Entity\Championship\PoolRanking[]
      * @throws \Bolt\Exception\InvalidRepositoryException
@@ -174,7 +177,7 @@ trait TwigFunctionsTrait
      * Retourne le tableau des rencontres des poules du championnat d'id donné.
      *
      * @param integer $championshipId
-     * @param array   $categoryNames
+     * @param array $categoryNames
      *
      * @return array
      * @throws \Bolt\Exception\InvalidRepositoryException
@@ -203,8 +206,29 @@ trait TwigFunctionsTrait
     public function renderTournament($competitionRecord)
     {
         // Récupération de l'url donnée dans le contenu "Compétition"
-        $jsonFileUrl = $competitionRecord->get('tournoi_url_json');
+        $tournamentId = $competitionRecord->get('tournament_id');
+        $jsonFileUrl = $competitionRecord->get('tournament_url_json');
 
+        if ($tournamentId) {
+            $tournamentContent = $this->renderTournamentFromDb($tournamentId);
+        } elseif ($jsonFileUrl) {
+            $tournamentContent = $this->renderTournamentFromJsonFile($jsonFileUrl);
+        } else {
+            $tournamentContent = '';
+        }
+
+        return $tournamentContent;
+    }
+
+    /**
+     * @param string $jsonFileUrl
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    protected function renderTournamentFromJsonFile($jsonFileUrl)
+    {
         // Chemin vers le fichier .html dont on veut vérifier l'existence / générer le contenu / récupérer le contenu
         $htmlFilePath = $this->getHtmlFilePath($jsonFileUrl);
         $htmlFile = $this->getFile($htmlFilePath);
@@ -214,32 +238,80 @@ trait TwigFunctionsTrait
         } else {
             $jsonFileAbsoluteUrl = $this->getFileUrl($jsonFileUrl);
 
-            $parser = $this->getJaTennisParser();
+            /** @var \Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser $parser */
+            $parser = $this->container['ja_tennis_parser'];
             $parser->setJsonFileUrl($jsonFileAbsoluteUrl);
             $parsedData = $parser->parse();
 
-            if (isset($parsedData['error'])) {
-                // pour debug, afficher $parsedData['trace'] en plus !
-                return 'Une erreur est survenue dans le traitement des données du tournoi :<br>'
-                    .$parsedData['error'];
-                    /*'<div style="text-align: left !important;">'
-                    .$parsedData['trace'].'</div>';*/
-            }
+            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData);
 
+            // On génère le .html pour la prochaine fois
+            $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
+            $htmlFile->setPath($htmlFilePath);
+
+            $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
+            $endDate->setTime(0, 0, 0);
+
+            if (!isset($parsedData['error']) && $endDate < Carbon::now()) {
+                // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
+                // non à jour.
+                $htmlFile->write($tournamentContent);
+            }
+        }
+
+        return $tournamentContent;
+    }
+
+    protected function renderTournamentFromDb($tournamentId)
+    {
+
+
+        /** @var \Bundle\Asmb\Competition\Parser\Tournament\DbParser $parser */
+        $parser = $this->container['tournament_db_parser'];
+        $parser->setTournamentId($tournamentId);
+        $parsedData = $parser->parse();
+
+        try {
+            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData);
+        } catch (\Exception $e) {
+            $tournamentContent = '';
+        }
+
+        return $tournamentContent;
+    }
+
+    /**
+     * @param AbstractParser $parser
+     * @param array $parsedData
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    protected function getRenderedTournamentContent(AbstractParser $parser, array $parsedData)
+    {
+        if (isset($parsedData['error'])) {
+            // pour debug, afficher $parsedData['trace'] en plus !
+            return 'Une erreur est survenue dans le traitement des données du tournoi :<br>'
+                . $parsedData['error'];
+            /*'<div style="text-align: left !important;">'
+            .$parsedData['trace'].'</div>';*/
+        }
+
+        $display = '#res';
+        $planningDayFormatted = '';
+
+        if (isset($parsedData['info']['begin'])) {
             // Règle d'affichage du tournoi:
             // - Tournoi terminé : on affiche la page de résultat
             // - Tournoi à venir : on affiche la page de planning avec le 1er jour du tournoi
             // - Tournoi en cours : on affiche la page du jour J ou du prochain jour de tournoi
-
             $now = Carbon::now();
 
             $beginDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['begin']);
-            $beginDate->setTime(0, 0, 0);
+            $beginDate->setTime(0, 0);
             $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
-            $endDate->setTime(0, 0, 0);
-
-            $display = '#res';
-            $planningDayFormatted = '';
+            $endDate->setTime(23, 59);
 
             if ($now <= $beginDate) {
                 // Tournoi à venir ou 1er du tournoi : on affiche le planning du 1er jour
@@ -256,36 +328,18 @@ trait TwigFunctionsTrait
                 $planningDayFormatted = $parser->getFormattedCleanedDate($planningDay);
                 $display = '#pla';
             }
-
-            $context = [
-                'parsedData' => $parsedData,
-                'display'    => $display,
-                'plaDay'     => $planningDayFormatted,
-            ];
-
-            /** @var $twig \Twig\Environment */
-            $twig = $this->container['twig'];
-            $tournamentContent = $twig->render('@AsmbCompetition/tournament/ja_tennis_tournament.twig', $context);
-
-            // On génère le .html pour la prochaine fois
-            $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
-            $htmlFile->setPath($htmlFilePath);
-            if (!isset($parsedData['error']) && '#res' === $display) {
-                // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
-                // non à jour.
-                //$htmlFile->write($tournamentContent);
-            }
         }
 
-        return $tournamentContent;
-    }
+        $context = [
+            'parsedData' => $parsedData,
+            'display' => $display,
+            'plaDay' => $planningDayFormatted,
+        ];
 
-    /**
-     * @return \Bundle\Asmb\Competition\Parser\JaTennisJsonParser
-     */
-    protected function getJaTennisParser()
-    {
-        return $this->container['ja_tennis_parser'];
+        /** @var $twig \Twig\Environment */
+        $twig = $this->container['twig'];
+
+        return $twig->render('@AsmbCompetition/tournament/tournament.twig', $context);
     }
 
     /**
@@ -297,10 +351,14 @@ trait TwigFunctionsTrait
      */
     protected function getHtmlFilePath($jsonFileUrl)
     {
-        $basename = basename($jsonFileUrl);
+        $basename = rawurldecode(basename($jsonFileUrl));
 
-        // On voudra générer un .html dans "files/tournois/html" et avec l'extension .html au lieu de .json
-        $htmlFilePath = 'tournois/html/' . str_replace('.json', '.html', $basename);
+        // S'il y a des paramètres après l'extension .json, on les retire (en plus de l'extension)
+        $htmlFileName = substr($basename, 0, strpos($basename, '.json'));
+        // On "slugify" le nom du json (= remplacement des caractères spéciaux)
+        $htmlFileName = Slugify::create()->slugify($htmlFileName);
+
+        $htmlFilePath = 'tournois/html/' . $htmlFileName . '.html';
 
         return $htmlFilePath;
     }
@@ -344,7 +402,7 @@ trait TwigFunctionsTrait
     }
 
     /**
-     * @return \Symfony\Component\Routing\Generator\UrlGeneratorInterface
+     * @return UrlGeneratorInterface
      */
     protected function getUrlGenerator()
     {
@@ -363,13 +421,13 @@ trait TwigFunctionsTrait
     protected function registerTwigFunctions()
     {
         return [
-            'getHomeMeetings'          => 'getHomeMeetings',
-            'getLastMeetings'          => 'getLastMeetings',
-            'getNextMeetings'          => 'getNextMeetings',
-            'getPoolsPerCategoryName'  => 'getPoolsPerCategoryName',
-            'getPoolRankingPerPoolId'  => 'getPoolRankingPerPoolId',
+            'getHomeMeetings' => 'getHomeMeetings',
+            'getLastMeetings' => 'getLastMeetings',
+            'getNextMeetings' => 'getNextMeetings',
+            'getPoolsPerCategoryName' => 'getPoolsPerCategoryName',
+            'getPoolRankingPerPoolId' => 'getPoolRankingPerPoolId',
             'getPoolMeetingsPerPoolId' => 'getPoolMeetingsPerPoolId',
-            'renderTournament'         => 'renderTournament',
+            'renderTournament' => 'renderTournament',
         ];
     }
 
@@ -390,10 +448,11 @@ trait TwigFunctionsTrait
      * Recupère les poules à partir de l'id de compétition donné.
      *
      * @param integer $championshipId
-     * @param array   $categoryNames
+     * @param array $categoryNames
      *
      * @return Pool[]
      * @throws \Bolt\Exception\InvalidRepositoryException
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function getPools($championshipId, array $categoryNames)
     {
@@ -413,8 +472,8 @@ trait TwigFunctionsTrait
     public function getHomeMeetings($competitionRecord)
     {
         $homeMeetings = [
-            'sat'      => [], // Rencontres du samedi
-            'sun'      => [], // Rencontres du dimanche
+            'sat' => [], // Rencontres du samedi
+            'sun' => [], // Rencontres du dimanche
             'satSlots' => [], // Créneaux du samedi pour lesquels il existe au moins 1 rencontre
             'sunSlots' => [], // Créneaux du dimanche pour lesquels il existe au moins 1 rencontre
         ];

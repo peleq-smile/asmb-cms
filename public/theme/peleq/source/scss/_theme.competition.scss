@@ -88,7 +88,7 @@
 
     .box {
         .container {
-            max-width: 50%;
+            max-width: 75%;
         }
     }
 
@@ -189,6 +189,8 @@
 
                         .name {
                             font-weight: bold;
+                            line-height: 1;
+                            display: inline-block;
                         }
 
                         .date {
@@ -283,7 +285,8 @@
                     text-decoration: none;
                     padding: 0.5rem 0;
                     text-align: center;
-                    width: 4.25rem;
+                    width:4rem;
+                    font-size: 0.85rem;
 
                     &:hover, &.is-active {
                         background: $secondary;
@@ -302,6 +305,7 @@
 
             .day {
                 text-transform: uppercase;
+                white-space: nowrap;
             }
 
             &:first-of-type {
@@ -309,13 +313,20 @@
             }
 
             .column {
-                padding: 0 2px !important;
+                padding: 0 4px !important;
+                line-height: 1;
             }
         }
 
-        .is-winner {
-            color: $win;
+        .is-winner a {
+            color: $win !important;
             font-weight: bold;
+        }
+
+        .club {
+            font-size: 0.7rem;
+            color: $dark-light;
+            margin-top: 6px;
         }
     }
 
@@ -335,6 +346,11 @@
 
         .column > span {
             padding-right: 1rem;
+        }
+
+        .column .player-name {
+            display: inline-block;
+            padding-bottom: 1rem;
         }
     }
 }

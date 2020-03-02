@@ -1,0 +1,45 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'tournament-menu' %}
+
+{% if tournament.name is not empty %}
+    {% set title =  __('page.tournament.edit.title', {'%name%': tournament.name}) %}
+{% else %}
+    {% set title =   __('page.tournament.new.title') %}
+{% endif %}
+
+{% block page_title title %}
+
+{% block page_main %}
+    <div class="competition-page-main">
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournament') }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+                {% if isallowed('competition:edit') and tournament.id > 0 %}
+                    <div class="pull-right">
+                        <form action="{{ path('tournamentdelete', {'id': tournament.id}) }}" method="post">
+                            <button type="submit" class="btn btn-danger confirm"
+                                    data-confirm="{{ __('general.phrase.confirm-delete-tournament', { '%name%': tournament.name }) }}">
+                                <span class="pull-left">
+                                    <i class="fa fa-trash"></i>
+                                    <span>{{ __('general.phrase.delete') }}</span></span>
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Formulaire #}
+        <div class="row">
+            <div class="col-md-12">
+                {{ include('@AsmbCompetition/tournament/_edit-infos.twig', {'form': context.form}) }}
+            </div>
+        </div>
+    </div>
+{% endblock page_main %}

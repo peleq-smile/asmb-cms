@@ -3,7 +3,7 @@
 namespace Bundle\Asmb\Competition\Entity;
 
 use Bolt\Storage\Entity\Entity;
-use Bundle\Asmb\Competition\Entity\Championship\AbstractShortNamedEntity;
+use Bundle\Asmb\Competition\Entity\AbstractShortNamedEntity;
 
 /**
  * Entity for championship.

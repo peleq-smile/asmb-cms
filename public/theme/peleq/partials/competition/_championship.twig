@@ -1,6 +1,6 @@
-{% set poolsPerCategoryName = getPoolsPerCategoryName(record.competition_id, record.competition_categories) %}
-{% set poolRankingPerPoolId = getPoolRankingPerPoolId(record.competition_id, record.competition_categories) %}
-{% set poolMeetingsPerPoolId = getPoolMeetingsPerPoolId(record.competition_id, record.competition_categories) %}
+{% set poolsPerCategoryName = getPoolsPerCategoryName(record.championship_id, record.championship_categories) %}
+{% set poolRankingPerPoolId = getPoolRankingPerPoolId(record.championship_id, record.championship_categories) %}
+{% set poolMeetingsPerPoolId = getPoolMeetingsPerPoolId(record.championship_id, record.championship_categories) %}
 
 {% set MAX_PER_ROW = 4 %}
 
@@ -28,10 +28,10 @@
                             {% endif %}
 
                             <div class="column is-{{ MAX_PER_ROW-1 }}">
-                                {% if loop.first or prevCategoryName != categoryName %}
+                                {% if poolsPerCategoryName|length > 1 and (loop.first or prevCategoryName != categoryName) %}
                                     <h2 class="title">{{ categoryName }}</h2>
                                     {% set prevCategoryName = categoryName %}
-                                {% else %}
+                                {% elseif poolsPerCategoryName|length > 1 %}
                                     <h2 class="title is-invisible">{{ categoryName }}</h2>
                                 {% endif %}
 
@@ -51,7 +51,7 @@
                 {% endfor %}
 
                 {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': lastUpdatedAt|date('d/m/Y'), '%time%': lastUpdatedAt|date('H\\hi')}) %}
-                <span class="last-updated-at">{{ __('page.view-pool.fetch-ranking-and-meetings.updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>
+                <span class="last-updated-at">{{ __('general.phrase.last_updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>
             </div>
         </div>
     </section>

@@ -1,0 +1,23 @@
+{% if table.previousTable is not null or table.nextTable is not null %}
+    <div class="link-prev-next-tables clearfix">
+        {% if table.previousTable is not null %}
+            {% set btnClass = (table.previousTable.status == 1) ? 'btn-warning' : (table.previousTable.status == 2) ? 'btn-success':'btn-default' %}
+
+            <a class="btn {{ btnClass }} btn-xs pull-left"
+               href="{{ path('tournamenttable', {tableId: table.previousTable.id}) }}">
+                <i class="fa fa-caret-left "></i>
+                {{ __('page.index-tournament.table.previous_table.link', {'%tableName%': table.previousTable.name}) }}
+            </a>
+        {% endif %}
+
+        {% if table.nextTable is not null %}
+            {% set btnClass = (table.nextTable.status == 1) ? 'btn-warning' : (table.nextTable.status == 2) ? 'btn-success':'btn-default' %}
+
+            <a class="btn {{ btnClass }} btn-xs pull-right"
+               href="{{ path('tournamenttable', {tableId: table.nextTable.id}) }}">
+                {{ __('page.index-tournament.table.next_table.link', {'%tableName%': table.nextTable.name}) }}
+                <i class="fa fa-caret-right "></i>
+            </a>
+        {% endif %}
+    </div>
+{% endif %}

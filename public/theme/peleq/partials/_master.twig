@@ -1,32 +1,46 @@
-<!doctype html>
+<!doctype html>{% spaceless %}
 <html lang="{{ htmllang() }}">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-
-    {% if record is not defined and homepage is defined %}
-        {% set record = homepage %}
-    {% endif %}
-
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
     {# On prend en priorité la donnée "meta_title" si elle existe, puis la donnée "title" ensuite. #}
     {% set headTitle = '' %}
     {% if record.meta_title is defined and record.meta_title is not empty %}
-        {% set headTitle = record.meta_title ~ ' | ' %}
+        {% set headTitle = record.meta_title %}
     {% elseif record.title is defined and record.title is not empty %}
-        {% set headTitle = record.title ~ ' | ' %}
+        {% set headTitle = record.title %}
     {% endif %}
-    {% set headTitle = headTitle ~ config.get('general/sitename') %}
-    <title>{{ headTitle -}}</title>
 
-    {% if record.meta_description is defined and record.meta_description is not empty %}
-        <meta name="description" content="{{ record.meta_description }}">
+    <title>{{ headTitle ~ ' - ' ~ config.get('general/sitename') }}</title>
+    <meta name="description" content="{{ metaDescription }}">
+    {% if record is not defined and homepage is defined %}
+        {% set record = homepage %}
     {% endif %}
+    {% if record.meta_description is defined and record.meta_description is not empty %}
+        {% set metaDescription = record.meta_description %}
+    {% endif %}
+
+    <meta property="og:url" content="{{ absolute_url(record.link()) }}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="{{ headTitle }}"/>
+    <meta property="og:description" content="{{ metaDescription }}"/>
+    {% if record.meta_image is defined and record.meta_image is not empty %}
+        {% set metaImage = absolute_url(record.meta_image|image) %}
+    {% else %}
+        {% setcontent homepage = "homepage" limit 1 returnsingle %}
+        {% set metaImage = absolute_url(asset(homepage.logo_file, 'files')) %}
+    {% endif %}
+    {% set metaImage = absolute_url(asset('photos/joueur-tranquille-sur-court.jpg', 'files')) %}
+
+    <meta property="og:image" content="{{ metaImage }}"/>
+    <meta property="og:locale" content="fr_FR"/>
 
     {% if record.meta_robots is defined and record.meta_robots is not empty %}
         <meta name="robots" content="{{ record.meta_robots }}">
     {% endif %}
+    <meta property="fb:app_id" content="2011781802368449"/>
 
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}"/>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}">
 
     <link href="https://fonts.googleapis.com/css?family=Bitter|Roboto:400,400i,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato|Niramit|Poppins|Mali|Ultra|Comfortaa|Raleway"
@@ -37,8 +51,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
           integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-   {% block head %}{% endblock head %}
-</head>
+    {% block head %}{% endblock head %}
+</head>{% endspaceless %}
 
 <body class="{{ block('body_class') }}">
 

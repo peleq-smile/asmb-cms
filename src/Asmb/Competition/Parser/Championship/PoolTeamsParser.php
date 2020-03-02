@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\Asmb\Competition\Parser;
+namespace Bundle\Asmb\Competition\Parser\Championship;
 
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;

@@ -1,0 +1,132 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'tournament-menu' %}
+
+{% block page_title tournament.name %}
+{% block page_subtitle __('page.edit-scores.tournament.title') %}
+
+{% block page_main %}
+    <div class="competition-page-main">
+        {% import '@bolt/_macro/_macro.twig' as macro %}
+
+        {# Barre d'actions du haut #}
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournament') }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if boxesByDay is not empty %}
+            {% form_theme context.form 'form_bolt_layout.twig' %}
+            {{ form_start(context.form) }}
+            {% for day, boxes in boxesByDay %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h2>{{ day }}</h2></div>
+                    <div class="panel-body">
+
+                        {% for box in boxes %}
+                            <div class="row row-no-gutters">
+                                <div class="col-md-1 col-xs-2 col-with-no-form-control text-center-md text-warning">
+                                    <h3>{{ box.datetime|date('H\\hi') }}</h3></div>
+                                <div class="col-md-2 col-xs-10 col-with-no-form-control text-right-xs">
+                                    <h3><a href="{{ path('tournamenttable', {'tableId': box.table_id}) }}">
+                                            <i class="fa fa-external-link-square"></i> {{ box.tableName }}
+                                        </a>
+                                    </h3></div>
+
+                                <div class="col-md-2 col-xs-5 col-with-no-form-control text-right-md text-left-xs">
+                                <span class="text-info">
+                                    {% if box.boxTop.player_name is not empty %}
+                                        {{ box.boxTop.player_name }} <em>({{ box.boxTop.player_rank }})</em>
+                                    {% elseif box.boxBtm.player_name is not empty %}
+                                        {{ box.boxBtm.player_name }} <em>({{ box.boxBtm.player_rank }})</em>
+                                    {% else %}
+                                        ?
+                                    {% endif %}
+                                </span>
+                                </div>
+                                <div class="col-xs-2 hidden-md visible-xs text-center">&nbsp;-</div>
+                                <div class="col-md-2 col-xs-5 col-with-no-form-control text-left-md text-right-xs">
+                                    <span class="separator hidden-xs">&nbsp;-</span>
+                                    <span class="text-info">
+                                {% if box.boxTop.player_name is not empty and box.boxBtm.player_name is not empty %}
+                                    {{ box.boxBtm.player_name }}  <em>({{ box.boxBtm.player_rank }})</em>
+                                {% else %}
+                                    ?
+                                {% endif %}
+                                </span>
+                                </div>
+
+                                <div class="col-md-5 col-xs-12">
+                                    <div class="col-md-7 col-xs-7">
+                                        <label for="{{ context.form['box-' ~ box.id ~ '_winner'].vars.id }}"
+                                               class="control-label winner success">
+                                            <strong>{{ __('page.edit-tournament.box.winner') }} :</strong>
+                                        </label>
+                                        {{ form_widget(context.form['box-' ~ box.id ~ '_winner']) }}
+                                    </div>
+                                    <div class="col-md-5 col-xs-5">
+                                        <label for="{{ context.form['box-' ~ box.id ~ '_score'].vars.id }}"
+                                               class="control-label winner success">
+                                            <strong>{{ __('page.edit-tournament.box.score') }} :</strong>
+                                        </label>
+                                        {{ form_widget(context.form['box-' ~ box.id ~ '_score']) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            {# Barre d'actions du bas #}
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <a href="{{ path('tournament') }}" class="btn btn-default">
+                            <i class="fa fa-chevron-circle-left"></i>
+                            {{ __('general.phrase.back') }}
+                        </a>
+                    </div>
+                    <div class="pull-right">
+                        {{ form_widget(context.form['save_all']) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_end(context.form) }}
+        {% else %}
+            <div class="panel panel-default">
+                <div class="panel-body bg-success">
+                    <h2 class="mt-md mb-md text-center">Oh... mais tout a déjà été saisi :-)</h2>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function onScoreTyping($scoreInput) {
+            let scoreValue = $scoreInput.val(),
+                nbChar = scoreValue.length;
+
+            if (nbChar > 0 && $.isNumeric(scoreValue[0])) {
+                // Le 1er caractère saisi est un chiffre : on peut ajouter automatiquement les slashs
+                scoreValue = scoreValue.replace(/(\d)(\d)/, '$1/$2 ')
+                    .replace(/(\d)(\d)/, '$1/$2 ')
+                    .replace(/(\d)(\d)/, '$1/$2 ')
+                    .trim();
+                $scoreInput.val(scoreValue);
+            }
+        }
+
+        $(function () {
+            $('form input[id$=_score]').bind('change', function (event) {
+                onScoreTyping($(event.target));
+            });
+        });
+    </script>
+{% endblock page_main %}

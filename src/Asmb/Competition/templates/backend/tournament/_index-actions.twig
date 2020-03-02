@@ -1,0 +1,9 @@
+{% if isallowed('competition:edit') %}
+    <div class="btn-group">
+        {# Ajout d'un tournoi #}
+        <a class="btn btn-default" href="{{ path('tournamentadd') }}">
+            <i class="fa fa-fw fa-plus"></i>
+            {{ __('page.list-tournament.add') }}
+        </a>
+    </div>
+{% endif %}

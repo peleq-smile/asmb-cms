@@ -3,10 +3,8 @@
 namespace Bundle\Asmb\Competition\Controller\Backend;
 
 use Bolt\Translation\Translator as Trans;
-use Bundle\Asmb\Competition\Entity;
 use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Form\FormType;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Silex\ControllerCollection;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +23,9 @@ class ChampionshipController extends AbstractController
     public function addRoutes(ControllerCollection $c)
     {
         $c->match('/', 'index')
+            ->bind('competition');
+
+        $c->match('/', 'index')
             ->bind('championship');
 
         $c->match('/edit/{id}', 'edit')
@@ -41,7 +42,7 @@ class ChampionshipController extends AbstractController
             ->bind('championshipview');
 
         $c->post('/delete/{id}', 'delete')
-            ->assert('id', '\d*')
+            ->assert('id', '\d+')
             ->bind('championshipdelete');
 
         return $c;
@@ -51,6 +52,7 @@ class ChampionshipController extends AbstractController
      * @param Request $request
      *
      * @return Response
+     * @noinspection PhpUnusedParameterInspection
      */
     public function index(Request $request)
     {
@@ -68,12 +70,12 @@ class ChampionshipController extends AbstractController
     /**
      * Build championship edit form.
      *
-     * @param \Symfony\Component\HttpFoundation\Request    $request
-     * @param \Bundle\Asmb\Competition\Entity\Championship $championship
+     * @param Request $request
+     * @param Championship $championship
      *
      * @return FormInterface
      */
-    protected function buildEditForm(Request $request, Entity\Championship $championship)
+    protected function buildEditForm(Request $request, Championship $championship)
     {
         $form = $this->createFormBuilder(FormType\ChampionshipEditType::class, $championship)
             ->getForm()
@@ -83,7 +85,7 @@ class ChampionshipController extends AbstractController
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      * @param string                                    $id
      * @param string|null                               $categoryName
      *
@@ -95,7 +97,7 @@ class ChampionshipController extends AbstractController
         /** @var Championship $championship */
         $championship = $this->getRepository('championship')->find($id);
         if (!$championship) {
-            $championship = new Entity\Championship();
+            $championship = new Championship();
         }
 
         // FORM 1: édition des infos de base d'un championnat
@@ -151,11 +153,12 @@ class ChampionshipController extends AbstractController
     /**
      * Visualisation des classements et rencontres des poules du championnat d'id donné.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      * @param integer                                   $id
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView
      * @throws \Bolt\Exception\InvalidRepositoryException
+     * @noinspection PhpUnusedParameterInspection
      */
     public function view(Request $request, $id)
     {
@@ -181,10 +184,11 @@ class ChampionshipController extends AbstractController
     /**
      * Action de suppression d'un championnat.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      * @param integer                                   $id
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @noinspection PhpUnusedParameterInspection
      */
     public function delete(Request $request, $id)
     {
@@ -228,10 +232,6 @@ class ChampionshipController extends AbstractController
                 }
 
                 return true;
-            } catch (UniqueConstraintViolationException $e) {
-                $this->flashes()->error(
-                    Trans::__('page.edit-championship.message.duplicate-error', ['%name%' => $championship->getName()])
-                );
             } catch (\Exception $e) {
                 $this->flashes()->error(
                     Trans::__('page.edit-championship.message.not-saved', ['%name%' => $championship->getName()])
@@ -270,11 +270,6 @@ class ChampionshipController extends AbstractController
                 }
 
                 return true;
-            } catch (UniqueConstraintViolationException $e) {
-                $this->flashes()->error(
-                    Trans::__('page.edit-championship.message.duplicate-error', ['%name%' => $championship->getName()])
-                    . "\n" . $e->getMessage()
-                );
             } catch (\Exception $e) {
                 $this->flashes()->error(
                     Trans::__('page.edit-championship.message.not-saved', ['%name%' => $championship->getName()])

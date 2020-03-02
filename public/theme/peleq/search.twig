@@ -37,7 +37,8 @@
                     <h2 class="title"><a href="{{ record.link }}">{{ record.title }}</a></h2>
 
                     {# display something introduction-like.. #}
-                    <p>{{ record.excerpt(300, false, search|default('')) }}</p>
+                    {% set stripFields = ['meta_title','meta_robots','tournament_json_url','tournament_id','championsship_id'] %}
+                    <p>{{ record.excerpt(300, false, search|default(''), stripFields) }}</p>
 
                     {% include 'partials/_record_meta.twig' with {'record': record, 'extended': true} %}
                 </div>

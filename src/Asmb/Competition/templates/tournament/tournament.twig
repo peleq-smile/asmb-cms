@@ -24,16 +24,16 @@
                     <select id="select-planning" data-hash="#pla">
                         <option value="-">-</option>
                         {% for day, planningByDayData in parsedData.planning %}
-                            <option value="{{ day|replace({'.':'', ' ':'', '1er':'1'}) }}">{{ day }}</option>
+                            <option value="{{ day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) }}">{{ day }}</option>
                         {% endfor %}
                     </select>
                 </div>
             </li>
             {% if parsedData.result is not empty %}
-            <li class="column control">
-                <label class="label is-invisible">&nbsp;</label>
-                <a href="{{ app.request.uri }}#res" data-hash="#res" class="button">Résultats</a>
-            </li>
+                <li class="column control">
+                    <label class="label is-invisible">&nbsp;</label>
+                    <a href="{{ app.request.uri }}#res" data-hash="#res" class="button">Résultats</a>
+                </li>
             {% endif %}
             <li class="column control">
                 <label class="label is-invisible">&nbsp;</label>
@@ -76,12 +76,12 @@
             </div>
         </div>
     {% endfor %}
-    
+
     {# Date de der màj #}
     {% if parsedData.info.updatedAt is defined %}
         <div>
             <br><br>
-            <em class="has-text-grey-light is-size-7">Dernière mise à jour le {{ parsedData.info.updatedAt }}</em>       
+            <em class="has-text-grey-light is-size-7">Dernière mise à jour le {{ parsedData.info.updatedAt }}</em>
         </div>
     {% endif %}
 {% endif %}
@@ -90,64 +90,76 @@
     <div class="box planning-container" style="display: {{ planningDisplay }}">
         <ul class="planning-nav is-hidden-touch">
             {% for day, planningByDayData in planning %}
-                {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1'}) %}
+                {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
                 <li><a href="{{ app.request.uri }}#pla:{{ cleanedDay }}"
                        {{ (planningDay == cleanedDay)? ' class="is-active"' }};
                        data-hash="#pla"
-                       data-param="{{ cleanedDay }}">{{ day }}</a>
+                       data-param="{{ cleanedDay }}">{{ day|slice(0, 7) }}</a>
                 </li>
             {% endfor %}
         </ul>
 
         {% for day, planningByDayData in planning %}
-            {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1'}) %}
+            {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
 
             <div class="container planning-day" id="planning-day-{{ cleanedDay }}"
                  style="display: {{ (planningDay == cleanedDay) ? 'block':'none' }};">
                 <div class="columns is-gapless">
                     <div class="column is-one-fifth-mobile"><strong class="day">{{ day }}</strong></div>
-                    <div class="column is-one-quarter-desktop is-hidden-mobile"><strong>Tableau</strong>
+                    <div class="column is-one-quarter-desktop is-hidden-mobile"><strong></strong>
                     </div>
-                    <div class="column is-one-quarter-desktop is-hidden-mobile"><strong>Joueur 1</strong>
+                    <div class="column is-one-quarter-desktop is-hidden-mobile"><strong></strong>
                     </div>
-                    <div class="column is-hidden-mobile"><strong>Score</strong></div>
-                    <div class="column  is-one-quarter-desktop is-hidden-mobile"><strong>Joueur 2</strong>
+                    <div class="column is-hidden-mobile"><strong></strong></div>
+                    <div class="column  is-one-quarter-desktop is-hidden-mobile"><strong></strong>
                     </div>
                 </div>
 
                 {% for time, planningByTimeData in planningByDayData %}
                     {% for place, planningByPlaceData in planningByTimeData %}
                         {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
-                        <div class="columns is-gapless is-mobile is-multiline">
-                            <div class="column is-one-fifth-mobile">{{ time }}</div>
-                            <div class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
-                            <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">                                
-                                {% if planningByPlaceData.player1.name is not empty %}
-                                    <a class="player-link text-secondary" href="#jou:{{ planningByPlaceData.player1.jid }}"
-                                       data-hash="#jou" data-param="{{ planningByPlaceData.player1.jid }}"
-                                    >{{ planningByPlaceData.player1.name }}</a>
-                                {% elseif planningByPlaceData.player1.qualif is not empty %}
-                                    <strong class="score is-size-6"> Q{{ planningByPlaceData.player1.qualif }}</strong>
-                                {% else %}
-                                    <span>?</span>
-                                {% endif %}
-                           
-                                <em>{{ planningByPlaceData.player1.rank }}</em>
+                            <div class="columns is-gapless is-mobile is-multiline">
+                                <div class="column is-one-fifth-mobile">{{ (time != '00h') ? time : '-' }}</div>
+                                <div class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
+                                <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">
+                                    {% if planningByPlaceData.player1.name is not empty %}
+                                        <a class="player-link text-secondary"
+                                           href="#jou:{{ planningByPlaceData.player1.jid }}"
+                                           data-hash="#jou" data-param="{{ planningByPlaceData.player1.jid }}"
+                                        >{{ planningByPlaceData.player1.name }}</a>
+                                        <em>{{ planningByPlaceData.player1.rank }}</em>
+                                        <div class="club">{{ planningByPlaceData.player1.club }}</div>
+                                    {% elseif planningByPlaceData.player1.qualif is not empty %}
+                                        <strong class="score is-size-6">
+                                            Q{{ planningByPlaceData.player1.qualif }}</strong>
+                                    {% elseif planningByPlaceData.player2.name is not empty %}
+                                        <a class="player-link text-secondary"
+                                           href="#jou:{{ planningByPlaceData.player2.jid }}"
+                                           data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
+                                        >{{ planningByPlaceData.player2.name }}</a>
+                                        <em>{{ planningByPlaceData.player2.rank }}</em>
+                                        <div class="club">{{ planningByPlaceData.player1.club }}</div>
+                                    {% else %}
+                                        <span>?</span>
+                                    {% endif %}
+                                </div>
+                                <div class="column"><strong class="score">{{ planningByPlaceData.score }}</strong></div>
+                                <div class="column is-one-quarter-desktop">
+                                    {% if planningByPlaceData.player1.name is not empty and planningByPlaceData.player2.name is not empty %}
+                                        <a class="player-link text-secondary"
+                                           href="#jou:{{ planningByPlaceData.player2.jid }}"
+                                           data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
+                                        >{{ planningByPlaceData.player2.name }}</a>
+                                        <em>{{ planningByPlaceData.player2.rank }}</em>
+                                        <div class="club">{{ planningByPlaceData.player2.club }}</div>
+                                    {% elseif planningByPlaceData.player2.qualif is not empty %}
+                                        <strong class="score is-size-6">
+                                            Q{{ planningByPlaceData.player2.qualif }}</strong>
+                                    {% else %}
+                                        <span>?</span>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="column score">{{ planningByPlaceData.score }}</div>
-                            <div class="column is-one-quarter-desktop">
-                                {% if planningByPlaceData.player2.name is not empty %}
-                                    <a class="player-link text-secondary" href="#jou:{{ planningByPlaceData.player2.jid }}"
-                                       data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
-                                    >{{ planningByPlaceData.player2.name }}</a>
-                                {% elseif planningByPlaceData.player2.qualif is not empty %}
-                                    <strong class="score is-size-6"> Q{{ planningByPlaceData.player2.qualif }}</strong>
-                                {% else %}
-                                    <span>?</span>
-                                {% endif %}
-                                <em>{{ planningByPlaceData.player2.rank }}</em>
-                            </div>
-                        </div>
                         {% endif %}
                     {% endfor %}
                 {% endfor %}
@@ -167,35 +179,48 @@
                     {% if resultData.winner is defined %}
                         <div class="columns is-gapless">
                             <div class="column is-one-fifth-desktop is-size-5"><strong>Vainqueur :</strong></div>
-                            <div class="column is-one-third-desktop is-size-5 winner-name">
-                                <a class="player-link text-primary is-size-5" href="#jou:{{ resultData.winner.jid }}"
+                            <div class="column is-two-fifths-desktop is-size-5 line-height-1 winner-name">
+                                <a class="player-link text-primary is-size-5 winner-name"
+                                   href="#jou:{{ resultData.winner.jid }}"
                                    data-hash="#jou" data-param="{{ resultData.winner.jid }}"
-                                >{{ resultData.winner.name }}</a>
+                                >{{ resultData.winner.name }}
+                                    <span class="is-italic">({{ resultData.winner.rank }})</span>
+                                </a>
+                                {% if resultData.winner.club is not empty %}
+                                    <br><span class="is-size-7 is-normal">{{ resultData.winner.club }}</span>
+                                {% endif %}
                             </div>
-                            <div class="column is-one-fifth-desktop winner-rank is-size-5">{{ resultData.winner.rank }}</div>
                             <div class="column is-one-fifth-desktop score is-size-5">{{ resultData.winner.score }}</div>
                         </div>
                         {% if resultData.finalist is defined %}
                             <div class="columns is-gapless">
-                                <div class="column is-one-fifth-desktop">Finaliste :</div>
-                                <div class="column is-one-third-desktop name">
+                                <div class="column is-one-fifth-desktop is-size-5">Finaliste :</div>
+                                <div class="column is-two-fifths-desktop name is-size-5 line-height-1">
                                     <a class="player-link text-secondary" href="#jou:{{ resultData.finalist.jid }}"
                                        data-hash="#jou" data-param="{{ resultData.finalist.jid }}"
-                                    >{{ resultData.finalist.name }}</a>
+                                    >{{ resultData.finalist.name }}
+                                        <span class="is-italic">({{ resultData.finalist.rank }})</span>
+                                    </a>
+                                    {% if resultData.finalist.club is not empty %}
+                                        <br><span class="is-size-7 is-normal text-secondary">{{ resultData.finalist.club }}</span>
+                                    {% endif %}
                                 </div>
-                                <div class="column is-one-fifth-desktop rank">{{ resultData.finalist.rank }}</div>
                             </div>
                         {% endif %}
                     {% else %}
                         {% for finalist in resultData.finalists %}
                             <div class="columns is-gapless">
                                 <div class="column is-one-fifth-desktop">Finaliste :</div>
-                                <div class="column is-one-third-desktop name">
+                                <div class="column is-two-fifths-desktop name line-height-1">
                                     <a class="player-link text-secondary" href="#jou:{{ resultData.finalist.jid }}"
                                        data-hash="#jou" data-param="{{ resultData.finalist.jid }}"
-                                    >{{ finalist.name }}</a>
+                                    >{{ finalist.name }}
+                                        <span class="is-italic">({{ finalist.rank }})</span>
+                                    </a>
+                                    {% if finalist.club is not empty %}
+                                        <br><span class="is-size-7 is-normal text-secondary">{{ finalist.club }}</span>
+                                    {% endif %}
                                 </div>
-                                <div class="column is-one-fifth-desktop rank">{{ finalist.rank }}</div>
                             </div>
                         {% endfor %}
                     {% endif %}
@@ -210,23 +235,28 @@
         <div class="container">
             <h2 class="title">Liste des {{ players|length }} joueurs</h2>
             <div class="columns is-gapless is-mobile is-multiline">
+                <span class="column is-hidden-mobile">Catégorie</span>
+                <span class="column is-hidden-desktop">Cat.</span>
                 <span class="column is-one-third-desktop is-half-mobile">
                     NOM<span class="is-hidden-mobile"> Prénom</span>
                     <span class="is-hidden-desktop">(+ club)</span>
                 </span>
-                <span class="column is-hidden-mobile">Sexe</span>
-                <span class="column">Class.</span>
+                <span class="column">Classement</span>
+                <span class="column is-hidden-mobile">Club</span>
             </div>
             {% for playersData in players %}
                 <div class="columns is-gapless is-mobile is-multiline">
+                    <span class="column">{{ playersData.cat }}</span>
                     <span class="column is-one-third-desktop is-half-mobile">
                          <a class="player-link text-secondary" href="#jou:{{ playersData.jid }}"
                             data-hash="#jou" data-param="{{ playersData.jid }}"
                          >{{ playersData.name }}</a>
-                        {% if playersData.club is not empty %}<br>({{ playersData.club }}){% endif %}
+                        <span class="is-hidden-desktop">
+                            {% if playersData.club is not empty %}<br>({{ playersData.club }}){% endif %}
+                        </span>
                     </span>
-                    <span class="column is-hidden-mobile">{{ playersData.sexe }}</span>
                     <span class="column">{{ playersData.rank }}</span>
+                    <span class="column is-hidden-mobile">{{ playersData.club }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -236,13 +266,14 @@
 {% macro playerView(player) %}
     {% if player is not empty %}
         <div class="box one-player-container" id="jou-{{ player.jid }}" style="display: none;">
-            <div class="container ">
+            <div class="container">
                 <div class="columns is-multiline is-gapless">
                     <div class="column is-one-fifth">&nbsp;</div>
                     <div class="column is-four-fifths"><strong
-                                class="is-size-5 text-secondary">{{ player.name }}</strong></div>
+                                class="is-size-5 text-secondary player-name">{{ player.name }}</strong></div>
                     <div class="column is-one-fifth is-size-6">Classement :</div>
                     <div class="column is-four-fifths is-size-6"><em class="rank">{{ player.rank }}</em></div>
+                    <div class="column is-full">&nbsp;</div>
                     <div class="column is-one-fifth is-size-6">Matchs :</div>
                     <div class="column is-four-fifths">
                         {% for tableName, matchesByTable in player.matches %}
@@ -287,19 +318,23 @@
                             <a class="player-link text-default" href="#jou:{{ tableData.jid }}"
                                data-hash="#jou" data-param="{{ tableData.jid }}"
                             >{{ tableData.name }}</a>
-                            <em>{{ tableData.rank }}</em> </span><br>
+                            <em>{{ tableData.rank }}</em>
+                        </span><br>
+                        {% if tableData.club is defined %}
+                            <span class="club">{{ tableData.club }}</span><br>
+                        {% endif %}
                     {% elseif tableData.qualif is defined %}
                         <strong class="name score is-size-6"> Q{{ tableData.qualif }}</strong><br>
                     {% else %}
                         <span class="name"> ?</span><br>
                     {% endif %}
 
-                    {% if tableData.date is defined %}
+                    {% if tableData.date is defined and tableData.score is not defined and tableData.score != 'wo' %}
                         <span class="date">{{ tableData.date }}</span><br>
                     {% endif %}
 
                     {% if tableData.score is defined %}
-                        <span class="score">{{ tableData.score }}</span><br>
+                        <strong class="score">{{ tableData.score }}</strong><br>
                     {% endif %}
                 </p>
             </div>

@@ -1,6 +1,7 @@
 {##
  # SURCHARGE DU TEMPLATE BACKEND /vendor/bolt/bolt/app/view/twig/_nav/_secondary.twig
- # RAISON: gérer l'indicateur "menu actif" pour le cas des menus custom
+ # RAISON 1: gérer l'indicateur "menu actif" pour le cas des menus custom
+ # RAISON 2: remonter le menu custom AVANT le menu de config
  #}
 {% import '@bolt/_nav/_macros.twig' as nav %}
 
@@ -31,6 +32,22 @@
         </li>
         {{ include('@bolt/_nav/_secondary-content.twig') }}
 
+        {# Customs #}
+        {# START CUSTOM PELEQ - on indique si le menu "custom" est actif ou non #}
+        {% if menus.has('custom') %}
+            <li class="divider">
+                <em>{{ nav.label('fa:trophy', __('general.phrase.competition')) }}</em>
+            </li>
+            {% for menu in menus.get('custom').children %}
+                {% if menu.children != null %}
+                    {{ nav.submenu(menu.icon, menu.label, menu.children, (page_nav == menu.name)) }}
+                {% else %}
+                    {{ nav.submenu(null, null, [menu], (page_nav == menu.name)) }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {# END CUSTOM PELEQ #}
+
         {# Settings #}
         {% if menus.has('config') or menus.has('files') or menus.has('translations') or menus.has('extensions') %}
             <li class="divider">
@@ -40,17 +57,6 @@
         {% if menus.has('config') %}{{ include('@bolt/_nav/_secondary-configuration.twig') }}{% endif %}
         {% if menus.has('files') %}{{ include('@bolt/_nav/_secondary-filemanagement.twig') }}{% endif %}
         {% if menus.has('extensions') %}{{ include('@bolt/_nav/_secondary-extensions.twig') }}{% endif %}
-        {% if menus.has('custom') %}
-            {% for menu in menus.get('custom').children %}
-                {# START CUSTOM PELEQ - on indique si le menu "custom" est actif ou non #}
-                {% if menu.children != null %}
-                    {{ nav.submenu(menu.icon, menu.label, menu.children, (page_nav == menu.name)) }}
-                {% else %}
-                    {{ nav.submenu(null, null, [menu], (page_nav == menu.name)) }}
-                {% endif %}
-                {# END CUSTOM PELEQ #}
-            {% endfor %}
-        {% endif %}
 
         {# Collapse/expand sidebar #}
         <li class="nav-secondary-collapse">

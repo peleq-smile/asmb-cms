@@ -8,13 +8,15 @@ use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 use Bundle\Asmb\Competition\Database\Schema\Table;
+use Bundle\Asmb\Competition\Entity;
 use Bundle\Asmb\Competition\Extension\TwigFiltersTrait;
 use Bundle\Asmb\Competition\Extension\TwigFunctionsTrait;
 use Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser;
-use Bundle\Asmb\Competition\Parser\JaTennisJsonParser;
-use Bundle\Asmb\Competition\Parser\PoolMeetingsParser;
-use Bundle\Asmb\Competition\Parser\PoolRankingParser;
-use Bundle\Asmb\Competition\Parser\PoolTeamsParser;
+use Bundle\Asmb\Competition\Parser\Tournament\DbParser;
+use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser;
+use Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser;
+use Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser;
+use Bundle\Asmb\Competition\Parser\Championship\PoolTeamsParser;
 use Pimple as Container;
 use Silex\Application;
 
@@ -37,12 +39,15 @@ class CompetitionExtension extends SimpleExtension
     protected function registerExtensionTables()
     {
         return [
-            'championship'              => Table\Championship::class,
-            'championship_category'     => Table\ChampionshipCategory::class,
-            'championship_pool'         => Table\ChampionshipPool::class,
+            'championship' => Table\Championship::class,
+            'championship_category' => Table\ChampionshipCategory::class,
+            'championship_pool' => Table\ChampionshipPool::class,
             'championship_pool_meeting' => Table\ChampionshipPoolMeeting::class,
             'championship_pool_ranking' => Table\ChampionshipPoolRanking::class,
-            'championship_pool_team'    => Table\ChampionshipPoolTeam::class,
+            'championship_pool_team' => Table\ChampionshipPoolTeam::class,
+            'tournament' => Table\Tournament::class,
+            'tournament_table' => Table\TournamentTable::class,
+            'tournament_box' => Table\TournamentBox::class,
         ];
     }
 
@@ -73,9 +78,12 @@ class CompetitionExtension extends SimpleExtension
         $meetingsParameters = $this->getMeetingsParameters();
 
         return [
-            '/extensions/championship'               => new Controller\Backend\ChampionshipController(),
-            '/extensions/championship/pool'          => new Controller\Backend\Championship\PoolController(),
-            '/extensions/championship/pool/meetings' => new Controller\Backend\Championship\PoolMeetingsController($meetingsParameters),
+            '/extensions/competition/championship' => new Controller\Backend\ChampionshipController(),
+            '/extensions/competition/championship/pool' => new Controller\Backend\Championship\PoolController(),
+            '/extensions/competition/championship/pool/meetings' => new Controller\Backend\Championship\PoolMeetingsController($meetingsParameters),
+            '/extensions/competition/tournament' => new Controller\Backend\TournamentController(),
+            '/extensions/competition/tournament/table' => new Controller\Backend\Tournament\TableController(),
+            '/extensions/competition/tournament/box' => new Controller\Backend\Tournament\BoxController(),
         ];
     }
 
@@ -86,27 +94,36 @@ class CompetitionExtension extends SimpleExtension
     {
         $permission = 'competition';
 
+        // Entrée du menu "Compétitions" : Championnats
         /** @var \Bolt\Users $usersService */
-        $menu = MenuEntry::create('competition-menu', 'championship')
+        $menuChampionship = MenuEntry::create('championship-menu')
             ->setRoute('championship')
-            ->setLabel(Trans::__('general.phrase.manage-competition'))
-            ->setIcon('fa:trophy')
+            ->setLabel(Trans::__('general.phrase.championships'))
+            ->setIcon('fa:flag')
             ->setPermission($permission);
 
-        $submenuChampionship = MenuEntry::create('championship-submenu')
-            ->setLabel(Trans::__('general.phrase.championship'))
-            ->setIcon('fa:users')
+        $submenuListChampionship = MenuEntry::create('championship-list-submenu')
+            ->setLabel(Trans::__('general.phrase.championships-list'))
+            ->setIcon('fa:list')
             ->setPermission($permission);
+
         $submenuMeetingsOfTheMoment = MenuEntry::create('meetings-of-the-moment-submenu', 'pool/meetings')
             ->setLabel(Trans::__('general.phrase.meetings-of-the-moment'))
             ->setIcon('fa:calendar')
             ->setPermission($permission);
 
-        $menu->add($submenuChampionship);
-        $menu->add($submenuMeetingsOfTheMoment);
+        $menuTournament = MenuEntry::create('tournament-menu')
+            ->setRoute('tournament')
+            ->setLabel(Trans::__('general.phrase.tournaments'))
+            ->setIcon('fa:sitemap')
+            ->setPermission($permission);
+
+        $menuChampionship->add($submenuListChampionship);
+        $menuChampionship->add($submenuMeetingsOfTheMoment);
 
         return [
-            $menu,
+            $menuChampionship,
+            $menuTournament
         ];
     }
 
@@ -116,12 +133,15 @@ class CompetitionExtension extends SimpleExtension
     protected function registerRepositoryMappings()
     {
         return [
-            'championship'              => [Entity\Championship::class => Repository\ChampionshipRepository::class],
-            'championship_category'     => [Entity\Championship\Category::class => Repository\Championship\CategoryRepository::class],
-            'championship_pool'         => [Entity\Championship\Pool::class => Repository\Championship\PoolRepository::class],
+            'championship' => [Entity\Championship::class => Repository\ChampionshipRepository::class],
+            'championship_category' => [Entity\Championship\Category::class => Repository\Championship\CategoryRepository::class],
+            'championship_pool' => [Entity\Championship\Pool::class => Repository\Championship\PoolRepository::class],
             'championship_pool_meeting' => [Entity\Championship\PoolMeeting::class => Repository\Championship\PoolMeetingRepository::class],
             'championship_pool_ranking' => [Entity\Championship\PoolRanking::class => Repository\Championship\PoolRankingRepository::class],
-            'championship_pool_team'    => [Entity\Championship\PoolTeam::class => Repository\Championship\PoolTeamRepository::class],
+            'championship_pool_team' => [Entity\Championship\PoolTeam::class => Repository\Championship\PoolTeamRepository::class],
+            'tournament' => [Entity\Tournament::class => Repository\TournamentRepository::class],
+            'tournament_table' => [Entity\Tournament\Table::class => Repository\Tournament\TableRepository::class],
+            'tournament_box' => [Entity\Tournament\Box::class => Repository\Tournament\BoxRepository::class],
         ];
     }
 
@@ -134,28 +154,38 @@ class CompetitionExtension extends SimpleExtension
         $this->extendRepositoryMapping();
 
         $app['pool_meetings_parser'] = $app->share(
-            function ($app) {
+            function () {
                 return new PoolMeetingsParser();
             }
         );
         $app['pool_ranking_parser'] = $app->share(
-            function ($app) {
+            function () {
                 return new PoolRankingParser();
             }
         );
         $app['pool_teams_guesser'] = $app->share(
-            function ($app) {
+            function () {
                 return new PoolTeamsGuesser();
             }
         );
         $app['pool_teams_parser'] = $app->share(
-            function ($app) {
+            function () {
                 return new PoolTeamsParser();
             }
         );
         $app['ja_tennis_parser'] = $app->share(
-            function ($app) {
+            function () {
                 return new JaTennisJsonParser();
+            }
+        );
+
+        $app['tournament_db_parser'] = $app->share(
+            function ($app) {
+                $tournamentRepository = $app['storage']->getRepository('tournament');
+                $tournamentTableRepository = $app['storage']->getRepository('tournament_table');
+                $tournamentBoxRepository = $app['storage']->getRepository('tournament_box');
+
+                return new DbParser($tournamentRepository, $tournamentTableRepository, $tournamentBoxRepository);
             }
         );
     }
@@ -168,7 +198,7 @@ class CompetitionExtension extends SimpleExtension
         /** @see https://stackoverflow.com/questions/52754936/overwrite-backend-template-in-bolt-cms */
         if ($this->getEnd() == 'backend') {
             return [
-                'view/backend'      => ['position' => 'prepend', 'namespace' => 'bolt'],
+                'view/backend' => ['position' => 'prepend', 'namespace' => 'bolt'],
                 'templates/backend' => ['namespace' => 'AsmbCompetition'],
             ];
         }

@@ -3,8 +3,8 @@
 namespace Bundle\Asmb\Competition\Repository\Championship;
 
 use Bolt\Storage\Repository;
+use Bundle\Asmb\Competition\Entity\Championship\Category;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
-use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 use Bundle\Asmb\Competition\Helpers\PoolTeamHelper;
 
@@ -31,7 +31,7 @@ class PoolRepository extends Repository
 
         if (!empty($categoryNames)) {
             // Init $poolsGroupedByCategoryName with given category name(s)
-            /** @var \Bundle\Asmb\Competition\Entity\Championship\Category $category */
+            /** @var Category $category */
             foreach ($categoryNames as $categoryName) {
                 $poolsGroupedByCategoryName[$categoryName] = [];
             }
@@ -40,7 +40,7 @@ class PoolRepository extends Repository
                 ->findBy([], ['position', 'ASC']);
 
             // Init $poolsGroupedByCategoryName with category name SORTED BY POSITION
-            /** @var \Bundle\Asmb\Competition\Entity\Championship\Category $category */
+            /** @var Category $category */
             foreach ($categories as $category) {
                 $poolsGroupedByCategoryName[$category->getName()] = [];
             }
@@ -57,12 +57,12 @@ class PoolRepository extends Repository
     }
 
     /**
-     * Return all pools of given championship id, sorted by name.
-     *
-     * @param integer $championshipId
-     *
-     * @return bool|Pool[]
-     */
+ * Return all pools of given championship id, sorted by name.
+ *
+ * @param integer $championshipId
+ *
+ * @return bool|Pool[]
+ */
     public function findByChampionshipId($championshipId)
     {
         $poolsSortedByName = [];

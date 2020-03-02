@@ -1,0 +1,141 @@
+{% form_theme scoresForm 'form_bolt_layout.twig' %}
+
+{{ form_start(scoresForm, {attr: {id: scoresForm.vars.name}}) }}
+<div class="table-container">
+    <div class="table-container-centered">
+        {% for box in boxes %}
+            {% if box.qualif_out is not null %}
+                <div class="table-container-part">
+                    {{ _self.displayBox(box, scoresForm, boxesWithMissingScore, duplicatesQualifIn) }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if boxes is empty %}
+            <p class="mt-md mb-md">{{ __('general.phrase.nothing-to-display') }}</p>
+        {% endif %}
+
+    </div>
+</div>
+{% if scoresForm['save_all'] is defined %}
+    <div class="form-group row clearfix">
+        <div class="col-md-12">
+            <div class="pull-right">
+                {{ form_widget(scoresForm['save_all']) }}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{{ form_end(scoresForm) }}
+
+{% macro displayBox(box, scoresForm, boxesWithMissingScore, duplicatesQualifIn) %}
+    {% if box is defined and box.id is not null %}
+
+        {% set boxClass = '' %}
+        {% if box.qualif_in is not empty and duplicatesQualifIn[box.qualif_in] is defined %}
+            {% set boxClass = 'border-danger' %}
+        {% endif %}
+
+        <div class="item">
+            <div class="item-parent">
+                <div class="box {{ boxClass }}">
+                    <a class="btn btn-xs btn-default pull-right"
+                       href="{{ path('tournamentboxedit', {'boxId': box.id}) }}">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    {% if box.datetime is not empty %}
+                        {% if box.datetime.hour > 0 or box.score != 'wo' %}
+                            <span class="date clearfix">{{ box.datetime|localizeddatetime }}</span>
+                        {% endif %}
+
+                        {% if boxesWithMissingScore[box.id] is defined %}
+                            {# Cas d'une rencontre passée sans score : formulaire rapide de saisie du vainqueur +
+                               score manquant #}
+                            <div class="row-no-gutters clearfix">
+                                <label for="{{ scoresForm['box-' ~ box.id ~ '_winner'].vars.id }}"
+                                       class="control-label label-sm winner">
+                                    <strong>{{ __('page.edit-tournament.box.winner') }} :</strong>
+                                </label>
+                                <div class="col-md-7">
+                                    {{ form_widget(scoresForm['box-' ~ box.id ~ '_winner'], {attr: {class: 'input-sm to-setted'}}) }}
+                                </div>
+                                <div class="col-md-5">
+                                    {{ form_widget(scoresForm['box-' ~ box.id ~ '_score'], {attr: {class: 'input-sm to-setted', placeholder:  __('page.edit-tournament.box.score')}}) }}
+                                </div>
+                            </div>
+                        {% elseif box.player_name is empty %}
+                            <span class="name"><strong> ? </strong></span>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if box.qualif_in is not empty %}
+                        <div><strong class="qualif-in"> Q{{ box.qualif_in }}</strong></div>
+                    {% endif %}
+
+                    {% if box.player_name is not empty and boxesWithMissingScore[box.id] is not defined %}
+                        <span class="name">
+                            <strong>{{ box.player_name }}</strong><br>
+                            <em class="ranking">{{ box.player_rank }}</em>
+                            {% if box.player_club is not empty %}
+                                - <em class="club">{{ box.player_club }}</em>
+                            {% endif %}
+                        </span><br>
+                    {% endif %}
+
+                    {% if box.score is not empty %}
+                        <span class="score">{{ box.score }}</span>
+                    {% endif %}
+
+                    {% if box.qualif_out is not empty %}
+                        <strong class="qualif-out pull-right"> Q{{ box.qualif_out }}</strong>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if box.boxBtm is not null or box.boxTop is not null %}
+                <div class="item-childrens">
+                    {% if box.boxTop is defined %}
+                        <div class="item-child">
+                            {{ _self.displayBox(box.boxTop, scoresForm, boxesWithMissingScore, duplicatesQualifIn) }}
+                        </div>
+                    {% endif %}
+                    {% if box.boxBtm is defined %}
+                        <div class="item-child">
+                            {{ _self.displayBox(box.boxBtm, scoresForm, boxesWithMissingScore, duplicatesQualifIn) }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+<script>
+    function onScoreTyping($scoreInput) {
+        let scoreValue = $scoreInput.val(),
+            nbChar = scoreValue.length;
+
+        if (nbChar > 0 && $.isNumeric(scoreValue[0])) {
+            // Le 1er caractère saisi est un chiffre : on peut ajouter automatiquement les slashs
+            scoreValue = scoreValue.replace(/(\d)(\d)/, '$1/$2 ')
+                .replace(/(\d)(\d)/, '$1/$2 ')
+                .replace(/(\d)(\d)/, '$1/$2 ')
+                .trim();
+            $scoreInput.val(scoreValue);
+        }
+    }
+
+    $(function () {
+        let $form = $('#tournament_boxes_score_edit'),
+            $winnerSelects = $('select', $form),
+            $scoreInputs = $('input[type="text"]', $form);
+
+        $winnerSelects.bind('change', function (event) {
+            $(event.target).parent().parent().find('input[type="text"]:first').focus();
+        });
+
+        $scoreInputs.bind('change', function (event) {
+            onScoreTyping($(event.target));
+        });
+    });
+</script>

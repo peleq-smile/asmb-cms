@@ -1,0 +1,29 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'tournament-menu' %}
+
+{% set title =  __('page.tournament.table.title', {'%tournament%': tournament.name ~ ' ' ~ tournament.year, '%tableName%': table.name}) %}
+
+{% block page_title title %}
+
+{% block page_main %}
+    <div class="competition-page-main">
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournamenttable', {'tableId': table.id}) }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Formulaire #}
+        <div class="row">
+            <div class="col-md-12">
+                {{ include('@AsmbCompetition/tournament/box/_edit-infos.twig', {'form': context.form}) }}
+            </div>
+        </div>
+    </div>
+{% endblock page_main %}

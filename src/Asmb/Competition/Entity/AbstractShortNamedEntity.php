@@ -1,6 +1,6 @@
 <?php
 
-namespace Bundle\Asmb\Competition\Entity\Championship;
+namespace Bundle\Asmb\Competition\Entity;
 
 use Bolt\Storage\Entity\Entity;
 
