@@ -28,6 +28,7 @@ class TournamentTable extends BaseTable
         $this->table->addColumn('updated_at', 'datetime', ['notnull' => false, 'default' => null]);
         $this->table->addColumn('updated_by', 'integer', ['notnull' => false, 'default' => null]);
         $this->table->addColumn('previous_table_id', 'integer', ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('position', 'integer', ['notnull' => true, 'default' => 0, 'unsigned' => true]);
     }
 
     /**
@@ -35,6 +36,7 @@ class TournamentTable extends BaseTable
      */
     protected function addIndexes()
     {
+        $this->table->addIndex(['position']);
     }
 
     /**

@@ -2,7 +2,7 @@
     <thead>
     <tr>
         <th>{{ __('general.phrase.id') }}</th>
-        <th class="hidden-xs">{{ __('general.phrase.name') }} <em>({{ __('general.phrase.short_name') }})</em></th>
+        <th class="hidden-xs">{{ __('general.phrase.name') }}<br><em style="white-space: nowrap">({{ __('general.phrase.short_name') }})</em></th>
         <th class="hidden-xs">{{ __('general.phrase.year') }}</th>
         <th class="hidden-xs">{{ __('general.phrase.dates') }}</th>
         <th class="visible-xs">{{ __('general.phrase.info') }}</th>
@@ -16,7 +16,7 @@
         <tr>
             <td>{{ tournament.id }}</td>
             <td class="hidden-xs name">
-                {{ tournament.name }}<br><em>({{ tournament.short_name ? tournament.short_name : ' - '}})</em>
+                {{ tournament.name }}<br><em style="white-space: nowrap">({{ tournament.short_name ? tournament.short_name : ' - '}})</em>
             </td>
             <td class="hidden-xs year">{{ tournament.year }}</td>
             <td class="hidden-xs">
@@ -47,9 +47,6 @@
                     </a>
                 {% endfor %}
                 <br>
-                {% if isallowed('competition:edit') %}
-
-                {% endif %}
             </td>
 
             <td class="actions">

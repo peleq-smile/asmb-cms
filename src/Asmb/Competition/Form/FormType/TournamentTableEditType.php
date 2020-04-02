@@ -50,6 +50,15 @@ class TournamentTableEditType extends AbstractType
                 ]
             )
             ->add(
+                'position',
+                Type\IntegerType::class,
+                [
+                    'label' => Trans::__('page.edit-tournament.table.position'),
+                    'required' => false,
+                    'empty_data' => 0,
+                ]
+            )
+            ->add(
                 'visible',
                 Type\CheckboxType::class,
                 [

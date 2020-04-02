@@ -134,11 +134,17 @@ class DbParser extends AbstractParser
 
             $playersData = $this->getPlayersData();
 
-            // On récupère tout d'abord tous les tableaux du tournoi
-            $tables = $this->tableRepository->findBy([
-                'tournament_id' => $this->getTournamentId(),
-                'visible' => true
-            ]);
+            // On récupère tout d'abord tous les tableaux du tournoi (par position)
+            $tables = $this->tableRepository->findBy(
+                [
+                    'tournament_id' => $this->getTournamentId(),
+                    'visible' => true
+                ],
+                [
+                    'position',
+                    'asc'
+                ]
+            );
             /** @var Table $table */
             foreach ($tables as $table) {
                 $tableName = $table->getCategoryLabel() . ' &bull; ' . $table->getName();

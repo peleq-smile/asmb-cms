@@ -55,6 +55,10 @@ class Table extends AbstractShortNamedEntity
     /**
      * @var integer
      */
+    protected $position = 0;
+    /**
+     * @var integer
+     */
     private $nb_round;
     /**
      * @var Table
@@ -194,6 +198,22 @@ class Table extends AbstractShortNamedEntity
     public function setPreviousTableId($previousTableId)
     {
         $this->previous_table_id = $previousTableId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
     }
 
     /**

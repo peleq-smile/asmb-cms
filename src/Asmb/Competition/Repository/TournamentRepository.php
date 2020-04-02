@@ -32,12 +32,14 @@ class TournamentRepository extends Repository
         $qb->addSelect("tour_table.name AS table_name");
         $qb->addSelect("tour_table.status AS table_status");
         $qb->addSelect("tour_table.visible AS table_visible");
+        $qb->addSelect("tour_table.position AS table_position");
         $qb->leftJoin(
             $this->getAlias(),
             'bolt_tournament_table',
             'tour_table',
             $qb->expr()->eq($this->getAlias() . '.id', 'tour_table.tournament_id')
         );
+        $qb->addOrderBy('table_position');
         $qb->addOrderBy('table_id');
 
         $result = $qb->execute()->fetchAll();
