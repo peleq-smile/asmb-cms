@@ -79,6 +79,10 @@
 
 {{ include('partials/_footer.twig') }}
 
+{% if app.request.get('_route') == "homepage" and homepage.alert_text is not empty %}
+    <div class="static-alert-container">{{ homepage.alert_text|raw }}</div>
+{% endif %}
+
 <script src="{{ asset('js/lib/jquery-3.3.1.min.js', 'theme') }}" defer></script>
 <script src="{{ asset('js/lib/jquery.touchSwipe.min.js', 'theme') }}" defer></script>
 

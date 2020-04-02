@@ -21,84 +21,6 @@ p a,
 li a {
   text-decoration: underline; }
 
-/*!
- * baguetteBox.js
- * @author  feimosi
- * @version %%INJECT_VERSION%%
- * @url https://github.com/feimosi/baguetteBox.js
- */
-#baguetteBox-overlay {
-  display: none;
-  opacity: 0;
-  position: fixed;
-  overflow: hidden;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000000;
-  background-color: #222;
-  background-color: rgba(0, 0, 0, 0.8);
-  -webkit-transition: opacity .5s ease;
-  transition: opacity .5s ease; }
-  #baguetteBox-overlay.visible {
-    opacity: 1; }
-  #baguetteBox-overlay .full-image {
-    display: inline-block;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center; }
-    #baguetteBox-overlay .full-image figure {
-      display: inline;
-      margin: 0;
-      height: 100%; }
-    #baguetteBox-overlay .full-image img {
-      display: inline-block;
-      width: auto;
-      height: auto;
-      max-height: 100%;
-      max-width: 100%;
-      vertical-align: middle;
-      -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
-              box-shadow: 0 0 8px rgba(0, 0, 0, 0.6); }
-    #baguetteBox-overlay .full-image figcaption {
-      display: block;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      text-align: center;
-      line-height: 1.8;
-      white-space: normal;
-      color: #ccc;
-      background-color: #000;
-      background-color: rgba(0, 0, 0, 0.6);
-      font-family: sans-serif; }
-    #baguetteBox-overlay .full-image:before {
-      content: "";
-      display: inline-block;
-      height: 50%;
-      width: 1px;
-      margin-right: -1px; }
-
-#baguetteBox-slider {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  white-space: nowrap;
-  -webkit-transition: left .4s ease, -webkit-transform .4s ease;
-  transition: left .4s ease, -webkit-transform .4s ease;
-  transition: left .4s ease, transform .4s ease;
-  transition: left .4s ease, transform .4s ease, -webkit-transform .4s ease; }
-  #baguetteBox-slider.bounce-from-right {
-    -webkit-animation: bounceFromRight .4s ease-out;
-            animation: bounceFromRight .4s ease-out; }
-  #baguetteBox-slider.bounce-from-left {
-    -webkit-animation: bounceFromLeft .4s ease-out;
-            animation: bounceFromLeft .4s ease-out; }
-
 @-webkit-keyframes bounceFromRight {
   0% {
     margin-left: 0; }
@@ -372,7 +294,30 @@ pre[class*="language-"] {
     color: #6e9c6d; }
   .container .messages-container .close {
     display: none; }
-
+.static-alert-container {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-height: 2rem;
+  background: #d1a633ee;
+  padding: 1rem;
+  color: white;
+  font-weight: 400;
+  z-index: 10000;
+  border-top: solid 6px #7c0000;
+}
+.static-alert-container h2 {
+  font-size: 1.5rem;
+  color: #7c0000;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+.static-alert-container p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
 .columns.white-framed {
   -webkit-box-align: center;
       -ms-flex-align: center;

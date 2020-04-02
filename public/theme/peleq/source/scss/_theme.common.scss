@@ -59,6 +59,34 @@
     }
 }
 
+/* Messge d'alerte statique */
+.static-alert-container {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-height: 2rem;
+    background: #d1a633ee;
+    padding: 1rem;
+    color: white;
+    font-weight: 400;
+    z-index: 10000;
+    border-top: solid 6px $red;
+
+    h2 {
+        font-size: 1.5rem;
+        color: $red;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
 .columns.white-framed {
     align-items: center;
     background: linear-gradient(to right, $white 50%, $body-background-color);

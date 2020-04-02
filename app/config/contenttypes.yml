@@ -155,8 +155,12 @@ homepage:
                 Ouvert dans un nouvel onglet/une nouvelle fenêtre.
 
         # Onglet Pied de page du site : personnalisation de certains éléments du pied de page
-        footer_contact_address_text:
+        alert_text:
             group: pied de page du site
+            label: "Message d'alerte"
+            type: html
+            required: false
+        footer_contact_address_text:
             label: Adresse du club
             type: textarea
             required: true
