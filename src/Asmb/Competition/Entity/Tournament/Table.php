@@ -20,6 +20,8 @@ class Table extends AbstractShortNamedEntity
     static public $categories = [
         'D' => 'Dames',
         'M' => 'Messieurs',
+        'G' => 'Garçons',
+        'F' => 'Filles',
     ];
 
     /**

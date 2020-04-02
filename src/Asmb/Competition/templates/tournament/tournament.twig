@@ -88,6 +88,7 @@
 
 {% macro planningView(planning, planningDisplay, planningDay) %}
     <div class="box planning-container" style="display: {{ planningDisplay }}">
+        {% if planning.length > 1 %}
         <ul class="planning-nav is-hidden-touch">
             {% for day, planningByDayData in planning %}
                 {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
@@ -98,6 +99,7 @@
                 </li>
             {% endfor %}
         </ul>
+        {% endif %}
 
         {% for day, planningByDayData in planning %}
             {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}

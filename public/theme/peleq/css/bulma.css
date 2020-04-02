@@ -3501,14 +3501,6 @@ a.box:active {
     padding: 0.5em 1em;
 }
 
-.select:not(.is-multiple):not(.is-loading):hover::after, .boltform select:not(.is-multiple):not(.is-loading):hover::after {
-    border-color: #363636;
-}
-
-.select.is-white:not(:hover)::after, .boltform select.is-white:not(:hover)::after {
-    border-color: white;
-}
-
 .select.is-white select, .boltform select.is-white select {
     border-color: white;
 }
