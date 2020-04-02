@@ -62,53 +62,56 @@ trait TwigFunctionsTrait
     protected function getLastOrNextMeetings($pastOrFutureDays)
     {
         $sortedMeetings = [];
-        $groupedMeetings = [];
 
-        /** @var PoolMeetingRepository $poolMeetingRepository */
-        $poolMeetingRepository = $this->getStorage()->getRepository('championship_pool_meeting');
-        $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;
-        $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
-        $meetingsOfTheMoment = $poolMeetingRepository->findClubMeetingsOfTheMoment($pastDays, $futureDays);
+        if ($pastOrFutureDays != 0) {
+            $groupedMeetings = [];
 
-        // On récupère le contenu "Competition" pour regrouper les rencontres par Championnat/catégorie et
-        // pour ajouter un lien vers la page
-        /** @var \Bolt\Application $app */
-        $app = $this->getContainer();
-        foreach ($meetingsOfTheMoment as $meeting) {
-            // On ignore les rencontres dont l'une des équipes contient "Exempt"
-            if (
-                stripos($meeting->getHomeTeamName(), 'exempt') !== false ||
-                stripos($meeting->getVisitorTeamName(), 'exempt') !== false
-            ) {
-                continue;
-            }
+            /** @var PoolMeetingRepository $poolMeetingRepository */
+            $poolMeetingRepository = $this->getStorage()->getRepository('championship_pool_meeting');
+            $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;
+            $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
+            $meetingsOfTheMoment = $poolMeetingRepository->findClubMeetingsOfTheMoment($pastDays, $futureDays);
 
-            /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
-            $competitionPage = $app['query']->getContent(
-                'competition',
-                [
-                    'championship_id' => $meeting->getChampionshipId(),
-                    'championship_categories' => '%' . $meeting->getCategoryName() . '%',
-                    'returnsingle' => true
-                ]
-            );
+            // On récupère le contenu "Competition" pour regrouper les rencontres par Championnat/catégorie et
+            // pour ajouter un lien vers la page
+            /** @var \Bolt\Application $app */
+            $app = $this->getContainer();
+            foreach ($meetingsOfTheMoment as $meeting) {
+                // On ignore les rencontres dont l'une des équipes contient "Exempt"
+                if (
+                    stripos($meeting->getHomeTeamName(), 'exempt') !== false ||
+                    stripos($meeting->getVisitorTeamName(), 'exempt') !== false
+                ) {
+                    continue;
+                }
 
-            if (null !== $competitionPage && $competitionPage) {
-                $meetingDate = $meeting->getFinalDate()->format('Ymd');
+                /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
+                $competitionPage = $app['query']->getContent(
+                    'competition',
+                    [
+                        'championship_id' => $meeting->getChampionshipId(),
+                        'championship_categories' => '%' . $meeting->getCategoryName() . '%',
+                        'returnsingle' => true
+                    ]
+                );
 
-                $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
-                $meeting->setCompetitionRecordSlug($competitionPage->getSlug());
+                if (null !== $competitionPage && $competitionPage) {
+                    $meetingDate = $meeting->getFinalDate()->format('Ymd');
 
-                if (!isset($groupedMeetings[$meetingDate . '-' . $competitionPage->getId()])) {
-                    $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()] = [$meeting];
-                } else {
-                    $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()][] = $meeting;
+                    $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
+                    $meeting->setCompetitionRecordSlug($competitionPage->getSlug());
+
+                    if (!isset($groupedMeetings[$meetingDate . '-' . $competitionPage->getId()])) {
+                        $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()] = [$meeting];
+                    } else {
+                        $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()][] = $meeting;
+                    }
                 }
             }
-        }
 
-        foreach ($groupedMeetings as $meetings) {
-            $sortedMeetings = array_merge($sortedMeetings, $meetings);
+            foreach ($groupedMeetings as $meetings) {
+                $sortedMeetings = array_merge($sortedMeetings, $meetings);
+            }
         }
 
         return $sortedMeetings;
