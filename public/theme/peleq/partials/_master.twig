@@ -57,25 +57,29 @@
 
 <a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
 
-{% block body %}
-    <header id="header" role="banner" class="header">
-        {{ include('partials/_header_top.twig') }}
-        {% if app.request.get('_route') == "homepage" %}
-            {{ include('partials/_header.twig') }}
-        {% endif %}
-    </header>
 
-    <div id="main-content">
-        {{ widgets('main_top') }}
+{% set isHome = (app.request.get('_route') == "homepage" or record.template == 'template_accueil.twig' )%}
 
-        {% block main %}
-        {% endblock main %}
+{% block header %}
+<header id="header" role="banner" class="header">
+    {{ include('partials/_header_top.twig') }}
+    {% if isHome %}
+        {{ include('partials/_hero.twig') }}
+    {% endif %}
+</header>
+{% endblock header %}
 
-        {{ widgets('main_bottom') }}
-    </div>
+<div id="main-content">
+    {{ widgets('main_top') }}
 
-    <a href="#header" class="scrollup" title="{{ __('general.phrase.back-to-top') }}"><i class="fa fa-arrow-up"></i></a>
-{% endblock body %}
+    {% block main %}
+    {% endblock main %}
+
+    {{ widgets('main_bottom') }}
+</div>
+
+{# Lien qui apparaît pour remonter rapidement vers le haut de la page #}
+<a href="#header" class="scrollup" title="{{ __('general.phrase.back-to-top') }}"><i class="fa fa-arrow-up"></i></a>
 
 {{ include('partials/_footer.twig') }}
 
@@ -118,5 +122,3 @@
 </script>
 </body>
 </html>
-
-

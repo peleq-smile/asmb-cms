@@ -5,7 +5,7 @@ header {
         position: relative;
 
         .topbar {
-            padding: 0.5rem 0;
+            padding: 0.1rem 0;
             display: flex;
 
             .navbar-item {
@@ -45,10 +45,9 @@ header {
                 padding: 0 1rem;
 
                 .navbar-brand {
-                    padding: 0.5rem 0;
+                    padding: 0;
                     a {
                         transition: all .2s ease-in-out;
-                        line-height: 120px;
 
                         &:hover {
                             transform: scale(1.15);

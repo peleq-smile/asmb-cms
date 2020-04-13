@@ -71,40 +71,11 @@ homepage:
                     values: (blocs,infos_tournoi)/title
                     filter: { status: published }
 
-        # Onglet Propriétés
-        slug:
-            group: meta
-            type: slug
-            uses: title
-
         # Onglet En-tête du site : personnalisation de certains éléments de l'en-tête
         logo_file:
             group: en-tête du site
             label: 'Logo du site'
             type: image
-            required: true
-
-        header_title:
-            label: 'Titre'
-            type: text
-            required: true
-            postfix: |
-                Peut contenir des balises HTML. Les lettres mises entre les balises &lt;strong&gt;&lt;/strong&gt; sont
-                mises en avant (taille plus grande + autre couleur).
-
-        header_baseline:
-            label: 'Accroche du site'
-            type: textarea
-            required: false
-
-        header_banner:
-            label: 'Image du bandeau'
-            type: image
-            required: true
-
-        header_fft_number:
-            label: 'Numéro FFT'
-            type: text
             required: true
 
         header_location_text:
@@ -154,12 +125,99 @@ homepage:
             postfix: |
                 Ouvert dans un nouvel onglet/une nouvelle fenêtre.
 
-        # Onglet Pied de page du site : personnalisation de certains éléments du pied de page
-        alert_text:
-            group: pied de page du site
-            label: "Message d'alerte"
-            type: html
+        # Onglet Bandeau : choix image ou vidéos, couleurs etc.
+        hero_video_mp4:
+            group: bandeau
+            label: "Vidéo du bandeau (format .mp4)"
+            type: file
+            extensions: [ mp4 ]
+            upload: videos
             required: false
+            postfix: |
+                La page d'accueil affiche un bandeau sur toute la largeur de la page avec
+                cette vidéo. La vidéo est prioritaire sur l'image qui peut être fournie ci-dessous.
+                Il peut être nécessaire de fournir la même vidéo au format .mp4 et .mov.
+
+        hero_video_mov:
+            group: bandeau
+            label: "Vidéo du bandeau (.mov)"
+            type: file
+            extensions: [ mov ]
+            upload: videos
+            required: false
+            postfix: |
+                La page d'accueil affiche un bandeau sur toute la largeur de la page avec
+                cette vidéo. La vidéo est prioritaire sur l'image qui peut être fournie ci-dessous.
+                Il peut être nécessaire de fournir la même vidéo au format .mp4 et .mov.
+
+        hero_image:
+        # header_banner:
+            label: 'Image du bandeau'
+            type: image
+            extensions: [ jpg, jpeg, png ]
+            required: true
+            postfix: |
+                Cette image s'affiche à la place de la vidéo si aucune vidéo n'est fournie et/ou sur
+                les terminaux ne gérant pas la vidéo (mobiles, ...).
+
+        hero_opacity:
+            label: 'Transparence (en %)'
+            type: select
+            values: { '1': "0", '0.9': "10", '0.8': "20", '0.7': "30", '0.6': "40", '0.5': "50", '0.4': "60", '0.3': "70", '0.2': "80" }
+
+        hero_color_mask:
+            label: 'Couleur de transparence'
+            type: select
+            values: { '026094': "Bleu", 'd1a633': "Jaune", '2c2d32': "Foncé" }
+            require: false
+
+        #header_title:
+        hero_title:
+            label: 'Titre du bandeau'
+            type: text
+            required: true
+            postfix: |
+                Ce titre s'affiche par dessus la vidéo ou l'image du bandeau.
+                Il peut contenir des balises HTML. Les lettres mises entre les balises &lt;strong&gt;&lt;/strong&gt; sont
+                mises en avant (taille plus grande).
+
+        hero_title_color:
+            label: 'Couleur du titre'
+            type: select
+            values: { '2c2d32': "Foncé", 'ffffff': "Blanc", '026094': "Bleu", 'd1a633': "Jaune" }
+            required: true
+
+        hero_title_color_shadow:
+            label: 'Couleur de l''ombre du titre'
+            type: select
+            values: { '0a0a0a': "Foncé", 'ffffff': "Clair" }
+            required: false
+
+        #header_baseline:
+        hero_subtitle:
+            label: 'Sous-titre du bandeau'
+            type: text
+            required: false
+            postfix: |
+                Ce sous-titre s'affiche par dessus la vidéo ou l'image du bandeau, sous le titre.
+
+        hero_subtitle_color:
+            label: 'Couleur du sous-titre'
+            type: select
+            values: { '2c2d32': "Foncé", 'ffffff': "Blanc", '026094': "Bleu", 'd1a633': "Jaune" }
+
+        hero_subtitle_color_shadow:
+            label: 'Couleur de l''ombre du sous-titre'
+            type: select
+            values: { '0a0a0a': "Foncé", 'ffffff': "Clair" }
+
+        # Onglet Pied de page du site : personnalisation de certains éléments du pied de page
+        footer_fft_number:
+            group: pied de page du site
+            label: 'Numéro FFT'
+            type: text
+            required: true
+
         footer_contact_address_text:
             label: Adresse du club
             type: textarea
@@ -207,6 +265,12 @@ homepage:
             label: Page Facebook: URL du lien
             type: text
             required: true
+
+        alert_text:
+            label: "Message d'alerte"
+            type: html
+            required: false
+
         # Ajout onglet "SEO"
         meta_title:
             label: 'Meta "title"'
@@ -235,6 +299,11 @@ homepage:
             type: image
             extensions: [ jpg, png ]
 
+        # Onglet Propriétés
+        slug:
+            group: meta
+            type: slug
+            uses: title
 blocs:
     name: Blocs simples
     singular_name: Bloc simple
@@ -551,11 +620,14 @@ infos_tournoi:
             uses: [ title ]
 
         # Onglet "Détails"
+        description:
+            group: "Détails"
+            label: 'Texte descriptif libre'
+            type: textarea
         valid_for_ranking:
             label: 'Compte pour le classement mensuel'
             type: checkbox
             postfix: 'Affiche "Ce tournoi compte pour votre classement mensuel !"'
-            group: "Détails"
         balls_provided:
             label: 'Infos balles fournies/non fournies'
             type: select

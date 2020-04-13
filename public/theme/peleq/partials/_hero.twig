@@ -1,0 +1,20 @@
+{% if record.contenttype.slug|default() not in ['showcases', 'entries'] %}
+    {% setcontent homepage = "homepage" limit 1 returnsingle %}
+
+    {% set heroImageFile = '' %}
+    {% if homepage.hero_image %}
+        {% set heroImageFile = (homepage.hero_image is iterable) ? homepage.hero_image.file : homepage.hero_image %}
+    {% endif %}
+
+    <section class="hero hero-image {% if app.request.get('_route') == "homepage" %}is-medium{% else %}is-small{% endif %}"
+             style="background: url('{{ asset(heroImageFile, 'files') }}') no-repeat center bottom / cover;">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title is-spaced">{{- homepage.hero_title -}}</h1>
+                {% if homepage.hero_subtitle is not empty %}
+                <h2 class="subtitle">{{- homepage.hero_subtitle -}}</h2>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endif %}

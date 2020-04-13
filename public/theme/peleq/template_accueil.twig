@@ -1,0 +1,76 @@
+{% extends 'partials/_master.twig'  %}
+
+{% setcontent homepage = "homepage" limit 1 returnsingle %}
+
+{% block header %}
+<header id="header" role="banner" class="header">
+    {{ include('partials/_header_top.twig') }}
+    {{ include('partials/_hero2.twig', {'homepage': homepage}) }}
+</header>
+{% endblock header %}
+
+{% block main %}
+    <div class="homepage">
+        {# BLOCS ACCUEIL - Bloc de bienvenue #}
+        {% if homepage.teaser is not empty %}
+            <section class="section welcome">
+                <div class="container">
+                    <div class="columns white-framed">
+                        <div class="column{% if homepage.teaser_image is not empty %} is-three-quarters-desktop{% endif %}">
+                            <div class="content">
+                                <h2 class="title is-size-1 is-size-3-mobile">{{ homepage.title }}</h2>
+                                <div class="teaser">{{ homepage.teaser }}</div>
+                                {{ homepage.content }}
+                            </div>
+                        </div>
+                        {% if homepage.teaser_image is not empty %}
+                            <div class="column">
+                                {% if homepage.teaser_image %}
+                                    {{ homepage.teaser_image|showimage(300) }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+        {# BLOCS ACCUEIL - Section du haut #}
+        {% set index = 1 %}
+        {% if homepage.blocks_top is not empty %}
+            <section class="section blocks">
+                <div class="container">
+                    {% for item in homepage.blocks_top %}
+                        {% setcontent block = item.block %}
+                        {# On vérifie que block est bien instancié, il peut s'agir d'un contenu dépublié... #}
+                        {% if block != false %}
+                            {% include block.contenttype.homepage_template_block with {'block': block, 'index': index} %}
+                            {% set index = index+1 %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {# Rencontres du moment #}
+        {% include 'partials/home/_meetings.twig'
+            with {'pastDays': homepage.meetings_past_days, 'futureDays': homepage.meetings_future_days}
+        %}
+
+        {# BLOCS ACCUEIL - Section du bas #}
+        {% if homepage.blocks_bottom is not empty %}
+            <section class="section blocks">
+                <div class="container">
+                    {% for item in homepage.blocks_bottom %}
+                        {% setcontent block = item.block %}
+                        {# On vérifie que block est bien instancié, il peut s'agir d'un contenu dépublié... #}
+                        {% if block != false %}
+                            {% include block.contenttype.homepage_template_block with {'block': block, 'index': index} %}
+                            {% set index = index+1 %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+{% endblock main %}
