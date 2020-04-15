@@ -1,0 +1,43 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{#{% block page_nav 'visitors-statistics-menu' %}#}
+
+{% block page_title 'Statistiques sur les visiteurs du site' %}
+
+{% block page_main %}
+    <div class="statistics-page-main">
+        {% import '@bolt/_macro/_macro.twig' as macro %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="title">Visiteurs du dernier mois glissant</span>
+            </div>
+
+            <div class="panel-body">
+{#                {{ dump(lastMonthJsonData) }}#}
+                <div id="lastMonthContainer" style="height: 250px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("lastMonthContainer", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                axisX:{
+                    valueFormatString: "DD/MM" ,
+                    labelAngle: -50
+                },
+                data: [{
+                    type: "column", //change type to bar, line, area, pie, etc
+                    xValueType: "dateTime",
+                    dataPoints: {{ lastMonthJsonData|raw }}
+                }]
+            });
+            chart.render();
+        }
+    </script>
+
+    <script src="{{ asset('lib/canvasjs.min.js', 'theme') }}"></script>
+{% endblock page_main %}
