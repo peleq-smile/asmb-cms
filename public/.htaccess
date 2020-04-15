@@ -1,7 +1,9 @@
-Test.
-
 # Set the default handler.
-DirectoryIndex index.php index.html index.htm
+DirectoryIndex index.php
+
+# Désactivation des ETAG, cf. https://lehollandaisvolant.net/tuto/pagespd/
+Header unset ETag
+FileETag none
 
 # Prevent directory listing
 Options -Indexes
@@ -21,8 +23,85 @@ Options -Indexes
   </IfModule>
 </FilesMatch>
 
+# Optimisation : contrôle du cache
+# On exclut le BO du cache
+SetEnvIf Request_URI "^/asmbolt(/.*)?$" OVERRIDE_CACHE_HEADERS=TRUE
+Header set Cache-Control no-cache env=OVERRIDE_CACHE_HEADERS
+
+# Cf. https://lehollandaisvolant.net/tuto/pagespd/
+<IfModule mod_headers.c>
+  # Prends en compte les polices (formats récents)
+  AddType application/x-font-woff .woff
+  AddType application/x-font-woff2 .woff2
+  # active la mise en cache
+  ExpiresActive On
+  ExpiresDefault "access"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  ExpiresByType video/mov "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType application/x-font-woff "access plus 1 year"
+  ExpiresByType application/x-font-woff2 "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
+
+# See https://www.creapulse.fr/guide-seo-optimiser-performances-serveur/
+<IfModule mod_deflate.c>
+   AddOutputFilterByType DEFLATE application/font-woff text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine on
+
+  # Utilisation forcée d'HTTPS
+  RewriteCond %{SERVER_PORT} 80
+  RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R,L]
+  
+  # Utilisation forcée d'HTTP (en attendant de corriger le bug ERR_HTTP2_PROTOCOL_ERROR
+  #RewriteCond %{SERVER_PORT} 443
+  #RewriteRule ^(.*)$ http://%{SERVER_NAME}/$1 [R,L]
+
+  # Ajout de redirections permanentes, pour faire suivre les liens de l'ancien site vers le nouveau
+  # Cf. doc OVH https://docs.ovh.com/fr/hosting/htaccess-reecriture-url-mod-rewrite/
+  # Il faut veiller à mettre les drapeaux de réécriture [R=301,L] à la fin pour que cela fonctionne
+  # Redirections PERMANENTES (code HTTP 301)
+  # RewriteRule "^(index.php/)?accueil"                                              /                               [R=301,L]
+  # RewriteRule "^(index.php/)?component/?(.*)$"                                     /                               [R=301,L]
+  # RewriteRule "^(index.php/)?contacts?/?(.*)$"                                     /page/contact                   [R=301,L]
+  # RewriteRule "^(index.php/)?editorial(.*)$"                                       /page/edito                     [R=301,L]
+  # RewriteRule "^(index.php/)?enseignement/?(.*)$"                                  /page/inscriptions              [R=301,L]
+  # RewriteRule "^(index.php/)?infos-pratiques/documents-divers/?(.*)$"              /document-divers/tous           [R=301,L]
+  # RewriteRule "^(index.php/)?infos-pratiques/?(.*)$"                               /tags/infos-pratiques           [R=301,L]
+  # RewriteRule "^(index.php/)?inscriptions/tarifs/?(.*)$"                           /page/tarifs                    [R=301,L]
+  # RewriteRule "^(index.php/)?inscriptions/?(.*)$"                                  /page/inscriptions              [R=301,L]
+  # RewriteRule "^(index.php/)?historique-du-tennis/conquete-du-lawn-tennis/?(.*)$"  /page/conquete-du-lawn-tennis   [R=301,L]
+  # RewriteRule "^(index.php/)?historique-du-tennis/invention-du-lawn-tennis/?(.*)$" /page/invention-du-lawn-tennis  [R=301,L]
+  # RewriteRule "^(index.php/)?historique-du-tennis/tennis-moderne/?(.*)$"           /page/tennis-moderne            [R=301,L]
+  # RewriteRule "^(index.php/)?historique-du-tennis/?(.*)$"                          /page/le-jeu-de-paume           [R=301,L]
+  # RewriteRule "^(index.php/)?le-club/adherents/?(.*)$"                             /statistiques/les-chiffres      [R=301,L]
+  # RewriteRule "^(index.php/)?le-club/lebureau/?(.*)$"                              /page/le-bureau                 [R=301,L]
+  # RewriteRule "^(index.php/)?le-club/reglement/?(.*)$"                             /page/reglement-interieur       [R=301,L]
+  # RewriteRule "^(index.php/)?le-club/terrains/?(.*)$"                              /page/plan-acces                [R=301,L]
+  # RewriteRule "^(index.php/)?le-club/?(.*)$"                                       /page/infrastructures           [R=301,L]
+  # RewriteRule "^(index.php/)?tennis-loisir/creneaux/?(.*)$"                        /page/tennis-loisir-creneaux    [R=301,L]
+  # RewriteRule "^(index.php/)?tennis-loisir/menureservation/?(.*)$"                 /page/tennis-loisir-reservation [R=301,L]
+  # RewriteRule "^(index.php/)?tennis-loisir/?(.*)$"                                 /page/tennis-loisir-carte       [R=301,L]
+
+  # Redirections TEMPORAIRES (code HTTP 302)
+  # RewriteRule "^(index.php/)?agenda/?(.*)$"               /calendrier/2019-2020                                   [R=302,L]
+  # RewriteRule "^(index.php/)?competitions/tournois/?"     /competition/tournoi-interne-automne-2019               [R=302,L]
+  # RewriteRule "^(index.php/)?competitions/tournois/(.+)$" /tags/archives-tournois                                 [R=302,L]
+  # RewriteRule "^(index.php/)?competitions/?(.*)$"         /competition/championnat-hiver-regional-2019-2020       [R=302,L]
+  # RewriteRule "^(index.php/)?evenements/?(.*)$"           /                                                       [R=302,L]
+  # RewriteRule "^(index.php/)?photos/?(.*)$"               /                                                       [R=302,L]
+  # Fin des redirections
+
+  # Redirections de la V2
+  # RewriteRule "^document-divers/?$"                       /document-divers/tous    [R=302,L]
 
   RewriteRule cache/ - [F]
 
@@ -59,20 +138,7 @@ Options -Indexes
 
   # Rewrite all other queries to the front controller.
   RewriteRule ^ %{ENV:BASE}/index.php [L]
-
 </IfModule>
-
-
-# set the correct mime type for woff2 font type
-# =============================================
-# if you don't set your own mimetypes or you aren't using
-# HTML5 Boilerplate Server Configs https://github.com/h5bp/server-configs-apache
-# then you can uncomment (delete the hash/pound/octothorpe/number symbol)
-# the section below:
-
-#<IfModule mod_mime.c>
-#  AddType application/font-woff2    woff2
-#</IfModule>
 
 # Block access to all hidden files and directories. These types of files
 # usually contain user preferences and can include private information like,
