@@ -113,12 +113,6 @@ class VisitorRepository extends Repository
             ->format(Carbon::DEFAULT_TO_STRING_FORMAT);;
         $yesterdayEnd = Carbon::now()->modify('-1day')
             ->setTime(23, 59, 59)
-            ->format(Carbon::DEFAULT_TO_STRING_FORMAT);;
-
-        // TODO à supprimer
-        $yesterdayStart = Carbon::now()->setTime(0, 0)
-            ->format(Carbon::DEFAULT_TO_STRING_FORMAT);
-        $yesterdayEnd = Carbon::now()->setTime(23, 59, 59)
             ->format(Carbon::DEFAULT_TO_STRING_FORMAT);
 
         $qb = $this->getLoadQuery()
