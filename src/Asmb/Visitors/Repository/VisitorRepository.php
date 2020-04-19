@@ -54,12 +54,26 @@ class VisitorRepository extends Repository
             $visitor->setIsActive(true);
             $this->insert($visitor);
         } else {
+            // On commence par mettre à jour le nombre de visites du jour
+            $diffInDaysWithLastActive = Carbon::today()->diffInDays($existingVisitor->getDatetime());
+            if ($diffInDaysWithLastActive >= 1) {
+                // La dernière visite date d'avant auj, on remet le compteur à 1 pour la journée
+                $existingVisitor->setDailyVisitsCount(1);
+            } else {
+                $diffInMinutesWithLastActive = Carbon::now()->diffInMinutes($existingVisitor->getDatetime());
+                if ($diffInMinutesWithLastActive > VisitorHelper::$expirationTime) {
+                    $existingVisitor->setDailyVisitsCount($existingVisitor->getDailyVisitsCount() + 1);
+                }
+            }
+
             // Already registered visitor : update case
             $existingVisitor->copyFieldFromVisitor($visitor);
             $existingVisitor->setUsername($visitor->getUsername());
             $existingVisitor->setIp($visitor->getIp());
             $existingVisitor->setDatetime($visitor->getDatetime());
             $existingVisitor->setIsActive(true);
+
+
             $this->update($existingVisitor);
         }
 
@@ -78,6 +92,7 @@ class VisitorRepository extends Repository
         $expirationDateTime->modify('-' . VisitorHelper::$expirationTime . 'minutes');
         $expirationDateTime = $expirationDateTime->format('Y-m-d H:i:s');
 
+        // TODO: supprimer toutes les entrées qui datent d'avant le 1er jour de la saison en cours
         //        $query = $this->getEntityManager()->createQueryBuilder()
         //            ->delete($this->getTableName())
         //            ->where('datetime < :expirationDate')
@@ -108,19 +123,65 @@ class VisitorRepository extends Repository
 
     public function findYesterdayVisitorsCount()
     {
-        $yesterdayStart = Carbon::now()->modify('-1day')
-            ->setTime(0, 0)
-            ->format(Carbon::DEFAULT_TO_STRING_FORMAT);;
-        $yesterdayEnd = Carbon::now()->modify('-1day')
-            ->setTime(23, 59, 59)
-            ->format(Carbon::DEFAULT_TO_STRING_FORMAT);
+        return $this->findVisitorsCountBetweenDates(Carbon::yesterday(), Carbon::yesterday());
+    }
+
+    /**
+     * Retourne le nombre de visites d'hier.
+     *
+     * @return int
+     */
+    public function findYesterdayVisitsCount()
+    {
+        $startDate = Carbon::yesterday()->setTime(0, 0);
+        $endDate = Carbon::yesterday()->setTime(23, 59, 59, 9999);
+
+        $qb = $this->getLoadQuery()
+            ->select('SUM(dailyVisitsCount)')
+            ->where('datetime >= :startDate')
+            ->andWhere('datetime <= :endDate')
+            ->setParameter(':startDate', $startDate->format(Carbon::DEFAULT_TO_STRING_FORMAT))
+            ->setParameter(':endDate', $endDate->format(Carbon::DEFAULT_TO_STRING_FORMAT));
+
+        $result = $qb->execute()->fetchColumn(0);
+
+        return (int)$result;
+    }
+
+    /**
+     * Retourne le nombre de visiteurs du mois dernier.
+     *
+     * @return int
+     */
+    public function findLastMonthVisitorsCount()
+    {
+        $month = (Carbon::now()->month) - 1;
+        $year = ($month === 12) ? Carbon::now()->year - 1 : Carbon::now()->year;
+        $firstDayOfMonth = Carbon::createFromDate($year, $month, 1);
+        $lastDayOfMonth = Carbon::createFromDate($year, $month+1, 1)->modify('-1 day');
+
+        return $this->findVisitorsCountBetweenDates($firstDayOfMonth, $lastDayOfMonth);
+    }
+
+    /**
+     * Retourne le nombre de visiteurs entre les 2 dates données.
+     *
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     *
+     * @return int
+     */
+    protected function findVisitorsCountBetweenDates(Carbon $startDate, Carbon $endDate)
+    {
+        $startDate->setTime(0, 0);
+        $endDate->setTime(23, 59, 59, 9999);
 
         $qb = $this->getLoadQuery()
             ->select('COUNT(id)')
-            ->where('datetime >= :yesterdayStart')
-            ->where('datetime <= :yesterdayEnd')
-            ->setParameter(':yesterday', $yesterdayStart)
-            ->setParameter(':yesterdayEnd', $yesterdayEnd);
+            ->where('datetime >= :startDate')
+            ->andWhere('datetime <= :endDate')
+            ->setParameter(':startDate', $startDate->format(Carbon::DEFAULT_TO_STRING_FORMAT))
+            ->setParameter(':endDate', $endDate->format(Carbon::DEFAULT_TO_STRING_FORMAT));
 
         $result = $qb->execute()->fetchColumn(0);
 

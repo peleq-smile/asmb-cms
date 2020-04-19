@@ -2,7 +2,7 @@
 
 {#{% block page_nav 'visitors-statistics-menu' %}#}
 
-{% block page_title 'Statistiques sur les visiteurs du site' %}
+{% block page_title 'Statistiques visites & visiteurs' %}
 
 {% block page_main %}
     <div class="statistics-page-main">
@@ -10,29 +10,57 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <span class="title">Visiteurs du dernier mois glissant</span>
+                <h2 class="title">Visites - Dernier mois</h2>
             </div>
 
             <div class="panel-body">
-{#                {{ dump(lastMonthJsonData) }}#}
-                <div id="lastMonthContainer" style="height: 250px; width: 100%;"></div>
+                <div id="lastMonthVisitsContainer" style="height: 250px; width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="title">Visiteurs - Dernier mois</h2>
+            </div>
+
+            <div class="panel-body">
+                <div id="lastMonthVisitorsContainer" style="height: 250px; width: 100%;"></div>
             </div>
         </div>
     </div>
 
     <script>
         window.onload = function () {
-            var chart = new CanvasJS.Chart("lastMonthContainer", {
+            var chart = new CanvasJS.Chart("lastMonthVisitsContainer", {
                 animationEnabled: true,
                 theme: "light2", // "light1", "light2", "dark1", "dark2"
                 axisX:{
-                    valueFormatString: "DD/MM" ,
-                    labelAngle: -50
+                    valueFormatString: "DD/MM",
+                    labelAngle: 45
                 },
                 data: [{
                     type: "column", //change type to bar, line, area, pie, etc
                     xValueType: "dateTime",
-                    dataPoints: {{ lastMonthJsonData|raw }}
+                    interval: 1,
+                    intervalType: "day",
+                    dataPoints: {{ lastMonthVisitsJsonData|raw }}
+                }]
+            });
+            chart.render();
+
+            var chart = new CanvasJS.Chart("lastMonthVisitorsContainer", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                axisX:{
+                    valueFormatString: "DD/MM",
+                    labelAngle: 45
+                },
+                data: [{
+                    type: "column", //change type to bar, line, area, pie, etc
+                    xValueType: "dateTime",
+                    interval: 1,
+                    intervalType: "day",
+                    dataPoints: {{ lastMonthVisitorsJsonData|raw }}
                 }]
             });
             chart.render();

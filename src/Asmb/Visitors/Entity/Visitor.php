@@ -53,6 +53,10 @@ class Visitor extends Entity
      * @var string
      */
     protected $geolocalization;
+    /**
+     * @var integer
+     */
+    protected $dailyVisitsCount = 1;
 
     /**
      * Visitor constructor.
@@ -234,6 +238,22 @@ class Visitor extends Entity
     }
 
     /**
+     * @return int
+     */
+    public function getDailyVisitsCount(): int
+    {
+        return $this->dailyVisitsCount;
+    }
+
+    /**
+     * @param int $dailyVisitsCount
+     */
+    public function setDailyVisitsCount(int $dailyVisitsCount): void
+    {
+        $this->dailyVisitsCount = $dailyVisitsCount;
+    }
+
+    /**
      * Copie les données du visiteur donné dans le visiteur actuel.
      *
      * @param Visitor $visitor
@@ -241,7 +261,7 @@ class Visitor extends Entity
     public function copyFieldFromVisitor(Visitor $visitor)
     {
         foreach ($this->getFields() as $field) {
-            if (! in_array($field, ['id', 'datetime'])) {
+            if (! in_array($field, ['id', 'datetime', 'dailyVisitsCount'])) {
                 $this->set($field, $visitor->get($field));
             }
         }

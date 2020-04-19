@@ -5,11 +5,8 @@ namespace Bundle\Asmb\Visitors\Controller\Backend;
 
 
 use Bolt\Controller\Backend\BackendBase;
-use Bundle\Asmb\Visitors\Entity\VisitorStatistics;
 use Bundle\Asmb\Visitors\Helpers\VisitorHelper;
-use Carbon\Carbon;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\Response;
 
 class StatisticsController extends BackendBase
 {
@@ -24,14 +21,26 @@ class StatisticsController extends BackendBase
 
     public function index()
     {
-        $visitorStatistics = $this->getRepository('visitor_statistics')->findStatisticsOfSeason();
-        $lastMonthDataForChart = VisitorHelper::getLastMonthDataForChart($visitorStatistics);
+        /** @var \Bundle\Asmb\Visitors\Repository\VisitorStatisticsRepository $visitorStatisticsRepo */
+        $visitorStatisticsRepo = $this->app['storage']->getRepository('visitor_statistics');
+        /** @var \Bundle\Asmb\Visitors\Repository\VisitStatisticsRepository $visitStatisticsRepo */
+        $visitStatisticsRepo = $this->app['storage']->getRepository('visit_statistics');
+
+        $visitorStatistics = $visitorStatisticsRepo->findOfSeason();
+        $visitStatistics = $visitStatisticsRepo->findOfSeason();
+
+        $lastMonthVisitorsDataForChart = VisitorHelper::getLastMonthDataForChart($visitorStatistics, 'visiteurs');
+        $lastMonthVisitsDataForChart = VisitorHelper::getLastMonthDataForChart($visitStatistics, 'visites');
+
+        /** @var \Symfony\Component\Console\Application $nut Nut Console Application */
+        $nut = $this->app['nut'];
 
         return $this->render(
             '@AsmbVisitors/statistics/index.twig',
             [],
             [
-                'lastMonthJsonData' => json_encode($lastMonthDataForChart, JSON_NUMERIC_CHECK),
+                'lastMonthVisitorsJsonData' => json_encode($lastMonthVisitorsDataForChart, JSON_NUMERIC_CHECK),
+                'lastMonthVisitsJsonData'   => json_encode($lastMonthVisitsDataForChart, JSON_NUMERIC_CHECK),
             ]
         );
     }

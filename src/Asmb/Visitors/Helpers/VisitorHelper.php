@@ -2,7 +2,7 @@
 
 namespace Bundle\Asmb\Visitors\Helpers;
 
-use Bundle\Asmb\Visitors\Entity\VisitorStatistics;
+use Bundle\Asmb\Visitors\Entity\AbstractStatisticsPerSeason;
 use Carbon\Carbon;
 
 /**
@@ -130,61 +130,60 @@ class VisitorHelper
         return [$osName, $terminal];
     }
 
-    public static function getLastMonthDataForChart(VisitorStatistics $visitorStatistics)
-    {
+    public static function getLastMonthDataForChart(
+        AbstractStatisticsPerSeason $statisticsPerSeason,
+        string $labelForTop
+    ) {
         $data = [];
-
-        $today = Carbon::now();
-        // TODO dev à retirer - pour tests
-//        $today = Carbon::createFromDate(2020, 04,30);
-//        $today = Carbon::createFromDate(2020, 05,01);
-        $yesterday = Carbon::now()->modify('-1 day')->setTime(23, 59, 59);
+        $yesterday = Carbon::yesterday()->setTime(23, 59, 59);
 
         // 1. On affiche les données du mois précédent
-        $firstDayOfChart = Carbon::now()->modify('-1 month'); // Même jour qu'auj mais du mois précédent
+        $firstDayOfChart = Carbon::today()->modify('-1 month'); // Même jour qu'auj mais du mois précédent
         $lastDayOfChart = $yesterday;
 
         /** @var Carbon $dayOfChart */
         $dayOfChart = $firstDayOfChart->copy();
-        $skipAsVisitorIsZero = true;
-//        $topVisitorsCount = 2;
-//        $topVisitorsIndexes = [];
+        $topVisitorsCount = 2;
+        $topVisitorsIndexes = [];
+        $idx = 0;
         do {
             $columnOfDay = 'dayOfMonth' . sprintf("%02d", $dayOfChart->day);
-            $visitorsCount = $visitorStatistics->get($columnOfDay);
+            $visitorsCount = $statisticsPerSeason->get($columnOfDay);
 
             // On formate la date en "1er janv. 2020", "10 févr. 2020", etc.
-            $format = ($dayOfChart->daysInMonth === 1) ? '%der %b %Y' : '%d %b %Y';
+            $format = ($dayOfChart->daysInMonth === 1) ? '%a %der %b %Y' : '%a %d %b %Y';
             $formattedDayOfChart = $dayOfChart->formatLocalized($format);
 
-            if ($visitorsCount > 0 || !$skipAsVisitorIsZero) {
-                $toolTipContent = "$formattedDayOfChart: $visitorsCount visiteur";
-                $toolTipContent .= ($visitorsCount > 1) ? 's' : '';
+            $toolTipContent = "$formattedDayOfChart: $visitorsCount visiteur";
+            $toolTipContent .= ($visitorsCount > 1) ? 's' : '';
 
-                /** @see https://canvasjs.com/php-charts/chart-index-data-label/ */
-                $data[] = [
-                    'x' => ($dayOfChart->timestamp) * 1000, // x représente le jour du mois
-                    'y' => $visitorsCount, // y réprésente le nb de visiteurs
-                    'toolTipContent' => $toolTipContent,
-                ];
+            /** @see https://canvasjs.com/php-charts/chart-index-data-label/ */
+            $data[$idx] = [
+                'x'              => ($dayOfChart->timestamp) * 1000, // x représente le jour du mois
+                'y'              => $visitorsCount, // y réprésente le nb de visiteurs
+                'toolTipContent' => $toolTipContent,
+            ];
 
-//                if ($visitorsCount > $topVisitorsCount) {
-//                    $topVisitorsDays = [$dayOfChart->day];
-//                    $topVisitorsCount = $visitorsCount;
-//                } elseif ($visitorsCount === $topVisitorsCount) {
-//                    $topVisitorsDays[] = $dayOfChart->day;
-//                }
-
-                $skipAsVisitorIsZero = false;
+            if ($visitorsCount > $topVisitorsCount) {
+                $topVisitorsIndexes = [$idx];
+                $topVisitorsCount = $visitorsCount;
+            } elseif ($visitorsCount === $topVisitorsCount) {
+                $topVisitorsIndexes[] = $idx;
             }
 
-//            foreach ($topVisitorsDays as $day) {
-//                $data[$day]['indexLabel'] = "Top : {$topVisitorsCount} visiteurs";
-//            }
-
             $dayOfChart->addDay(); // On incrémente d'1 jour
+            $idx++;
         } while ($dayOfChart->lessThanOrEqualTo($lastDayOfChart));
 
+        // On ajoute 1 jour vide, pour alléger le graphique
+        $data[$idx] = [
+            'x' => ($dayOfChart->timestamp) * 1000, // x représente le jour du mois
+            'y' => 0, // y réprésente le nb de visiteurs
+        ];
+
+        foreach ($topVisitorsIndexes as $i) {
+            $data[$i]['indexLabel'] = "Top: {$topVisitorsCount} $labelForTop";
+        }
 
         return $data;
     }

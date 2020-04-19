@@ -54,6 +54,7 @@ class VisitorsExtension extends SimpleExtension
         return [
             'visitor'            => Table\Visitor::class,
             'visitor_statistics' => Table\VisitorStatistics::class,
+            'visit_statistics'   => Table\VisitStatistics::class,
         ];
     }
 
@@ -75,6 +76,7 @@ class VisitorsExtension extends SimpleExtension
         return [
             'visitor'            => [Entity\Visitor::class => Repository\VisitorRepository::class],
             'visitor_statistics' => [Entity\VisitorStatistics::class => Repository\VisitorStatisticsRepository::class],
+            'visit_statistics'   => [Entity\VisitStatistics::class => Repository\VisitStatisticsRepository::class],
         ];
     }
 

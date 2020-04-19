@@ -27,6 +27,7 @@ class Visitor extends BaseTable
         $this->table->addColumn('osName', 'string', ['length' => 20, 'notnull' => true]);
         $this->table->addColumn('terminal', 'string', ['length' => 20, 'notnull' => true]);
         $this->table->addColumn('geolocalization', 'string', ['length' => 50, 'notnull' => true]);
+        $this->table->addColumn('dailyVisitsCount', 'integer', ['notnull' => true, 'default' => 0]);
         $this->table->addColumn('httpUserAgent', 'string',   ['length' => 255]);
     }
 

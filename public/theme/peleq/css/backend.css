@@ -557,3 +557,8 @@
         margin-bottom: 0;
     }
 }
+
+/** Pages de statistiques des visiteurs **/
+.canvasjs-chart-credit {
+    display: none;
+}
