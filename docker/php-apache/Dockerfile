@@ -1,0 +1,41 @@
+FROM php:7.2-apache
+
+RUN apt-get update && apt-get install -y
+
+RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev ssl-cert libpng-dev libfreetype6-dev libjpeg62-turbo-dev unzip \
+    && pecl install memcached-3.0.4 \
+    && docker-php-ext-enable memcached \
+    && docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include
+
+RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql gd exif zip
+
+RUN pecl install redis-3.1.2 \
+    && pecl install xdebug \
+    && pecl install apcu \
+    && docker-php-ext-enable redis xdebug apcu
+
+COPY ./docker/php-apache/php.ini-development /usr/local/etc/php/conf.d/php.ini
+COPY ./docker/php-apache/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+ARG UID
+ARG GID
+RUN usermod -u ${UID} www-data
+RUN groupmod -g ${GID} www-data
+
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+WORKDIR /var/www/html
+
+COPY ./docker/php-apache/000-default.conf /etc/apache2/sites-available/
+COPY ./docker/php-apache/default-ssl.conf /etc/apache2/sites-available/
+COPY ./docker/php-apache/.bashrc /home/www-data/.bashrc
+
+RUN a2enmod deflate
+RUN a2enmod headers
+RUN a2enmod expires
+RUN a2enmod rewrite
+RUN a2enmod ssl
+
+RUN a2ensite default-ssl

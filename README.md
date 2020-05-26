@@ -1,10 +1,29 @@
-### Bolt Installer for Composer
+# Mise en place env de dev avec Docker
 
-To start the install just run the following command replacing the project with
-the name you want to use.
+## PHP/Apache
 
-`composer create-project bolt/composer-install:^3.5 <MYPROJECT> --prefer-dist`
+### Conf apache
 
+On récupère la conf depuis le conteneur :
+```
+docker exec -u=1000:1000 php cat /etc/apache2/sites-available/000-default.conf > ~/perso/asmb-cms/docker/php-apache/000-default.conf
+docker exec -u=1000:1000 php cat /etc/apache2/sites-available/default-ssl.conf > ~/perso/asmb-cms/docker/php-apache/default-ssl.conf
+```
 
-After the packages have downloaded, you can choose whether you would like a
-separate public directory and if so choose a name.
+### Personnaliser le .bachrc
+
+```
+docker exec -u=1000:1000 php cat /home/perrine/.bashrc > ~/perso/asmb-cms/docker/php-apache/.bashrc
+```
+
+### Mise en place du SSL sur env de dev
+
+Génerer un certificat et une clé en local :
+```
+openssl req -x509 -out localhost.crt -keyout localhost.key \
+  -newkey rsa:2048 -nodes -sha256 \
+  -subj '/CN=localhost' -extensions EXT -config <( \
+   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+```
+
+cf. https://letsencrypt.org/docs/certificates-for-localhost/#making-and-trusting-your-own-certificates

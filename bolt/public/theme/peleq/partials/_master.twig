@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="{{ htmllang() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    {# On prend en priorité la donnée "meta_title" si elle existe, puis la donnée "title" ensuite. #}
+    {% set headTitle = '' %}
+    {% if record.meta_title is defined and record.meta_title is not empty %}
+        {% set headTitle = record.meta_title %}
+    {% elseif record.title is defined and record.title is not empty %}
+        {% set headTitle = record.title %}
+    {% endif %}
+
+    {% if record.meta_description is defined and record.meta_description is not empty %}
+        {% set metaDescription = record.meta_description %}
+    {% endif %}
+
+    <title>{{ headTitle ~ ' - ' ~ config.get('general/sitename') }}</title>
+    <meta name="description" content="{{ metaDescription }}">
+    {% if record is not defined and homepage is defined %}
+        {% set record = homepage %}
+    {% endif %}
+
+    <meta property="og:url" content="{{ absolute_url(record.link()) }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ headTitle }}">
+    <meta property="og:description" content="{{ metaDescription }}">
+
+    {% setcontent homepage = "homepage" limit 1 returnsingle %}
+    {% if record.meta_image is defined and record.meta_image is not empty %}
+        {% set metaImage = absolute_url(record.meta_image|image) %}
+    {% else %}
+        {% set metaImage = absolute_url(asset(homepage.logo_file, 'files')) %}
+    {% endif %}
+    {% set metaImage = absolute_url(asset('photos/joueur-tranquille-sur-court.jpg', 'files')) %}
+    {% set metaImage = absolute_url(asset('photos/accueil/joueuse-asmb.jpg', 'files')) %}
+
+    <meta property="og:image" content="{{ metaImage }}">
+    <meta property="og:locale" content="fr_FR">
+    {% if record.meta_robots is defined and record.meta_robots is not empty %}
+    <meta name="robots" content="{{ record.meta_robots }}">
+    {% endif %}
+    <meta property="fb:app_id" content="2011781802368449">
+
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}">
+
+    <link rel="stylesheet" href="{{ asset('css/theme.min.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/bulma.min.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome-free-5.12.1-web/css/all.min.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/googlefonts/fonts.min.css', 'theme') }}">
+
+    {% block headincludes %}{% endblock headincludes %}
+
+
+</head>
+
+<body class="{{ block('body_class') }}">
+
+<a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
+
+
+{% set isHome = (app.request.get('_route') == "homepage" or record.template == 'template_accueil.twig' )%}
+
+{% block header %}
+<header id="header" role="banner" class="header">
+    {{ include('partials/_header_top.twig') }}
+    {% if isHome %}
+        {{ include('partials/_hero.twig') }}
+    {% endif %}
+</header>
+{% endblock header %}
+
+<div id="main-content">
+    {{ widgets('main_top') }}
+
+    {% block main %}
+    {% endblock main %}
+
+    {{ widgets('main_bottom') }}
+</div>
+
+{# Lien qui apparaît pour remonter rapidement vers le haut de la page #}
+<a href="#header" class="scrollup" title="{{ __('general.phrase.back-to-top') }}"><i class="fa fa-arrow-up"></i></a>
+
+{{ include('partials/_footer.twig') }}
+
+{% if app.request.get('_route') == "homepage" and homepage.alert_text is not empty %}
+    <div class="static-alert-container">{{ homepage.alert_text|raw }}</div>
+{% endif %}
+
+<script src="{{ asset('js/lib/jquery-3.3.1.min.js', 'theme') }}" defer></script>
+<script src="{{ asset('js/lib/jquery.touchSwipe.min.js', 'theme') }}" defer></script>
+
+<!-- jQuery Custom Scroller CDN -->
+<script src="{{ asset('lib/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js', 'theme') }}" defer></script>
+
+<script src="{{ asset('js/asmb.js', 'theme') }}" defer></script>
+
+<script type="application/ld+json" defer>
+    {
+        "@context": "https://schema.org",
+        "@type": "TennisComplex",
+        "@id": "{{ absolute_url(homepage.link()) }}",
+        "url": "{{ absolute_url(homepage.link()) }}",
+        "name": "{{ config.get('general/sitename') }}",
+        "logo": "{{ absolute_url(asset(homepage.logo_file, 'files')) }}",
+        "image": [
+            "{{ metaImage }}"
+        ],
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "2 rue des Boires",
+            "addressLocality": "Nantes",
+            "postalCode": "44200",
+            "addressCountry": "FR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 47.204428,
+            "longitude": -1.542494
+        }
+    }
+</script>
+</body>
+</html>
