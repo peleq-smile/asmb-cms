@@ -1,4 +1,9 @@
 $(document).ready(function($) {
+    /** Gestion du toggle sur le message d'alerte de l'accueil **/
+    $('.static-alert-container h2').on('click', function() {
+        $(this).parent().toggleClass('visible');
+    });
+
     /** Déclaration des fonctions **/
     // Initialisation du JS commun de navigation du site ASMB
     function initAsmbCommonNavJs() {

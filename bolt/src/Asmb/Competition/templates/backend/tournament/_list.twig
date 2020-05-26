@@ -40,7 +40,7 @@
                     {% set visibleClass = (table.visible) ? 'fa-eye':'fa-eye-slash' %}
                     {% set visibleLabel = (table.visible) ? 'visible sur le site':'non visible sur le site' %}
 
-                    <a class="btn btn-xs {{btnClass}}" title="Tableau {{ table.name }} {{ statusLabel }}, {{ visibleLabel }}"
+                    <a class="btn btn-sm {{btnClass}}" title="Tableau {{ table.name }} {{ statusLabel }}, {{ visibleLabel }}"
                        href="{{ path('tournamenttable', {'tableId': table.id}) }}">
                         <i class="fa {{ visibleClass }}"></i>
                         {{ table.name }}

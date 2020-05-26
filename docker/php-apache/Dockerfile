@@ -2,7 +2,7 @@ FROM php:7.2-apache
 
 RUN apt-get update && apt-get install -y
 
-RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev ssl-cert libpng-dev libfreetype6-dev libjpeg62-turbo-dev unzip \
+RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev ssl-cert libpng-dev libfreetype6-dev libjpeg62-turbo-dev unzip nodejs npm \
     && pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include
@@ -19,6 +19,10 @@ COPY ./docker/php-apache/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xde
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN npm install
+RUN npm install -g yarn
+RUN npm install -g gulp
+
 ARG UID
 ARG GID
 RUN usermod -u ${UID} www-data
@@ -28,9 +32,12 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
 WORKDIR /var/www/html
 
+COPY ./docker/php-apache/.bashrc /var/www
+RUN chown www-data:www-data -R /var/www
+RUN chmod g+w -R /var/www
+
 COPY ./docker/php-apache/000-default.conf /etc/apache2/sites-available/
 COPY ./docker/php-apache/default-ssl.conf /etc/apache2/sites-available/
-COPY ./docker/php-apache/.bashrc /home/www-data/.bashrc
 
 RUN a2enmod deflate
 RUN a2enmod headers
