@@ -2,14 +2,18 @@
 
 namespace Bundle\Asmb\Visitors;
 
+use Bolt\Asset\Widget\Widget;
 use Bolt\Exception\InvalidRepositoryException;
 use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\SimpleExtension;
+use Bolt\Storage\EntityManagerInterface;
 use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 use Bundle\Asmb\Visitors\Database\Schema\Table;
 use Bundle\Asmb\Visitors\Entity;
 use Bundle\Asmb\Visitors\Helpers\VisitorHelper;
 use Bundle\Asmb\Visitors\Repository;
+use Bundle\Asmb\Visitors\Repository\VisitorRepository;
+use Exception;
 use Pimple as Container;
 use Silex\Application;
 
@@ -27,7 +31,7 @@ class VisitorsExtension extends SimpleExtension
     protected function registerAssets()
     {
         // Widget qui affiche le nombre de visiteurs
-        $widgetGetVisitors = new \Bolt\Asset\Widget\Widget();
+        $widgetGetVisitors = new Widget();
         $widgetGetVisitors->setClass('getvisitors');
         $widgetGetVisitors->setZone('frontend');
         $widgetGetVisitors->setLocation('footer');
@@ -74,7 +78,7 @@ class VisitorsExtension extends SimpleExtension
     protected function registerRepositoryMappings()
     {
         return [
-            'visitor'            => [Entity\Visitor::class => Repository\VisitorRepository::class],
+            'visitor'            => [Entity\Visitor::class => VisitorRepository::class],
             'visitor_statistics' => [Entity\VisitorStatistics::class => Repository\VisitorStatisticsRepository::class],
             'visit_statistics'   => [Entity\VisitStatistics::class => Repository\VisitStatisticsRepository::class],
         ];
@@ -109,14 +113,14 @@ class VisitorsExtension extends SimpleExtension
      * Update current visitors count.
      *
      * @throws InvalidRepositoryException
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateCurrentVisitorsCount()
     {
         if (isset($_SERVER['REMOTE_ADDR'])) {
             $currentIp = $_SERVER['REMOTE_ADDR'];
 
-            /** @var \Bundle\Asmb\Visitors\Repository\VisitorRepository $visitorRepo */
+            /** @var VisitorRepository $visitorRepo */
             $visitorRepo = $this->getStorageEntityManager()->getRepository('visitor');
 
             $visitor = new Entity\Visitor();
@@ -165,7 +169,7 @@ class VisitorsExtension extends SimpleExtension
     {
         $this->updateCurrentVisitorsCount();
 
-        /** @var Repository\VisitorRepository $visitorRepo */
+        /** @var VisitorRepository $visitorRepo */
         $visitorRepo = $this->getStorageEntityManager()->getRepository('visitor');
         $count = $visitorRepo->countCurrentVisitors();
 
@@ -184,7 +188,7 @@ class VisitorsExtension extends SimpleExtension
     /**
      * Return storage entity manager.
      *
-     * @return \Bolt\Storage\EntityManagerInterface
+     * @return EntityManagerInterface
      */
     protected function getStorageEntityManager()
     {

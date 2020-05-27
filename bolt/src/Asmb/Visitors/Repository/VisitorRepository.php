@@ -26,29 +26,17 @@ class VisitorRepository extends Repository
      */
     public function addOrUpdateVisitor(Visitor $visitor)
     {
-        $existingVisitor = false;
-
         /** @var Visitor $existingVisitor */
-        // On récupère d'abord l'utilisateur par son nom (si connecté)
-        if (null !== $visitor->getUsername()) {
-            $existingVisitor = $this->findOneBy(
-                [
-                    'username' => $visitor->getUsername(),
-                ]
-            );
-        }
-        // Ou sinon par IP et support utilisé
-        if (false === $existingVisitor) {
-            $existingVisitor = $this->findOneBy(
-                [
-                    'ip'             => $visitor->getIp(),
-                    'browserName'    => $visitor->getBrowserName(),
-                    'browserVersion' => $visitor->getBrowserVersion(),
-                    'osName'         => $visitor->getOsName(),
-                    'terminal'       => $visitor->getTerminal()
-                ]
-            );
-        }
+        // On récupère les données visiteurs correspondantes si elles existent déjà
+        $existingVisitor = $this->findOneBy(
+            [
+                'ip' => $visitor->getIp(),
+                'browserName' => $visitor->getBrowserName(),
+                'browserVersion' => $visitor->getBrowserVersion(),
+                'osName' => $visitor->getOsName(),
+                'terminal' => $visitor->getTerminal()
+            ]
+        );
 
         if (false === $existingVisitor) {
             // Nouveau visiteur : insertion
@@ -56,8 +44,9 @@ class VisitorRepository extends Repository
             $this->insert($visitor);
         } else {
             // On commence par mettre à jour le nombre de visites du jour
-            $existingVisitorDatetime = Carbon::createFromDate($existingVisitor->getDatetime());
-            $diffInDaysWithLastActive = Carbon::today()->dayOfWeek - $existingVisitorDatetime->dayOfWeek;
+            /** @var Carbon $existingVisitorDatetime */
+            $existingVisitorDatetime = $existingVisitor->getDatetime();
+            $diffInDaysWithLastActive = Carbon::now()->day - $existingVisitorDatetime->day;
             if ($diffInDaysWithLastActive >= 1) {
                 // La dernière visite date d'avant auj, on remet le compteur à 1 pour la journée
                 $existingVisitor->setDailyVisitsCount(1);
@@ -160,7 +149,7 @@ class VisitorRepository extends Repository
         $month = (Carbon::now()->month) - 1;
         $year = ($month === 12) ? Carbon::now()->year - 1 : Carbon::now()->year;
         $firstDayOfMonth = Carbon::createFromDate($year, $month, 1);
-        $lastDayOfMonth = Carbon::createFromDate($year, $month+1, 1)->modify('-1 day');
+        $lastDayOfMonth = Carbon::createFromDate($year, $month + 1, 1)->modify('-1 day');
 
         return $this->findVisitorsCountBetweenDates($firstDayOfMonth, $lastDayOfMonth);
     }
