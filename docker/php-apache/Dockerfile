@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev ssl-cert li
     && docker-php-ext-enable memcached \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include
 
-RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql gd exif zip
+RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql gd exif zip calendar
 
 RUN pecl install redis-3.1.2 \
     && pecl install xdebug \
