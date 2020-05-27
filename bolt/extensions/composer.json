@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "bolt/boltforms": "^4.2",
+        "bolt/boltforms": "^4.3",
         "bolt/sitemap": "^2.5"
     },
     "scripts": {

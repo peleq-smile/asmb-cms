@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c7cd7ad4065d76d1311894e4f9d2d52",
+    "content-hash": "7d66494abc0d26c61122f5c3198d94b5",
     "packages": [
         {
             "name": "bolt/boltforms",
-            "version": "v4.2.3",
+            "version": "v4.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bolt/boltforms.git",
-                "reference": "b6b8d2151bf9d1e41fdf17d97180b377711ea118"
+                "url": "git@github.com:bolt/boltforms.git",
+                "reference": "b48a1973023b802e75b5321574412805d19ec5ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bolt/boltforms/zipball/b6b8d2151bf9d1e41fdf17d97180b377711ea118",
-                "reference": "b6b8d2151bf9d1e41fdf17d97180b377711ea118",
+                "url": "https://api.github.com/repos/bolt/boltforms/zipball/b48a1973023b802e75b5321574412805d19ec5ca",
+                "reference": "b48a1973023b802e75b5321574412805d19ec5ca",
                 "shasum": ""
             },
             "require": {
@@ -74,23 +74,19 @@
                 "reCaptcha",
                 "uploads"
             ],
-            "support": {
-                "source": "https://github.com/bolt/boltforms/tree/4.2",
-                "issues": "https://github.com/bolt/boltforms/issues"
-            },
-            "time": "2018-05-20T00:19:01+00:00"
+            "time": "2019-09-06T16:07:14+00:00"
         },
         {
             "name": "bolt/email-spooler",
             "version": "v3.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bolt/bolt-extension-email-spooler.git",
+                "url": "git@github.com:GawainLynch/bolt-extension-email-spooler.git",
                 "reference": "75a0e2dd2bd004af623d22a8d24d33be986ba9cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bolt/bolt-extension-email-spooler/zipball/75a0e2dd2bd004af623d22a8d24d33be986ba9cf",
+                "url": "https://api.github.com/repos/GawainLynch/bolt-extension-email-spooler/zipball/75a0e2dd2bd004af623d22a8d24d33be986ba9cf",
                 "reference": "75a0e2dd2bd004af623d22a8d24d33be986ba9cf",
                 "shasum": ""
             },
@@ -123,9 +119,6 @@
                 "email",
                 "spool"
             ],
-            "support": {
-                "source": "https://github.com/bolt/bolt-extension-email-spooler/tree/master"
-            },
             "time": "2018-05-19T14:33:45+00:00"
         },
         {
@@ -133,7 +126,7 @@
             "version": "2.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bolt/Sitemap.git",
+                "url": "git@github.com:bolt/Sitemap.git",
                 "reference": "f7e67187c7fddd0335e90d5ae000c471593ed6bc"
             },
             "dist": {
@@ -180,33 +173,29 @@
                 "SEO",
                 "sitemap"
             ],
-            "support": {
-                "source": "https://github.com/bolt/Sitemap/tree/2.x",
-                "issues": "https://github.com/bolt/Sitemap/issues"
-            },
             "time": "2018-06-03T09:18:36+00:00"
         },
         {
             "name": "google/recaptcha",
-            "version": "1.2.1",
+            "version": "1.2.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/recaptcha.git",
-                "reference": "e7add3be59211482ecdb942288f52da64a35f61a"
+                "url": "git@github.com:google/recaptcha.git",
+                "reference": "614f25a9038be4f3f2da7cbfd778dc5b357d2419"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/recaptcha/zipball/e7add3be59211482ecdb942288f52da64a35f61a",
-                "reference": "e7add3be59211482ecdb942288f52da64a35f61a",
+                "url": "https://api.github.com/repos/google/recaptcha/zipball/614f25a9038be4f3f2da7cbfd778dc5b357d2419",
+                "reference": "614f25a9038be4f3f2da7cbfd778dc5b357d2419",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.2.20|^2.12",
+                "friendsofphp/php-cs-fixer": "^2.2.20|^2.15",
                 "php-coveralls/php-coveralls": "^2.1",
-                "phpunit/phpunit": "^4.8.36|^5.7.27|^6.59|^7"
+                "phpunit/phpunit": "^4.8.36|^5.7.27|^6.59|^7.5.11"
             },
             "type": "library",
             "extra": {
@@ -246,10 +235,9 @@
             ],
             "support": {
                 "forum": "https://groups.google.com/forum/#!forum/recaptcha",
-                "source": "https://github.com/google/recaptcha",
-                "issues": "https://github.com/google/recaptcha/issues"
+                "source": "https://github.com/google/recaptcha"
             },
-            "time": "2018-08-05T09:31:53+00:00"
+            "time": "2020-03-31T17:50:54+00:00"
         }
     ],
     "packages-dev": [],
@@ -259,5 +247,6 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
