@@ -194,7 +194,7 @@
                         }
 
                         .date {
-                            color: $secondary-xlight;
+                            color: $secondary;
                             font-weight: bold;
                         }
                     }
@@ -268,7 +268,7 @@
         }
 
         .winner-name {
-            color: $win;
+            color: $win !important;
         }
     }
 

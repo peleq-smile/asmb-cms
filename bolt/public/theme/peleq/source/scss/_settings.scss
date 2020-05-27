@@ -25,7 +25,9 @@ $red: #7c0000;
 
 // Custom other colors
 $secondary: #d1a633;
+$secondary-transparent: rgba(209, 166, 51, 0.85);
 $secondary-light: #e4c676;
+$secondary-light-transparent: rgba(228, 198, 118, 0.85);
 $secondary-xlight: #e8e2d1;
 $dark-light: #81838C;
 
@@ -67,6 +69,7 @@ $column-gap: 1.5rem;
 $header-hero-linear-gradient: rgba(2, 96, 148, 0.8);
 $header-height-navbar: 100px;
 $header-height-navbar-sticky: 80px;
+$header-height-topbar: 50px;
 
 // Title
 $title-color: $white;

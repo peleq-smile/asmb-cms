@@ -61,29 +61,71 @@
 
 /* Messge d'alerte statique */
 .static-alert-container {
-    position: sticky;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
     min-height: 2rem;
-    background: #d1a633ee;
-    padding: 1rem;
+    background: $secondary-light-transparent;
+    padding: 0.5rem 1rem;
     color: white;
     font-weight: 400;
     z-index: 10000;
     border-top: solid 6px $red;
 
     h2 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         color: $red;
-        margin-bottom: 0.5rem;
+        margin-top: 0.25rem;
         font-weight: bold;
+        cursor: pointer;
+
+        &:before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            content: "\f138";
+            padding-right: 0.5rem;
+        }
     }
 
     p {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        margin: 0.25rem 0 0 0 ;
+        display: none;
+        color: #2c2d32;
+        font-weight: bold;
+    }
+
+    &.visible {
+        background: $secondary-transparent;
+
+        h2 {
+            padding-bottom: 1rem;
+            &:before {
+                content: "\f13a";
+            }
+        }
+
+        p {
+            display: block;
+        }
+    }
+}
+
+@media screen and (min-width: $tablet) {
+    .static-alert-container {
+        width: 50%;
+    }
+}
+@media screen and (min-width: $desktop) {
+    .static-alert-container {
+        width: 20%;
+        padding: 0.2rem 1rem;
+
+        &:hover {
+            background: $secondary-transparent;
+        }
     }
 }
 
