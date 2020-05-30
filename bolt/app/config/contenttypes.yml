@@ -249,17 +249,17 @@ homepage:
             required: true
 
         footer_membership_link_text:
-            label: Page d'inscription: Libellé du lien
+            label: "Page d'inscription: Libellé du lien"
             type: text
             required: true
 
         footer_membership_url:
-            label: Page d'inscription: URL du lien
+            label: "Page d'inscription: URL du lien"
             type: text
             required: true
 
         footer_facebook_link_url:
-            label: Page Facebook: URL du lien
+            label: "Page Facebook: URL du lien"
             type: text
             required: true
 
@@ -859,7 +859,7 @@ statistiques:
     name: Pages de statistiques
     singular_name: Page de statistiques
     singular_slug: statistiques
-    icon_many: "fa:bar-chart"
+    icon_many: "fa:pie-chart"
     record_template: statistiques.twig
     taxonomy: [ tags ]
     fields:

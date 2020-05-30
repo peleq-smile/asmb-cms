@@ -22,35 +22,39 @@ class VisitorHelper
 
     static public $emptyValue = '-';
 
+    static public $desktopVisitorTotalCount;
+
+    static public $notDesktopVisitorTotalCount;
+
     private static $knownBrowsers = [
         'Seamonkey' => ['seamonkey/([\d\.-_]+)'],
-        'Chromium'  => ['chromium/([\d\.-_]+)'],
-        'Firefox'   => ['firefox/([\d\.-_]+)'],
-        'Chrome'    => ['chrome/([\d\.-_]+)'],
-        'Safari'    => ['safari/([\d\.-_]+)'],
-        'Opera'     => ['opr/([\d\.-_]+)', 'opera/([\d\.-_]+)'],
-        'IE'        => [';\s?msie ([\d\.-_]+);', ';\s?Trident/[\d\.-_]+'],
-        'Edge'      => [';\s?edge ([\d\.-_]+);'],
+        'Chromium' => ['chromium/([\d\.-_]+)'],
+        'Firefox' => ['firefox/([\d\.-_]+)'],
+        'Chrome' => ['chrome/([\d\.-_]+)'],
+        'Safari' => ['safari/([\d\.-_]+)'],
+        'Opera' => ['opr/([\d\.-_]+)', 'opera/([\d\.-_]+)'],
+        'IE' => [';\s?msie ([\d\.-_]+);', ';\s?Trident/[\d\.-_]+'],
+        'Edge' => [';\s?edge ([\d\.-_]+);'],
     ];
 
     private static $knownOs = [
-        'Windows 10'                 => ['windows nt 10'],
-        'Windows 8.1'                => ['windows nt 6.3'],
-        'Windows 8'                  => ['windows nt 6.2'],
-        'Windows 7'                  => ['windows nt 6.1'],
-        'Windows Vista'              => ['windows nt 6.0'],
+        'Windows 10' => ['windows nt 10'],
+        'Windows 8.1' => ['windows nt 6.3'],
+        'Windows 8' => ['windows nt 6.2'],
+        'Windows 7' => ['windows nt 6.1'],
+        'Windows Vista' => ['windows nt 6.0'],
         'Windows Server 2003/XP x64' => ['windows nt 5.2'],
-        'Windows XP'                 => ['windows nt 5.1', 'windows xp'],
-        'Mac OS X'                   => ['macintosh|mac os x'],
-        'Mac OS 9'                   => ['mac_powerpc'],
-        'Linux/Unix'                 => ['ubuntu', 'linux', 'unix'],
+        'Windows XP' => ['windows nt 5.1', 'windows xp'],
+        'Mac OS X' => ['macintosh|mac os x'],
+        'Mac OS 9' => ['mac_powerpc'],
+        'Linux/Unix' => ['ubuntu', 'linux', 'unix'],
     ];
 
     private static $knownTerminals = [
-        'Android'         => ['android'],
-        'BlackBerry'      => ['blackberry'],
-        'iPhone'          => ['iphone'],
-        'iPad'            => ['ipad'],
+        'Android' => ['android'],
+        'BlackBerry' => ['blackberry'],
+        'iPhone' => ['iphone'],
+        'iPad' => ['ipad'],
         'Mobile (divers)' => ['webos', 'mobile'],
     ];
 
@@ -130,10 +134,14 @@ class VisitorHelper
         return [$osName, $terminal];
     }
 
-    public static function getLastMonthDataForChart(
-        AbstractStatisticsPerSeason $statisticsPerSeason,
-        string $label
-    ) {
+    /**
+     * Retourne les données à afficher dans un graphique de stats des visites/visiteurs par jour sur le dernier mois.
+     *
+     * @param AbstractStatisticsPerSeason $statisticsPerSeason
+     * @return array
+     */
+    public static function getLastMonthDataForChart(AbstractStatisticsPerSeason $statisticsPerSeason)
+    {
         $data = [];
         $yesterday = Carbon::yesterday()->setTime(23, 59, 59);
 
@@ -142,46 +150,188 @@ class VisitorHelper
         $lastDayOfChart = $yesterday;
 
         $dayOfChart = $firstDayOfChart->copy();
-        $topVisitorsCount = 2;
-        $topVisitorsIndexes = [];
+
+        $bottomCount = null;
+        $topCount = 2;
+        $bottomIndexes = [];
+        $topIndexes = [];
         $idx = 0;
         do {
             $columnOfDay = 'dayOfMonth' . sprintf("%02d", $dayOfChart->day);
             $statisticCount = $statisticsPerSeason->get($columnOfDay);
 
             // On formate la date en "1er janv. 2020", "10 févr. 2020", etc.
-            $format = ($dayOfChart->daysInMonth === 1) ? '%a %der %b %Y' : '%a %d %b %Y';
-            $formattedDayOfChart = $dayOfChart->formatLocalized($format);
-
-            $toolTipContent = "$formattedDayOfChart: $statisticCount $label";
-            $toolTipContent .= ($statisticCount > 1) ? 's' : '';
+            $shortFormat = ($dayOfChart->day === 1) ? '%eer %b' : '%e %b';
+            $shortFormattedDayOfChart = $dayOfChart->formatLocalized($shortFormat);
 
             /** @see https://canvasjs.com/php-charts/chart-index-data-label/ */
             $data[$idx] = [
-                'x'              => ($dayOfChart->timestamp) * 1000, // x représente le jour du mois
-                'y'              => $statisticCount, // y réprésente le nb de visiteurs
-                'toolTipContent' => $toolTipContent,
+                'label' => $shortFormattedDayOfChart, // x représente le jour du mois
+                'y' => $statisticCount, // y réprésente le nb de visiteurs
             ];
 
-            if ($statisticCount > $topVisitorsCount) {
-                $topVisitorsIndexes = [$idx];
-                $topVisitorsCount = $statisticCount;
-            } elseif ($statisticCount === $topVisitorsCount) {
-                $topVisitorsIndexes[] = $idx;
+            // Calcul du TOP
+            if ($statisticCount > $topCount) {
+                $topIndexes = [$idx];
+                $topCount = $statisticCount;
+            } elseif ($statisticCount === $topCount) {
+                $topIndexes[] = $idx;
+            }
+
+            // Calcul du BOTTOM
+            if ($statisticCount > 0 && ($bottomCount === null || $statisticCount < $bottomCount)) {
+                $bottomIndexes = [$idx];
+                $bottomCount = $statisticCount;
+            } elseif ($statisticCount === $bottomCount) {
+                $bottomIndexes[] = $idx;
             }
 
             $dayOfChart->addDay(); // On incrémente d'1 jour
             $idx++;
         } while ($dayOfChart->lessThanOrEqualTo($lastDayOfChart));
 
-        // On ajoute 1 jour vide, pour alléger le graphique
-        $data[$idx] = [
-            'x' => ($dayOfChart->timestamp) * 1000, // x représente le jour du mois
-            'y' => 0, // y réprésente le nb de visiteurs
-        ];
+        foreach ($topIndexes as $i) {
+            $data[$i]['indexLabel'] = "☀$topCount";
+        }
+        foreach ($bottomIndexes as $i) {
+            $data[$i]['indexLabel'] = "☁$bottomCount";
+        }
 
-        foreach ($topVisitorsIndexes as $i) {
-            $data[$i]['indexLabel'] = "Top: $topVisitorsCount";
+        return $data;
+    }
+
+    /**
+     * Retourne les données à afficher dans un graphique de stats des visites/visiteurs par mois sur la dernière saison.
+     *
+     * @param AbstractStatisticsPerSeason $statisticsPerSeason
+     * @return array
+     */
+    public static function getLastSeasonDataForChart(AbstractStatisticsPerSeason $statisticsPerSeason)
+    {
+        $data = [];
+        $bottomCount = null;
+        $topCount = 2;
+        $bottomIndexes = [];
+        $topIndexes = [];
+        $idx = 0;
+
+        // Données des mois de septembre à décembre
+        self::addDataChartBetweenMonths(
+            $statisticsPerSeason,
+            $data,
+            $idx,
+            $statisticsPerSeason->getSeasonStartYear(),
+            9,
+            12,
+            $topCount,
+            $bottomCount,
+            $topIndexes,
+            $bottomIndexes
+        );
+
+        // Données des mois de janvier à août
+        self::addDataChartBetweenMonths(
+            $statisticsPerSeason,
+            $data,
+            $idx,
+            $statisticsPerSeason->getSeasonStartYear(),
+            1,
+            8,
+            $topCount,
+            $bottomCount,
+            $topIndexes,
+            $bottomIndexes
+        );
+
+        foreach ($topIndexes as $i) {
+            $data[$i]['indexLabel'] = "☀$topCount";
+        }
+        foreach ($bottomIndexes as $i) {
+            $data[$i]['indexLabel'] = "☁$bottomCount";
+        }
+
+        return $data;
+    }
+
+    protected static function addDataChartBetweenMonths(
+        AbstractStatisticsPerSeason $statisticsPerSeason,
+        array &$data,
+        int &$idx,
+        int $year,
+        int $startMonth,
+        int $endMonth,
+        int &$topCount,
+        ?int &$bottomCount,
+        array &$topIndexes,
+        array &$bottomIndexes
+    ) {
+        for ($month = $startMonth; $month <= $endMonth; $month++) {
+            $columnOfMonth = 'month' . sprintf("%02d", $month);
+            $count = $statisticsPerSeason->get($columnOfMonth);
+            $monthOfChart = Carbon::create($year, $month, 1);
+
+            // On formate la date en 'janv. 2020'
+            $formattedMonthOfChart = $monthOfChart->formatLocalized('%b %Y');
+            $data[$idx] = [
+                'label' => $formattedMonthOfChart,
+                'y' => $count,
+            ];
+
+            // Calcul du TOP
+            if ($count > $topCount) {
+                $topIndexes = [$idx];
+                $topCount = $count;
+            } elseif ($count === $topCount) {
+                $topIndexes[] = $idx;
+            }
+
+            // Calcul du BOTTOM
+            if ($count > 0 && ($bottomCount === null || $count < $bottomCount)) {
+                $bottomIndexes = [$idx];
+                $bottomCount = $count;
+            } elseif ($count === $bottomCount) {
+                $bottomIndexes[] = $idx;
+            }
+
+            $idx++;
+        }
+    }
+
+    public static function getDesktopDataForChart(array $desktopVisitorData)
+    {
+        $data = [];
+        self::$desktopVisitorTotalCount = 0;
+
+        foreach ($desktopVisitorData as $idx => $row) {
+            $browserName = (in_array($row['browserName'], ['-', 'Other'])) ? 'Autre' : $row['browserName'];
+            $osName = (in_array($row['osName'], ['-', 'Other'])) ? 'Autre' : $row['osName'];
+            $data[] = [
+                'label' => "$browserName - $osName",
+                'y' => $row['count'],
+                'exploded' => ($idx === 0)
+            ];
+
+            self::$desktopVisitorTotalCount += $row['count'];
+        }
+
+        return $data;
+    }
+
+    public static function getNotDesktopDataForChart(array $notDesktopVisitorData)
+    {
+        $data = [];
+        self::$notDesktopVisitorTotalCount = 0;
+
+        foreach ($notDesktopVisitorData as $idx => $row) {
+            $browserName = (in_array($row['browserName'], ['-', 'Other'])) ? 'Autre' : $row['browserName'];
+            $terminal = (in_array($row['terminal'], ['-', 'Other'])) ? 'Autre' : $row['terminal'];
+            $data[] = [
+                'label' => "$browserName - $terminal",
+                'y' => $row['count'],
+                'exploded' => ($idx === 0)
+            ];
+
+            self::$notDesktopVisitorTotalCount += $row['count'];
         }
 
         return $data;

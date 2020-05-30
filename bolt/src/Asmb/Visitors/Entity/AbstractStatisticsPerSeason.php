@@ -784,4 +784,24 @@ abstract class AbstractStatisticsPerSeason extends Entity
 
         $this->updated_at = $updateAt;
     }
+
+    public function getSeasonStartYear()
+    {
+        $seasonStartYear = null;
+
+        if (null !== $this->season) {
+            $seasonStartYear = substr($this->season, 0, 4);
+        }
+        return $seasonStartYear;
+    }
+
+    public function getSeasonEndYear()
+    {
+        $seasonEndYear = null;
+
+        if (null !== $this->season) {
+            $seasonEndYear = substr($this->season, 5, 4);
+        }
+        return $seasonEndYear;
+    }
 }

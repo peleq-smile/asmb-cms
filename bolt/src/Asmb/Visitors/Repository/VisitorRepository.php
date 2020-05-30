@@ -7,6 +7,7 @@ use Bundle\Asmb\Visitors\Entity\Visitor;
 use Bundle\Asmb\Visitors\Helpers\VisitorHelper;
 use Carbon\Carbon;
 use DateTime;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * Repository for visitors.
@@ -32,7 +33,6 @@ class VisitorRepository extends Repository
             [
                 'ip' => $visitor->getIp(),
                 'browserName' => $visitor->getBrowserName(),
-                'browserVersion' => $visitor->getBrowserVersion(),
                 'osName' => $visitor->getOsName(),
                 'terminal' => $visitor->getTerminal()
             ]
@@ -83,12 +83,6 @@ class VisitorRepository extends Repository
         $expirationDateTime->modify('-' . VisitorHelper::$expirationTime . 'minutes');
         $expirationDateTime = $expirationDateTime->format('Y-m-d H:i:s');
 
-        // TODO: supprimer toutes les entrées qui datent d'avant le 1er jour de la saison en cours
-        //        $query = $this->getEntityManager()->createQueryBuilder()
-        //            ->delete($this->getTableName())
-        //            ->where('datetime < :expirationDate')
-        //            ->setParameter(':expirationDate', $expirationDateTime);
-
         $query = $this->getEntityManager()->createQueryBuilder()
             ->update($this->getTableName())
             ->set('isActive', ':isActive')
@@ -133,6 +127,8 @@ class VisitorRepository extends Repository
             ->setParameter(':startDate', $startDate->format(Carbon::DEFAULT_TO_STRING_FORMAT))
             ->setParameter(':endDate', $endDate->format(Carbon::DEFAULT_TO_STRING_FORMAT));
 
+        $this->addBotExclusionWhereCondition($qb);
+
         $result = $qb->execute()->fetchColumn(0);
 
         return (int)$result;
@@ -174,8 +170,59 @@ class VisitorRepository extends Repository
             ->setParameter(':startDate', $startDate->format(Carbon::DEFAULT_TO_STRING_FORMAT))
             ->setParameter(':endDate', $endDate->format(Carbon::DEFAULT_TO_STRING_FORMAT));
 
+        $this->addBotExclusionWhereCondition($qb);
+
         $result = $qb->execute()->fetchColumn(0);
 
         return (int)$result;
+    }
+
+    public function findDesktopVisitorsStats()
+    {
+        $qb = $this->getLoadQuery()
+            ->select('browserName', 'osName','COUNT(id) AS count')
+            ->where('terminal = :terminal')
+            ->setParameter(':terminal', 'Desktop')
+            ->groupBy('terminal', 'browserName', 'osName')
+            ->orderBy('count', 'desc')
+            ->addOrderBy('browserName')
+        ;
+
+        $this->addBotExclusionWhereCondition($qb);
+
+        $result = $qb->execute()->fetchAll();
+        if (false === $result) {
+            $result = [];
+        }
+
+        return $result;
+    }
+
+    public function findNotDesktopVisitorsStats()
+    {
+        $qb = $this->getLoadQuery()
+            ->select('browserName', 'terminal','COUNT(id) AS count')
+            ->where('terminal != :terminal')
+            ->setParameter(':terminal', 'Desktop')
+            ->groupBy('terminal', 'browserName', 'osName')
+            ->orderBy('count', 'desc')
+            ->addOrderBy('browserName')
+        ;
+
+        $this->addBotExclusionWhereCondition($qb);
+
+        $result = $qb->execute()->fetchAll();
+        if (false === $result) {
+            $result = [];
+        }
+
+        return $result;
+    }
+
+    protected function addBotExclusionWhereCondition(QueryBuilder $qb)
+    {
+        $qb->andWhere($qb->expr()->orX('osName != :noOs', 'browserName != :other'));
+        $qb->setParameter(':noOs', VisitorHelper::$emptyValue);
+        $qb->setParameter(':other', 'Other');
     }
 }

@@ -8,59 +8,145 @@
     <div class="statistics-page-main">
         {% import '@bolt/_macro/_macro.twig' as macro %}
 
+        <div class="clearfix">
+            <div class="pull-right mb-md">Visiteurs simultanés max. : {{ maxSimultaneous }}</div>
+        </div>
+
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h2 class="title">Visites - Dernier mois</h2>
+            <div class="panel-body">
+                <p>Un <strong>visiteur</strong> désigne une personne qui consulte le site et qui se distingue par son
+                    adresse <strong>IP</strong>, son <strong>terminal</strong> (PC, Mobile) et le
+                    <strong>navigateur</strong> utilisé.<br>
+                    Une <strong>visite</strong> correspond à la consultation d'une ou plusieurs pages du site par un
+                    visiteur, pour une durée de <strong>30 min</strong> maximum.</p>
+                <p>Plusieurs visites sont ainsi comptabilisées pour un même visiteur s'il consulte le site avec plus de
+                    30min
+                    d'intervalle dans la même journée.</p>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h2 class="title">Visites & visiteurs du dernier mois</h2>
             </div>
 
             <div class="panel-body">
-                <div id="lastMonthVisitsContainer" style="height: 250px; width: 100%;"></div>
+                <div id="lastMonthContainer" style="height: 250px; width: 100%;"></div>
             </div>
         </div>
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2 class="title">Visiteurs - Dernier mois</h2>
+                <h2 class="title">Visites & visiteurs de la saison en cours</h2>
             </div>
 
             <div class="panel-body">
-                <div id="lastMonthVisitorsContainer" style="height: 250px; width: 100%;"></div>
+                <div id="lastSeasonContainer" style="height: 250px; width: 100%;"></div>
             </div>
         </div>
+
+        {% if (desktopVisitorTotalCount+notDesktopVisitorTotalCount) > 0 %}
+            {% set desktopVisitorPercent = desktopVisitorTotalCount*100/(desktopVisitorTotalCount+notDesktopVisitorTotalCount) %}
+            {% set notDesktopVisitorPercent = notDesktopVisitorTotalCount*100/(desktopVisitorTotalCount+notDesktopVisitorTotalCount) %}
+            <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="title">Navigateurs, systèmes d'exploitation et terminaux utilisés par les <strong>{{ desktopVisitorTotalCount + notDesktopVisitorTotalCount }}</strong> visiteurs du site</h2>
+            </div>
+
+            <div class="panel-body">
+                <div class="col-md-6">
+                    <h3 class="title text-center mb-md font-weight-bold">
+                        <strong>Ordinateur ({{ desktopVisitorTotalCount }} visiteurs soit {{ desktopVisitorPercent|number_format(1) }} %)</strong>
+                    </h3>
+                    <div id="desktopContainer" class="mt-md" style="height: 450px; width: 100%;"></div>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="title text-center mb-md font-weight-bold">
+                        <strong>Mobiles/tablettes ({{ notDesktopVisitorTotalCount }} visiteurs soit {{ notDesktopVisitorPercent|number_format(1) }} %)</strong>
+                    </h3>
+                    <div id="notDesktopContainer" class="mt-md" style="height: 450px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <script>
         window.onload = function () {
-            new CanvasJS.Chart("lastMonthVisitsContainer", {
+            CanvasJS.addColorSet('visitsAndVisitorsColorSet', ['#6d78ad', '#fcc26c']);
+
+            new CanvasJS.Chart("lastMonthContainer", {
                 animationEnabled: true,
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                axisX:{
-                    valueFormatString: "DD/MM",
-                    labelAngle: 45
+                axisX: {
+                    interval: (window.innerWidth > 1080) ? 1 : 2,
+                    labelAngle: -45
                 },
-                data: [{
-                    type: "column", //change type to bar, line, area, pie, etc
-                    xValueType: "dateTime",
-                    interval: 1,
-                    intervalType: "day",
-                    dataPoints: {{ lastMonthVisitsJsonData|raw }}
-                }]
+                toolTip: {
+                    shared: true
+                },
+                colorSet: "visitsAndVisitorsColorSet",
+                data: [
+                    {
+                        name: "visites",
+                        type: "column",
+                        showInLegend: true,
+                        dataPoints: {{ lastMonthVisitsJsonData|raw }}
+                    },
+                    {
+                        name: "visiteurs",
+                        type: "column", //change type to bar, line, area, pie, etc
+                        showInLegend: true,
+                        dataPoints: {{ lastMonthVisitorsJsonData|raw }}
+                    }
+                ]
             }).render();
 
-            new CanvasJS.Chart("lastMonthVisitorsContainer", {
+            new CanvasJS.Chart("lastSeasonContainer", {
                 animationEnabled: true,
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                axisX:{
-                    valueFormatString: "DD/MM",
-                    labelAngle: 45
-                },
-                data: [{
-                    type: "column", //change type to bar, line, area, pie, etc
-                    xValueType: "dateTime",
+                axisX: {
                     interval: 1,
-                    intervalType: "day",
-                    dataPoints: {{ lastMonthVisitorsJsonData|raw }}
-                }]
+                    labelAngle: -45
+                },
+                toolTip: {
+                    shared: true
+                },
+                colorSet: "visitsAndVisitorsColorSet",
+                data: [
+                    {
+                        name: "visites",
+                        type: "column",
+                        showInLegend: true,
+                        dataPoints: {{ lastSeasonVisitsJsonData|raw }}
+                    },
+                    {
+                        name: "visiteurs",
+                        type: "column", //change type to bar, line, area, pie, etc
+                        showInLegend: true,
+                        dataPoints: {{ lastSeasonVisitorsJsonData|raw }}
+                    }
+                ]
+            }).render();
+
+            new CanvasJS.Chart("desktopContainer", {
+                theme: "light2",
+                data: [
+                    {
+                        type: "pie",
+                        toolTipContent: "<b>{label}</b>: {y} visiteur(s) soit #percent %",
+                        dataPoints: {{ desktopDataForChart|raw }}
+                    }
+                ]
+            }).render();
+
+            new CanvasJS.Chart("notDesktopContainer", {
+                theme: "light2",
+                data: [
+                    {
+                        type: "pie",
+                        toolTipContent: "<b>{label}</b>: {y} visiteur(s) soit #percent %",
+                        dataPoints: {{ notDesktopDataForChart|raw }}
+                    }
+                ]
             }).render();
         }
     </script>

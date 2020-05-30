@@ -36,12 +36,11 @@ class Visitor extends BaseTable
      */
     protected function addIndexes()
     {
-        $this->table->addUniqueIndex(['ip', 'browserName', 'browserVersion', 'osName', 'terminal']);
+        $this->table->addUniqueIndex(['ip', 'browserName', 'osName', 'terminal']);
         $this->table->addIndex(['isActive']);
         $this->table->addIndex(['browserName']);
         $this->table->addIndex(['osName']);
         $this->table->addIndex(['terminal']);
-        $this->table->addIndex(['geolocalization']);
     }
 
     /**
