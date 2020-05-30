@@ -18,6 +18,7 @@ var PATHS = {
 
 var javascriptFiles = [
     'javascript/app.js',
+    'javascript/asmb.js',
     'node_modules/baguettebox.js/src/baguetteBox.js',
     'node_modules/prismjs/prism.js',
     'node_modules/prismjs/components/prism-php.js',

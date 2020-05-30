@@ -1,7 +1,7 @@
 $(document).ready(function($) {
     /** Gestion du toggle sur le message d'alerte de l'accueil **/
-    $('.static-alert-container h2').on('click', function() {
-        $(this).parent().toggleClass('visible');
+    $('.static-alert-container').on('click', function() {
+        $(this).toggleClass('visible');
     });
 
     /** Déclaration des fonctions **/
@@ -184,7 +184,7 @@ $(document).ready(function($) {
             $resPart = $('.results-container', $sectionTournament), // RESULTATS
             $unJouParts = $('.one-player-container', $sectionTournament); // UN JOUEUR
 
-        function updateView(hash, param = null) {
+        function updateView(hash, param) {
             switch (hash) {
                 case '#pla':
                     // On retire le flag 'is-active' du sous-menu
@@ -276,7 +276,7 @@ $(document).ready(function($) {
         // -- Clic sur un lien de la navigation principale
         $('nav a', $sectionTournament).on('click', function (event) {
             var hash = $(event.target).data('hash');
-            updateView(hash);
+            updateView(hash, null);
         });
 
         // -- Sélection dans un des menus du la navigation principale
@@ -327,7 +327,7 @@ $(document).ready(function($) {
     /** Appels des fonctions**/
     initAsmbCommonNavJs();
 
-    let $sectionTournament = $('#main-content .section-tournament');
+    var $sectionTournament = $('#main-content .section-tournament');
     if ($sectionTournament.length) {
         handleTournamentJsNav($sectionTournament);
     }

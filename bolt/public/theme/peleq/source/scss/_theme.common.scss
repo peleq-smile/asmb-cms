@@ -62,39 +62,40 @@
 /* Message d'alerte statique */
 .static-alert-container {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    min-height: 2rem;
+    bottom: 1rem;
+    left: 1rem;
     background: $secondary-light-transparent;
     padding: 0.5rem 1rem;
     color: white;
     font-weight: 400;
     z-index: 10000;
-    border-top: solid 6px $red;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.4);
+    margin-right: 1rem;
 
     h2 {
         font-size: 1.2rem;
         color: $red;
-        margin-top: 0.25rem;
         font-weight: bold;
         cursor: pointer;
 
         &:before {
             font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            content: "\f138";
+            content: "\f129";
             padding-right: 0.5rem;
         }
     }
 
     p {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         margin: 0.25rem 0 0 0 ;
         display: none;
         color: #2c2d32;
         font-weight: bold;
+    }
+
+    a {
+        font-size: 1rem;
     }
 
     &.visible {
@@ -102,29 +103,26 @@
 
         h2 {
             padding-bottom: 1rem;
-            &:before {
-                content: "\f13a";
-            }
         }
 
         p {
             display: block;
         }
+
+        a {
+            font-size: 1.1rem;
+        }
     }
 }
 
-@media screen and (min-width: $tablet) {
-    .static-alert-container {
-        width: 50%;
-    }
-}
 @media screen and (min-width: $desktop) {
     .static-alert-container {
-        width: 20%;
-        padding: 0.2rem 1rem;
+        bottom: 2.25rem;
+        left: 2.25rem;
+        max-width: 40%;
 
-        &:hover {
-            background: $secondary-transparent;
+        p {
+            font-size: 1rem;
         }
     }
 }
