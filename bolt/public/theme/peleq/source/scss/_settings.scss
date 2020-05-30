@@ -10,11 +10,10 @@ $debug-breakpoint: false;
 // 2. Set your own initial variables
 
 // Responsiveness
-
-$tablet: 769px !default
-$desktop: 1087px + (2 * $gap) !default
-$widescreen: 1280px + (2 * $gap) !default
-$fullhd: 1472px + (2 * $gap) !default
+$tablet: 769px;
+$desktop: 1087px + (2 * $gap);
+$widescreen: 1239px + (2 * $gap);
+$fullhd: 1472px + (2 * $gap);
 
 // Colors
 $light: #caeafc;
@@ -27,7 +26,7 @@ $red: #7c0000;
 $secondary: #d1a633;
 $secondary-transparent: rgba(209, 166, 51, 0.85);
 $secondary-light: #e4c676;
-$secondary-light-transparent: rgba(228, 198, 118, 0.85);
+$secondary-light-transparent: rgba(228, 198, 118, 0.6);
 $secondary-xlight: #e8e2d1;
 $dark-light: #81838C;
 

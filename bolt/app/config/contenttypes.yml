@@ -128,27 +128,24 @@ homepage:
         # Onglet Bandeau : choix image ou vidéos, couleurs etc.
         hero_video_mp4:
             group: bandeau
-            label: "Vidéo du bandeau (format .mp4)"
+            label: "Vidéo du bandeau (format .mp4 ou .m4v)"
             type: file
-            extensions: [ mp4 ]
+            extensions: [ mp4, .m4v ]
             upload: videos
             required: false
             postfix: |
                 La page d'accueil affiche un bandeau sur toute la largeur de la page avec
                 cette vidéo. La vidéo est prioritaire sur l'image qui peut être fournie ci-dessous.
-                Il peut être nécessaire de fournir la même vidéo au format .mp4 et .mov.
 
-        hero_video_mov:
-            group: bandeau
-            label: "Vidéo du bandeau (.mov)"
-            type: file
-            extensions: [ mov ]
-            upload: videos
-            required: false
+        hero_video_negative_margin_top:
+            label: "Marge (en %) de remontée de la vidéo pour la vue Desktop"
+            type: integer
+            min: 0
+            max: 50
             postfix: |
-                La page d'accueil affiche un bandeau sur toute la largeur de la page avec
-                cette vidéo. La vidéo est prioritaire sur l'image qui peut être fournie ci-dessous.
-                Il peut être nécessaire de fournir la même vidéo au format .mp4 et .mov.
+                Si la vidéo est trop haute (ex: 1920px x 1080px), elle prend trop de place en hauteur sur l'accueil.
+                La taille du bandeau a donc été limitée, une partie de la vidéo est donc rendue invisible. Cette marge
+                permet d'ajuster le centrage vertical de la vidéo dans le bandeau.
 
         hero_image:
         # header_banner:
