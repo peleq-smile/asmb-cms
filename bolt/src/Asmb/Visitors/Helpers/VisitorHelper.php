@@ -170,14 +170,6 @@ class VisitorHelper
                 'y' => $statisticCount, // y réprésente le nb de visiteurs
             ];
 
-            // Calcul du TOP
-            if ($statisticCount > $topCount) {
-                $topIndexes = [$idx];
-                $topCount = $statisticCount;
-            } elseif ($statisticCount === $topCount) {
-                $topIndexes[] = $idx;
-            }
-
             // Calcul du BOTTOM
             if ($statisticCount > 0 && ($bottomCount === null || $statisticCount < $bottomCount)) {
                 $bottomIndexes = [$idx];
@@ -186,15 +178,23 @@ class VisitorHelper
                 $bottomIndexes[] = $idx;
             }
 
+            // Calcul du TOP
+            if ($statisticCount > $topCount) {
+                $topIndexes = [$idx];
+                $topCount = $statisticCount;
+            } elseif ($statisticCount === $topCount) {
+                $topIndexes[] = $idx;
+            }
+
             $dayOfChart->addDay(); // On incrémente d'1 jour
             $idx++;
         } while ($dayOfChart->lessThanOrEqualTo($lastDayOfChart));
 
-        foreach ($topIndexes as $i) {
-            $data[$i]['indexLabel'] = "☀$topCount";
-        }
         foreach ($bottomIndexes as $i) {
             $data[$i]['indexLabel'] = "☁$bottomCount";
+        }
+        foreach ($topIndexes as $i) {
+            $data[$i]['indexLabel'] = "☀$topCount";
         }
 
         return $data;
@@ -234,7 +234,7 @@ class VisitorHelper
             $statisticsPerSeason,
             $data,
             $idx,
-            $statisticsPerSeason->getSeasonStartYear(),
+            $statisticsPerSeason->getSeasonEndYear(),
             1,
             8,
             $topCount,
@@ -243,11 +243,11 @@ class VisitorHelper
             $bottomIndexes
         );
 
-        foreach ($topIndexes as $i) {
-            $data[$i]['indexLabel'] = "☀$topCount";
-        }
         foreach ($bottomIndexes as $i) {
             $data[$i]['indexLabel'] = "☁$bottomCount";
+        }
+        foreach ($topIndexes as $i) {
+            $data[$i]['indexLabel'] = "☀$topCount";
         }
 
         return $data;
@@ -277,20 +277,20 @@ class VisitorHelper
                 'y' => $count,
             ];
 
-            // Calcul du TOP
-            if ($count > $topCount) {
-                $topIndexes = [$idx];
-                $topCount = $count;
-            } elseif ($count === $topCount) {
-                $topIndexes[] = $idx;
-            }
-
             // Calcul du BOTTOM
             if ($count > 0 && ($bottomCount === null || $count < $bottomCount)) {
                 $bottomIndexes = [$idx];
                 $bottomCount = $count;
             } elseif ($count === $bottomCount) {
                 $bottomIndexes[] = $idx;
+            }
+
+            // Calcul du TOP
+            if ($count > $topCount) {
+                $topIndexes = [$idx];
+                $topCount = $count;
+            } elseif ($count === $topCount) {
+                $topIndexes[] = $idx;
             }
 
             $idx++;
