@@ -60,7 +60,7 @@
 }
 
 /* Message d'alerte statique */
-.static-alert-container {
+.static-alert-btn {
     position: fixed;
     bottom: 1rem;
     left: 1rem;
@@ -73,7 +73,7 @@
     box-shadow: 0 2px 6px 0 rgba(0,0,0,.4);
     margin-right: 1rem;
 
-    h2 {
+    span {
         font-size: 1.2rem;
         color: $red;
         font-weight: bold;
@@ -81,43 +81,64 @@
 
         &:before {
             font-family: "Font Awesome 5 Free";
-            content: "\f129";
+            content: "\f05a";
             padding-right: 0.5rem;
         }
+    }
+
+    &:active, &.active {
+        background: $secondary-transparent;
+    }
+
+    &.active {
+        span {
+            &:before {
+                font-family: "Font Awesome 5 Free";
+                content: "\f057";
+                padding-right: 0.5rem;
+            }
+        }
+    }
+}
+.static-alert-container {
+    position: fixed;
+    bottom: 5rem;
+    left: 1rem;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-weight: 400;
+    z-index: 10000;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.4);
+    margin-right: 1rem;
+    background: $secondary-transparent;
+
+    h2 {
+        font-size: 1.2rem;
+        color: $red;
+        font-weight: bold;
+        padding-bottom: 1rem;
     }
 
     p {
         font-size: 0.9rem;
         margin: 0.25rem 0 0 0 ;
-        display: none;
         color: #2c2d32;
         font-weight: bold;
     }
 
     a {
-        font-size: 1rem;
-    }
-
-    &.visible {
-        background: $secondary-transparent;
-
-        h2 {
-            padding-bottom: 1rem;
-        }
-
-        p {
-            display: block;
-        }
-
-        a {
-            font-size: 1.1rem;
-        }
+        font-size: 1.1rem;
     }
 }
 
 @media screen and (min-width: $desktop) {
-    .static-alert-container {
+    .static-alert-btn {
         bottom: 2.25rem;
+        left: 2.25rem;
+    }
+    .static-alert-container {
+        bottom: 6.25rem;
         left: 2.25rem;
         max-width: 40%;
 

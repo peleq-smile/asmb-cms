@@ -263,6 +263,13 @@ homepage:
             type: text
             required: true
 
+        alert_title:
+            label: "Titre du message d'alerte"
+            type: text
+            required: false
+            pattern: "^.{1,20}$"
+            postfix: "20 caractères max."
+
         alert_text:
             label: "Message d'alerte"
             type: html
@@ -357,7 +364,7 @@ blocs:
         contentlink:
             type: text
             label: 'Lien'
-            placeholder: Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")
+            placeholder: 'Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")'
             postfix: "Ajoute un lien sur ce bloc vers une page. Ce peut être un lien interne relatif (ex: <tt>page/contact</tt>) ou un lien externe absolu (ex: `https://www.fft.fr/`)."
         contentlink_label:
             type: text

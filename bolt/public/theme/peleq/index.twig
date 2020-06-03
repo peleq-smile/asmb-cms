@@ -1,8 +1,8 @@
-{% extends 'partials/_master.twig'  %}
+{% extends 'partials/_master.twig' %}
 
 {% setcontent record = "homepage" limit 1 returnsingle %}
 {% block main %}
-    <div class="homepage">
+    <div class="homepage" data-nosnippet>
 
         {# BLOCS ACCUEIL - Bloc de bienvenue #}
         {% if record.teaser is not empty %}
@@ -47,8 +47,7 @@
 
         {# Rencontres du moment #}
         {% include 'partials/home/_meetings.twig'
-            with {'pastDays': record.meetings_past_days, 'futureDays': record.meetings_future_days}
-        %}
+            with {'pastDays': record.meetings_past_days, 'futureDays': record.meetings_future_days} %}
 
         {# BLOCS ACCUEIL - Section du bas #}
         {% if record.blocks_bottom is not empty %}

@@ -1,7 +1,8 @@
 $(document).ready(function($) {
     /** Gestion du toggle sur le message d'alerte de l'accueil **/
-    $('.static-alert-container').on('click', function() {
-        $(this).toggleClass('visible');
+    $('.static-alert-btn').on('click', function() {
+        $(this).toggleClass('active');
+        $('.static-alert-container').fadeToggle();
     });
 
     /** Déclaration des fonctions **/
