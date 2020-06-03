@@ -8,6 +8,7 @@ use Bundle\Asmb\Visitors\Helpers\VisitorHelper;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Exception as ExceptionAlias;
 
 /**
  * Repository for visitors.
@@ -23,7 +24,7 @@ class VisitorRepository extends Repository
      * @param Visitor $visitor
      *
      * @return void
-     * @throws \Exception
+     * @throws ExceptionAlias
      */
     public function addOrUpdateVisitor(Visitor $visitor)
     {
@@ -75,7 +76,6 @@ class VisitorRepository extends Repository
      * Clean visitors considered as expired.
      *
      * @return void
-     * @throws \Exception
      */
     protected function cleanExpiredVisitors()
     {
@@ -105,20 +105,21 @@ class VisitorRepository extends Repository
         return (false !== $visitors) ? count($visitors) : 1;
     }
 
-    public function findYesterdayVisitorsCount()
+    public function findDayVisitorsCount(Carbon $dayDate)
     {
-        return $this->findVisitorsCountBetweenDates(Carbon::yesterday(), Carbon::yesterday());
+        return $this->findVisitorsCountBetweenDates($dayDate->copy(), $dayDate->copy());
     }
 
     /**
      * Retourne le nombre de visites d'hier.
      *
+     * @param Carbon $dayDate
      * @return int
      */
-    public function findYesterdayVisitsCount()
+    public function findDayVisitsCount(Carbon $dayDate)
     {
-        $startDate = Carbon::yesterday()->setTime(0, 0);
-        $endDate = Carbon::yesterday()->setTime(23, 59, 59, 9999);
+        $startDate = $dayDate->copy()->setTime(0, 0);
+        $endDate = $dayDate->copy()->setTime(23, 59, 59, 9999);
 
         $qb = $this->getLoadQuery()
             ->select('SUM(dailyVisitsCount)')
@@ -137,12 +138,13 @@ class VisitorRepository extends Repository
     /**
      * Retourne le nombre de visiteurs du mois dernier.
      *
-     *
+     * @param int|null $month
      * @return int
      */
-    public function findLastMonthVisitorsCount()
+    public function findMonthVisitorsCount(?int $month): int
     {
-        $month = (Carbon::now()->month) - 1;
+        $month = $month ?? (Carbon::now()->month) - 1;
+
         $year = ($month === 12) ? Carbon::now()->year - 1 : Carbon::now()->year;
         $firstDayOfMonth = Carbon::createFromDate($year, $month, 1);
         $lastDayOfMonth = Carbon::createFromDate($year, $month + 1, 1)->modify('-1 day');

@@ -138,9 +138,11 @@ class VisitorHelper
      * Retourne les données à afficher dans un graphique de stats des visites/visiteurs par jour sur le dernier mois.
      *
      * @param AbstractStatisticsPerSeason $statisticsPerSeason
+     * @param string                      $color
+     * @param int                         $todayCount
      * @return array
      */
-    public static function getLastMonthDataForChart(AbstractStatisticsPerSeason $statisticsPerSeason)
+    public static function getLastMonthDataForChart(AbstractStatisticsPerSeason $statisticsPerSeason, string $color, int $todayCount)
     {
         $data = [];
         $yesterday = Carbon::yesterday()->setTime(23, 59, 59);
@@ -190,6 +192,13 @@ class VisitorHelper
             $idx++;
         } while ($dayOfChart->lessThanOrEqualTo($lastDayOfChart));
 
+        // On ajoute les stats du jour
+        $data[$idx] = [
+            'label' => $dayOfChart->formatLocalized($shortFormat),
+            'y' => $todayCount,
+            'color' => $color . '5c', // concaténer '5c' ajoute de la transparence
+        ];
+
         foreach ($bottomIndexes as $i) {
             $data[$i]['indexLabel'] = "☁$bottomCount";
         }
@@ -204,9 +213,10 @@ class VisitorHelper
      * Retourne les données à afficher dans un graphique de stats des visites/visiteurs par mois sur la dernière saison.
      *
      * @param AbstractStatisticsPerSeason $statisticsPerSeason
+     * @param string                      $color
      * @return array
      */
-    public static function getLastSeasonDataForChart(AbstractStatisticsPerSeason $statisticsPerSeason)
+    public static function getLastSeasonDataForChart(AbstractStatisticsPerSeason $statisticsPerSeason, string $color)
     {
         $data = [];
         $bottomCount = null;
@@ -226,7 +236,8 @@ class VisitorHelper
             $topCount,
             $bottomCount,
             $topIndexes,
-            $bottomIndexes
+            $bottomIndexes,
+            $color
         );
 
         // Données des mois de janvier à août
@@ -240,7 +251,8 @@ class VisitorHelper
             $topCount,
             $bottomCount,
             $topIndexes,
-            $bottomIndexes
+            $bottomIndexes,
+            $color
         );
 
         foreach ($bottomIndexes as $i) {
@@ -263,7 +275,8 @@ class VisitorHelper
         int &$topCount,
         ?int &$bottomCount,
         array &$topIndexes,
-        array &$bottomIndexes
+        array &$bottomIndexes,
+        string $color
     ) {
         for ($month = $startMonth; $month <= $endMonth; $month++) {
             $columnOfMonth = 'month' . sprintf("%02d", $month);
@@ -277,12 +290,17 @@ class VisitorHelper
                 'y' => $count,
             ];
 
-            // Calcul du BOTTOM
-            if ($count > 0 && ($bottomCount === null || $count < $bottomCount)) {
-                $bottomIndexes = [$idx];
-                $bottomCount = $count;
-            } elseif ($count === $bottomCount) {
-                $bottomIndexes[] = $idx;
+            // Mois courant : on met de la transparence sur la couleur
+            if (Carbon::today()->month === $month) {
+                $data[$idx]['color'] = $color . '5c'; // concaténer '5c' ajoute de la transparence
+            } else {
+                // Calcul du BOTTOM (on exclut le mois en cours, qui a des chances d'être bottom !)
+                if ($count > 0 && ($bottomCount === null || $count < $bottomCount)) {
+                    $bottomIndexes = [$idx];
+                    $bottomCount = $count;
+                } elseif ($count === $bottomCount) {
+                    $bottomIndexes[] = $idx;
+                }
             }
 
             // Calcul du TOP
@@ -308,7 +326,6 @@ class VisitorHelper
             $data[] = [
                 'label' => "$browserName - $osName",
                 'y' => $row['count'],
-                'exploded' => ($idx === 0)
             ];
 
             self::$desktopVisitorTotalCount += $row['count'];
@@ -328,7 +345,6 @@ class VisitorHelper
             $data[] = [
                 'label' => "$browserName - $terminal",
                 'y' => $row['count'],
-                'exploded' => ($idx === 0)
             ];
 
             self::$notDesktopVisitorTotalCount += $row['count'];

@@ -71,7 +71,7 @@ class RefreshStatisticsCommand extends BaseCommand
         $visitorStatistics = $visitorStatisticsRepo->findOfSeason();
 
         // 1. On met à jour la bonne colonne de la table de statistiques
-        $yesterdayVisitorsCount = $visitorRepo->findYesterdayVisitorsCount();
+        $yesterdayVisitorsCount = $visitorRepo->findDayVisitorsCount($yesterday);
         $columnOfYesterday = 'dayOfMonth' . sprintf("%02d", $yesterday->day);
         $visitorStatistics->set($columnOfYesterday, $yesterdayVisitorsCount);
 
@@ -84,8 +84,9 @@ class RefreshStatisticsCommand extends BaseCommand
             }
 
             // 2.2 On màj les visiteurs du mois précédent, si on est le 1er
-            $lastMonthVisitorsCount = $visitorRepo->findLastMonthVisitorsCount();
             $lastMonth = ($today->month) - 1;
+            $lastMonth = (0 === $lastMonth) ? 12 : $lastMonth; // en janvier, le mois précédent est décembre (12)
+            $lastMonthVisitorsCount = $visitorRepo->findMonthVisitorsCount($lastMonth);
 
             $columnOfLastMonth = 'month' . sprintf("%02d", $lastMonth);
             $visitorStatistics->set($columnOfLastMonth, $lastMonthVisitorsCount);
@@ -112,7 +113,7 @@ class RefreshStatisticsCommand extends BaseCommand
         $visitStatistics = $visitStatisticsRepo->findOfSeason();
 
         // 1. On met à jour la bonne colonne de la table de statistiques
-        $yesterdayVisitorsCount = $visitorRepo->findYesterdayVisitsCount();
+        $yesterdayVisitorsCount = $visitorRepo->findDayVisitsCount($yesterday);
         $columnOfYesterday = 'dayOfMonth' . sprintf("%02d", $yesterday->day);
         $visitStatistics->set($columnOfYesterday, $yesterdayVisitorsCount);
 
