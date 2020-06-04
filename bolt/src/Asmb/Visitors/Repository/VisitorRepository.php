@@ -45,10 +45,7 @@ class VisitorRepository extends Repository
             $this->insert($visitor);
         } else {
             // On commence par mettre à jour le nombre de visites du jour
-            /** @var Carbon $existingVisitorDatetime */
-            $existingVisitorDatetime = $existingVisitor->getDatetime();
-            $diffInDaysWithLastActive = Carbon::now()->day - $existingVisitorDatetime->day;
-            if ($diffInDaysWithLastActive >= 1) {
+            if ($this->isLastVisitBeforeToday($existingVisitor)) {
                 // La dernière visite date d'avant auj, on remet le compteur à 1 pour la journée
                 $existingVisitor->setDailyVisitsCount(1);
             } else {
@@ -70,6 +67,22 @@ class VisitorRepository extends Repository
         }
 
         $this->cleanExpiredVisitors();
+    }
+
+    protected function isLastVisitBeforeToday(Visitor $visitor)
+    {
+        /** @var Carbon $visitorDatetime */
+        $visitorDatetime = $visitor->getDatetime();
+        $today = Carbon::today();
+
+        $is = true;
+        if ($visitorDatetime->year === $today->year
+            && $visitorDatetime->month === $today->month
+            && $visitorDatetime->day === $today->day
+        ) {
+            $is = false;
+        }
+        return $is;
     }
 
     /**
@@ -182,13 +195,12 @@ class VisitorRepository extends Repository
     public function findDesktopVisitorsStats()
     {
         $qb = $this->getLoadQuery()
-            ->select('browserName', 'osName','COUNT(id) AS count')
+            ->select('browserName', 'osName', 'COUNT(id) AS count')
             ->where('terminal = :terminal')
             ->setParameter(':terminal', 'Desktop')
             ->groupBy('terminal', 'browserName', 'osName')
             ->orderBy('count', 'desc')
-            ->addOrderBy('browserName')
-        ;
+            ->addOrderBy('browserName');
 
         $this->addBotExclusionWhereCondition($qb);
 
@@ -203,13 +215,12 @@ class VisitorRepository extends Repository
     public function findNotDesktopVisitorsStats()
     {
         $qb = $this->getLoadQuery()
-            ->select('browserName', 'terminal','COUNT(id) AS count')
+            ->select('browserName', 'terminal', 'COUNT(id) AS count')
             ->where('terminal != :terminal')
             ->setParameter(':terminal', 'Desktop')
             ->groupBy('terminal', 'browserName', 'osName')
             ->orderBy('count', 'desc')
-            ->addOrderBy('browserName')
-        ;
+            ->addOrderBy('browserName');
 
         $this->addBotExclusionWhereCondition($qb);
 
@@ -221,9 +232,9 @@ class VisitorRepository extends Repository
         return $result;
     }
 
-    protected function addBotExclusionWhereCondition(QueryBuilder $qb)
+    protected function addBotExclusionWhereCondition(QueryBuilder &$qb)
     {
-        $qb->andWhere($qb->expr()->orX('osName != :noOs', 'browserName != :other'));
+        $qb->andWhere($qb->expr()->andX('osName != :noOs', 'browserName != :other'));
         $qb->setParameter(':noOs', VisitorHelper::$emptyValue);
         $qb->setParameter(':other', 'Other');
     }
