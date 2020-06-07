@@ -27,7 +27,7 @@ header {
                     i {
                         font-size: 2em;
                         display: inline-block;
-                        margin: auto 0.25rem auto 0;
+                        margin: auto 0.35rem auto 0;
                     }
 
                     address, span {
@@ -56,6 +56,7 @@ header {
 
                 .navbar-brand {
                     padding: 0;
+
                     a {
                         transition: all .2s ease-in-out;
 
@@ -88,6 +89,7 @@ header {
                         &.has-dropdown {
                             height: 100%;
                         }
+
                         .navbar-link {
                             background-color: transparent;
                         }
@@ -98,6 +100,7 @@ header {
                             padding-top: 0.5rem;
                             padding-bottom: 0.5rem;
                         }
+
                         .navbar-link {
                             padding-left: 0;
                             width: 100%;
@@ -130,6 +133,7 @@ header {
             text-shadow: 4px 8px 16px $black;
             line-height: 1.2em;
         }
+
         .subtitle {
             margin-top: 1rem;
         }
@@ -193,31 +197,34 @@ header {
                     font-weight: bold;
                 }
             }
-            h1.title  {
+
+            h1.title {
                 font-size: $title-size;
             }
-            h2.subtitle  {
+
+            h2.subtitle {
                 margin-top: 0;
                 font-size: $subtitle-size;
                 font-family: $font-sans-serif;
             }
+
             @include tablet {
                 padding-bottom: 12rem;
                 padding-top: 12rem;
-                h1.title  {
+                h1.title {
                     font-size: $title-size * 1.25;
                 }
-                h2.subtitle  {
+                h2.subtitle {
                     font-size: $subtitle-size * 1.25;
                 }
             }
             @include desktop {
                 padding-bottom: 16rem;
                 padding-top: 16rem;
-                h1.title  {
+                h1.title {
                     font-size: $title-size * 1.5;
                 }
-                h2.subtitle  {
+                h2.subtitle {
                     font-size: $subtitle-size * 1.5;
                 }
             }
@@ -314,6 +321,7 @@ header {
                         background-color: $navbar-item-hover-background-color !important;
                     }
                 }
+
                 .navbar-link {
                     &:after {
                         transform: rotate(-135deg);
@@ -321,6 +329,7 @@ header {
                         right: 0;
                     }
                 }
+
                 .is-hoverable {
                     &:hover {
                         & > .navbar-dropdown {
@@ -332,17 +341,6 @@ header {
         }
     }
 }
-
-//@media screen and (min-width: $widescreen) {
-//    header {
-//        .hero.is-medium {
-//            .hero-body {
-//                padding-top: 3rem !important;
-//                padding-bottom: 3rem !important;
-//            }
-//        }
-//    }
-//}
 
 @media screen and (min-width: $tablet) and (max-width: $widescreen) {
     header {
@@ -428,15 +426,8 @@ header {
                     .navbar-brand {
                         order: 1;
                         margin: 0 0 0 0.5rem;
-
-                        a {
-                            line-height: $header-height-navbar-sticky;
-
-                            img {
-                                line-height: $header-height-navbar-sticky;
-                            }
-                        }
                     }
+
                     .navbar-reservation {
                         order: 2;
 
@@ -446,6 +437,7 @@ header {
                             background-size: 114px 23px;
                         }
                     }
+
                     .navbar-burger {
                         order: 3;
                         min-width: 3.25rem;
@@ -457,6 +449,7 @@ header {
                             padding: 1.5rem 1rem;
                         }
                     }
+
                     .navbar-menu {
                         display: block;
                         position: fixed;
@@ -520,6 +513,7 @@ header {
                                     &.is-active {
                                         background: none !important;
                                     }
+
                                     &:hover {
                                         background-color: $navbar-item-hover-background-color-mobile;
                                     }
@@ -646,6 +640,40 @@ header {
 
 @media screen and (max-width: $tablet) {
     header {
+        .header-top {
+            .topbar {
+                padding: 0;
+
+                .navbar-item {
+                    padding: 0;
+
+                    a {
+                        height: $header-height-topbar - 20px;
+                        width: $header-height-topbar - 20px;
+                        padding: 0;
+                        margin: 10px 2px 10px 4px;
+
+                        i {
+                            margin: auto;
+                        }
+                    }
+                }
+            }
+
+            .navbar {
+                .container {
+                    .navbar-brand {
+                        a {
+                            margin: 16px 0;
+                            img {
+                                height: $header-height-topbar;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         .hero {
             .hero-body {
                 h1 {
@@ -670,6 +698,7 @@ header {
                     }
                 }
             }
+
             .hero-video {
                 max-height: 60vh;
 

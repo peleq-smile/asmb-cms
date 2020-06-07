@@ -26,6 +26,11 @@
     line-height: 1;
 }
 
+.pcoord {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
+
 //--- Layout
 #main-content {
     h1.title {
