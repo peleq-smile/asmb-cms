@@ -1,0 +1,8 @@
+# N'empêche pas l'indexation, mais indique aux robots de ne pas explorer les pages ci-dessous, pour éviter les surcharges
+# Cf. https://support.google.com/webmasters/answer/6062596?hl=fr&ref_topic=6061961
+User-agent: *
+Disallow: /acces-bureau
+Disallow: /asmbolt
+Disallow: /page/information-covid-19
+
+Sitemap: https://asmbtennis.fr/sitemap.xml

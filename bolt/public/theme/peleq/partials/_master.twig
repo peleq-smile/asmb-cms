@@ -18,7 +18,7 @@
     {% endif %}
 
     <title>{{ headTitle ~ ' | ' ~ config.get('general/sitename') }}</title>
-    <meta name="robots" content="max-snippet: 500">
+    <meta name="robots" content="max-snippet: 200">
     <meta name="description" content="{{ metaDescription }}">
     {% if record is not defined and homepage is defined %}
         {% set record = homepage %}
@@ -74,11 +74,15 @@
                 "@type": "GeoCoordinates",
                 "latitude": 47.204428,
                 "longitude": -1.542494
-            }
+            },
+            "sameAS": [
+                "{{ homepage.header_facebook_url }}",
+                "{{ homepage.header_instagram_url }}",
+                "https://ballejaune.com/club/asmb"
+            ]
         }
     </script>
     {% block headincludes %}{% endblock headincludes %}
-
 </head>
 
 <body class="{{ block('body_class') }}">
