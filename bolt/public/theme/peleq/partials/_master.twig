@@ -41,7 +41,7 @@
     <meta property="og:image" content="{{ metaImage }}">
     <meta property="og:locale" content="fr_FR">
     {% if record.meta_robots is defined and record.meta_robots is not empty %}
-    <meta name="robots" content="{{ record.meta_robots }}">
+        <meta name="robots" content="{{ record.meta_robots }}">
     {% endif %}
     <meta property="fb:app_id" content="2011781802368449">
 
@@ -51,37 +51,6 @@
     <link rel="stylesheet" href="{{ asset('css/bulma.min.css', 'theme') }}">
     <link rel="stylesheet" href="{{ asset('css/fontawesome-free-5.12.1-web/css/all.min.css', 'theme') }}">
     <link rel="stylesheet" href="{{ asset('css/googlefonts/fonts.min.css', 'theme') }}">
-
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "TennisComplex",
-            "@id": "{{ absolute_url(homepage.link()) }}",
-            "url": "{{ absolute_url(homepage.link()) }}",
-            "name": "{{ config.get('general/sitename') }}",
-            "logo": "{{ absolute_url(asset(homepage.logo_file, 'files')) }}",
-            "image": [
-                "{{ metaImage }}"
-            ],
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "2 rue des Boires",
-                "addressLocality": "Nantes",
-                "postalCode": "44200",
-                "addressCountry": "FR"
-            },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": 47.204428,
-                "longitude": -1.542494
-            },
-            "sameAS": [
-                "{{ homepage.header_facebook_url }}",
-                "{{ homepage.header_instagram_url }}",
-                "https://ballejaune.com/club/asmb"
-            ]
-        }
-    </script>
     {% block headincludes %}{% endblock headincludes %}
 </head>
 
@@ -90,15 +59,15 @@
 <a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
 
 
-{% set isHome = (app.request.get('_route') == "homepage" or record.template == 'template_accueil.twig' )%}
+{% set isHome = (app.request.get('_route') == "homepage" or record.template == 'template_accueil.twig' ) %}
 
 {% block header %}
-<header id="header" role="banner" class="header">
-    {{ include('partials/_header_top.twig') }}
-    {% if isHome %}
-        {{ include('partials/_hero.twig') }}
-    {% endif %}
-</header>
+    <header id="header" role="banner" class="header">
+        {{ include('partials/_header_top.twig') }}
+        {% if isHome %}
+            {{ include('partials/_hero.twig') }}
+        {% endif %}
+    </header>
 {% endblock header %}
 
 <div id="main-content">
@@ -126,6 +95,38 @@
 <!-- jQuery Custom Scroller CDN -->
 <script src="{{ asset('lib/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js', 'theme') }}" defer></script>
 
-<script src="{{ asset('js/asmb.js', 'theme') }}" defer></script>
+<script src="{{ asset('js/asmb.min.js', 'theme') }}" defer></script>
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TennisComplex",
+        "@id": "{{ absolute_url(homepage.link()) }}",
+        "url": "{{ absolute_url(homepage.link()) }}",
+        "name": "{{ config.get('general/sitename') }}",
+        "image": [
+            "{{ metaImage }}"
+        ],
+        "logo": "{{ absolute_url(asset(homepage.logo_file, 'files')) }}",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "2 rue des Boires",
+            "addressLocality": "Nantes",
+            "postalCode": "44200",
+            "addressCountry": "FR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 47.204428,
+            "longitude": -1.542494
+        },
+        "sameAS": [
+            "{{ homepage.header_facebook_url }}",
+            "{{ homepage.header_instagram_url }}",
+            "https://ballejaune.com/club/asmb",
+            "https://tenup.fft.fr/club/61440250"
+        ]
+    }
+</script>
 </body>
 </html>
