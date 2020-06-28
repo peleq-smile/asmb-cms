@@ -30,7 +30,7 @@
 
         {# BLOCS ACCUEIL - Section du haut #}
         {% set index = 1 %}
-        {% if record.blocks_top is not empty %}
+        {% if record.blocks_top.count > 0 %}
             <section class="section blocks">
                 <div class="container">
                     {% for item in record.blocks_top %}

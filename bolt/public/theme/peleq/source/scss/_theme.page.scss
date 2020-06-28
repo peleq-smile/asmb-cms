@@ -13,8 +13,8 @@
 
         img {
             border: solid 5px $white;
-            height: auto !important;
-            width: auto !important;
+            height: 100% !important;
+            object-fit: cover;
 
             &.decorated {
                 display: block;
@@ -35,6 +35,7 @@
                     padding-right: 0.4rem;
                     font-weight: bold;
                 }
+                padding-bottom: 0.5rem;
             }
         }
 
@@ -65,11 +66,46 @@
                 .block-content {
                     margin: 3rem 1.5rem 1rem 1.5rem;
                 }
+
+                .block-image {
+                    a.image {
+                        transition: all .2s ease-in-out;
+
+                        .see-more {
+                            display: none;
+                            font-size: 3em;
+                            background: linear-gradient($block-with-image-lg);
+                            color: $dark;
+                            position: absolute;
+                            top: 0;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            margin: auto 20%;
+                            height: 10rem;
+                            line-height: 10rem;
+                            vertical-align: middle;
+                            text-align: center;
+                        }
+
+                        &:hover {
+                            .see-more {
+                                display: inline;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        article {
+            h2:not(:first-child) {
+                margin-top: 0;
             }
         }
 
         .embed-block {
-            margin: 2rem 0 3rem 0;
+            margin: 0 0 3rem 0;
 
             .columns.block {
                 .block-content {
@@ -84,6 +120,7 @@
 
                     h3 {
                         margin-top: 0;
+
                         .title {
                             color: $primary !important;
                             font-size: 2.5rem;
@@ -135,6 +172,7 @@
                         visibility: hidden;
                         vertical-align: top;
                     }
+
                     &.entry:before {
                         content: '\f0a4';
                         font-weight: normal;
@@ -179,7 +217,7 @@
                     }
 
                     .block-image {
-                        display: none;
+
                     }
                 }
             }
@@ -203,6 +241,7 @@
         }
     }
 }
+
 @media screen and (min-width: $desktop) {
     .section-page {
         .container {
@@ -214,7 +253,6 @@
 
             .columns.block {
                 .block-image {
-                    flex-grow: 0;
                     background-color: $secondary;
                     margin-left: $block-with-image-gap + 1rem;
                     padding: 3rem 0;
@@ -222,12 +260,17 @@
 
                     .image {
                         right: $block-with-image-gap;
-                        display: flex;
+                        display: block;
                         text-align: center;
                         max-width: 100% !important;
-                        max-height: 100% !important;
                         border: white solid 8px;
                         overflow: hidden;
+                        height: 100%;
+
+                        img {
+                            object-fit: cover;
+                            height: 100%;
+                        }
                     }
                 }
             }

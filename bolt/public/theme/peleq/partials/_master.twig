@@ -47,7 +47,7 @@
 
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}">
 
-    <link rel="stylesheet" href="{{ asset('css/theme.min.css', 'theme') }}?4">
+    <link rel="stylesheet" href="{{ asset('css/theme.css', 'theme') }}?4">
     <link rel="stylesheet" href="{{ asset('css/bulma.min.css', 'theme') }}">
     <link rel="stylesheet" href="{{ asset('css/fontawesome-free-5.12.1-web/css/all.min.css', 'theme') }}">
     <link rel="stylesheet" href="{{ asset('css/googlefonts/fonts.min.css', 'theme') }}">
@@ -55,6 +55,37 @@
 </head>
 
 <body class="{{ block('body_class') }}">
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TennisComplex",
+        "@id": "{{ absolute_url(homepage.link()) }}",
+        "url": "{{ absolute_url(homepage.link()) }}",
+        "name": "{{ config.get('general/sitename') }}",
+        "image": [
+            "{{ metaImage }}"
+        ],
+        "logo": "{{ absolute_url(asset(homepage.logo_file, 'files')) }}",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "2 rue des Boires",
+            "addressLocality": "Nantes",
+            "postalCode": "44200",
+            "addressCountry": "FR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 47.204428,
+            "longitude": -1.542494
+        },
+        "sameAS": [
+            "{{ homepage.header_facebook_url }}",
+            "{{ homepage.header_instagram_url }}",
+            "https://ballejaune.com/club/asmb",
+            "https://tenup.fft.fr/club/61440250"
+        ]
+    }
+</script>
 
 <a href="#main-content" class="visually-hidden focusable skip-link">Skip to main content</a>
 
@@ -96,37 +127,5 @@
 <script src="{{ asset('lib/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js', 'theme') }}" defer></script>
 
 <script src="{{ asset('js/asmb.min.js', 'theme') }}" defer></script>
-
-<script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TennisComplex",
-        "@id": "{{ absolute_url(homepage.link()) }}",
-        "url": "{{ absolute_url(homepage.link()) }}",
-        "name": "{{ config.get('general/sitename') }}",
-        "image": [
-            "{{ metaImage }}"
-        ],
-        "logo": "{{ absolute_url(asset(homepage.logo_file, 'files')) }}",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "2 rue des Boires",
-            "addressLocality": "Nantes",
-            "postalCode": "44200",
-            "addressCountry": "FR"
-        },
-        "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 47.204428,
-            "longitude": -1.542494
-        },
-        "sameAS": [
-            "{{ homepage.header_facebook_url }}",
-            "{{ homepage.header_instagram_url }}",
-            "https://ballejaune.com/club/asmb",
-            "https://tenup.fft.fr/club/61440250"
-        ]
-    }
-</script>
 </body>
 </html>

@@ -34,13 +34,39 @@
             .block-content {
                 margin-top: $block-with-image-gap + 2rem;
             }
+            .block-image {
+                a.image {
+                    transition: all .2s ease-in-out;
+
+                    .see-more {
+                        display: none;
+                        font-size: 3em;
+                        background: linear-gradient($block-with-image-lg);
+                        color: $dark;
+                        position: absolute;
+                        top: 0;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        margin: auto 20%;
+                        height: 10rem;
+                        line-height: 10rem;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+
+                    &:hover {
+                        .see-more {
+                            display: inline;
+                        }
+                    }
+                }
+            }
         }
 
         .block-content {
-            flex-grow: 2;
-
             h3 {
-                font-size: 1.6em;
+                font-size: 1.6rem;
                 color: $primary;
             }
 
@@ -167,6 +193,7 @@
 @media screen and (max-width: $tablet) {
     .section.welcome {
         .column:not(:last-child) {
+            padding-top: 2.5rem;
             padding-bottom: 0;
         }
     }
@@ -188,25 +215,35 @@
     }
 
     .homepage {
-        h2 {
-            font-size: 2rem;
-        }
-
         .columns.block {
             font-size: 1rem;
             position: relative;
             margin-top: 0;
-            margin-bottom: 0;
-            padding: 1.5rem;
+            margin-bottom: -1rem;
+            padding: 1rem;
             overflow: hidden;
 
             &.block-with-image {
+                display: flex;
+                flex-direction: column-reverse;
+
                 .block-content {
                     margin-top: 0;
                     position: relative;
                     height: 100%;
                     z-index: 2;
                     background: rgba(255, 255, 255, 0.9);
+                    padding: 1.5rem 1rem 1rem 1rem;
+                }
+
+                .block-image {
+                    a.image {
+                        .see-more {
+                            font-size: 1.5rem;
+                            height: 6rem;
+                            line-height: 6rem;
+                        }
+                    }
                 }
             }
 
@@ -216,27 +253,26 @@
         }
 
         .block-image {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1;
             padding: 0;
 
             .image {
                 margin: auto;
                 width: 100% !important;
-                opacity: 0.1;
 
-                .see-more {
-                    display: none;
+                img {
+                    max-height: 12rem;
+                    object-fit: cover;
                 }
             }
         }
 
         .block-content {
-
+            h2 {
+                font-size: 1.8rem !important;
+            }
+            h3 {
+                font-size: 1.4rem !important;
+            }
             hr {
                 margin: 0.5rem 0;
             }
@@ -285,7 +321,6 @@
     .homepage {
         .columns.block {
             .block-image {
-                flex-grow: 0;
                 background-color: $secondary;
                 margin-right: $block-with-image-gap + 1rem;
                 padding: 3rem 0 3rem 2rem;
@@ -293,29 +328,21 @@
 
                 .image {
                     left: $block-with-image-gap;
-                    display: flex;
                     text-align: center;
-                    transition: all .2s ease-in-out;
                     max-width: 100% !important;
-                    max-height: 100% !important;
                     border: white solid 8px;
                     overflow: hidden;
+                    height: 100%;
 
-                    .see-more {
-                        display: none;
-                        font-size: 3em;
-                        background: linear-gradient($block-with-image-lg);
-                        color: $dark;
-                        margin: auto;
-                        padding: 10%;
+                    img {
+                        object-fit: cover;
+                        height: 100%;
                     }
+                }
 
+                a.image {
                     &:hover {
                         transform: scale(0.95);
-
-                        .see-more {
-                            display: inline-block;
-                        }
                     }
                 }
             }
