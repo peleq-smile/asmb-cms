@@ -303,6 +303,11 @@ homepage:
             type: image
             extensions: [ jpg, png ]
 
+        complex_data:
+            label: 'Données structurées'
+            required: false
+            type: textarea
+
         # Onglet Propriétés
         slug:
             group: meta
