@@ -1,6 +1,5 @@
 main:
     - label: 'Le Club'
-      path: page/edito
       submenu:
         - label: 'Édito'
           path: page/edito
@@ -14,14 +13,12 @@ main:
           path: page/reglement-interieur
 
     - label: 'Jouer'
-      path: page/inscriptions
       submenu:
         - label: 'Inscriptions'
           path: page/inscriptions
         - label: 'Formules et tarifs'
           path: page/tarifs
         - label: 'Tennis Loisir'
-          path: page/tennis-loisir-carte
           submenu:
             - label: 'La carte'
               path: page/tennis-loisir-carte
@@ -31,10 +28,8 @@ main:
               path: page/tennis-loisir-reservation
 
     - label: 'Compétitions'
-      path: competition/championnat-hiver-regional-2019-2020
       submenu:
         - label: 'Championnat d''Hiver'
-          path: competition/championnat-hiver-regional-2019-2020
           submenu:
             - label: 'Championnat Régional'
               path: competition/championnat-hiver-regional-2019-2020
@@ -81,7 +76,6 @@ main:
 
 
     - label: 'Publications'
-      path: tags/infos-pratiques
       submenu:
         - label: 'Infos pratiques'
           path: tags/infos-pratiques
@@ -90,7 +84,6 @@ main:
           path: document-divers/tous
 
         - label: 'Histoire du Tennis'
-          path: page/le-jeu-de-paume
           submenu:
             - label: 'Le jeu de Paume'
               path: page/le-jeu-de-paume
