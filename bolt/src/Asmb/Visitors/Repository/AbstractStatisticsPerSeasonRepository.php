@@ -4,6 +4,7 @@ namespace Bundle\Asmb\Visitors\Repository;
 
 use Bolt\Storage\Entity\Entity;
 use Bolt\Storage\Repository;
+use Bundle\Asmb\Visitors\Entity\VisitorStatistics;
 use Carbon\Carbon;
 
 /**
@@ -50,7 +51,9 @@ abstract class AbstractStatisticsPerSeasonRepository extends Repository
         $statistics = $this->findOneBy(['season' => $season]);
         if (false === $statistics) {
             // Les stats de la saison en cours n'existent pas encore, on créé l'entrée
+            /** @var VisitorStatistics $statistics */
             $statistics = $this->create(['season' => $season]);
+            $statistics->setMaxSimultaneous(0);
             $this->save($statistics, true);
         }
 

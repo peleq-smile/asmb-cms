@@ -51,7 +51,11 @@ class JaTennisJsonParser extends AbstractParser
         try {
             // On récupère le contenu JSON depuis le fichier ou l'url donnée
             $jsonFileContent = file_get_contents($this->jsonFileUrl);
-            $this->jsonData = json_decode($jsonFileContent, true);
+
+            // Corrections à l'arrache du JSON exporté par JA-Tennis !
+            $fixedJsonFileContent = str_replace(',team:', ',"team":', $jsonFileContent);
+
+            $this->jsonData = json_decode($fixedJsonFileContent, true);
 
             if (null === $this->jsonData || false === $this->jsonData) {
                 throw new \Exception('Le contenu JSON n\'a pas pu être extrait correctement.');
@@ -82,7 +86,11 @@ class JaTennisJsonParser extends AbstractParser
      */
     protected function add1month($inputDate)
     {
-        $outputDate = str_replace(['-10-', '-09-'], ['-11-', '-10-'], $inputDate);
+        $outputDate = str_replace(
+            ['-11-','-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-'],
+            ['-12-','-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-'],
+            $inputDate
+        );
 
         return $outputDate;
     }
@@ -178,18 +186,21 @@ class JaTennisJsonParser extends AbstractParser
 
             if (isset($this->jsonData['players'])) {
                 foreach ($this->jsonData['players'] as $playerData) {
-                    // On gère les noms trop long...
-                    if (strlen($playerData['name']) > 15) {
-                        // dans ce cas, on affiche que la 1ère lettre du prénom
-                        $name = $playerData['name'] . ' ' . substr($playerData['firstname'], 0, 1) . '.';
-                    } else {
-                        $name = $playerData['name'] . ' ' . $playerData['firstname'];
+                    $name = $playerData['name'];
+                    if (isset($playerData['firstname'])) {
+                        // On gère les noms trop long...
+                        if (strlen($name) > 15 || strlen($playerData['firstname']) > 12) {
+                            // dans ce cas, on affiche que la 1ère lettre du prénom
+                            $name .= ' ' . substr($playerData['firstname'], 0, 1) . '.';
+                        } else {
+                            $name .= ' ' . $playerData['firstname'];
+                        }
                     }
 
                     $this->playersData[$playerData['id']] = [
                         'jid' => $playerData['id'],
                         'name' => $name,
-                        'rank' => $playerData['rank'],
+                        'rank' => isset($playerData['rank']) ? $playerData['rank'] : '',
                         'year' => isset($playerData['birth']) ? substr($playerData['birth'], 0, 4) : '',
                         'cat' => $playerData['sexe'],
                         'club' => isset($playerData['club']) ? $playerData['club'] : '',
@@ -206,7 +217,7 @@ class JaTennisJsonParser extends AbstractParser
      * pour chaque boîte, quelles sont les boîtes précédentes haute et basse.
      *
      * @param array $boxes
-     * @param int $nbOut
+     * @param int   $nbOut
      *
      * @return array
      */
@@ -247,9 +258,9 @@ class JaTennisJsonParser extends AbstractParser
      * ]
      *
      * @param string $tableName Ex: "Messieurs senior NC à 30/2"
-     * @param array $boxes
+     * @param array  $boxes
      * @param        $boxIdx
-     * @param array $indexesRegister
+     * @param array  $indexesRegister
      *
      * @return array
      */
@@ -364,8 +375,8 @@ class JaTennisJsonParser extends AbstractParser
             $this->planningData = [];
         }
 
-        $date = $box['date'];
-        $place = $box['place'];
+        $date = isset($box['date']) ? $box['date'] : '';
+        $place = isset($box['place']) ? $box['place'] : '';
         $score = isset($box['score']) ? $box['score'] : '';
 
         if (!isset($this->planningData[$date][$place])) {
