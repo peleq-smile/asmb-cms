@@ -24,7 +24,10 @@
                     <select id="select-planning" data-hash="#pla">
                         <option value="-">-</option>
                         {% for day, planningByDayData in parsedData.planning %}
-                            <option value="{{ day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) }}">{{ day }}</option>
+                            {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
+                            <option
+                                {% if plaDay == cleanedDay %}selected="selected"{% endif %}
+                                value="{{ cleanedDay }}">{{ day }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -88,7 +91,7 @@
 
 {% macro planningView(planning, planningDisplay, planningDay) %}
     <div class="box planning-container" style="display: {{ planningDisplay }}">
-        {% if planning.length > 1 %}
+        {% if planning|length > 1 %}
         <ul class="planning-nav is-hidden-touch">
             {% for day, planningByDayData in planning %}
                 {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}

@@ -9,7 +9,6 @@ use Bundle\Asmb\Competition\Repository\Tournament\BoxRepository;
 use Bundle\Asmb\Competition\Repository\Tournament\TableRepository;
 use Bundle\Asmb\Competition\Repository\TournamentRepository;
 use Carbon\Carbon;
-use JsonSchema\Exception\RuntimeException;
 
 /**
  * Extrait les données d'un tournoi depuis la base de données.
@@ -96,7 +95,7 @@ class DbParser extends AbstractParser
                 'planning' => $this->getSortedPlanningData(),
                 'result' => $this->getResultData(),
                 'players' => $this->getSortedByNamePlayersData(),
-                'info' => $this->getInfoData(), //TODO comprendre pq il manque updatedAt !!!
+                'info' => $this->getInfoData(),
             ];
         } catch (\Exception $e) {
             $parsedData = [
@@ -117,10 +116,8 @@ class DbParser extends AbstractParser
         if (!isset($this->infoData['begin'])) {
             $tournament = $this->getTournament();
             if ($tournament) {
-                $this->infoData = [
-                    'begin' => $tournament->getFromDate()->format('Y-m-d'),
-                    'end' => $tournament->getToDate()->format('Y-m-d'),
-                ];
+                $this->infoData['begin'] = $tournament->getFromDate()->format('Y-m-d');
+                $this->infoData['end'] = $tournament->getToDate()->format('Y-m-d');
             }
         }
 
@@ -132,7 +129,7 @@ class DbParser extends AbstractParser
         if (null === $this->tablesData) {
             $this->tablesData = [];
 
-            $playersData = $this->getPlayersData();
+            $this->getPlayersData();
 
             // On récupère tout d'abord tous les tableaux du tournoi (par position)
             $tables = $this->tableRepository->findBy(

@@ -267,8 +267,6 @@ trait TwigFunctionsTrait
 
     protected function renderTournamentFromDb($tournamentId)
     {
-
-
         /** @var \Bundle\Asmb\Competition\Parser\Tournament\DbParser $parser */
         $parser = $this->container['tournament_db_parser'];
         $parser->setTournamentId($tournamentId);

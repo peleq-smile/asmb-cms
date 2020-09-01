@@ -124,7 +124,7 @@ class TournamentRepository extends Repository
         $qb->addSelect('tour_box.player_club AS club');
         $qb->addSelect('tour_table.category AS cat');
 
-        $qb->groupBy(['name', 'rank', 'club']);
+        $qb->groupBy(['name', 'rank', 'club', 'cat']);
 
         $playersData = [];
 
