@@ -2,7 +2,7 @@ FROM php:7.2-apache
 
 RUN apt-get update && apt-get install -y
 
-RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev ssl-cert libpng-dev libfreetype6-dev libjpeg62-turbo-dev unzip nodejs npm libicu-dev \
+RUN apt-get update && apt-get install -y vim libmemcached-dev zlib1g-dev ssl-cert libpng-dev libfreetype6-dev libjpeg62-turbo-dev unzip nodejs npm libicu-dev \
     && pecl install memcached-3.0.4 \
     && docker-php-ext-enable memcached \
     && docker-php-ext-configure gd --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include \
