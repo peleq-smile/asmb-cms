@@ -6,6 +6,37 @@ $col-footer-width-down-sm: 300px;
     position: relative;
     margin: auto;
 
+    .sponsors {
+        text-align: center;
+        border-bottom: solid 1px $bg-light;
+        padding: 1rem;
+
+        .sponsor {
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            width: max-content;
+
+            span {
+                border-right: solid 1px $bg-light;
+                padding-right: 1rem;
+                margin-right: 1rem;
+            }
+
+            a {
+                display: block;
+                margin: auto;
+            }
+
+            img {
+                display: block;
+                margin: auto;
+                opacity: 0.5;
+            }
+        }
+    }
+
     .top {
         display: flex;
         max-width: $fullhd;
@@ -196,6 +227,20 @@ $col-footer-width-down-sm: 300px;
 
 @media screen and (max-width: $tablet) {
     #footer {
+        .sponsors {
+            .sponsor {
+                flex-direction: column;
+
+                span {
+                    border-right: none;
+                    padding-right: 0;
+                    margin-right: 0;
+                    line-height: normal !important;
+                    padding-bottom: 0.5rem;
+                }
+            }
+        }
+
         .top {
             flex-direction: column;
             padding-left: 0;
