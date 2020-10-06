@@ -27,6 +27,12 @@ $col-footer-width-down-sm: 300px;
             a {
                 display: block;
                 margin: auto;
+
+                &:hover {
+                    img {
+                        opacity: 1;
+                    }
+                }
             }
 
             img {
