@@ -11,22 +11,29 @@
         {% set sundaySlotsCount = sundaySlots|length %}
 
         {# On calcule la taille de la colonne, sur une grille de 12 colonnes #}
-        {% set sizeColumnSaturday = 12 * saturdaySlotsCount/(saturdaySlotsCount+sundaySlotsCount)|round %}
-        {% set sizeColumnSunday = 12 - sizeColumnSaturday %}
+        {% if saturdaySlotsCount+sundaySlotsCount > 0 %}
+            {% set sizeColumnSaturday = 12 * saturdaySlotsCount/(saturdaySlotsCount+sundaySlotsCount)|round %}
 
-        <div class="columns box">
-            {# Rencontre du samedi #}
-            <div class="column is-{{ sizeColumnSaturday }}">
-                <h2 class="title text-primary">Samedi</h2>
-                {{ _self.dayOfWeekMeetingsView(homeMeetingsOfSaturday, saturdaySlots) }}
-            </div>
+            {% set sizeColumnSunday = 12 - sizeColumnSaturday %}
 
-            {# Rencontre du dimanche #}
-            <div class="column is-{{ sizeColumnSunday }}">
-                <h2 class="title text-primary">Dimanche</h2>
-                {{ _self.dayOfWeekMeetingsView(homeMeetingsOfSunday, sundaySlots) }}
+            <div class="columns box">
+                {# Rencontre du samedi #}
+                {% if sizeColumnSaturday > 0 %}
+                <div class="column is-{{ sizeColumnSaturday }}">
+                    <h2 class="title text-primary">Samedi</h2>
+                    {{ _self.dayOfWeekMeetingsView(homeMeetingsOfSaturday, saturdaySlots) }}
+                </div>
+                {% endif %}
+
+                {# Rencontre du dimanche #}
+                <div class="column is-{{ sizeColumnSunday }}">
+                    <h2 class="title text-primary">Dimanche</h2>
+                    {{ _self.dayOfWeekMeetingsView(homeMeetingsOfSunday, sundaySlots) }}
+                </div>
             </div>
-        </div>
+        {% else %}
+            <div class="empty">Aucune rencontre à afficher.</div>
+        {% endif %}
     </div>
 </section>
 

@@ -71,13 +71,11 @@ class RefreshCommand extends BaseCommand
         $poolRankingRepository = $storage->getRepository('championship_pool_ranking');
         /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository $poolMeetingRepository */
         $poolMeetingRepository = $storage->getRepository('championship_pool_meeting');
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
-        $poolTeamRepository = $storage->getRepository('championship_pool_team');
 
         // PARSERS
         /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser $poolRankingParser */
         $poolRankingParser = $this->app['pool_ranking_parser'];
-        /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser $poolMatchesParser */
+        /** @var PoolMeetingsParser $poolMatchesParser */
         $poolMeetingsParser = $this->app['pool_meetings_parser'];
 
 

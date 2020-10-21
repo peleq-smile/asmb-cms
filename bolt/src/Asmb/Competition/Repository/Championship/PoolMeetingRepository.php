@@ -268,6 +268,8 @@ class PoolMeetingRepository extends Repository
                 $poolMeeting->setReportDate($existingPoolMeeting->getReportDate());
                 // Si l'indicateur "reporté" existe, on le conserve
                 $poolMeeting->setIsReported($existingPoolMeeting->getIsReported());
+            } else {
+                $poolMeeting->setIsReported(false);
             }
             $this->save($poolMeeting, true);
         }

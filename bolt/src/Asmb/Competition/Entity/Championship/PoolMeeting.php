@@ -26,7 +26,7 @@ class PoolMeeting extends Entity
     /** @var Carbon */
     protected $report_date;
     /** @var boolean */
-    protected $is_reported;
+    protected $is_reported = 0;
     /** @var Carbon */
     protected $time;
     /** @var string */
@@ -157,19 +157,19 @@ class PoolMeeting extends Entity
     }
 
     /**
-     * @return boolean
+     * @return int
      */
     public function getIsReported()
     {
-        return (boolean) $this->is_reported;
+        return (int) $this->is_reported;
     }
 
     /**
-     * @param boolean $isReported
+     * @param int $isReported
      */
     public function setIsReported($isReported)
     {
-        $this->is_reported = $isReported;
+        $this->is_reported = (int) $isReported;
     }
 
     /**

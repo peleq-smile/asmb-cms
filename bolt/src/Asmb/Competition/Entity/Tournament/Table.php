@@ -22,6 +22,7 @@ class Table extends AbstractShortNamedEntity
         'M' => 'Messieurs',
         'G' => 'Garçons',
         'F' => 'Filles',
+        'X' => 'Mixte',
     ];
 
     /**

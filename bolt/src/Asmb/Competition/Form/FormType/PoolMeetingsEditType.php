@@ -66,7 +66,7 @@ class PoolMeetingsEditType extends AbstractType
                 Type\CheckboxType::class,
                 [
                     'label'    => Trans::__('general.phrase.reported'),
-                    'data'     => $meeting->getIsReported(),
+                    'data'     => (bool) $meeting->getIsReported(),
                     'required' => false,
                 ]
             );
