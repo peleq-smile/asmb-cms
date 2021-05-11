@@ -137,7 +137,7 @@ trait TwigFunctionsTrait
      * sur les catégories à prendre en compte.
      *
      * @param integer $championshipId
-     * @param array $categoryNames
+     * @param array   $categoryNames
      *
      * @return array
      * @throws \Bolt\Exception\InvalidRepositoryException
@@ -158,7 +158,7 @@ trait TwigFunctionsTrait
      * Retourne le classement des équipes des poules du championnat d'id donné.
      *
      * @param integer $championshipId
-     * @param array $categoryNames
+     * @param array   $categoryNames
      *
      * @return \Bundle\Asmb\Competition\Entity\Championship\PoolRanking[]
      * @throws \Bolt\Exception\InvalidRepositoryException
@@ -180,7 +180,7 @@ trait TwigFunctionsTrait
      * Retourne le tableau des rencontres des poules du championnat d'id donné.
      *
      * @param integer $championshipId
-     * @param array $categoryNames
+     * @param array   $categoryNames
      *
      * @return array
      * @throws \Bolt\Exception\InvalidRepositoryException
@@ -252,13 +252,15 @@ trait TwigFunctionsTrait
             $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
             $htmlFile->setPath($htmlFilePath);
 
-            $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
-            $endDate->setTime(0, 0, 0);
+            if (!isset($parsedData['error'])) {
+                $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
+                $endDate->setTime(0, 0, 0);
 
-            if (!isset($parsedData['error']) && $endDate < Carbon::now()) {
                 // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
                 // non à jour.
-                $htmlFile->write($tournamentContent);
+                if ($endDate < Carbon::now()) {
+                    $htmlFile->write($tournamentContent);
+                }
             }
         }
 
@@ -283,7 +285,7 @@ trait TwigFunctionsTrait
 
     /**
      * @param AbstractParser $parser
-     * @param array $parsedData
+     * @param array          $parsedData
      * @return string
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
@@ -294,9 +296,9 @@ trait TwigFunctionsTrait
         if (isset($parsedData['error'])) {
             // pour debug, afficher $parsedData['trace'] en plus !
             return 'Une erreur est survenue dans le traitement des données du tournoi :<br>'
-                . $parsedData['error'];
-            /*'<div style="text-align: left !important;">'
-            .$parsedData['trace'].'</div>';*/
+                . $parsedData['error']
+                . '<pre style="text-align: left !important;">'
+                . $parsedData['trace'] . '</pre>';
         }
 
         $display = '#res';
@@ -449,7 +451,7 @@ trait TwigFunctionsTrait
      * Recupère les poules à partir de l'id de compétition donné.
      *
      * @param integer $championshipId
-     * @param array $categoryNames
+     * @param array   $categoryNames
      *
      * @return Pool[]
      * @throws \Bolt\Exception\InvalidRepositoryException

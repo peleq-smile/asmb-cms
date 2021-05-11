@@ -67,6 +67,7 @@ class JaTennisJsonParser extends AbstractParser
                 'tables' => $this->getTablesData(),
                 'planning' => $this->getSortedPlanningData(),
                 'result' => $this->getResultData(),
+                'playersById' => $this->getPlayersData(),
                 'players' => $this->getSortedByNamePlayersData(),
             ];
         } catch (\Exception $e) {
@@ -87,8 +88,8 @@ class JaTennisJsonParser extends AbstractParser
     protected function add1month($inputDate)
     {
         $outputDate = str_replace(
-            ['-11-','-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-'],
-            ['-12-','-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-'],
+            ['-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-'],
+            ['-12-', '-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-'],
             $inputDate
         );
 
@@ -144,26 +145,35 @@ class JaTennisJsonParser extends AbstractParser
                         if (isset($draw['name'])) {
                             $name .= ' &bull; ' . $draw['name'];
                         }
+
+                        // S'agit-il d'une poule ?
+                        $isPool = ($draw['type'] === 2);
                         $boxesData = [];
-                        // L'export JSON de JA Tennis place les $nbOut boîtes sortantes en tête de l'entrée "boxes".
-                        // On ne parcourt donc ici que les $nbOut premières boîtes, le parsing du reste se faisant
-                        // ensuite récursivement.
-                        for ($idx = 0; $idx < $nbOut; $idx++) {
-                            $boxesData[] = $this->parseBox($name, $boxes, $idx, $indexesRegister);
-                        }
 
-                        // On profite de la boucle pour enregistrer les résultats (= vainqueurs + finalistes)
-                        // Avant de trier par ordre décroissant, le vainqueur est la 1ère "boîte" (pour les tableaux
-                        // dont il ressort 1 seule personne, càd où $nbOut=1.
-                        if (1 === $nbOut && isset($boxesData[0])) {
-                            $this->addResultDataFromFinalBox($name, $boxesData[0]);
-                        }
+                        if ($isPool) {
+                            $boxesData = $this->buildPoolBoxesData($name, $boxes, $draw['nbColumn']);
+                        } else {
+                            // L'export JSON de JA Tennis place les $nbOut boîtes sortantes en tête de l'entrée "boxes".
+                            // On ne parcourt donc ici que les $nbOut premières boîtes, le parsing du reste se faisant
+                            // ensuite récursivement.
+                            for ($idx = 0; $idx < $nbOut; $idx++) {
+                                $boxesData[] = $this->parseBox($name, $boxes, $idx, $indexesRegister);
+                            }
 
-                        krsort($boxesData);
+                            // On profite de la boucle pour enregistrer les résultats (= vainqueurs + finalistes)
+                            // Avant de trier par ordre décroissant, le vainqueur est la 1ère "boîte" (pour les tableaux
+                            // dont il ressort 1 seule personne, càd où $nbOut=1.
+                            if (1 === $nbOut && isset($boxesData[0])) {
+                                $this->addResultDataFromFinalBox($name, $boxesData[0]);
+                            }
+
+                            krsort($boxesData);
+                        }
 
                         $this->tablesData[] = [
                             'id' => $draw['id'],
                             'name' => $name,
+                            'isPool' => $isPool,
                             'boxes' => $boxesData,
                         ];
                     }
@@ -172,6 +182,145 @@ class JaTennisJsonParser extends AbstractParser
         }
 
         return $this->tablesData;
+    }
+
+    protected function getBoxCountForPoolType(int $nbPlayers)
+    {
+        if (3 === $nbPlayers) {
+            // 3 joueurs => 3 matchs en tout
+            return 3;
+        } else {
+            return $this->getBoxCountForPoolType($nbPlayers - 1) + $nbPlayers - 1;
+        }
+    }
+
+    protected function buildPoolBoxesData(string $tableName, array $boxes, int $nbPlayers)
+    {
+        $boxesData = [];
+        $boxCount = $this->getBoxCountForPoolType($nbPlayers);
+
+        // On fait une première boucle pour récupérer tous les joueurs et construire une matrice de poule
+        $players = [];
+        $idxPlayer = 1;
+        for ($i = count($boxes) - 1; $i >= 0; $i--) {
+            if (!isset($boxes[$i]['playerId'])) {
+                continue;
+            }
+            // utilisation d'un for pour parcourir à l'envers, sans utiliser krsort
+            $playerId = $boxes[$i]['playerId'];
+            if (!in_array($playerId, $players)) {
+                $players[$idxPlayer++] = $playerId;
+            }
+        }
+
+        // On initialise la matrice avec tous les joueurs
+        foreach ($players as $playerIdRow) {
+            $boxesData[$playerIdRow] = [];
+
+            foreach ($players as $playerIdCol) {
+                $boxesData[$playerIdRow][$playerIdCol] = [];
+            }
+        }
+
+        // On repasse dans toutes les "boxes" pour remplir la matrice avec les résultats, en ne prenant cette fois-ci
+        // que les $boxCount premières, et dans l'ordre inverse de JA-Tennis !
+        $firstReverseBoxes = array_slice($boxes, -0, $boxCount);
+        krsort($firstReverseBoxes);
+
+        $idxRow = 1;
+        $idxCol = 2; // = $idxRow + 1
+        foreach ($firstReverseBoxes as $box) {
+            $boxData = [];
+            $looserPlayer = null;
+            $playerIdRow = $players[$idxRow];
+            $playerIdCol = $players[$idxCol];
+
+            if (isset($box['date'])) {
+                $boxData['date'] = $this->getFormattedDateTime($box['date']);
+
+                if (isset($box['score']) && !empty($box['score'])) {
+                    $boxData['score'] = $box['score'];
+                    if (isset($box['playerId'])) {
+                        $winnerPlayerId = $box['playerId'];
+                        $boxData['jid'] = $winnerPlayerId;
+                        $boxData['name'] = $this->playersData[$winnerPlayerId]['name'];
+                        $boxData['rank'] = $this->playersData[$winnerPlayerId]['rank'];
+
+                        $looserPlayerId = ($playerIdRow === $winnerPlayerId) ? $playerIdCol : $playerIdRow;
+                        $looserPlayer = $this->playersData[$looserPlayerId];
+                    }
+                }
+
+                // On ajoute les données de match sur les joueurs
+                $this->addMatchesDataOnPlayersData($playerIdRow, $looserPlayer, $tableName, $box['date'], $boxData);
+
+                // On a une date : on enregistre des données sur le planning ici
+                $date = $box['date']; // non formattée ici, c'est ce qu'on veut pour trier
+                $place = isset($box['place']) ? $box['place'] : '';
+                $score = isset($boxData['score']) ? $boxData['score'] : '';
+
+                //TODO refactoriser tout ça !!!!
+                if (isset($winnerPlayerId, $looserPlayerId)) {
+                    // si vainqueur, on le place en 1er
+                    $player1 = [
+                        'jid' => $winnerPlayerId,
+                        'name' => $this->playersData[$winnerPlayerId]['name'],
+                        'rank' => $this->playersData[$winnerPlayerId]['rank'],
+//                        'club' => $this->playersData[$winnerPlayerId]['club'],
+                        'club' => '',
+                        'qualif' => '',
+                    ];
+                    $player2 = [
+                        'jid' => $looserPlayerId,
+                        'name' => $looserPlayer['name'],
+                        'rank' => $looserPlayer['rank'],
+//                        'club' => $looserPlayer['club'],
+                        'club' => '',
+                        'qualif' => '',
+                    ];
+                } else {
+                    // sinon le joueur 1 est le joueur de la ligne
+                    $player1Id = $playerIdRow;
+                    $player1 = [
+                        'jid' => $player1Id,
+                        'name' => $this->playersData[$player1Id]['name'],
+                        'rank' => $this->playersData[$player1Id]['rank'],
+//                        'club' => $this->playersData[$player1Id]['club'],
+                        'club' => '',
+                        'qualif' => '',
+                    ];
+                    // et le joueur 2 est le joueur de la colonne
+                    $player2Id = $playerIdCol ;
+                    $player2 = [
+                        'jid' => $player2Id,
+                        'name' => $this->playersData[$player2Id]['name'],
+                        'rank' => $this->playersData[$player2Id]['rank'],
+//                        'club' => $this->playersData[$player2Id]['club'],
+                        'club' => '',
+                        'qualif' => '',
+                    ];
+                }
+
+                $this->planningData[$date][$place] = [
+                    'table' => $tableName,
+                    'player1' => $player1,
+                    'player2' => $player2,
+                    'score' => $score,
+                ];
+            }
+            $boxesData[$playerIdRow][$playerIdCol] = $boxData;
+
+            if ($idxCol < $nbPlayers) {
+                $idxCol++;
+            } else {
+                $idxRow++;
+                $idxCol = $idxRow + 1;
+            }
+
+            unset($winnerPlayerId, $looserPlayerId);
+        }
+
+        return $boxesData;
     }
 
     /**
@@ -187,6 +336,7 @@ class JaTennisJsonParser extends AbstractParser
             if (isset($this->jsonData['players'])) {
                 foreach ($this->jsonData['players'] as $playerData) {
                     $name = $playerData['name'];
+                    $team = null; // par défaut, match en simple
                     if (isset($playerData['firstname'])) {
                         // On gère les noms trop long...
                         if (strlen($name) > 15 || strlen($playerData['firstname']) > 12) {
@@ -195,6 +345,9 @@ class JaTennisJsonParser extends AbstractParser
                         } else {
                             $name .= ' ' . $playerData['firstname'];
                         }
+                    } elseif (isset($playerData['team'])) {
+                        // gestion des doubles
+                        $team = $playerData['team']; // tableau à 2 entrées, contenant les IDs des 2 joueurs
                     }
 
                     $this->playersData[$playerData['id']] = [
@@ -204,6 +357,7 @@ class JaTennisJsonParser extends AbstractParser
                         'year' => isset($playerData['birth']) ? substr($playerData['birth'], 0, 4) : '',
                         'cat' => $playerData['sexe'],
                         'club' => isset($playerData['club']) ? $playerData['club'] : '',
+                        'team' => $team,
                     ];
                 }
             }
@@ -350,16 +504,20 @@ class JaTennisJsonParser extends AbstractParser
     /**
      * Reformate la date donnée en renvoyant la date et l'heure.
      *
-     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s"
+     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s" ou "Y-m-d"
      *
      * @return string
      */
-    protected function getFormattedDateTime($inputDateTime)
+    protected function getFormattedDateTime(string $inputDateTime)
     {
-        $outputDate = $this->getFormattedDate($inputDateTime);
-        $outputTime = $this->getFormattedTime($inputDateTime);
+        $formattedDateTime = $this->getFormattedDate($inputDateTime); // Donne par ex: jeu. 21 (ou chaîne vide)
 
-        return "$outputDate - $outputTime"; // Donne par ex: jeu. 21 - 20h30
+        $outputTime = $this->getFormattedTime($inputDateTime);
+        if (!empty($outputTime)) {
+            $formattedDateTime .= " - $outputTime"; // Donne par ex: jeu. 21 - 20h30
+        }
+
+        return $formattedDateTime;
     }
 
     /**

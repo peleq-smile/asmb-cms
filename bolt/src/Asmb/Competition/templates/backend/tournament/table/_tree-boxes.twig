@@ -48,7 +48,7 @@
                             <span class="date clearfix">{{ box.datetime|localizeddatetime }}</span>
                         {% endif %}
 
-                        {% if boxesWithMissingScore[box.id] is defined %}
+                        {% if boxesWithMissingScore[box.id] is defined and scoresForm['box-' ~ box.id ~ '_winner'] is not null %}
                             {# Cas d'une rencontre passée sans score : formulaire rapide de saisie du vainqueur +
                                score manquant #}
                             <div class="row-no-gutters clearfix">

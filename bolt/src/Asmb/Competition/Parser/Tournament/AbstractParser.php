@@ -68,46 +68,59 @@ abstract class AbstractParser
     /**
      * Reformate la date donnée en renvoyant la date uniquement
      *
-     * @param string|Carbon $inputDateTime Date au format "Y-m-d\TH:i:s" ou objet Carbon
+     * @param string|Carbon $inputDateTime Date au format "Y-m-d\TH:i:s" ou au format "Y-m-d" ou objet Carbon
      *
      * @return string
      */
     public function getFormattedDate($inputDateTime)
     {
-        // Exemple de date en entrée: 2019-02-21T20:30:00
+        $formattedDate = '';
+
+        // Exemple de date en entrée: 2019-02-21T20:30:00 OU 2019-02-21
         if ($inputDateTime instanceof Carbon) {
             $carbonDate = $inputDateTime;
-        } else {
+        } elseif (19 === strlen($inputDateTime)) {
             $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
+        } elseif(10 === strlen($inputDateTime)) {
+            $carbonDate = Carbon::createFromFormat('Y-m-d', $inputDateTime);
         }
 
-        if ($carbonDate->daysInMonth == 1) {
-            $outputFormat = '%a %eer %b';
-        } else {
-            $outputFormat = '%a %e %b';
+        if (isset($carbonDate)) {
+            if ($carbonDate->daysInMonth == 1) {
+                $outputFormat = '%a %eer %b';
+            } else {
+                $outputFormat = '%a %e %b';
+            }
+            $formattedDate = $carbonDate->formatLocalized($outputFormat); // Donne par ex: jeu. 21 févr.
         }
 
-        return $carbonDate->formatLocalized($outputFormat); // Donne par ex: jeu. 21 févr.
+        return $formattedDate;
     }
 
     /**
      * Reformate la date donnée en renvoyant l'heure uniquement.
      *
-     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s"
+     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s" ou "Y-m-d"
      *
      * @return string
      */
-    public function getFormattedTime($inputDateTime)
+    public function getFormattedTime(string $inputDateTime)
     {
+        $formattedTime = '';
+
         // Exemple de date en entrée: 2019-02-21T20:30:00
-        $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
-        if ($carbonDate->minute > 0) {
-            $outputFormat = '%Hh%M';
-        } else {
-            $outputFormat = '%Hh';
+        if (19 === strlen($inputDateTime)) {
+            $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
+            if ($carbonDate->minute > 0) {
+                $outputFormat = '%Hh%M';
+            } else {
+                $outputFormat = '%Hh';
+            }
+
+            $formattedTime = $carbonDate->formatLocalized($outputFormat); // Donne par ex: "19h" ou "20h30"
         }
 
-        return $carbonDate->formatLocalized($outputFormat); // Donne par ex: "19h" ou "20h30"
+        return $formattedTime;
     }
 
     protected function getUpdatedAtFormatted(Carbon $datetime)
@@ -189,8 +202,13 @@ abstract class AbstractParser
             foreach ($this->planningData as $dateTime => $planningDataByPlace) {
                 ksort($planningDataByPlace);
                 foreach ($planningDataByPlace as $place => $planningData) {
-                    $formattedDate = $this->getFormattedDate($dateTime);
-                    $formattedTime = $this->getFormattedTime($dateTime);
+                    try {
+
+                        $formattedDate = $this->getFormattedDate($dateTime);
+                        $formattedTime = $this->getFormattedTime($dateTime);
+                    } catch (\Exception $e) {
+                        $p = 'pause';
+                    }
                     $sortedPlanningData[$formattedDate][$formattedTime][$place] = $planningData;
                 }
             }

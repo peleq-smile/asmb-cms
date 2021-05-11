@@ -69,13 +69,21 @@
             </div>
 
             <div class="table-container">
-                <div class="table-container-centered">
-                    {% for boxesData in tableData.boxes %}
-                        <div class="table-container-part">
-                            {{ _self.tableItem(boxesData) }}
+                {% if tableData.isPool is defined and tableData.isPool %}
+                    <div class="container">
+                        <div class="box">
+                            {{ _self.pool(tableData.boxes, parsedData.playersById) }}
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
+                {% else %}
+                    <div class="table-container-centered">
+                        {% for boxesData in tableData.boxes %}
+                            <div class="table-container-part">
+                                {{ _self.tableItem(boxesData) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% endfor %}
@@ -92,16 +100,16 @@
 {% macro planningView(planning, planningDisplay, planningDay) %}
     <div class="box planning-container" style="display: {{ planningDisplay }}">
         {% if planning|length > 1 %}
-        <ul class="planning-nav is-hidden-touch">
-            {% for day, planningByDayData in planning %}
-                {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
-                <li><a href="{{ app.request.uri }}#pla:{{ cleanedDay }}"
-                       {{ (planningDay == cleanedDay)? ' class="is-active"' }};
-                       data-hash="#pla"
-                       data-param="{{ cleanedDay }}">{{ day|slice(0, 7) }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+            <ul class="planning-nav is-hidden-touch">
+                {% for day, planningByDayData in planning %}
+                    {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
+                    <li><a href="{{ app.request.uri }}#pla:{{ cleanedDay }}"
+                           {{ (planningDay == cleanedDay)? ' class="is-active"' }};
+                           data-hash="#pla"
+                           data-param="{{ cleanedDay }}">{{ day|slice(0, 7) }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% endif %}
 
         {% for day, planningByDayData in planning %}
@@ -125,8 +133,10 @@
                         {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
                             <div class="columns is-gapless is-mobile is-multiline">
                                 <div class="column is-one-fifth-mobile">{{ (time != '00h') ? time : '-' }}</div>
-                                <div class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
-                                <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">
+                                <div
+                                    class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
+                                <div
+                                    class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">
                                     {% if planningByPlaceData.player1.name is not empty %}
                                         <a class="player-link text-secondary"
                                            href="#jou:{{ planningByPlaceData.player1.jid }}"
@@ -207,7 +217,8 @@
                                         <span class="is-italic">({{ resultData.finalist.rank }})</span>
                                     </a>
                                     {% if resultData.finalist.club is not empty %}
-                                        <br><span class="is-size-7 is-normal text-secondary">{{ resultData.finalist.club }}</span>
+                                        <br><span
+                                        class="is-size-7 is-normal text-secondary">{{ resultData.finalist.club }}</span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -275,7 +286,7 @@
                 <div class="columns is-multiline is-gapless">
                     <div class="column is-one-fifth">&nbsp;</div>
                     <div class="column is-four-fifths"><strong
-                                class="is-size-5 text-secondary player-name">{{ player.name }}</strong></div>
+                            class="is-size-5 text-secondary player-name">{{ player.name }}</strong></div>
                     <div class="column is-one-fifth is-size-6">Classement :</div>
                     <div class="column is-four-fifths is-size-6"><em class="rank">{{ player.rank }}</em></div>
                     <div class="column is-full">&nbsp;</div>
@@ -318,6 +329,10 @@
         <div class="item">
             <div class="item-parent">
                 <p>
+                    {% if tableData.date is defined %}
+                        <span class="date">{{ tableData.date }}</span><br><br>
+                    {% endif %}
+
                     {% if tableData.name is defined %}
                         <span class="name">
                             <a class="player-link text-default" href="#jou:{{ tableData.jid }}"
@@ -334,11 +349,7 @@
                         <span class="name"> ?</span><br>
                     {% endif %}
 
-                    {% if tableData.date is defined and tableData.score is not defined and tableData.score != 'wo' %}
-                        <span class="date">{{ tableData.date }}</span><br>
-                    {% endif %}
-
-                    {% if tableData.score is defined %}
+                    {% if tableData.score is defined and tableData.score is not empty %}
                         <strong class="score">{{ tableData.score }}</strong><br>
                     {% endif %}
                 </p>
@@ -359,4 +370,53 @@
             {% endif %}
         </div>
     {% endif %}
+{% endmacro %}
+
+{% macro pool(boxesData, playersById) %}
+    <table class="table is-fullwidth">
+        <thead>
+        <tr>
+            {# TODOpeleq :changer le width qui est mis en dur là, car on peut avoir des poules de plus de 3j !!! #}
+            <th width="25%"></th>
+            {% for playerIdRow, boxesRowData in boxesData %}
+                {% set playerInfo = playersById[playerIdRow] %}
+                <th width="25%" style="font-size: 1.4rem">
+                    {{ playerInfo.name }}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for playerIdRow, boxesRowData in boxesData %}
+            <tr>
+                <th style="vertical-align: middle; font-size: 1.4rem;">
+                    <a class="player-link"
+                       href="#jou:{{ playerIdRow }}" style="font-weight: bold; color: #363636;"
+                       data-hash="#jou" data-param="{{ playerIdRow }}"
+                    >{{ playersById[playerIdRow].name }}</a><br>
+                    <em class="rank is-size-6">{{ playersById[playerIdRow].rank }}</em>
+                </th>
+
+                {% for playerIdCol, boxData in boxesRowData %}
+                    {% if boxData is not empty and boxData.date is defined %}
+                        <td class="">
+                            <span class="date" style="color: #d1a633;">{{ boxData.date }}</span>
+                            {% if boxData.jid is not empty %}
+                                <br><strong class="is-size-5" style="color: #6e9c6d">{{ boxData.name }}</strong>
+                                <br><strong class="score">{{ boxData.score }}</strong>
+                            {% else %}
+                                <br><br>
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td style="background: #dbdbdb">
+                            <br><br><br>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endmacro %}
