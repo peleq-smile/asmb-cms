@@ -329,7 +329,7 @@
         <div class="item">
             <div class="item-parent">
                 <p>
-                    {% if tableData.date is defined %}
+                    {% if tableData.date is defined and tableData.date is not empty %}
                         <span class="date">{{ tableData.date }}</span><br><br>
                     {% endif %}
 
@@ -340,7 +340,7 @@
                             >{{ tableData.name }}</a>
                             <em>{{ tableData.rank }}</em>
                         </span><br>
-                        {% if tableData.club is defined %}
+                        {% if tableData.club is defined and tableData.club is not empty %}
                             <span class="club">{{ tableData.club }}</span><br>
                         {% endif %}
                     {% elseif tableData.qualif is defined %}

@@ -92,11 +92,14 @@ class Box extends Entity
     public function getDatetime()
     {
         $datetime = null;
-        if (null !== $this->getDate() && null !== $this->getTime()) {
-            $datetime = $this->getDate()->setTime(
-                $this->getTime()->format('H'),
-                $this->getTime()->format('i')
-            );
+        if (null !== $this->getDate()) {
+            $datetime = $this->getDate();
+            if (null !== $this->getTime()) {
+                $datetime->setTime(
+                    $this->getTime()->format('H'),
+                    $this->getTime()->format('i')
+                );
+            }
         }
         return $datetime;
     }

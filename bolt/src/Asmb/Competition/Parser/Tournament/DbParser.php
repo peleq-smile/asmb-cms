@@ -233,7 +233,12 @@ class DbParser extends AbstractParser
         }
 
         if (null !== $box->getDatetime()) {
-            $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b %H:%M');
+            if ($box->getDatetime()->format('H') !== '00') {
+                $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b %H:%M');
+            } else {
+                // si l'horaire du match est "00:00", on n'affiche pas l'heure
+                $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b');
+            }
         }
         if (null !== $box->getScore()) {
             $boxData['score'] = $box->getScore();
@@ -326,7 +331,13 @@ class DbParser extends AbstractParser
 
     protected function getBoxDatetimeFormattedForSort(Carbon $datetime)
     {
-        return $datetime->format('Y-m-d\TH:i:s');
+        if ($datetime->hour > 0) {
+            $datetimeFormatted = $datetime->format('Y-m-d\TH:i:s');
+        } else {
+            $datetimeFormatted = $datetime->format('Y-m-d');
+        }
+
+        return $datetimeFormatted;
     }
 
     protected function getPlayerUniqIdFromBox(Box $box)

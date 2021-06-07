@@ -67,7 +67,7 @@ class BoxRepository extends Repository
 
         foreach ($boxes as $box) {
             // On teste si la rencontre n'a pas de score et a eu lieu avant aujourd'hui
-            if (null !== $box->getDate() && null !== $box->getTime()
+            if (null !== $box->getDate()
                 && (null === $box->getPlayerName() || null === $box->getScore())
                 && (!$inPastOnly || $inPastOnly && $this->isBoxDatetimePastFromXhours($box))
             ) {
@@ -139,8 +139,8 @@ class BoxRepository extends Repository
                     }
 
                     // On formate la date
-                    $formatedDate = DateHelper::formatWithLocalizedDayAndMonth($box->getDatetime());
-                    $boxesWithMissingScore[$formatedDate][$box->getId()] = $box;
+                    $formattedDate = DateHelper::formatWithLocalizedDayAndMonth($box->getDatetime());
+                    $boxesWithMissingScore[$formattedDate][$box->getId()] = $box;
                 }
             }
         }
