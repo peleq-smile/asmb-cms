@@ -108,21 +108,9 @@
         {% endif %}
     </div>
 
+
+    <script src="{{ asset('js/page/backend/competition.js', 'theme') }}"></script>
     <script>
-        function onScoreTyping($scoreInput) {
-            let scoreValue = $scoreInput.val(),
-                nbChar = scoreValue.length;
-
-            if (nbChar > 0 && $.isNumeric(scoreValue[0])) {
-                // Le 1er caractère saisi est un chiffre : on peut ajouter automatiquement les slashs
-                scoreValue = scoreValue.replace(/(\d)(\d)/, '$1/$2 ')
-                    .replace(/(\d)(\d)/, '$1/$2 ')
-                    .replace(/(\d)(\d)/, '$1/$2 ')
-                    .trim();
-                $scoreInput.val(scoreValue);
-            }
-        }
-
         $(function () {
             $('form input[id$=_score]').bind('change', function (event) {
                 onScoreTyping($(event.target));

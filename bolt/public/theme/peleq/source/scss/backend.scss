@@ -390,6 +390,7 @@ a:visited {
                     text-align: center;
                     display: block;
                     margin-bottom: -6px;
+                    margin-top: 4px;
                 }
 
                 .score {
@@ -485,7 +486,7 @@ a:visited {
                 position: absolute;
                 background-color: $white;
                 right: -25px;
-                height: calc(50% + 22px);
+                height: calc(50% +  22px);
                 width: 2px;
                 top: 50%;
             }

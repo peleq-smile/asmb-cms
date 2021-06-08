@@ -12,7 +12,39 @@
         {% endfor %}
 
         {% if boxes is empty %}
-            <p class="mt-md mb-md">{{ __('general.phrase.nothing-to-display') }}</p>
+            <p class="h3 mt-md mb-md">Aucun match n'a encore été saisi.</p>
+            <hr>
+            <p class="mt-md text-left h4">Pour ajouter des matchs à ce tableau, il faut choisir un <b>nombre de qualifié(es) sortant(es)</b> et un nombre
+                de <b>tours</b> dans le formulaire ci-dessus.</p>
+
+            <div class="h4 text-left mb-md">
+                <ul>
+                    <li class="mt-md">Le <b>nombre de qualifié(es) sortant(es)</b> correspond au nombre de joueurs gagnants que l'on retrouve
+                        en fin de tableau. Pour un tableau final il est de 1.</li>
+                    <li class="mt-md">Le nombre de <b>tours</b> correspond au nombre maximal de colonnes que l'on va avoir sur le tableau.<br>
+                        <b><u>IMPORTANT</u></b> : dans le doute sur le nombre de tours, choisir au plus haut, car il est
+                        possible de saisir moins de tours que prévu, en revanche en saisir plus est impossible !
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <p class="h3 mt-md">
+                <i class="fa fa-exclamation-triangle"></i> Le tournoi se déroule du
+                <b class="text-danger">{{ tournament.from_date|date('d/m/Y') }}</b>
+                au <b class="text-danger">{{ tournament.to_date|date('d/m/Y') }}</b>.
+            </p>
+            <p class="h3 mb-md">
+                Vous ne pourrez pas saisir de dates de match en dehors de ces dates.
+            </p>
+
+            <p class="h4 mt-md">
+                Pour mettre à jour les dates du tournoi, veuillez cliquer sur :<br>
+                <a class="btn btn-lg btn-secondary" href="{{ path('tournamentedit', {'id': tournament.id}) }}">
+                    <i class="fa fa-edit"></i> <span>Éditer les informations du tournoi</span>
+                </a>
+            </p>
         {% endif %}
 
     </div>
@@ -28,6 +60,7 @@
 {% endif %}
 {{ form_end(scoresForm) }}
 
+{# Macro pour afficher 1 "boîte" du tableau #}
 {% macro displayBox(box, scoresForm, boxesWithMissingScore, duplicatesQualifIn) %}
     {% if box is defined and box.id is not null %}
 
@@ -44,7 +77,7 @@
                         <i class="fa fa-edit"></i>
                     </a>
                     {% if box.datetime is not empty %}
-                        {% if box.datetime.hour > 0 or box.score != 'wo' %}
+                        {% if box.score != 'wo' %}
                             <span class="date clearfix">{{ box.datetime|localizeddatetime }}</span>
                         {% endif %}
 
@@ -110,21 +143,8 @@
     {% endif %}
 {% endmacro %}
 
+<script src="{{ asset('js/page/backend/competition.js', 'theme') }}"></script>
 <script>
-    function onScoreTyping($scoreInput) {
-        let scoreValue = $scoreInput.val(),
-            nbChar = scoreValue.length;
-
-        if (nbChar > 0 && $.isNumeric(scoreValue[0])) {
-            // Le 1er caractère saisi est un chiffre : on peut ajouter automatiquement les slashs
-            scoreValue = scoreValue.replace(/(\d)(\d)/, '$1/$2 ')
-                .replace(/(\d)(\d)/, '$1/$2 ')
-                .replace(/(\d)(\d)/, '$1/$2 ')
-                .trim();
-            $scoreInput.val(scoreValue);
-        }
-    }
-
     $(function () {
         let $form = $('#tournament_boxes_score_edit'),
             $winnerSelects = $('select', $form),

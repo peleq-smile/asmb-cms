@@ -20,16 +20,16 @@
             </td>
             <td class="hidden-xs year">{{ tournament.year }}</td>
             <td class="hidden-xs">
-                <span class="text-nowrap">du {{ tournament.from_date|localizeddate }}</span>
+                <span class="text-nowrap">du {{ tournament.from_date|date('d/m/y') }}</span>
                 <br>
-                <span class="text-nowrap">au {{ tournament.to_date|localizeddate }}</span>
+                <span class="text-nowrap">au {{ tournament.to_date|date('d/m/y') }}</span>
             </td>
 
             <td class="visible-xs col-xs-4">
                 {{ tournament.name }} {{ tournament.year }}<br><br>
-                <span class="text-nowrap">du {{ tournament.from_date|localizeddate }}</span>
+                <span class="text-nowrap">du {{ tournament.from_date|date('d/m/y') }}</span>
                 <br>
-                <span class="text-nowrap">au {{ tournament.to_date|localizeddate }}</span>
+                <span class="text-nowrap">au {{ tournament.to_date|date('d/m/y') }}</span>
             </td>
 
             {# Lien direct vers les différents tableaux du tournoi (si tournoi actif) #}
