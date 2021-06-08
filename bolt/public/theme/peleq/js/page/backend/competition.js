@@ -1,6 +1,6 @@
 function onScoreTyping($scoreInput) {
     let scoreValue = $scoreInput.val(),
-        regexp = new RegExp('^[0-9 ]$');
+        regexp = new RegExp('^[0-9 ]+$');
 
     if (regexp.test(scoreValue)) {
         // Seulement des chiffres et des espaces : on peut ajouter automatiquement les slashs
