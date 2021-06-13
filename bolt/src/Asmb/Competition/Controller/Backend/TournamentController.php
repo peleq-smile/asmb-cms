@@ -35,7 +35,7 @@ class TournamentController extends AbstractController
             ->bind('tournamentedit');
 
         $c->match('/edit/scores/{id}', 'editScores')
-            ->assert('id', '\d+')
+            ->assert('id', '\d*')
             ->bind('tournamenteditscores');
 
         $c->post('/delete/{id}', 'delete')
@@ -74,12 +74,16 @@ class TournamentController extends AbstractController
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function editScores(Request $request, $id)
+    public function editScores(Request $request, $id = null)
     {
-        /** @var Tournament $tournament */
-        $tournament = $this->getRepository('tournament')->find($id);
-        if (!$tournament) {
-            return $this->redirectToRoute('tournament');
+        $tournament = null;
+
+        if (!empty($id)) {
+            /** @var Tournament $tournament */
+            $tournament = $this->getRepository('tournament')->find($id);
+            if (!$tournament) {
+                return $this->redirectToRoute('tournament');
+            }
         }
 
         $boxesByDay = $this->getRepository('tournament_box')

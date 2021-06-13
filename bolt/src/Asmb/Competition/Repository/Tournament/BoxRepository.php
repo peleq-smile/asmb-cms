@@ -56,7 +56,7 @@ class BoxRepository extends Repository
      * Récupère et retourne les boîtes pour lesquels un score est attendu.
      *
      * @param Table $table
-     * @param bool $inPastOnly
+     * @param bool  $inPastOnly
      * @return Box[]
      */
     public function findAllWithMissingScoreByTable(Table $table, $inPastOnly = true)
@@ -83,11 +83,11 @@ class BoxRepository extends Repository
      * Retourne la liste des boîtes avec vainqueur/score manquant, uniquement dans le passé ou non, tout tableau
      * confondu pour le tournoi donné.
      *
-     * @param Tournament $tournament
-     * @param bool $inPastOnly
+     * @param Tournament|null $tournament
+     * @param bool            $inPastOnly
      * @return Box[]
      */
-    public function findAllWithMissingScoreByTournamentSortedByDay(Tournament $tournament, $inPastOnly = false)
+    public function findAllWithMissingScoreByTournamentSortedByDay(?Tournament $tournament = null, $inPastOnly = false)
     {
         $boxesWithMissingScore = [];
 
@@ -102,9 +102,27 @@ class BoxRepository extends Repository
         $qb->addSelect('tour_table.category as table_category');
         $qb->addSelect('tour_table.name as table_name');
 
+        // on veut récupérer les noms des tournois
+        $qb->innerJoin(
+            'tour_table',
+            'bolt_tournament',
+            'tour',
+            $qb->expr()->eq('tour_table.tournament_id', 'tour.id')
+        );
+        $qb->addSelect('CONCAT(tour.name, " ", tour.year)  as tour_name');
+
+        if (null === $tournament) {
+            // si pas de tournoi donné : on filtre sur la date de fin : on ne veut pas de vieux tournois
+            Carbon::now()->modify('- 1month');
+            $qb->andWhere('tour.to_date > :beforeDate');
+            $qb->setParameter('beforeDate', Carbon::now());
+        }
+
         // Filtre sur le tournoi
-        $qb->where('tour_table.tournament_id = :tournamentId');
-        $qb->setParameter('tournamentId', $tournament->getId());
+        if (null !== $tournament) {
+            $qb->where('tour_table.tournament_id = :tournamentId');
+            $qb->setParameter('tournamentId', $tournament->getId());
+        }
 
         $qb->orderBy('date', 'ASC');
         $qb->addOrderBy('time', 'ASC');
@@ -114,6 +132,7 @@ class BoxRepository extends Repository
             $boxes = [];
             // Tout d'abord on récupère et "indexe" toutes les boîtes du tournoi
             foreach ($result as $boxData) {
+                /** @var Box $box */
                 $box = $this->hydrate($boxData, $qb);
                 // On valorise le nom de la table
                 $tableName = $boxData['table_name'];
@@ -121,6 +140,9 @@ class BoxRepository extends Repository
                     $tableName = Table::$categories[$boxData['table_category']] . ' - Tableau ' . $tableName;
                 }
                 $box->setTableName($tableName);
+                if (isset($boxData['tour_name'])) {
+                    $box->setTournamentName($boxData['tour_name']);
+                }
 
                 $boxes[$boxData['id']] = $box;
             }
@@ -139,9 +161,17 @@ class BoxRepository extends Repository
                         $box->setBoxTop($boxes[$box->getBoxTopId()]);
                     }
 
-                    // On formate la date
-                    $formattedDate = DateHelper::formatWithLocalizedDayAndMonth($box->getDatetime());
-                    $boxesWithMissingScore[$formattedDate][$box->getId()] = $box;
+                    if (null !== $box->getDatetime()) {
+                        // On formate la date
+                        $formattedDate = DateHelper::formatWithLocalizedDayMonthAndYear($box->getDatetime());
+
+                        // Si on n'a pas de tournoi donné, on ajoute le nom du tournoi en suffixe de la date
+                        if (!empty($box->getTournamentName())) {
+                            $boxesWithMissingScore[$formattedDate . ' - ' . $box->getTournamentName()][$box->getId()] = $box;
+                        } else {
+                            $boxesWithMissingScore[$formattedDate][$box->getId()] = $box;
+                        }
+                    }
                 }
             }
         }
@@ -151,6 +181,7 @@ class BoxRepository extends Repository
 
     /**
      * Récupère les "Q" entrants qui sont en double (les Q0 ne sont pas pris en compte).
+     *
      * @param $tableId
      *
      * @return array

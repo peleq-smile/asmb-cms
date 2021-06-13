@@ -30,6 +30,9 @@ roles:
     developer:
         description: "Ce rôle permet de modifier les paramètres système, notamment."
         label: Dévelopeur
+    scoresEditor:
+        description: "Ce rôle permet uniquement de saisir les résultats d'un tournoi."
+        label: Éditeur de scores
     guest:
         description: "Ce rôle permet d'accéder en lecture aux contenus du site dans le BO."
         label: Lecteur
@@ -83,7 +86,7 @@ global:
     files:uploads: [ admin, developer, editor ]
     files: [ admin, developer, editor ]
     prefill: [ developer ]
-    profile: [ everyone ] # edit own profile
+    profile: [ admin, developer, editor, guest ] # edit own profile
     settings: [ admin, developer, everyone ]
     translation: [ developer ]
     useraction: [ admin, developer ] # enable/disable/delete

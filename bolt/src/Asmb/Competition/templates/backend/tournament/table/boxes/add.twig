@@ -2,7 +2,16 @@
 
 {% block page_nav 'tournament-menu' %}
 
-{% set title =  __('page.tournament.table.title', {'%tournament%': tournament.name ~ ' ' ~ tournament.year, '%tableName%': table.name}) %}
+{% set title %}
+    {{ __('page.tournament.table.title', {'%tournament%': tournament.name ~ ' ' ~ tournament.year, '%tableName%': table.name}) }}
+    -
+    {{ tournament.name }}
+    du {{ tournament.from_date|date('d/m/Y') }}
+    au {{ tournament.to_date|date('d/m/Y') }}
+    {% if tournament.is_internal %}
+        <small>(tournoi interne)</small>
+    {% endif %}
+{% endset %}
 {% block page_title title %}
 
 {% block page_main %}
@@ -303,7 +312,7 @@
             // Focus sur la 1ère box avec qualif_out
             $('#tournament_boxes_add_box1_date').focus();
 
-            // 4- Désactivation de la touche "Entrée"
+            // Désactivation de la touche "Entrée"
             $form.on('keypress', function (e) {
                 if (e.which == 13) {
                     // en cas de pression de la touche Entrée
@@ -316,6 +325,16 @@
                         // on empêche la soumission (sinon ça peut provoquer des erreurs !)
                         return false;
                     }
+                }
+            });
+
+            // Blocage retour arrière
+            $(function() {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState('', null, window.location.pathname + window.location.search);
+                    $(window).on('popstate', function() {
+                        alert('Le retour arrière est désactivé lors de la saisie d\'un tableau !');
+                    });
                 }
             });
         });

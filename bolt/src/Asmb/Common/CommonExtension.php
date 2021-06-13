@@ -2,9 +2,13 @@
 
 namespace Bundle\Asmb\Common;
 
+use Bolt\Events\AccessControlEvents;
 use Bolt\Extension\SimpleExtension;
+use Bundle\Asmb\Common\EventListener\RedirectListener;
 use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 use Bundle\Asmb\Common\Extension\TwigFiltersTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Asmb Common bundle extension loader.
@@ -42,5 +46,21 @@ class CommonExtension extends SimpleExtension
         return [
             '/acces-bureau' => new Controller\AuthenticationController(),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $app = $this->getContainer();
+
+        $redirectListener = new RedirectListener(
+            $app['session'],
+            $app['url_generator.lazy'],
+            $app['users'],
+            $app['access_control']
+        );
+        $dispatcher->addListener(KernelEvents::RESPONSE, [$redirectListener, 'onResponse']);
     }
 }

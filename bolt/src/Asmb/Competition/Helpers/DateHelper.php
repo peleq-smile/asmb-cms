@@ -15,4 +15,9 @@ class DateHelper
 
         return $date->formatLocalized($outputFormat);
     }
+
+    public static function formatWithLocalizedDayMonthAndYear(Carbon $date)
+    {
+        return self::formatWithLocalizedDayAndMonth($date) . ' ' . $date->year;
+    }
 }

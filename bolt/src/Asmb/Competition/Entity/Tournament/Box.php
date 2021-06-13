@@ -69,6 +69,10 @@ class Box extends Entity
      * @var string
      */
     private $tableName;
+    /**
+     * @var string
+     */
+    private $tournamentName;
 
     /**
      * @return integer
@@ -310,5 +314,20 @@ class Box extends Entity
     public function setTableName(string $tableName)
     {
         $this->tableName = $tableName;
+    }
+    /**
+     * @return string
+     */
+    public function getTournamentName()
+    {
+        return $this->tournamentName;
+    }
+
+    /**
+     * @param string $tournamentName
+     */
+    public function setTournamentName(string $tournamentName)
+    {
+        $this->tournamentName = $tournamentName;
     }
 }

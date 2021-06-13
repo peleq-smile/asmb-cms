@@ -36,12 +36,14 @@
     </li>
     {% endif %}
 
+    {% if user.roles[0] != 'scoresEditor' %}
     <li>
         <a href="{{ path('statistics') }}" title="Statistiques visites & visiteurs">
             <i class="fa fa-bar-chart"></i>
             Visites & visiteurs
         </a>
     </li>
+    {% endif %}
     {# END CUSTOM PELEQ#}
 
     <li>
