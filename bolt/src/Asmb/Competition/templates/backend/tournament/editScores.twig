@@ -8,6 +8,21 @@
     <div class="competition-page-main">
         {% import '@bolt/_macro/_macro.twig' as macro %}
 
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="panel-title h1">
+                    <strong style="font-size: 3rem"><i class="fa fa-lightbulb-o"></i></strong>
+                    <strong>ASTUCE SAISIE DES SCORES</strong>
+                </div>
+                <p class="h4">
+                    Vous pouvez <strong>omettre les slashes (/) et les espaces</strong> pour une saisie plus rapide.
+                </p>
+                <p class="h5">
+                    Ex : <code>6263</code> devient automatiquement <code>6/2 6/3</code>
+                </p>
+            </div>
+        </div>
+
         {# Barre d'actions du haut #}
         {% if tournament is not null %}
             <div class="row form-group">
@@ -27,7 +42,7 @@
             {{ form_start(context.form) }}
             {% for day, boxes in boxesByDay %}
                 <div class="panel panel-default">
-                    <div class="panel-heading"><h2>{{ day }}</h2></div>
+                    <div class="panel-heading"><h2 class="h4">{{ day }}</h2></div>
                     <div class="panel-body">
 
                         {% for box in boxes %}
