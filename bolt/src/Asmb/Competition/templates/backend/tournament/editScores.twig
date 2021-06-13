@@ -39,9 +39,14 @@
 
                                 {# Nom du tableau #}
                                 <div class="col-md-3 col-xs-10 col-with-no-form-control text-right-xs">
-                                    <h3><a href="{{ path('tournamenttable', {'tableId': box.table_id}) }}">
+                                    <h3>
+                                        {% if tournament is not null %}
+                                        <a href="{{ path('tournamenttable', {'tableId': box.table_id}) }}">
                                             <i class="fa fa-external-link-square"></i> {{ box.tableName }}
                                         </a>
+                                        {% else %}
+                                            {{ box.tableName }}
+                                        {% endif %}
                                     </h3>
                                 </div>
 
