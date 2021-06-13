@@ -28,6 +28,10 @@ class Tournament extends AbstractShortNamedEntity
      * @var Table[]
      */
     private $tables;
+    /**
+     * @var boolean
+     */
+    protected $is_internal;
 
     /**
      * @return int
@@ -100,5 +104,18 @@ class Tournament extends AbstractShortNamedEntity
     public function setTables($tables)
     {
         $this->tables = $tables;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isInternal()
+    {
+        return $this->is_internal;
+    }
+
+    public function setIsInternal($isInternal)
+    {
+        $this->is_internal = $isInternal;
     }
 }

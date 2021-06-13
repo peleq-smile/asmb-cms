@@ -23,6 +23,7 @@ class Tournament extends BaseTable
         $this->table->addColumn('short_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('from_date', 'date', ['notnull' => true]);
         $this->table->addColumn('to_date', 'date', ['notnull' => true]);
+        $this->table->addColumn('is_internal', 'boolean', ['default' => 0, 'notnull' => true]);
     }
 
     /**

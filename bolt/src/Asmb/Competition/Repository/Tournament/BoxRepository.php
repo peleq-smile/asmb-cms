@@ -67,9 +67,9 @@ class BoxRepository extends Repository
 
         foreach ($boxes as $box) {
             // On teste si la rencontre n'a pas de score et a eu lieu avant aujourd'hui
-            if (null !== $box->getDate()
+            if ((null !== $box->getBoxBtmId() && null !== $box->getBoxTopId())
                 && (null === $box->getPlayerName() || null === $box->getScore())
-                && (!$inPastOnly || $inPastOnly && $this->isBoxDatetimePastFromXhours($box))
+                && (!$inPastOnly || $this->isBoxDatetimePastFromXhours($box) || null === $box->getDatetime())
             ) {
                 $boxesWithMissingScore[$box->getId()] = $box;
             }
@@ -128,8 +128,9 @@ class BoxRepository extends Repository
             foreach ($boxes as $box) {
                 // On re-parcourt ensuite chaque boîte en ne conservant que celle avec résultat manquant
                 // et en leur affectant les données sur les boîtes précédentes
-                if (null !== $box->getDatetime() && (null === $box->getPlayerName() || null === $box->getScore())
-                    && (!$inPastOnly || $inPastOnly && $this->isBoxDatetimePastFromXhours($box))
+                if ((null !== $box->getBoxBtmId() && null !== $box->getBoxTopId())
+                    && (null === $box->getPlayerName() || null === $box->getScore())
+                    && (!$inPastOnly || $this->isBoxDatetimePastFromXhours($box) || null === $box->getDatetime())
                 ) {
                     if ($box->getBoxBtmId() && isset($boxes[$box->getBoxBtmId()])) {
                         $box->setBoxBtm($boxes[$box->getBoxBtmId()]);
@@ -314,14 +315,14 @@ class BoxRepository extends Repository
     /**
      * Teste si la boîte donnée a une date+heure passée du nombre d'heure donné.
      *
-     * @param Box $box
+     * @param Box   $box
      * @param float $xHours
      * @return bool
      */
-    protected function isBoxDatetimePastFromXhours(Box $box, $xHours = 1.5)
+    protected function isBoxDatetimePastFromXhours(Box $box, float $xHours = 1.5): bool
     {
         $xHoursAgo = Carbon::now()->addHours(-1 * $xHours);
 
-        return $box->getDatetime() <= $xHoursAgo;
+        return (null !== $box->getDatetime() && $box->getDatetime() <= $xHoursAgo);
     }
 }

@@ -28,6 +28,12 @@ class TournamentBoxesScoreEditType extends AbstractType
             if (null === $box->getBoxTop() || null === $box->getBoxBtm()) {
                 continue;
             }
+
+            // Il s'agit d'une rencontre à venir, mais la date est encore inconnue => on zappe
+            if (null === $box->getDatetime()) {
+                continue;
+            }
+
             // Joueur gagnant
             $winnerData = null;
             if ($box->getPlayerName() === $box->getBoxTop()->getPlayerName()) {

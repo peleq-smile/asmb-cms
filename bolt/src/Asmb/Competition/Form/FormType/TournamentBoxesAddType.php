@@ -19,10 +19,12 @@ class TournamentBoxesAddType extends AbstractType
         parent::buildForm($builder, $options);
 
         // En entrée du formulaire :
+        // - le tournoi
         // - l'ID du tableau
         // - le nombre de boîtes "sortantes" à ajouter
         // - le nombre de boîtes "sortantes" déjà existantes dans ce tableau
         // - les dates de début et de fin du tournoi
+        $tournament = $options['tournament'];
         $tableId = $options['tableId'];
         $nbOutToAdd = $options['nbOutToAdd'];
         $existingNbOut = $options['existingNbOut'];
@@ -41,7 +43,7 @@ class TournamentBoxesAddType extends AbstractType
                 Type\DateType::class,
                 [
                     'widget' => 'single_text',
-                    'required' => true,
+                    'required' => false,
                     'attr' => [
                         'class' => 'input-sm',
                         'min' => $fromDate->format(TournamentBoxEditType::DATE_MIN_MAX_FORMAT),
@@ -54,7 +56,7 @@ class TournamentBoxesAddType extends AbstractType
                 Type\TimeType::class,
                 [
                     'widget' => 'single_text',
-                    'required' => true,
+                    'required' => false,
                     'attr' => [
                         'class' => 'input-sm',
                         'min' => $fromDate->format(TournamentBoxEditType::TIME_MIN_MAX_FORMAT),
@@ -75,8 +77,8 @@ class TournamentBoxesAddType extends AbstractType
 
             $prefixElement = 'box' . $idxOut;
             // Box précédentes (haut + bas)
-            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, true, $fromDate, $toDate, $nbRound);
-            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, false, $fromDate, $toDate, $nbRound);
+            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, $tournament, true, $fromDate, $toDate, $nbRound);
+            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, $tournament, false, $fromDate, $toDate, $nbRound);
         }
 
         $builder
@@ -101,12 +103,12 @@ class TournamentBoxesAddType extends AbstractType
     protected function addTopOrBottomBoxFormElements(
         FormBuilderInterface $builder,
         $parentPrefixElement,
+        $tournament,
         $isTop,
         Carbon $fromDate,
         Carbon $toDate,
         $nbRound
-    )
-    {
+    ) {
         $prefixElement = ($isTop) ? $parentPrefixElement . '-1' : $parentPrefixElement . '-2';
 
         if ($nbRound > 2) {
@@ -148,24 +150,24 @@ class TournamentBoxesAddType extends AbstractType
             ]
         );
         $builder->add(
-        $prefixElement . '_player_name',
-        Type\TextType::class,
-        [
-            'required' => false,
-            'attr' => [
-                'class' => 'input-sm',
-                'maxlength' => 30,
-                'placeholder' => Trans::__('page.edit-tournament.box.player_name')
+            $prefixElement . '_player_name',
+            Type\TextType::class,
+            [
+                'required' => false,
+                'attr' => [
+                    'class' => 'input-sm',
+                    'maxlength' => 30,
+                    'placeholder' => Trans::__('page.edit-tournament.box.player_name')
+                ]
             ]
-        ]
-    );
+        );
         $builder->add(
             $prefixElement . '_player_rank',
             Type\TextType::class,
             [
                 'required' => false,
                 'attr' => [
-                    'class' => 'input-sm',
+                    'class' => 'input-sm input-ranking',
                     'maxlength' => 5,
                     'placeholder' => Trans::__('page.edit-tournament.box.player_rank')
                 ],
@@ -179,16 +181,17 @@ class TournamentBoxesAddType extends AbstractType
                 'attr' => [
                     'class' => 'input-sm',
                     'maxlength' => 20,
-                    'placeholder' => Trans::__('page.edit-tournament.box.player_club')
-                ]
+                    'placeholder' => Trans::__('page.edit-tournament.box.player_club'),
+                ],
+                'data' => $tournament->isInternal() ? 'ASMB' : null
             ]
         );
 
         $nbRound--;
         if ($nbRound > 1) {
             // Box précédentes (haut + bas)
-            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, true, $fromDate, $toDate, $nbRound);
-            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, false, $fromDate, $toDate, $nbRound);
+            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, $tournament, true, $fromDate, $toDate, $nbRound);
+            $this->addTopOrBottomBoxFormElements($builder, $prefixElement, $tournament, false, $fromDate, $toDate, $nbRound);
         }
     }
 
@@ -199,6 +202,7 @@ class TournamentBoxesAddType extends AbstractType
     {
         $resolver->setDefined(
             [
+                'tournament',
                 'tableId',
                 'nbOutToAdd',
                 'existingNbOut',

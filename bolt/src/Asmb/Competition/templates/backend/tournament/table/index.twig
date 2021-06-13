@@ -7,6 +7,9 @@
     -
     du {{ tournament.from_date|date('d/m/Y') }}
     au {{ tournament.to_date|date('d/m/Y') }}
+    {% if tournament.is_internal %}
+        <small>(tournoi interne)</small>
+    {% endif %}
 {% endblock %}
 
 {% block page_main %}

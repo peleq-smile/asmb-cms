@@ -74,7 +74,7 @@
                         .see-more {
                             display: none;
                             font-size: 3em;
-                            background: linear-gradient($block-with-image-lg);
+                            background: $block-with-image-lg;
                             color: $dark;
                             position: absolute;
                             top: 0;
@@ -247,7 +247,7 @@
         .container {
             img.decorated {
                 margin: 4rem auto;
-                box-shadow: 2rem 2rem 0 0 $secondary-xlight, -2rem -2rem 0 0rem $primary;
+                box-shadow: 2rem 2rem 0 0 $secondary-xlight, -2rem -2rem 0 0 $primary;
                 max-width: 60%;
             }
 

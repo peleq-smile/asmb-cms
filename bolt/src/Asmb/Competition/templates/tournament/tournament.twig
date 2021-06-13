@@ -133,10 +133,8 @@
                         {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
                             <div class="columns is-gapless is-mobile is-multiline">
                                 <div class="column is-one-fifth-mobile">{{ (time != '00h') ? time : '-' }}</div>
-                                <div
-                                    class="column is-one-quarter-desktop is-four-fifths-mobile">{{ planningByPlaceData.table|raw }}</div>
-                                <div
-                                    class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }}">
+                                <div class="column is-one-quarter-desktop is-four-fifths-mobile has-text-right-mobile">{{ planningByPlaceData.table|raw }}</div>
+                                <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }} is-two-fifths-mobile">
                                     {% if planningByPlaceData.player1.name is not empty %}
                                         <a class="player-link text-secondary"
                                            href="#jou:{{ planningByPlaceData.player1.jid }}"
@@ -158,8 +156,10 @@
                                         <span>?</span>
                                     {% endif %}
                                 </div>
-                                <div class="column"><strong class="score">{{ planningByPlaceData.score }}</strong></div>
-                                <div class="column is-one-quarter-desktop">
+
+                                <div class="column has-text-centered-mobile"><strong class="score">{{ planningByPlaceData.score }}</strong></div>
+
+                                <div class="column is-one-quarter-desktop is-two-fifths-mobile">
                                     {% if planningByPlaceData.player1.name is not empty and planningByPlaceData.player2.name is not empty %}
                                         <a class="player-link text-secondary"
                                            href="#jou:{{ planningByPlaceData.player2.jid }}"

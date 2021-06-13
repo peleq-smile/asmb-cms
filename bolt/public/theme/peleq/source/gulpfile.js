@@ -39,9 +39,9 @@ gulp.task('bulma-sass', function() {
         includePaths: PATHS.sass
       })
         .on('error', $.sass.logError))
-      .pipe($.autoprefixer({
-        browsers: COMPATIBILITY
-      }))
+      // .pipe($.autoprefixer({
+      //   browsers: COMPATIBILITY
+      // }))
       .pipe($.if(PRODUCTION, $.cssnano()))
       .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
       .pipe(gulp.dest('../css'));
@@ -56,9 +56,9 @@ gulp.task('theme-sass', function() {
         includePaths: PATHS.sass
       })
         .on('error', $.sass.logError))
-      .pipe($.autoprefixer({
-        browsers: COMPATIBILITY
-      }))
+      // .pipe($.autoprefixer({
+      //   browsers: COMPATIBILITY
+      // }))
       // If you _do_ want to compress this file on 'production', uncomment the the lines below.
       .pipe($.if(PRODUCTION, $.cssnano()))
       .pipe($.if(!PRODUCTION, $.sourcemaps.write()))
@@ -74,9 +74,9 @@ gulp.task('backend-sass', function() {
         includePaths: PATHS.sass
       })
         .on('error', $.sass.logError))
-      .pipe($.autoprefixer({
-        browsers: COMPATIBILITY
-      }))
+      // .pipe($.autoprefixer({
+      //   browsers: COMPATIBILITY
+      // }))
       // If you _do_ want to compress this file on 'production', uncomment the the lines below.
       .pipe($.if(PRODUCTION, $.cssnano()))
       .pipe($.if(!PRODUCTION, $.sourcemaps.write()))

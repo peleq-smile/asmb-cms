@@ -75,6 +75,14 @@ class TournamentEditType extends AbstractType
             ]
         );
         $builder->add(
+            'is_internal',
+            Type\CheckboxType::class,
+            [
+                'label' => Trans::__('general.phrase.is_internal'),
+                'required' => false,
+            ]
+        );
+        $builder->add(
             'save',
             Type\SubmitType::class,
             [

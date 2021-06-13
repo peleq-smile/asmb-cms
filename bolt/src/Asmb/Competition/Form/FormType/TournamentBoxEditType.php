@@ -34,8 +34,8 @@ class TournamentBoxEditType extends AbstractType
         /** @var Carbon $toDate */
         $toDate = $options['toDate'];
 
-        $fromDate->setTime(9, 0);
-        $toDate->setTime(22, 0);
+        $fromDate->setTime(0, 0);
+        $toDate->setTime(23, 0);
 
         if (null !== $box->getBoxBtm() && null !== $box->getBoxTop()) {
             // La boîte a des éléments précédents
@@ -45,10 +45,6 @@ class TournamentBoxEditType extends AbstractType
                 [
                     'widget' => 'single_text',
                     'required' => false,
-                    'attr' => [
-                        'min' => $fromDate->format(self::DATE_MIN_MAX_FORMAT),
-                        'max' => $toDate->format(self::DATE_MIN_MAX_FORMAT),
-                    ]
                 ]
             );
             $builder->add(
@@ -90,9 +86,9 @@ class TournamentBoxEditType extends AbstractType
                     'label' => Trans::__('page.edit-tournament.box.score'),
                     'required' => false,
                     'constraints' => [
-                        new Assert\Length(['max' => 11])
+                        new Assert\Length(['max' => 20])
                     ],
-                    'attr' => ['maxlength' => 11, 'autocomplete' => 'off']
+                    'attr' => ['maxlength' => 20, 'autocomplete' => 'off']
                 ]
             );
 
@@ -111,7 +107,7 @@ class TournamentBoxEditType extends AbstractType
                 'player_name',
                 Type\TextType::class,
                 [
-                    'label' => Trans::__('page.edit-tournament.box.player'),
+                    'label' => Trans::__('page.edit-tournament.box.player_in'),
                     'required' => false,
                     'attr' => [
                         'maxlength' => 30,

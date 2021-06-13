@@ -122,8 +122,8 @@ class TableController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param integer $tournamentId
+     * @param Request      $request
+     * @param integer      $tournamentId
      * @param integer|null $tableId
      *
      * @return TemplateResponse|TemplateView|RedirectResponse
@@ -237,7 +237,7 @@ class TableController extends AbstractController
      * Construit un formulaire permettant de saisir les scores des rencontres passées.
      *
      * @param Request $request
-     * @param Box[] $boxes
+     * @param Box[]   $boxes
      *
      * @return FormInterface
      */
@@ -256,8 +256,8 @@ class TableController extends AbstractController
      * Gestion de la soumission du formulaire de saisie des scores.
      *
      * @param FormInterface $form
-     * @param Box[] $boxes
-     * @param Table $table
+     * @param Box[]         $boxes
+     * @param Table         $table
      *
      * @return bool
      */
@@ -314,11 +314,11 @@ class TableController extends AbstractController
     /**
      * Construction du formulaire d'ajout de boîtes dans un tableau de tournoi.
      *
-     * @param Request $request
+     * @param Request    $request
      * @param Tournament $tournament Tournoi
-     * @param Table $table Tableau
-     * @param integer $nbOut Nombre de qualifié(es) sortant(es) du tableau à ajouter
-     * @param integer $nbRound Nombre de tour (maximum) dans le tableau
+     * @param Table      $table      Tableau
+     * @param integer    $nbOut      Nombre de qualifié(es) sortant(es) du tableau à ajouter
+     * @param integer    $nbRound    Nombre de tour (maximum) dans le tableau
      *
      * @return FormInterface
      */
@@ -328,6 +328,7 @@ class TableController extends AbstractController
         $existingNbOut = $this->getRepository('tournament_box')->getOutBoxesCountByTableId($table->getId());
 
         $formOptions = [
+            'tournament' => $tournament,
             'tableId' => $table->getId(),
             'nbOutToAdd' => $nbOut,
             'existingNbOut' => $existingNbOut,
@@ -373,6 +374,8 @@ class TableController extends AbstractController
             return true;
         }
 
+        $errors = $form->getErrors(true);
+
         return false;
     }
 
@@ -380,9 +383,9 @@ class TableController extends AbstractController
      * Sauvegarde des boîtes à ajouter au tableau.
      *
      * @param BoxRepository $repository
-     * @param $formData
-     * @param $prefixElement
-     * @param $idxRound
+     * @param               $formData
+     * @param               $prefixElement
+     * @param               $idxRound
      */
     protected function handleBoxesSaving(BoxRepository $repository, $formData, $prefixElement, $idxRound)
     {
@@ -454,7 +457,7 @@ class TableController extends AbstractController
      * Construit le formulaire d'édition des infos d'un tableau
      *
      * @param Request $request
-     * @param Table $table
+     * @param Table   $table
      *
      * @return FormInterface
      */

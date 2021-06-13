@@ -78,7 +78,11 @@
                     </a>
                     {% if box.datetime is not empty %}
                         {% if box.score != 'wo' %}
-                            <span class="date clearfix">{{ box.datetime|localizeddatetime }}</span>
+                            {% if box.time is not null %}
+                                <span class="date clearfix">{{ box.datetime|localizeddatetime }}</span>
+                            {% else %}
+                                <span class="date clearfix">{{ box.datetime|localizeddate }}</span>
+                            {% endif %}
                         {% endif %}
 
                         {% if boxesWithMissingScore[box.id] is defined and scoresForm['box-' ~ box.id ~ '_winner'] is not null %}
