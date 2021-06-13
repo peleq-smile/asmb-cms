@@ -9,16 +9,18 @@
         {% import '@bolt/_macro/_macro.twig' as macro %}
 
         {# Barre d'actions du haut #}
-        <div class="row form-group">
-            <div class="col-md-12">
-                <div class="pull-left">
-                    <a href="{{ path('tournament') }}" class="btn btn-default">
-                        <i class="fa fa-chevron-circle-left"></i>
-                        {{ __('general.phrase.back') }}
-                    </a>
+        {% if tournament is not null %}
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <a href="{{ path('tournament') }}" class="btn btn-default">
+                            <i class="fa fa-chevron-circle-left"></i>
+                            {{ __('general.phrase.back') }}
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
         {% if boxesByDay is not empty %}
             {% form_theme context.form 'form_bolt_layout.twig' %}
@@ -102,19 +104,21 @@
             {% endfor %}
 
             {# Barre d'actions du bas #}
-            <div class="row form-group">
-                <div class="col-md-12">
-                    <div class="pull-left">
-                        <a href="{{ path('tournament') }}" class="btn btn-default">
-                            <i class="fa fa-chevron-circle-left"></i>
-                            {{ __('general.phrase.back') }}
-                        </a>
-                    </div>
-                    <div class="pull-right">
-                        {{ form_widget(context.form['save_all']) }}
+            {% if tournament is not null %}
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <a href="{{ path('tournament') }}" class="btn btn-default">
+                                <i class="fa fa-chevron-circle-left"></i>
+                                {{ __('general.phrase.back') }}
+                            </a>
+                        </div>
+                        <div class="pull-right">
+                            {{ form_widget(context.form['save_all']) }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
             {{ form_end(context.form) }}
         {% else %}
             <div class="panel panel-default">
