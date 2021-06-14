@@ -58,6 +58,14 @@ a:visited {
     padding-left: 5px;
 }
 
+.d-block {
+    display: block;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
 .d-flex {
     display: flex;
 }
@@ -92,6 +100,10 @@ a:visited {
 
 .mb-md {
     margin-bottom: 20px;
+}
+
+.w-100 {
+    width: 100%;
 }
 
 .danger {

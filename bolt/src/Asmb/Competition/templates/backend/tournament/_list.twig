@@ -3,7 +3,6 @@
     <tr>
         <th>{{ __('general.phrase.id') }}</th>
         <th class="hidden-xs">{{ __('general.phrase.name') }}<br><em style="white-space: nowrap">({{ __('general.phrase.short_name') }})</em></th>
-        <th class="hidden-xs">{{ __('general.phrase.year') }}</th>
         <th class="hidden-xs">{{ __('general.phrase.dates') }}</th>
         <th class="visible-xs">{{ __('general.phrase.info') }}</th>
         <th>{{ __('page.list-tournament.tables.title') }}</th>
@@ -15,10 +14,7 @@
     {% for tournament in tournaments %}
         <tr>
             <td>{{ tournament.id }}</td>
-            <td class="hidden-xs name">
-                {{ tournament.name }}<br><em style="white-space: nowrap">({{ tournament.short_name ? tournament.short_name : ' - '}})</em>
-            </td>
-            <td class="hidden-xs year">{{ tournament.year }}</td>
+            <td class="hidden-xs name">{{ tournament.name }}</td>
             <td class="hidden-xs">
                 <span class="text-nowrap">du {{ tournament.from_date|date('d/m/y') }}</span>
                 <br>
@@ -40,10 +36,10 @@
                     {% set visibleClass = (table.visible) ? 'fa-eye':'fa-eye-slash' %}
                     {% set visibleLabel = (table.visible) ? 'visible sur le site':'non visible sur le site' %}
 
-                    <a class="btn btn-sm {{btnClass}}" title="Tableau {{ table.name }} {{ statusLabel }}, {{ visibleLabel }}"
+                    <a class="btn btn-sm {{btnClass}} d-inline-block mb-xs" title="Tableau {{ table.name }} {{ statusLabel }}, {{ visibleLabel }}"
                        href="{{ path('tournamenttable', {'tableId': table.id}) }}">
                         <i class="fa {{ visibleClass }}"></i>
-                        {{ table.name }}
+                        {{ table.categoryLabel }} &bull; {{ table.name }}
                     </a>
                 {% endfor %}
                 <br>

@@ -32,6 +32,7 @@ class TournamentRepository extends Repository
         $qb->addSelect("tour_table.name AS table_name");
         $qb->addSelect("tour_table.status AS table_status");
         $qb->addSelect("tour_table.visible AS table_visible");
+        $qb->addSelect("tour_table.category AS table_category");
         $qb->addSelect("tour_table.position AS table_position");
         $qb->leftJoin(
             $this->getAlias(),
@@ -66,6 +67,7 @@ class TournamentRepository extends Repository
                     $tournamentTable->setName($row['table_name']);
                     $tournamentTable->setStatus($row['table_status']);
                     $tournamentTable->setVisible($row['table_visible']);
+                    $tournamentTable->setCategory($row['table_category']);
 
                     $tournamentTables[] = $tournamentTable;
                     $tournament->setTables($tournamentTables);
