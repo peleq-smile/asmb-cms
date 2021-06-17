@@ -67,6 +67,7 @@ class DbParser extends AbstractParser
     {
         if (null === $this->tournament) {
             $this->tournament = $this->tournamentRepository->find($this->getTournamentId());
+            $this->tournament->setIsManual(true);
         }
 
         return $this->tournament;
@@ -233,12 +234,8 @@ class DbParser extends AbstractParser
         }
 
         if (null !== $box->getDatetime()) {
-            if ($box->getDatetime()->format('H') !== '00') {
-                $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b %H:%M');
-            } else {
-                // si l'horaire du match est "00:00", on n'affiche pas l'heure
-                $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b');
-            }
+            // cas saisie manuelle : on n'affiche pas les heures
+            $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b');
         }
         if (null !== $box->getScore()) {
             $boxData['score'] = $box->getScore();
@@ -319,13 +316,18 @@ class DbParser extends AbstractParser
             $this->planningData = [];
         }
 
+        $today = Carbon::today()->format('Y-m-d');
         $date = $this->getBoxDatetimeFormattedForSort($box->getDatetime());
-        $score = (null !== $box->getScore()) ? $box->getScore() : '';
-        $place = $box->getId(); // Tentons d'utiliser cette donnée...
 
-        if (!isset($this->planningData[$date][$box->getId()])) {
-            $jId = $this->getPlayerUniqIdFromBox($box);
-            $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
+        // en saisie manuelle : on décide de pas afficher les rencontres futures (trop d'incertitudes !)
+        if ($box->getDatetime()->format('Y-m-d') <= $today) {
+            $score = (null !== $box->getScore()) ? $box->getScore() : '';
+            $place = $box->getId(); // Tentons d'utiliser cette donnée...
+
+            if (!isset($this->planningData[$date][$box->getId()])) {
+                $jId = $this->getPlayerUniqIdFromBox($box);
+                $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
+            }
         }
     }
 

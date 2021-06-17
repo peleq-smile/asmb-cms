@@ -132,7 +132,9 @@
                     {% for place, planningByPlaceData in planningByTimeData %}
                         {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
                             <div class="columns is-gapless is-mobile is-multiline">
+                                {% if displayTimes %}
                                 <div class="column is-one-fifth-mobile">{{ (time != '00h') ? time : '-' }}</div>
+                                {% endif %}
                                 <div class="column is-one-quarter-desktop is-four-fifths-mobile has-text-right-mobile">{{ planningByPlaceData.table|raw }}</div>
                                 <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }} is-two-fifths-mobile">
                                     {% if planningByPlaceData.player1.name is not empty %}

@@ -246,7 +246,7 @@ trait TwigFunctionsTrait
             $parser->setJsonFileUrl($jsonFileAbsoluteUrl);
             $parsedData = $parser->parse();
 
-            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData);
+            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, true);
 
             // On génère le .html pour la prochaine fois
             $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
@@ -275,7 +275,7 @@ trait TwigFunctionsTrait
         $parsedData = $parser->parse();
 
         try {
-            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData);
+            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, false);
         } catch (\Exception $e) {
             $tournamentContent = '';
         }
@@ -291,7 +291,7 @@ trait TwigFunctionsTrait
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
      */
-    protected function getRenderedTournamentContent(AbstractParser $parser, array $parsedData)
+    protected function getRenderedTournamentContent(AbstractParser $parser, array $parsedData, bool $displayTimes)
     {
         if (isset($parsedData['error'])) {
             // pour debug, afficher $parsedData['trace'] en plus !
@@ -337,6 +337,7 @@ trait TwigFunctionsTrait
             'parsedData' => $parsedData,
             'display' => $display,
             'plaDay' => $planningDayFormatted,
+            'displayTimes' => $displayTimes
         ];
 
         /** @var $twig \Twig\Environment */
