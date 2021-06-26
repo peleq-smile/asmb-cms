@@ -3,6 +3,7 @@
 namespace Bundle\Asmb\Competition\Entity;
 
 use Bundle\Asmb\Competition\Entity\Tournament\Table;
+use Carbon\Carbon;
 
 /**
  * Entité représentant un tournoi.
@@ -54,7 +55,7 @@ class Tournament extends AbstractShortNamedEntity
      */
     public function isActive()
     {
-        $now = \Datetime::now();
+        $now = Carbon::now();
         return ($this->getFromDate() <= $now && $now <= $this->getToDate());
     }
 

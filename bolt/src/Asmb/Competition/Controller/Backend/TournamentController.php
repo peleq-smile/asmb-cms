@@ -56,12 +56,16 @@ class TournamentController extends AbstractController
     public function index(Request $request)
     {
         $tournaments = $this->getRepository('tournament')->findAll();
+        // tableaux groupés par catégorie et triés par nom ASC
+        $tablesByTournament = $this->getRepository('tournament_table')
+            ->findAllGroupByAndSorted();
 
         return $this->render(
             '@AsmbCompetition/tournament/index.twig',
             [],
             [
                 'tournaments' => $tournaments,
+                'tablesByTournament' => $tablesByTournament,
             ]
         );
     }
@@ -179,7 +183,7 @@ class TournamentController extends AbstractController
 
     /**
      * @param Request $request
-     * @param Box[] $boxesByDay
+     * @param Box[]   $boxesByDay
      * @return FormInterface
      */
     protected function buildEditScoresForm(Request $request, array $boxesByDay)
@@ -201,7 +205,7 @@ class TournamentController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request    $request
      * @param Tournament $tournament
      * @return FormInterface
      */
@@ -218,7 +222,7 @@ class TournamentController extends AbstractController
      * Gestion de la soumission du formulaire de saisie des scores.
      *
      * @param FormInterface $form
-     * @param Box[][] $boxesByDay
+     * @param Box[][]       $boxesByDay
      *
      * @return bool
      */

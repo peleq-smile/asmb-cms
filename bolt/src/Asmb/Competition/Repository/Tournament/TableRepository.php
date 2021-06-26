@@ -98,4 +98,25 @@ class TableRepository extends Repository
 
         return $otherTables;
     }
+
+    public function findAllGroupByAndSorted()
+    {
+        $tables = [];
+
+        $qb = $this->getLoadQuery();
+        $qb->orderBy('tournament_id');
+        $qb->addOrderBy('category');
+        $qb->addOrderBy('name', 'desc');
+
+        $result = $qb->execute()->fetchAll();
+        if ($result) {
+            foreach ($result as $row) {
+                /** @var Table $table */
+                $table = $this->hydrate($row, $qb);
+                $tables[$table->getTournamentId()][$table->getCategory()][] = $table;
+            }
+        }
+
+        return $tables;
+    }
 }

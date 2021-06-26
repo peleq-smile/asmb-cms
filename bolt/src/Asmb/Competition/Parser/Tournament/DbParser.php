@@ -169,7 +169,7 @@ class DbParser extends AbstractParser
                     $this->addResultDataFromFinalBox($tableName, $boxesData[0]);
                 }
 
-                $this->tablesData[] = [
+                $this->tablesData[$tableName] = [
                     'id' => $table->getId(),
                     'name' => $tableName,
                     'boxes' => $boxesData,
@@ -181,6 +181,10 @@ class DbParser extends AbstractParser
                 }
 
             }
+
+            // On tri les tableaux par nom
+            ksort($this->tablesData);
+
             // On met à jour la date de dernière mise à jour du tournoi avec la date de mise à jour la + récente
             // parmi les tableaux
             if (isset($tournamentUpdatedAt)) {

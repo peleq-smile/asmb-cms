@@ -36,7 +36,7 @@ class TournamentTable extends BaseTable
      */
     protected function addIndexes()
     {
-        $this->table->addIndex(['position']);
+        $this->table->addIndex(['category','name']);
     }
 
     /**

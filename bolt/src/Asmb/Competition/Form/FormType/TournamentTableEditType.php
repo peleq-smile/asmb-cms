@@ -51,7 +51,7 @@ class TournamentTableEditType extends AbstractType
             )
             ->add(
                 'position',
-                Type\IntegerType::class,
+                Type\HiddenType::class,
                 [
                     'label' => Trans::__('page.edit-tournament.table.position'),
                     'required' => false,

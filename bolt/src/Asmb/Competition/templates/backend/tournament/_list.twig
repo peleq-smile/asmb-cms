@@ -30,17 +30,20 @@
 
             {# Lien direct vers les différents tableaux du tournoi (si tournoi actif) #}
             <td>
-                {% for table in tournament.tables %}
-                    {% set btnClass = (table.status == 1) ? 'btn-warning' : (table.status == 2) ? 'btn-success':'btn-default' %}
-                    {% set statusLabel = (table.status == 1) ? 'non complété' : (table.status == 2) ? 'complété' : '' %}
-                    {% set visibleClass = (table.visible) ? 'fa-eye':'fa-eye-slash' %}
-                    {% set visibleLabel = (table.visible) ? 'visible sur le site':'non visible sur le site' %}
+                {% for tablesByCategory in tablesByTournament[tournament.id] %}
+                    {% for table in tablesByCategory %}
+                        {% set btnClass = (table.status == 1) ? 'btn-warning' : (table.status == 2) ? 'btn-success':'btn-default' %}
+                        {% set statusLabel = (table.status == 1) ? 'non complété' : (table.status == 2) ? 'complété' : '' %}
+                        {% set visibleClass = (table.visible) ? 'fa-eye':'fa-eye-slash' %}
+                        {% set visibleLabel = (table.visible) ? 'visible sur le site':'non visible sur le site' %}
 
-                    <a class="btn btn-sm {{btnClass}} d-inline-block mb-xs" title="Tableau {{ table.name }} {{ statusLabel }}, {{ visibleLabel }}"
-                       href="{{ path('tournamenttable', {'tableId': table.id}) }}">
-                        <i class="fa {{ visibleClass }}"></i>
-                        {{ table.categoryLabel }} &bull; {{ table.name }}
-                    </a>
+                        <a class="btn btn-sm {{btnClass}} d-inline-block mb-xs" title="Tableau {{ table.name }} {{ statusLabel }}, {{ visibleLabel }}"
+                           href="{{ path('tournamenttable', {'tableId': table.id}) }}">
+                            <i class="fa {{ visibleClass }}"></i>
+                            {{ table.categoryLabel }} &bull; {{ table.name }}
+                        </a>
+                    {% endfor %}
+                    <br>
                 {% endfor %}
                 <br>
             </td>
