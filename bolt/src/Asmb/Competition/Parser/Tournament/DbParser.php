@@ -243,9 +243,8 @@ class DbParser extends AbstractParser
             // 'display_times' est à TRUE sur le tournoi
             $today = Carbon::today()->format('Y-m-d');
 
-            if ($this->getTournament()->getDisplayTimes()
+            if (($this->getTournament()->getDisplayTimes() || $box->getDatetime()->format('Y-m-d') <= $today)
                 && $box->getDatetime()->format('H') !== '00'
-                && $box->getDatetime()->format('Y-m-d') <= $today
             ) {
                 $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b %H:%M');
             } else {
@@ -335,8 +334,9 @@ class DbParser extends AbstractParser
         $today = Carbon::today()->format('Y-m-d');
         $date = $this->getBoxDatetimeFormattedForSort($box->getDatetime());
 
-        // en saisie manuelle : on décide de pas afficher les rencontres futures (trop d'incertitudes !)
-        if ($box->getDatetime()->format('Y-m-d') <= $today) {
+        // en saisie manuelle : on décide de pas afficher les rencontres futures (trop d'incertitudes !) si
+        // display_times est à FALSE
+        if ($box->getDatetime()->format('Y-m-d') <= $today || $this->getTournament()->getDisplayTimes()) {
             $score = (null !== $box->getScore()) ? $box->getScore() : '';
             $place = $box->getId(); // Tentons d'utiliser cette donnée...
 
