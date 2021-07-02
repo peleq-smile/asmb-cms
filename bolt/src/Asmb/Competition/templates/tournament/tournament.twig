@@ -59,7 +59,7 @@
 
     {# Planning #}
     {% set planningDisplay = (display starts with '#pla') ? 'block' : 'none' %}
-    {{ _self.planningView(parsedData.planning, planningDisplay, plaDay) }}
+    {{ _self.planningView(parsedData.planning, planningDisplay, plaDay, displayTimes) }}
 
     {# Tableaux #}
     {% for idxTable, tableData in parsedData.tables %}
@@ -97,7 +97,7 @@
     {% endif %}
 {% endif %}
 
-{% macro planningView(planning, planningDisplay, planningDay) %}
+{% macro planningView(planning, planningDisplay, planningDay, displayTimes) %}
     <div class="box planning-container" style="display: {{ planningDisplay }}">
         {% if planning|length > 1 %}
             <ul class="planning-nav is-hidden-touch">
@@ -289,9 +289,15 @@
                     <div class="column is-one-fifth">&nbsp;</div>
                     <div class="column is-four-fifths"><strong
                             class="is-size-5 text-secondary player-name">{{ player.name }}</strong></div>
+
                     <div class="column is-one-fifth is-size-6">Classement :</div>
                     <div class="column is-four-fifths is-size-6"><em class="rank">{{ player.rank }}</em></div>
                     <div class="column is-full">&nbsp;</div>
+
+                    <div class="column is-one-fifth is-size-6">Club :</div>
+                    <div class="column is-four-fifths is-size-6"><span>{{ player.club }}</span></div>
+                    <div class="column is-full">&nbsp;</div>
+
                     <div class="column is-one-fifth is-size-6">Matchs :</div>
                     <div class="column is-four-fifths">
                         {% for tableName, matchesByTable in player.matches %}

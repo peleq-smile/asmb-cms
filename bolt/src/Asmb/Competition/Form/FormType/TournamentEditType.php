@@ -75,6 +75,14 @@ class TournamentEditType extends AbstractType
             ]
         );
         $builder->add(
+            'display_times',
+            Type\CheckboxType::class,
+            [
+                'label' => Trans::__('general.phrase.display_times'),
+                'required' => false,
+            ]
+        );
+        $builder->add(
             'is_internal',
             Type\CheckboxType::class,
             [

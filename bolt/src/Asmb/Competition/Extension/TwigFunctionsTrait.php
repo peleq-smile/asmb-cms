@@ -274,8 +274,11 @@ trait TwigFunctionsTrait
         $parser->setTournamentId($tournamentId);
         $parsedData = $parser->parse();
 
+        $tournament = $parser->getTournament();
+        $displayTimes = $tournament->getDisplayTimes();
+
         try {
-            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, false);
+            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, $displayTimes);
         } catch (\Exception $e) {
             $tournamentContent = '';
         }

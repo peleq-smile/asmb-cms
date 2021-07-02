@@ -128,7 +128,7 @@ class DbParser extends AbstractParser
     protected function getTablesData()
     {
         if (null === $this->tablesData) {
-            $this->tablesData = [];
+            $tablesData = [];
 
             $this->getPlayersData();
 
@@ -169,7 +169,7 @@ class DbParser extends AbstractParser
                     $this->addResultDataFromFinalBox($tableName, $boxesData[0]);
                 }
 
-                $this->tablesData[$tableName] = [
+                $tablesData[$tableName] = [
                     'id' => $table->getId(),
                     'name' => $tableName,
                     'boxes' => $boxesData,
@@ -182,8 +182,9 @@ class DbParser extends AbstractParser
 
             }
 
-            // On tri les tableaux par nom
-            ksort($this->tablesData);
+            // On tri les tableaux par nom puis on supprime le nom comme "clé"
+            ksort($tablesData);
+            $this->tablesData = array_values($tablesData);
 
             // On met à jour la date de dernière mise à jour du tournoi avec la date de mise à jour la + récente
             // parmi les tableaux
@@ -238,8 +239,19 @@ class DbParser extends AbstractParser
         }
 
         if (null !== $box->getDatetime()) {
-            // cas saisie manuelle : on n'affiche pas les heures
-            $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b');
+            // on affiche les horaires des rencontres passées et du jour (sauf si 00h), si le champ
+            // 'display_times' est à TRUE sur le tournoi
+            $today = Carbon::today()->format('Y-m-d');
+
+            if ($this->getTournament()->getDisplayTimes()
+                && $box->getDatetime()->format('H') !== '00'
+                && $box->getDatetime()->format('Y-m-d') <= $today
+            ) {
+                $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b %H:%M');
+            } else {
+                // si l'horaire du match est "00:00", on n'affiche pas l'heure
+                $boxData['date'] = $box->getDatetime()->formatLocalized('%a %d %b');
+            }
         }
         if (null !== $box->getScore()) {
             $boxData['score'] = $box->getScore();

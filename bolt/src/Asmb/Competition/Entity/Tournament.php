@@ -33,6 +33,10 @@ class Tournament extends AbstractShortNamedEntity
      * @var boolean
      */
     protected $is_internal;
+    /**
+     * @var boolean
+     */
+    protected $display_times;
 
     /**
      * @return int
@@ -118,5 +122,18 @@ class Tournament extends AbstractShortNamedEntity
     public function setIsInternal($isInternal)
     {
         $this->is_internal = $isInternal;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDisplayTimes()
+    {
+        return $this->display_times;
+    }
+
+    public function setDisplayTimes($displayTimes)
+    {
+        $this->display_times = $displayTimes;
     }
 }
