@@ -1,0 +1,91 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'tournament-menu' %}
+
+{% block page_title %}
+    {{ tournament.name }}
+    -
+    du {{ tournament.from_date|date('d/m/Y') }}
+    au {{ tournament.to_date|date('d/m/Y') }}
+    {% if tournament.is_internal %}
+        <small>(tournoi interne)</small>
+    {% endif %}
+{% endblock %}
+
+{% block page_main %}
+    {% import '@bolt/_macro/_macro.twig' as macro %}
+
+    <div class="competition-page-main">
+        {# Barre d'actions du haut #}
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournament') }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+                {% if isallowed('competition:edit') %}
+                    <div class="pull-right">
+                        <a href="{{ path('tournamenttableedit', {'tournamentId': tournament.id, 'tableId': table.id}) }}"
+                           class="btn btn-secondary">
+                            {{ __('general.phrase.edit-infos') }}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Panneau principal #}
+        {% set statusLabel = (table.status == 1) ? '(non complété)' : (table.status == 2) ? '(complété)' : '' %}
+        {% set visibleClass = (table.visible) ? 'fa-eye':'fa-eye-slash' %}
+        {% set visibleLabel = (table.visible) ? 'Visible sur le site':'Non visible sur le site' %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h2 class="pull-left {{ titleClass }}">
+                    <i class="fa {{ visibleClass }}" title="{{ visibleLabel }}"></i>
+                    {{ __('page.tournament.table.title', {'%tableName%': table.name}) }}
+                    {{ statusLabel }}
+                </h2>
+                <div class="pull-right hidden-sm hidden-xs">
+                    {{ include('@AsmbCompetition/tournament/table/_index-add-boxes-form.twig', {'table': table}) }}
+                </div>
+            </div>
+            <div class="panel-body clearfix">
+                {# Liens (du haut) vers les tableaux précédents/suivants #}
+                {{ include('@AsmbCompetition/tournament/table/_index-link-prev-next-tables.twig', {'table': table}) }}
+
+                {# Bloc contenant le tableau actuel (boîtes) #}
+                {{ include('@AsmbCompetition/tournament/table/_tree-boxes.twig',
+                    {
+                        'boxes': boxes,
+                        'scoresForm': context.scoresForm,
+                        'boxesWithMissingScore': boxesWithMissingScore,
+                        'duplicatesQualifIn': duplicatesQualifIn
+                    }) }}
+
+                {# Liens (du bas) vers les tableaux précédents/suivants #}
+                {{ include('@AsmbCompetition/tournament/table/_index-link-prev-next-tables.twig', {'table': table}) }}
+            </div>
+            <div class="panel-footer">
+                {{ __('general.phrase.last_updated_at', {'%updated_at%': table.updated_at|localizeddatetime}) }}
+                {% if updated_by_user.displayname is defined %}
+                    {{ __('general.phrase.by', {'%displayname%': updated_by_user.displayname}) }}
+                {% endif %}
+            </div>
+        </div>
+
+        {# Barre d'actions du bas #}
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournament') }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock page_main %}

@@ -1,0 +1,125 @@
+{% extends 'partials/_master.twig' %}
+
+{% block headincludes %}
+    <link rel="stylesheet" href="{{ app.request.scheme }}://unpkg.com/leaflet@1.3.1/dist/leaflet.css"/>
+    <script type="text/javascript" src="{{ app.request.scheme }}://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+{% endblock headincludes %}
+
+{% block main %}
+
+    <section class="section section-location" data-nosnippet>
+        <div class="container">
+            <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+            {{ record.teaser }}
+
+            <div class="columns">
+                <div class="column column-map">
+                    <div id="map">
+                    </div>
+
+                    <p class="airy">Afficher <a href="{{ config.get('general/location_url') }}"
+                                               target="_blank">AS Mangin Beaulieu Tennis (ASMB)</a> sur une carte plus grande</p>
+
+                </div>
+
+                <div class="column column-content">
+                    <article role="article" class="content">
+                        {{ record.body }}
+
+                        {% if record.image is not empty %}
+                            <figure class="image">
+                                <img src="{{ record.image|image }}" alt="{{ record.values.image.alt|default() }}"/>
+                                <figcaption>
+                                    {{ record.values.image.title|default() }}
+                                </figcaption>
+                            </figure>
+                        {% endif %}
+                    </article>
+                </div>
+
+                <script type="text/javascript">
+                    // Coordonnées GPS du club, de l'arrêt de tram le + proche et de la station de Bicloo la + proche
+                    var clubLatLng = [47.204428, -1.542494];
+                    var tramLatLng = [47.204176, -1.546565];
+                    var busLatLng = [47.206390, -1.543740];
+                    var bikeLatLng = [47.206814, -1.541791];
+
+                    // Personnalisation des icônes
+                    var iconClub = L.icon({
+                        iconUrl: "{{ asset('images/marker_tennis.png', 'theme') }}",
+                        iconSize: [32, 37],
+                        iconAnchor: [16, 37],
+                        popupAnchor: [-3, -49],
+                    });
+                    var iconTram = L.icon({
+                        iconUrl: "{{ asset('images/marker_tram.png', 'theme') }}",
+                        iconSize: [24, 28],
+                        iconAnchor: [12, 28],
+                        popupAnchor: [-3, -37],
+                    });
+                    var iconBus = L.icon({
+                        iconUrl: "{{ asset('images/marker_bus.png', 'theme') }}",
+                        iconSize: [24, 28],
+                        iconAnchor: [12, 28],
+                        popupAnchor: [-3, -37],
+                    });
+                    var iconBike = L.icon({
+                        iconUrl: "{{ asset('images/marker_bicloo.png', 'theme') }}",
+                        iconSize: [24, 28],
+                        iconAnchor: [12, 28],
+                        popupAnchor: [-3, -37],
+                    });
+
+                    function initMap() {
+                        var map = L.map('map', {
+                            dragging: !L.Browser.mobile,
+                            tap: !L.Browser.mobile
+                        }).setView(clubLatLng, 14);
+
+                        L.tileLayer('{{ app.request.scheme }}://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                            attribution: 'Données © <a href="{{ app.request.scheme }}://openstreetmap.fr">OpenStreetMap</a>',
+                            minZoom: 12,
+                            maxZoom: 18
+                        }).addTo(map);
+
+                        // Ajout du marqueur du club
+                        L.marker(clubLatLng, {icon: iconClub}).addTo(map);
+
+                        // Déclaration des autres marqueurs
+                        var markerTram = L.marker(tramLatLng, {icon: iconTram}).addTo(map),
+                            markerBus = L.marker(busLatLng, {icon: iconBus}).addTo(map),
+                            markerBike = L.marker(bikeLatLng, {icon: iconBike}).addTo(map);
+
+                        var southWest = L.latLng(47.069186463300724, -1.7413330078125),
+                            northEast = L.latLng(47.33975331313596, -1.3430786132812502);
+                        var bounds = L.latLngBounds(southWest, northEast);
+
+                        map.setMaxBounds(bounds);
+                        map.on('drag', function () {
+                            map.panInsideBounds(bounds, {animate: false});
+                        });
+                        map.on('zoomend', function () {
+                            if (map.getZoom() >= 14) {
+                                markerTram.addTo(map);
+                                markerBus.addTo(map);
+                                markerBike.addTo(map);
+                            } else {
+                                markerTram.remove();
+                                markerBus.remove();
+                                markerBike.remove();
+                            }
+                        });
+                    }
+
+                    window.onload = function () {
+                        var $map = $('#map');
+                        $map.height($map.width());
+
+                        initMap();
+                    };
+                </script>
+            </div>
+        </div>
+    </section>
+
+{% endblock main %}

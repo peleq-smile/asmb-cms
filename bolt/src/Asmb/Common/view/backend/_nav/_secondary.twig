@@ -1,0 +1,81 @@
+{##
+ # SURCHARGE DU TEMPLATE BACKEND /vendor/bolt/bolt/app/view/twig/_nav/_secondary.twig
+ # RAISON 1: gérer l'indicateur "menu actif" pour le cas des menus custom
+ # RAISON 2: remonter le menu custom AVANT le menu de config
+ #}
+{% import '@bolt/_nav/_macros.twig' as nav %}
+
+{% if user.roles[0] != 'scoresEditor' %}
+    <ul class="nav">
+        {% if app.session.has('authentication') %}
+            {% set menus = app['menu.admin'] %}
+
+            {# Omnisearch: one here for "extra small", the other in the header-navbar #}
+            <li class="search">
+                <form class="navbar-form">
+                    <i class="icon fa fa-search"></i><div class="form-group has-feedback omnisearch" role="search">
+                        <select class="form-control" data-omnisearch-url="{{ path('omnisearch') }}"></select>
+                    </div>
+                </form>
+            </li>
+
+            {# Dashboard #}
+            {{ nav.link('fa:dashboard', __('general.phrase.dashboard'), 'dashboard', (page_nav == 'Dashboard')) }}
+
+            {# View site #}
+            <li class="visible-xs">
+                <a href="{{ path('homepage') }}" target="_blank"><i class="icon fa fa-external-link-square"></i> {{ __('general.phrase.view-site') }}</a>
+            </li>
+
+            {# ContentTypes #}
+            <li class="divider">
+                <em>{{ nav.label('fa:file-text', __('general.phrase.content')) }}</em>
+            </li>
+            {{ include('@bolt/_nav/_secondary-content.twig') }}
+
+            {# Customs #}
+            {# START CUSTOM PELEQ - on indique si le menu "custom" est actif ou non #}
+            {% if menus.has('custom') %}
+                <li class="divider">
+                    <em>{{ nav.label('fa:trophy', __('general.phrase.competition')) }}</em>
+                </li>
+                {% for menu in menus.get('custom').children %}
+                    {% if menu.children != null %}
+                        {{ nav.submenu(menu.icon, menu.label, menu.children, (page_nav == menu.name)) }}
+                    {% else %}
+                        {{ nav.submenu(null, null, [menu], (page_nav == menu.name)) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {# END CUSTOM PELEQ #}
+
+            {# Settings #}
+            {% if menus.has('config') or menus.has('files') or menus.has('translations') or menus.has('extensions') %}
+                <li class="divider">
+                    <em>{{ nav.label('fa:wrench', __('general.phrase.settings')) }}</em>
+                </li>
+            {% endif %}
+            {% if menus.has('config') %}{{ include('@bolt/_nav/_secondary-configuration.twig') }}{% endif %}
+            {% if menus.has('files') %}{{ include('@bolt/_nav/_secondary-filemanagement.twig') }}{% endif %}
+            {% if menus.has('extensions') %}{{ include('@bolt/_nav/_secondary-extensions.twig') }}{% endif %}
+
+            {# Collapse/expand sidebar #}
+            <li class="nav-secondary-collapse">
+                <a href="#">{{ nav.label('fa:compress', __('general.phrase.collapse-sidebar')) }}</a>
+            </li>
+            <li class="nav-secondary-expand">
+                <a href="#">{{ nav.label('fa:expand', __('Expand sidebar')) }}</a>
+            </li>
+        {% else %}
+            {# View site #}
+            <li>
+                <a href="{{ path('homepage') }}" target="_blank"><i class="fa fa-external-link-square"></i> {{ __('general.phrase.view-site') }}</a>
+            </li>
+
+            {# Login #}
+            <li>
+                <a href="{{ path('login') }}"><i class="fa fa-signin"></i> {{ __('general.phrase.login') }}</a>
+            </li>
+        {% endif %}
+    </ul>
+{% endif %}

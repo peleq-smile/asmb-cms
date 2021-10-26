@@ -1,0 +1,165 @@
+{% form_theme scoresForm 'form_bolt_layout.twig' %}
+
+{{ form_start(scoresForm, {attr: {id: scoresForm.vars.name}}) }}
+<div class="table-container">
+    <div class="table-container-centered">
+        {% for box in boxes %}
+            {% if box.qualif_out is not null %}
+                <div class="table-container-part">
+                    {{ _self.displayBox(box, scoresForm, boxesWithMissingScore, duplicatesQualifIn) }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if boxes is empty %}
+            <p class="h3 mt-md mb-md">Aucun match n'a encore été saisi.</p>
+            <hr>
+            <p class="mt-md text-left h4">Pour ajouter des matchs à ce tableau, il faut choisir un <b>nombre de qualifié(es) sortant(es)</b> et un nombre
+                de <b>tours</b> dans le formulaire ci-dessus.</p>
+
+            <div class="h4 text-left mb-md">
+                <ul>
+                    <li class="mt-md">Le <b>nombre de qualifié(es) sortant(es)</b> correspond au nombre de joueurs gagnants que l'on retrouve
+                        en fin de tableau. Pour un tableau final il est de 1.</li>
+                    <li class="mt-md">Le nombre de <b>tours</b> correspond au nombre maximal de colonnes que l'on va avoir sur le tableau.<br>
+                        <b><u>IMPORTANT</u></b> : dans le doute sur le nombre de tours, choisir au plus haut, car il est
+                        possible de saisir moins de tours que prévu, en revanche en saisir plus est impossible !
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <p class="h3 mt-md">
+                <i class="fa fa-exclamation-triangle"></i> Le tournoi se déroule du
+                <b class="text-danger">{{ tournament.from_date|date('d/m/Y') }}</b>
+                au <b class="text-danger">{{ tournament.to_date|date('d/m/Y') }}</b>.
+            </p>
+            <p class="h3 mb-md">
+                Vous ne pourrez pas saisir de dates de match en dehors de ces dates.
+            </p>
+
+            <p class="h4 mt-md">
+                Pour mettre à jour les dates du tournoi, veuillez cliquer sur :<br>
+                <a class="btn btn-lg btn-secondary" href="{{ path('tournamentedit', {'id': tournament.id}) }}">
+                    <i class="fa fa-edit"></i> <span>Éditer les informations du tournoi</span>
+                </a>
+            </p>
+        {% endif %}
+
+    </div>
+</div>
+{% if scoresForm['save_all'] is defined %}
+    <div class="form-group row clearfix">
+        <div class="col-md-12">
+            <div class="pull-right">
+                {{ form_widget(scoresForm['save_all']) }}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{{ form_end(scoresForm) }}
+
+{# Macro pour afficher 1 "boîte" du tableau #}
+{% macro displayBox(box, scoresForm, boxesWithMissingScore, duplicatesQualifIn) %}
+    {% if box is defined and box.id is not null %}
+
+        {% set boxClass = '' %}
+        {% if box.qualif_in is not empty and duplicatesQualifIn[box.qualif_in] is defined %}
+            {% set boxClass = 'border-danger' %}
+        {% endif %}
+
+        <div class="item">
+            <div class="item-parent">
+                <div class="box {{ boxClass }}">
+                    <a class="btn btn-xs btn-default pull-right"
+                       href="{{ path('tournamentboxedit', {'boxId': box.id}) }}">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    {% if box.datetime is not empty %}
+                        {% if box.score != 'wo' %}
+                            {% if box.time is not null %}
+                                <span class="date clearfix">{{ box.datetime|localizeddatetime }}</span>
+                            {% else %}
+                                <span class="date clearfix">{{ box.datetime|localizeddate }}</span>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if boxesWithMissingScore[box.id] is defined and scoresForm['box-' ~ box.id ~ '_winner'] is not null %}
+                            {# Cas d'une rencontre passée sans score : formulaire rapide de saisie du vainqueur +
+                               score manquant #}
+                            <div class="row-no-gutters clearfix">
+                                <label for="{{ scoresForm['box-' ~ box.id ~ '_winner'].vars.id }}"
+                                       class="control-label label-sm winner">
+                                    <strong>{{ __('page.edit-tournament.box.winner') }} :</strong>
+                                </label>
+                                <div class="col-md-7">
+                                    {{ form_widget(scoresForm['box-' ~ box.id ~ '_winner'], {attr: {class: 'input-sm to-setted'}}) }}
+                                </div>
+                                <div class="col-md-5">
+                                    {{ form_widget(scoresForm['box-' ~ box.id ~ '_score'], {attr: {class: 'input-sm to-setted', placeholder:  __('page.edit-tournament.box.score')}}) }}
+                                </div>
+                            </div>
+                        {% elseif box.player_name is empty %}
+                            <span class="name"><strong> ? </strong></span>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if box.qualif_in is not empty %}
+                        <div><strong class="qualif-in"> Q{{ box.qualif_in }}</strong></div>
+                    {% endif %}
+
+                    {% if box.player_name is not empty and boxesWithMissingScore[box.id] is not defined %}
+                        <span class="name">
+                            <strong>{{ box.player_name }}</strong><br>
+                            <em class="ranking">{{ box.player_rank }}</em>
+                            {% if box.player_club is not empty %}
+                                - <em class="club">{{ box.player_club }}</em>
+                            {% endif %}
+                        </span><br>
+                    {% endif %}
+
+                    {% if box.score is not empty %}
+                        <span class="score">{{ box.score }}</span>
+                    {% endif %}
+
+                    {% if box.qualif_out is not empty %}
+                        <strong class="qualif-out pull-right"> Q{{ box.qualif_out }}</strong>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if box.boxBtm is not null or box.boxTop is not null %}
+                <div class="item-childrens">
+                    {% if box.boxTop is defined %}
+                        <div class="item-child">
+                            {{ _self.displayBox(box.boxTop, scoresForm, boxesWithMissingScore, duplicatesQualifIn) }}
+                        </div>
+                    {% endif %}
+                    {% if box.boxBtm is defined %}
+                        <div class="item-child">
+                            {{ _self.displayBox(box.boxBtm, scoresForm, boxesWithMissingScore, duplicatesQualifIn) }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+<script src="{{ asset('js/page/backend/competition.js', 'theme') }}"></script>
+<script>
+    $(function () {
+        let $form = $('#tournament_boxes_score_edit'),
+            $winnerSelects = $('select', $form),
+            $scoreInputs = $('input[type="text"]', $form);
+
+        $winnerSelects.bind('change', function (event) {
+            $(event.target).parent().parent().find('input[type="text"]:first').focus();
+        });
+
+        $scoreInputs.bind('change', function (event) {
+            onScoreTyping($(event.target));
+        });
+    });
+</script>

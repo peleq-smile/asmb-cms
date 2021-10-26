@@ -1,0 +1,689 @@
+// BACKEND ASMB specific styling.
+//cd public/theme/peleq/source/; gulp build
+
+//---- Parameters
+$default: #333333;
+$default-hover: #777777;
+$success: #3c763d;
+$success-light: #84ba84;
+$success-xlight: #9ad69a;
+$warning: #ec971f;
+$warning-light: #f9da96;
+$danger: #a94442;
+
+$dark: #58472c;
+$dark-light: #534629;
+$dark-xlight: #655334;
+
+$white: #ffffff;
+$light: #dddddd;
+$even: #f2f4f3;
+$dark-gray: #464545;
+
+$navSecondaryWidth: 240px;
+$desktop: 992px;
+$widescreen: 1280px;
+
+//---- Override general BO styles for wide screen
+@media only screen and (min-width: $widescreen) {
+    #navpage-secondary {
+        width: $navSecondaryWidth;
+
+        & > ul {
+            width: $navSecondaryWidth;
+        }
+    }
+    #navpage-content {
+        left: $navSecondaryWidth;
+    }
+    #navpage-wrapper.nav-secondary-collapsed-hoverable #navpage-secondary:hover {
+        width: $navSecondaryWidth;
+    }
+}
+
+//---- Styles
+.row.small-gap {
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+//-- Common
+a:visited {
+    color: inherit;
+}
+
+.row.small-gap > [class^="col-"],
+.row.small-gap > [class*=" col-"] {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-self-stretch {
+    align-self: stretch;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.mt-xs {
+    margin-top: 5px;
+}
+
+.mt-sm {
+    margin-top: 10px;
+}
+
+.mt-md {
+    margin-top: 20px;
+}
+
+.mb-xs {
+    margin-bottom: 5px;
+}
+
+.mb-sm {
+    margin-bottom: 10px;
+}
+
+.mb-md {
+    margin-bottom: 20px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.danger {
+    color: $danger;
+}
+
+.border-danger {
+    border: solid 2px $danger;
+
+    &:before {
+        font-family: "FontAwesome";
+        content: "\f071";
+        position: absolute;
+        top: -9px;
+        left: -10px;
+        font-size: 18px;
+        color: $danger;
+    }
+}
+
+.success {
+    color: $success;
+}
+
+.border-success {
+    border: solid 1px $success;
+}
+
+.btn {
+    line-height: 1;
+}
+
+.btn-success {
+    background-color: $success-xlight;
+    border-color: $success-light;
+    color: $default !important;
+}
+
+.btn-dark {
+    background-color: $dark-xlight;
+    border-color: $dark;
+    color: white !important;
+
+    &:hover {
+        background-color: $dark-light;
+    }
+}
+
+.score {
+    border-radius: 8px;
+    padding: 4px 6px 1px 6px;
+    white-space: nowrap;
+    border: solid 1px $default-hover;
+
+    &.victory {
+        background: $success;
+        color: $white;
+        border: none;
+    }
+
+    &.defeat {
+        background: $danger;
+        color: $white;
+        border: none;
+    }
+
+    &.draw {
+        background: $warning;
+        color: $white;
+        border: none;
+    }
+}
+
+//-- Styles BO pour les statistiques de visites/visiteurs
+.canvasjs-chart-credit {
+    display: none;
+}
+
+//-- Styles BO sur la gestion des compétitions
+.competition-page-main {
+    .dashboardlisting {
+        th, td {
+            vertical-align: middle;
+        }
+
+        .is_active i {
+            cursor: help;
+        }
+    }
+
+    .is-club {
+        font-weight: bold;
+    }
+
+    .is-reported {
+        color: $warning;
+    }
+
+    .btn-link {
+        color: $default;
+
+        &:hover {
+            color: $default-hover;
+        }
+    }
+
+    .link-prev-next-tables {
+        margin: 2px 0;
+    }
+
+    .panel-default > .panel-heading {
+        line-height: 2.5rem;
+    }
+
+    input[type=time] {
+        width: auto;
+        line-height: 20px;
+        display: inline-block;
+        min-width: 80px;
+    }
+
+    input[type=date] {
+        width: auto;
+        padding: 0 12px;
+        line-height: 33px;
+        display: inline-block;
+        min-width: 120px;
+    }
+
+    .table {
+        &.table-condensed {
+            .checkbox {
+                padding: 0;
+
+                label {
+                    padding: 0;
+                    margin: auto;
+                    text-align: center;
+
+                    input {
+                        margin: 0;
+                        padding: 0;
+                        position: unset;
+                    }
+                }
+            }
+        }
+
+        &.table-teams {
+
+            th {
+                white-space: nowrap;
+                padding: 4px 1px;
+            }
+
+            td {
+                vertical-align: middle;
+                padding: 4px 1px;
+            }
+
+            input.team-name {
+                width: 13rem;
+                padding: 6px;
+            }
+
+            input[type=checkbox] {
+                margin-top: 5px;
+            }
+
+            tr.is-club {
+                td {
+                    background-color: #fcf8e3;
+                }
+            }
+        }
+
+        &.table-meetings {
+            th {
+                vertical-align: middle;
+            }
+
+            td {
+                padding: 2px 4px;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+            .form-control {
+                height: 30px;
+            }
+
+            .form-inline {
+                display: inline-block;
+                white-space: nowrap;
+            }
+
+            .form-control {
+                padding: 4px 6px;
+            }
+
+            .select-team {
+                min-width: 105px;
+            }
+
+            .info-pop {
+                cursor: help;
+            }
+        }
+
+        &.table-meetings-by-date {
+            th em {
+                font-weight: normal;
+            }
+
+            thead:not(:first-child) th {
+                padding-top: 3rem;
+            }
+
+            td {
+                vertical-align: middle;
+            }
+        }
+
+        tr.even {
+            th, td {
+                background-color: $even;
+            }
+        }
+    }
+
+    .panel-heading {
+        .control-label {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        form {
+            margin-top: -2px;
+        }
+    }
+
+    //-- Styles BO sur la gestion des TOURNOIS
+    td .btn-xs {
+        margin-bottom: 4px;
+    }
+
+    .panel-heading .form-inline .form-group {
+        margin-top: 13px;
+
+        .label {
+            color: #333;
+        }
+    }
+
+    .table-container {
+        text-align: center;
+        background-color: $light;
+        margin: 0;
+        overflow: auto;
+        max-width: 100%;
+    }
+
+    .table-container-centered {
+        display: inline-table;
+        text-align: center;
+        background-color: $light;
+        padding: 20px;
+    }
+
+    .table-container-part {
+        justify-content: flex-end;
+        font-size: 1rem;
+
+        .item {
+            display: flex;
+            flex-direction: row-reverse;
+
+            .box {
+                padding: 6px;
+                margin: 0;
+                background-color: $white;
+                text-align: left;
+                width: 170px;
+
+                &.medium {
+                    min-width: 212px;
+                    max-width: 250px;
+                    min-height: 80px;
+                }
+
+                &.large {
+                    min-width: 280px;
+                    max-width: 350px;
+                    min-height: 80px;
+                    font-size: 1.2rem;
+                }
+
+                input[type=checkbox] {
+                    margin: 0 3px;
+                }
+
+                input[type=date], input[type=time] {
+                    min-width: auto;
+                }
+
+                .form-control {
+                    height: 28px;
+                    line-height: 20px;
+                }
+
+                .control-label {
+                    padding-top: 1.25rem;
+                    padding-bottom: 0.25rem;
+                    font-weight: bold;
+                }
+
+                .label-sm {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                    font-size: 1em;
+                }
+
+                .has-date-label {
+                    font-size: 1.75rem;
+                    padding: 2px 0 0 4px;
+                    font-weight: normal;
+                }
+
+                .input-sm {
+                    padding: 2px 4px;
+                }
+
+                .block-player strong {
+                    font-size: 1.2em;
+                    text-align: center;
+                    display: block;
+                    margin-bottom: -6px;
+                    margin-top: 4px;
+                }
+
+                .score {
+                    color: $danger;
+                    border: none;
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                    padding: 0;
+                    display: block;
+                    margin-top: 0.5rem;
+                }
+
+                .winner, .name, .ranking, .club {
+                    color: $success;
+                }
+
+                .date {
+                    color: $warning;
+                    font-weight: bold;
+                    padding-bottom: 0.5rem;
+                    display: block;
+                }
+
+                .qualif-in {
+                    line-height: 20px;
+                    display: inline-block;
+                    font-size: 1.2rem;
+                }
+
+                .qualif-out {
+                    padding-top: 0.4rem;
+                    display: inline-block;
+                    font-size: 1.2rem;
+                }
+            }
+
+            p.box {
+                width: 14rem;
+            }
+
+            .btn {
+                margin-left: 6px;
+                margin-bottom: 6px;
+            }
+        }
+
+        .item-parent {
+            position: relative;
+            margin-left: 50px;
+            display: flex;
+            align-items: center;
+
+            &:after {
+                position: absolute;
+                content: '';
+                width: 25px;
+                height: 2px;
+                left: 0;
+                top: 50%;
+                background-color: $white;
+                transform: translateX(-100%);
+            }
+        }
+
+        .item-children {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: visibility 1s ease-in-out;
+        }
+
+        .item-child {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            position: relative;
+
+            &:before {
+                content: '';
+                position: absolute;
+                background-color: $white;
+                right: 0;
+                top: 50%;
+                transform: translateX(100%);
+                width: 25px;
+                height: 2px;
+            }
+
+            &:after {
+                content: '';
+                position: absolute;
+                background-color: $white;
+                right: -25px;
+                height: calc(50% +  22px);
+                width: 2px;
+                top: 50%;
+            }
+
+            &:last-child:after {
+                transform: translateY(-100%);
+            }
+
+            &:only-child:after {
+                display: none;
+            }
+        }
+
+    }
+
+    form .separator {
+        display: inline;
+        margin: 0 0.5rem;
+    }
+
+    .not-setted {
+        background-color: $dark-gray;
+    }
+
+    .to-setted {
+        background-color: $warning-light;
+    }
+
+    .setted {
+        background-color: $success-xlight;
+    }
+}
+
+@media only screen and (max-width: $desktop) {
+    .text-center-xs {
+        text-align: center;
+    }
+    .text-left-xs {
+        text-align: left;
+    }
+    .text-right-xs {
+        text-align: right;
+    }
+    .competition-page-main form {
+        .col-with-no-form-control {
+            margin-bottom: 8px;
+        }
+
+        .row {
+            margin-bottom: 4rem;
+
+            h3 {
+                font-size: 17px;
+                font-weight: bold;
+            }
+
+            .text-info {
+                font-size: 15px;
+            }
+        }
+
+    }
+}
+
+@media only screen and (min-width: $desktop) {
+    .text-center-md {
+        text-align: center;
+    }
+    .text-left-md {
+        text-align: left;
+    }
+    .text-right-md {
+        text-align: right;
+    }
+    .competition-page-main form {
+        .col-with-no-form-control {
+            margin-top: 28px;
+            min-height: 33px;
+        }
+        .row {
+            h3 {
+                font-size: 14px;
+                font-weight: bold;
+                margin: 0;
+            }
+            em {
+                color: $default-hover;
+            }
+            .control-label {
+                padding-top: 0;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $widescreen) {
+    .competition-page-main {
+        h2 {
+            white-space: normal;
+            line-height: normal;
+        }
+        .table-teams, .table-meetings {
+            & * {
+                font-size: 0.9em;
+            }
+        }
+
+        .table-condensed {
+            th, td {
+                font-size: 0.9em;
+            }
+        }
+
+        input[type=time] {
+            min-width: 63px;
+            padding: 1px;
+            text-align: center;
+            line-height: unset;
+        }
+
+        input[type=date] {
+            padding: 1px;
+            text-align: center;
+            line-height: unset;
+        }
+
+        .btn-group {
+            text-align: center;
+            margin-bottom: 0;
+
+            .btn {
+                border-radius: 3px !important;
+                margin: 0 auto 1rem 0;
+                float: none;
+            }
+        }
+
+        .pull-right {
+            .btn-group {
+                margin-top: 1rem;
+                float: none;
+            }
+
+            &.mb-md {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

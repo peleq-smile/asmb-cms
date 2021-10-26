@@ -1,9 +1,0 @@
-{% if isallowed('competition:edit') %}
-    <div class="btn-group">
-        {# Accès à l'édition des dates/heures des prochaines rencontres #}
-        <a class="btn btn-tertiary" href="{{ path('poolmeetingsedit') }}">
-            <i class="fa fa-fw fa-edit"></i>
-            {{ __('panel.championship-actions.button.edit-datetime') }}
-        </a>
-    </div>
-{% endif %}

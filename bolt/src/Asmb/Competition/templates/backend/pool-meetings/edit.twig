@@ -1,0 +1,76 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'competition-menu' %}
+
+{% block page_title __('page.edit-pool-meetings.title') %}
+
+{% block page_main %}
+    <div class="competition-page-main">
+        {% import '@bolt/_macro/_macro.twig' as macro %}
+
+        {% form_theme context.editForm 'form_bolt_layout.twig' %}
+        {{ form_start(context.editForm) }}
+
+        <p>{{ __('page.edit-pool-meetings.text') }}</p>
+
+        {% if meetings is not empty %}
+            <table class="mt-md col-md-8 table table-meetings-by-date table-condensed">
+                {% for meeting in meetings %}
+                    {% if (previousDate is not defined or previousDate != meeting.date)
+                        or (previousChpName is not defined or previousChpName != meeting.championship_name) %}
+
+                    {% if loop.index != 1 %}
+                        </tbody>
+                    {% endif %}
+
+                    <thead>
+                    <tr>
+                        <th colspan="4" class="text-left"><span class="lead"><strong>{{ meeting|formattedDate }}</strong> <em>({{ meeting.championship_name }})</em></span></th>
+                        <th class="text-center">{{ __('general.phrase.report-date') }}</th>
+                        <th class="text-center">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    {% set previousDate = meeting.date %}
+                    {% set previousChpName = meeting.championship_name %}
+
+                    <tbody>
+                {% endif %}
+
+                <tr>
+                    <td class="text-center">{{ form_widget(context.editForm['pool_meeting' ~ meeting.id ~ '_time']) }}</td>
+                    <td class="text-right{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
+                    <td class="text-center">-</td>
+                    <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
+                    <td class="text-center">
+                        {{ form_widget(context.editForm['pool_meeting' ~ meeting.id ~ '_report_date']) }}
+                    </td>
+                    <td class="text-center">
+                        {{ form_widget(context.editForm['pool_meeting' ~ meeting.id ~ '_is_reported']) }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p><em>{{ __('general.phrase.nothing-to-display') }}</em></p>
+        {% endif %}
+
+        {# Boutons de retour et sauvegarde #}
+        <div class="row form-group">
+            <div class="col-md-12">
+                {% if meetings is not empty %}
+                <div class="pull-right">
+                    {{ form_widget(context.editForm['pool_meeting_save']) }}
+                </div>
+                {% endif %}
+                <div class="pull-left">
+                    <a href="{{ path('poolmeetings') }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(context.editForm) }}
+    </div>
+{% endblock page_main %}

@@ -1,0 +1,17 @@
+{% if isallowed('competition:edit') %}
+    <a class="btn btn-dark"
+       href="{{ path('tournamenttableedit', {'tournamentId': tournament.id, 'tableId': null}) }}">
+        <i class="fa fa-plus"></i> <span class="hidden-xs">{{ __('page.list-tournament.table.add') }}</span>
+    </a>
+
+    <a class="btn btn-primary"
+       href="{{ path('tournamenteditscores', {'id': tournament.id}) }}">
+        <i class="fa fa-calculator"></i> <span
+                class="hidden-xs">{{ __('page.list-tournament.edit-scores.title') }}</span>
+    </a>
+
+    <a class="btn btn-secondary"
+       href="{{ path('tournamentedit', {'id': tournament.id}) }}">
+        <i class="fa fa-edit"></i> <span class="hidden-xs">{{ __('general.phrase.edit') }}</span>
+    </a>
+{% endif %}

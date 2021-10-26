@@ -1,0 +1,48 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'championship-menu' %}
+
+{% set championship_title =  __('page.view-championship.title', {'%championship%': championship.name ~ ' ' ~ championship.year})%}
+
+{% block page_title championship_title %}
+
+{% block page_main %}
+    <div class="competition-page-main">
+        {% import '@bolt/_macro/_macro.twig' as macro %}
+
+        {% for category_name, pools in poolsPerCategoryName %}
+            {% if pools is not empty %}
+                <fieldset>
+                    <legend>{{ __('general.phrase.pools-of-category', {'%categoryName%': category_name}) }}</legend>
+                    {% for pool in pools %}
+                        {% if loop.index0 % 4 == 0 or loop.first %}
+                            <div class="row small-gap">
+                        {% endif %}
+
+                        <div class="col-lg-3 col-xs-12">
+                            {{ include('@AsmbCompetition/championship/pool/_ranking-and-meetings.twig',
+                                {
+                                    'poolRanking': poolRankingPerPoolId[pool.id],
+                                    'meetingsPerDay': poolMeetingsPerPoolId[pool.id],
+                                }) }}
+                        </div>
+                        {% if loop.index0 % 4 == 3 or loop.last %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </fieldset>
+            {% endif %}
+        {% endfor %}
+
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('championship') }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock page_main %}

@@ -1,0 +1,82 @@
+<section class="section section-competition section-home-meetings">
+    <div class="container">
+        <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+
+        {% set homeMeetings = getHomeMeetings(record) %}
+        {% set homeMeetingsOfSaturday = homeMeetings['sat'] %}
+        {% set homeMeetingsOfSunday = homeMeetings['sun'] %}
+        {% set saturdaySlots = homeMeetings['satSlots'] %}
+        {% set sundaySlots = homeMeetings['sunSlots'] %}
+        {% set saturdaySlotsCount = saturdaySlots|length %}
+        {% set sundaySlotsCount = sundaySlots|length %}
+
+        {# On calcule la taille de la colonne, sur une grille de 12 colonnes #}
+        {% if saturdaySlotsCount+sundaySlotsCount > 0 %}
+            {% set sizeColumnSaturday = 12 * saturdaySlotsCount/(saturdaySlotsCount+sundaySlotsCount)|round %}
+
+            {% set sizeColumnSunday = 12 - sizeColumnSaturday %}
+
+            <div class="columns box">
+                {# Rencontre du samedi #}
+                {% if sizeColumnSaturday > 0 %}
+                <div class="column is-{{ sizeColumnSaturday }}">
+                    <h2 class="title text-primary">Samedi</h2>
+                    {{ _self.dayOfWeekMeetingsView(homeMeetingsOfSaturday, saturdaySlots) }}
+                </div>
+                {% endif %}
+
+                {# Rencontre du dimanche #}
+                <div class="column is-{{ sizeColumnSunday }}">
+                    <h2 class="title text-primary">Dimanche</h2>
+                    {{ _self.dayOfWeekMeetingsView(homeMeetingsOfSunday, sundaySlots) }}
+                </div>
+            </div>
+        {% else %}
+            <div class="empty">Aucune rencontre à afficher.</div>
+        {% endif %}
+    </div>
+</section>
+
+{% macro dayOfWeekMeetingsView(homeMeetingsOfDayOfWeek, slots) %}
+    {% for date, homeMeetingsBySlot in homeMeetingsOfDayOfWeek %}
+        {# Pour la version mobile : on cache les journées sans rencontre #}
+        {% set isHiddenTouch = homeMeetingsBySlot is empty ? ' is-hidden-touch':'' %}
+        <div class="columns is-gapless{{ isHiddenTouch }}">
+            <div class="column is-narrow"><h3 class="date text-secondary">{{ date }}</h3></div>
+
+            {% if slots['AM'] is defined %}
+                <div class="column">
+                    {% if homeMeetingsBySlot['AM'] is defined %}
+                        {{ _self.meetingView(homeMeetingsBySlot['AM']) }}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if slots['MD'] is defined %}
+                <div class="column">
+                    {% if homeMeetingsBySlot['MD'] is defined %}
+                        {{ _self.meetingView(homeMeetingsBySlot['MD']) }}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if slots['PM'] is defined %}
+                <div class="column">
+                    {% if homeMeetingsBySlot['PM'] is defined %}
+                        {{ _self.meetingView(homeMeetingsBySlot['PM']) }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+
+{% macro meetingView(homeMeeting) %}
+    <div class="home-meeting">
+        <span class="time">{{ homeMeeting.time|date('H\\hi') }}</span>
+        <span class="meeting">
+            <strong>{{ homeMeeting.home_team_name }}</strong> - {{ homeMeeting.visitor_team_name }}
+        </span>
+    </div>
+{% endmacro %}

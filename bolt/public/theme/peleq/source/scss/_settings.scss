@@ -1,0 +1,115 @@
+// Show the current breakpoints in the lower left corner.
+$debug-breakpoint: false;
+
+// ------------ Settings for Bulma ---------------
+
+// 1. Import the initial variables
+@import "../node_modules/bulma/sass/utilities/initial-variables";
+@import "../node_modules/bulma/sass/utilities/functions";
+
+// 2. Set your own initial variables
+
+// Responsiveness
+$tablet: 769px;
+$desktop: 1086px + (2 * $gap);
+$widescreen: 1239px + (2 * $gap);
+$fullhd: 1472px + (2 * $gap);
+
+// Colors
+$light: #caeafc;
+$dark: #2c2d32;
+$medium: #026094;
+$bg-light: #f0f0f0;
+$red: #7c0000;
+
+// Custom other colors
+$secondary: #d1a633;
+$secondary-transparent: rgba(209, 166, 51, 0.92);
+$secondary-light: #e4c676;
+$secondary-light-transparent: rgba(228, 198, 118, 0.8);
+$secondary-xlight: #e8e2d1;
+$dark-light: #81838C;
+
+// Text colors
+$text: $dark;
+$text-invert: findColorInvert($text) !default
+$text-light: #f0f0f0;
+
+// Fonts
+$font-sans-serif    : 'Raleway', 'Roboto', sans-serif;     // Base font
+$font-serif         : 'Comfortaa', 'Bitter', serif;          // Headings
+
+// 3. Set the derived variables
+
+// Option 1: https://color.adobe.com/ims-construction-colors-color-theme-10555392/
+//$primary: #b44814;
+$primary: #026094;
+$info: $dark;
+$link: $secondary;
+$success: $light;
+
+// Clor for win/lost/draw matches
+$win: #6e9c6d;
+$lost: #ad0000;
+$draw: #d97432;
+
+$border-color-table: #dbdbdb;
+
+$pre-background: $grey-lighter;
+$family-primary: $font-sans-serif;
+
+// Generic variables
+$body-background-color: $bg-light;
+$body-weight: $weight-light;
+$column-gap: 1.5rem;
+
+// Header
+//$header-hero-linear-gradient: rgba(180, 72, 20, 0.8);
+$header-hero-linear-gradient: rgba(2, 96, 148, 0.8);
+$header-height-navbar: 100px;
+$header-height-navbar-sticky: 80px;
+$header-height-topbar: 60px;
+
+// Title
+$title-color: $white;
+$title-weight: $weight-normal;
+$title-size: 2.6rem;
+
+$subtitle-size: 1.1rem;
+$subtitle-color: $white;
+
+// Box
+$box-radius: 0;
+$box-shadow: 0;
+$box-shadow-color: $dark;
+
+// Block
+$block-with-image-gap: 2.5rem;
+$block-with-image-lg: rgba(230, 230, 230, 0.6);
+
+// 4. Setup your Custom Colors
+$linkedin: #0077b5;
+$linkedin-invert: findColorInvert($linkedin);
+$twitter: #55acee;
+$twitter-invert: findColorInvert($twitter);
+$github: #333;
+$github-invert: findColorInvert($github);
+
+// 5. Navbar
+$navbar-vertical-bg: $dark;
+$navbar-vertical-bg-dropdown-lvl1: #404146;
+$navbar-vertical-bg-dropdown-lvl2: #54555a;
+$navbar-vertical-bg: $dark;
+
+$navbar-item-color: $dark;
+$navbar-item-active-color: $link;
+$navbar-item-hover-background-color: $white-bis;
+$navbar-item-hover-background-color-mobile: rgba(250, 250, 250, 0.2);
+
+$navbar-dropdown-border-top: 2px solid $secondary;
+$navbar-dropdown-radius: 0;
+
+
+
+// 6. Import the rest of the "utilities".
+@import "../node_modules/bulma/sass/utilities/all";

@@ -1,0 +1,37 @@
+<p class="footer-title">Coordonnées</p>
+<div class="is-flex">
+    {# Plan du club #}
+    <div class="map"></div>
+
+    {# Adresse du club #}
+    <div class="">
+        <div class="item">
+            <address>
+            {{- homepage.footer_contact_address_text|raw -}}
+            </address>
+
+            <div class="num-fft">N° FFT du club : {{ homepage.footer_fft_number }}</div>
+        </div>
+
+        {# Lien vers l'accès au club #}
+        <div class="item">
+            <a href="{{ homepage.footer_contact_location_link_url }}">
+                <i class="fas fa-caret-right"></i>
+                {{- homepage.footer_contact_location_link_text -}}
+            </a>
+        </div>
+
+        {# Lien vers la page de contact #}
+        <div class="item">
+            <a href="{{ homepage.footer_contact_link_url }}">
+                <i class="fas fa-caret-right"></i>
+                {{- homepage.footer_contact_link_text -}}
+            </a>
+        </div>
+    </div>
+</div>
+
+{# Lien vers la page d'accès réservé au Bureau #}
+<div class="item private-access">
+    <a href="{{ absolute_url('/acces-bureau') }}" rel="nofollow"><i class="fas fa-caret-right"></i>Accès réservé Bureau<i class="fas fa-user-lock"></i></a>
+</div>

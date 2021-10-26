@@ -1,0 +1,57 @@
+{% block head_title __('page.authentication.title') %}
+{% block body_class 'page-authentication' %}
+
+{% extends 'partials/_master-lite.twig' %}
+
+{% block main %}
+    <div class="container">
+        <section class="section">
+            <div class="center">
+                <a href="{{ path('homepage') }}" title="{{ __('page.not-found.link.title') }}">
+                    <img class="img-responsive" width="120" height="120"
+                         src="{{ asset('logo.png', 'files') }}" alt="{{ config.get('general/sitename') }}">
+                </a>
+            </div>
+
+            <div class="container">
+                <h1 class="title center">{{ __('page.login.connection.backend') }}</h1>
+
+                <div class="messages-container">{{ include('@bolt/_sub/_messages.twig') }}</div>
+
+                <div class="columns is-centered is-8-desktop">
+                    <div class="column is-half-desktop">
+                        <div class="box">
+                            {{ form_start(form) }}
+
+                            <div class="field">
+                                <label class="label">{{ form_label(form.username) }}</label>
+                                <div class="control has-icons-left">
+                                    {{ form_widget(form.username, {'attr': {'class': 'input'}}) }}
+                                    <span class="icon is-small is-left"><i class="fas fa-user"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">{{ form_label(form.password) }}</label>
+                                <div class="control has-icons-left">
+                                    {{ form_widget(form.password, {'attr': {'class': 'input'}}) }}
+                                    <span class="icon is-small is-left"><i class="fas fa-key"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    {{ form_row(form.login, {'attr': {'class': 'button is-primary'}}) }}
+                                </div>
+                            </div>
+
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {{ form(form) }}
+{% endblock %}

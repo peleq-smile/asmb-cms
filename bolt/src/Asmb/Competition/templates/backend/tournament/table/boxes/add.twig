@@ -1,0 +1,410 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'tournament-menu' %}
+
+{% set title %}
+    {{ __('page.tournament.table.title', {'%tournament%': tournament.name ~ ' ' ~ tournament.year, '%tableName%': table.name}) }}
+    -
+    {{ tournament.name }}
+    du {{ tournament.from_date|date('d/m/Y') }}
+    au {{ tournament.to_date|date('d/m/Y') }}
+    {% if tournament.is_internal %}
+        <small>(tournoi interne)</small>
+    {% endif %}
+{% endset %}
+{% block page_title title %}
+
+{% block page_main %}
+    {% import '@bolt/_macro/_macro.twig' as macro %}
+
+    <div class="competition-page-main">
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournamenttable', {'tableId': table.id}) }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i> {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% form_theme context.form 'form_bolt_layout.twig' %}
+        {{ form_start(context.form, {attr: {id: context.form.vars.name}}) }}
+
+        {% for i in 1..nbOut %}
+            <div class="panel panel-default table-container">
+                <div class="panel-body table-container-centered">
+                    <div class="row form-group table-container-part">
+
+                        <div class="item">
+                            <div class="item-parent">
+                                <div class="box medium">
+                                    <label for="{{ context.form['box' ~ i ~ '_date'].vars.id }}"
+                                           class="control-label label-sm">{{ __('page.edit-tournament.box.datetime') }}</label>
+                                    <div class="row-no-gutters clearfix">
+                                        <div class="pull-left">{{ form_widget(context.form['box' ~ i ~ '_date']) }}</div>
+                                        <div class="pull-left">{{ form_widget(context.form['box' ~ i ~ '_time']) }}</div>
+                                        <div class="pull-left">
+                                            <input type="checkbox" class="input-sm form-control" autocomplete="off"
+                                                   id="{{ 'tournament_boxes_add_box' ~ i ~ '_hasDate' }}">
+                                        </div>
+                                        <div class="pull-left">
+                                            <label for="{{ 'tournament_boxes_add_box' ~ i ~ '_hasDate' }}"
+                                                   class="label-sm has-date-label">?</label>
+                                        </div>
+                                    </div>
+
+                                    <label for="{{ context.form['box' ~ i ~ '_qualif_out'].vars.id }}"
+                                           class="control-label label-sm">{{ __('page.edit-tournament.box.out') }}</label>
+                                    {{ form_widget(context.form['box' ~ i ~ '_qualif_out']) }}
+                                </div>
+                            </div>
+                            {% set prefixElement = 'box' ~ i %}
+                            <div class="item-children">
+                                {{ _self.displayChildBox(context.form, prefixElement, true, nbRound) }}
+                                {{ _self.displayChildBox(context.form, prefixElement, false, nbRound) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="row form-group">
+            <div class="col-md-12">
+                <div class="pull-left">
+                    <a href="{{ path('tournamenttable', {'tableId': table.id}) }}" class="btn btn-default">
+                        <i class="fa fa-chevron-circle-left"></i> {{ __('general.phrase.back') }}
+                    </a>
+                </div>
+                <div class="pull-right">
+                    {{ form_widget(context.form['boxes_save']) }}
+                </div>
+            </div>
+        </div>
+
+        {{ form_end(context.form) }}
+    </div>
+    <script>
+        function onDateChange($dateInput) {
+            let $boxParent = $dateInput.parents('.box').first(),
+                $playerInputs = $boxParent.find('.block-player input'),
+                $itemChildren = $dateInput.parents('.item').first().find('.item-children').first(),
+                $timeInput = $('#' + $dateInput.attr('id').replace('date', 'time')),
+                $hasDateCheckbox = $('#' + $dateInput.attr('id').replace('date', 'hasDate'));
+
+            if ($dateInput.val() || $hasDateCheckbox.is(':checked')) {
+                // On a une date (connue ou non) pour le match : on efface les données sur le joueur
+                $playerInputs.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+
+                if ($dateInput.val()) {
+                    $dateInput.addClass('setted');
+                    $hasDateCheckbox.prop('checked', true);
+                } else {
+                    $dateInput.removeClass('setted');
+                }
+
+                if ($timeInput.val()) {
+                    $timeInput.removeClass('not-setted').removeClass('to-setted').addClass('setted');
+                } else {
+                    $timeInput.removeClass('not-setted').removeClass('setted').addClass('to-setted');
+                }
+
+                // On affiche les 2 boîtes précédentes : elles doivent être valorisées !
+                $itemChildren.fadeIn();
+
+                // On focus sur le champ "time" correspondant (sur Firefox seulement)
+                if (navigator.userAgent.search("Firefox") > -1) {
+                    if ($dateInput.attr('min') <= $dateInput.val() && $dateInput.val() <= $dateInput.attr('max')) {
+                        $timeInput.focus();
+                    }
+                }
+            } else {
+                // La date a été effacée ou la case à cocher est décochée
+                $dateInput.removeClass('setted').removeClass('not-setted');
+                $playerInputs.val('').removeClass('not-setted');
+                $timeInput.removeClass('to-setted').removeClass('not-setted');
+
+                // On cache et reset les champs des 2 boîtes précédentes
+                $itemChildren.fadeOut().find('input').val('');
+            }
+        }
+
+        function onTimeChange($timeInput) {
+            let $playerInputs = $timeInput.next('.block-player').find('input'),
+                $dateInput = $('#' + $timeInput.attr('id').replace('time', 'date'));
+
+            if ($timeInput.val()) {
+                // On a une heure pour le match : on efface les données sur le joueur
+                $playerInputs.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+                $timeInput.addClass('setted');
+
+                if ($dateInput.val()) {
+                    $dateInput.removeClass('not-setted').removeClass('to-setted').addClass('setted');
+                } else {
+                    $dateInput.removeClass('not-setted').removeClass('setted').addClass('to-setted');
+                }
+            } else {
+                // L'heure a été effacée
+                $timeInput.removeClass('setted').removeClass('not-setted');
+                $playerInputs.val('').removeClass('not-setted');
+
+                if ($dateInput.val()) {
+                    $timeInput.removeClass('not-setted').removeClass('setted').addClass('to-setted');
+                } else {
+                    $timeInput.removeClass('not-setted').removeClass('setted').removeClass('to-setted');
+                }
+            }
+        }
+
+        function onHasDateChange($hasDateCheckbox) {
+            let $dateInput = $('#' + $hasDateCheckbox.attr('id').replace('hasDate', 'date')),
+                $boxParent = $dateInput.parents('.box').first(),
+                $playerInputs = $boxParent.find('.block-player input'),
+                $itemChildren = $dateInput.parents('.item').first().find('.item-children').first(),
+                $timeInput = $('#' + $dateInput.attr('id').replace('date', 'time'));
+
+            if ($hasDateCheckbox.is(':checked')) {
+                // Case cochée : on efface les données sur le joueur
+                $playerInputs.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+
+                if ($dateInput.val()) {
+                    $dateInput.removeClass('not-setted').removeClass('to-setted').addClass('setted');
+                } else {
+                    $dateInput.removeClass('not-setted').removeClass('setted');
+                }
+
+                if ($timeInput.val()) {
+                    $timeInput.removeClass('not-setted').removeClass('to-setted').addClass('setted');
+                } else {
+                    $timeInput.removeClass('not-setted').removeClass('setted');
+                }
+
+                // On affiche les 2 boîtes précédentes : elles doivent être valorisées !
+                $itemChildren.fadeIn();
+            } else {
+                // La case à cocher est décochée
+                $dateInput.val('').removeClass('setted').removeClass('not-setted').removeClass('to-setted');
+                $playerInputs.val('').removeClass('not-setted');
+                $timeInput.removeClass('to-setted').removeClass('not-setted');
+
+                // On cache et reset les champs des 2 boîtes précédentes
+                $itemChildren.fadeOut().find('input').val('');
+            }
+        }
+
+        function onPlayerInputChange($playerInput) {
+            let $blockPlayer = $playerInput.parents('.block-player').first(),
+                $boxParent = $playerInput.parents('.box').first(),
+                $playerInputs = $blockPlayer.find('input:not([id$=qualif_in])'),
+                $playerNameInput = $playerInputs.filter('[id$=player_name]'),
+                $qualifInInput = $blockPlayer.find('input[id$=qualif_in]'),
+                $dateInput = $boxParent.find('input[type=date]'),
+                $timeInput = $boxParent.find('input[type=time]'),
+                $hasDateCheckbox = $('#' + $dateInput.attr('id').replace('date', 'hasDate')),
+                $itemChildren = $dateInput.parents('.item').first().find('.item-children').first();
+
+            if ($playerInput.val()) {
+                // Une info de joueur a été saisie
+                $playerInputs.each(function () {
+                    let $input = $(this);
+                    if ($input.val()) {
+                        $input.addClass('setted').removeClass('to-setted').removeClass('not-setted');
+                    } else {
+                        $input.addClass('to-setted').removeClass('setted').removeClass('not-setted');
+                    }
+                });
+                $dateInput.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+                $timeInput.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+                $hasDateCheckbox.prop('checked', false);
+                $qualifInInput.val('').addClass('not-setted').removeClass('setted');
+
+                // On cache et reset les champs des 2 boîtes précédentes
+                $itemChildren.fadeOut().find('input').val('');
+            }
+            if ($playerInput.attr('id') === $playerNameInput.attr('id')) {
+                if ($playerNameInput.val()) {
+                    // Le champ du nom du joueur a été valorisé
+                    $playerInputs.filter('[id$=player_rank]').focus();
+                } else {
+                    // Le champ du nom du joueur n'est pas/plus valorisé
+                    $playerInputs.removeClass('setted').removeClass('to-setted').removeClass('not-setted');
+                    $dateInput.removeClass('not-setted');
+                    $timeInput.removeClass('not-setted');
+                    $qualifInInput.removeClass('not-setted');
+                }
+            }
+        }
+
+        function onQualifInChange($qualifInInput) {
+            let $boxParent = $qualifInInput.parents('.box').first(),
+                $blockPlayer = $qualifInInput.parents('.block-player').first(),
+                $playerInputs = $blockPlayer.find('input:not([id$=qualif_in])'),
+                $dateInput = $boxParent.find('input[type=date]'),
+                $timeInput = $boxParent.find('input[type=time]');
+
+            if ($qualifInInput.val()) {
+                // Un ID de qualifié entrant a été saisi
+                $qualifInInput.addClass('setted').removeClass('not-setted');
+                $playerInputs.each(function () {
+                    let $input = $(this);
+                    // On efface les infos joueur (car c'est l'un ou l'autre, non les 2 !)
+                    $input.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+                });
+                $dateInput.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+                $timeInput.val('').addClass('not-setted').removeClass('setted').removeClass('to-setted');
+            } else {
+                // Le champ ID qualifié n'est pas/plus valorisé
+                $dateInput.removeClass('not-setted');
+                $timeInput.removeClass('not-setted');
+                $qualifInInput.removeClass('setted');
+            }
+        }
+
+        function onRankingTyping($rankingInput) {
+            let rankingValue = $rankingInput.val(),
+                nbChar = rankingValue.length;
+
+            if (rankingValue && $.isNumeric(rankingValue)) {
+                if (nbChar == 3) { //ex: 305, 155, -26, -46
+                    $rankingInput.val(rankingValue[0] + rankingValue[1] + '/' + rankingValue[2]);
+                } else if ($.inArray(rankingValue, ['56', '46', '36', '26', '16']) >= 0) {
+                    $rankingInput.val(rankingValue[0] + '/' + rankingValue[1]);
+                }
+            }
+        }
+
+        function onDateTyping($dateInput) {
+            if ($dateInput.val()) {
+                let inputTimeId = $dateInput.attr('id').replace('date', 'time');
+                $('#' + inputTimeId).focus();
+            }
+        }
+
+        $(function () {
+            let $form = $('#tournament_boxes_add'),
+                $dateInputs = $('input[type=date]', $form),
+                $timeInputs = $('input[type=time]', $form),
+                $hasDateCheckboxes = $('input[type=checkbox]', $form),
+                $playerInputs = $('.block-player input:not([id$=qualif_in])', $form),
+                $qualifInInputs = $('.block-player input[id$=qualif_in]', $form),
+                $rankingInputs = $('.input-ranking', $form);
+
+            $dateInputs.bind('change', function (event) {
+                onDateChange($(event.target));
+            });
+            $timeInputs.bind('change', function (event) {
+                onTimeChange($(event.target));
+            });
+            $hasDateCheckboxes.bind('change', function (event) {
+                onHasDateChange($(event.target));
+            });
+            $playerInputs.bind('change', function (event) {
+                onPlayerInputChange($(event.target));
+            });
+            $qualifInInputs.bind('change', function (event) {
+                onQualifInChange($(event.target));
+            });
+            $rankingInputs.bind('change', function (event) {
+                onRankingTyping($(event.target));
+            });
+
+            // Focus sur la 1ère box avec qualif_out
+            $('#tournament_boxes_add_box1_date').focus();
+
+            // Désactivation de la touche "Entrée"
+            $form.on('keypress', function (e) {
+                if (e.which == 13) {
+                    // en cas de pression de la touche Entrée
+                    var $target = $(e.target);
+
+                    if ($target.is('input')) {
+                        // on a pressé la touche depuis un champ input : on déclenche l'évènement de "changement" de la valeur
+                        $target.trigger('change');
+
+                        // on empêche la soumission (sinon ça peut provoquer des erreurs !)
+                        return false;
+                    }
+                }
+            });
+
+            // Blocage retour arrière
+            $(function() {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState('', null, window.location.pathname + window.location.search);
+                    $(window).on('popstate', function() {
+                        alert('Le retour arrière est désactivé lors de la saisie d\'un tableau !');
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock page_main %}
+
+{% macro displayChildBox(form, parentPrefixElement, isTop, nbRound) %}
+    {% set prefixElement = isTop ? parentPrefixElement ~ '-1' : parentPrefixElement ~ '-2' %}
+    <div class="item-child">
+        <div class="item">
+            <div class="item-parent">
+                <div class="box medium">
+                    {% if nbRound > 2 %}
+                        {# Sur le 1er tour (= les boîtes de la colonne la + à gauche) on ne peut saisir que des joueurs #}
+                        <div class="row-no-gutters">
+                            <label for="{{ form[prefixElement ~ '_date'].vars.id }}"
+                                   class="control-label label-sm">{{ __('page.edit-tournament.box.datetime') }}</label>
+                            <div class="row-no-gutters clearfix">
+                                <div class="pull-left">{{ form_widget(form[prefixElement ~ '_date']) }}</div>
+                                <div class="pull-left">{{ form_widget(form[prefixElement ~ '_time']) }}</div>
+                                <div class="pull-left">
+                                    <input type="checkbox" class="input-sm form-control" autocomplete="off"
+                                           id="{{ 'tournament_boxes_add_' ~ prefixElement ~ '_hasDate' }}">
+                                </div>
+                                <div class="pull-left">
+                                    <label for="{{ 'tournament_boxes_add_' ~ prefixElement ~ '_hasDate' }}"
+                                           class="label-sm has-date-label">?</label>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="row-no-gutters">
+                        {% if nbRound > 2 %}
+                        <div class="mt-sm text-center"><strong> - OU - </strong></div>
+                        {% endif %}
+                        <div class="block-player">
+                            <div class="row-no-gutters">
+                                <div class="col-md-9">
+                                    <label for="{{ form[prefixElement ~ '_player_name'].vars.id }}"
+                                           class="control-label label-sm">{{ __('page.edit-tournament.box.player_in') }}</label>
+                                    {{ form_widget(form[prefixElement ~ '_player_name']) }}
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="{{ form[prefixElement ~ '_qualif_in'].vars.id }}"
+                                           class="control-label label-sm">{{ __('page.edit-tournament.box.in.short') }}</label>
+                                    {{ form_widget(form[prefixElement ~ '_qualif_in']) }}
+                                </div>
+                            </div>
+
+                            <div class="row-no-gutters">
+                                <div class="col-md-4">
+                                    {{ form_widget(form[prefixElement ~ '_player_rank']) }}
+                                </div>
+                                <div class="col-md-8">
+                                    {{ form_widget(form[prefixElement ~ '_player_club']) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% set nbRound = (nbRound-1) %}
+            {% if nbRound > 1 %}
+                <div class="item-children" style="display: none">
+                    {{ _self.displayChildBox(form, prefixElement, true, nbRound) }}
+                    {{ _self.displayChildBox(form, prefixElement, false, nbRound) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

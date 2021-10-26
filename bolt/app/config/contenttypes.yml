@@ -1,0 +1,985 @@
+# This file defines the contenttypes on the website. See the documentation for
+# details: https://docs.bolt.cm/contenttypes/intro
+
+# The Homepage contenttype is a singleton: There can be only one record of this
+# contenttype.
+
+homepage:
+  name: "Accueil"
+  singular_name: "Accueil"
+  viewless: true
+  singleton: true
+  default_status: published
+  icon_many: "fa:home"
+  icon_one: "fa:home"
+  fields:
+    # Onglet Contenu
+    title:
+      group: contenu
+      label: 'Titre'
+      type: text
+      class: large
+
+    teaser:
+      label: 'Accroche'
+      type: html
+      height: 150px
+      postfix: |
+        Si ce champ est renseigné, son contenu s'affiche <b>avant</b> les blocs de l'accueil.
+
+    teaser_image:
+      label: 'Image de l''accroche'
+      type: image
+
+    blocks_top:
+      label: 'Blocs du haut'
+      type: repeater
+      limit: 4
+      prefix: 'Ces blocs sont affichés <b>avant</b> les rencontres du moment.'
+      fields:
+        block:
+          label: 'Bloc'
+          type: select
+          values: (blocs,infos_tournoi)/title
+          filter: { status: published }
+
+    meetings_past_days:
+      label: 'Nb jours passés'
+      prefix: Afficher les résultats des rencontres de ce nb de jours passés.
+      type: integer
+      default: 14
+      min: 0
+      max: 60
+
+    meetings_future_days:
+      label: 'Nb jours à venir'
+      prefix: Afficher les prochaines rencontres de ce nb de jours à venir.
+      type: integer
+      default: 7
+      min: 0
+      max: 30
+
+    blocks_bottom:
+      label: 'Blocs du bas'
+      type: repeater
+      limit: 4
+      prefix: 'Ces blocs sont affichés <b>après</b> les rencontres du moment.'
+      fields:
+        block:
+          label: 'Bloc'
+          type: select
+          values: (blocs,infos_tournoi)/title
+          filter: { status: published }
+
+    # Onglet En-tête du site : personnalisation de certains éléments de l'en-tête
+    logo_file:
+      group: en-tête du site
+      label: 'Logo du site'
+      type: image
+      required: true
+
+    header_location_text:
+      label: 'Adresse postale du club'
+      type: text
+      required: true
+
+    header_location_url:
+      label: 'Url vers la page d''accès au club'
+      type: text
+      required: true
+      postfix: |
+        Url relative au site
+
+    header_contact_text:
+      label: 'Libellé contact'
+      type: text
+      required: true
+
+    header_contact_url:
+      label: 'Url vers la page de contact'
+      type: text
+      required: true
+      postfix: |
+        Url relative au site
+
+    header_facebook_text:
+      label: 'Libellé Facebook'
+      type: text
+
+    header_facebook_url:
+      label: 'Url Facebook'
+      type: text
+
+    header_instagram_text:
+      label: 'Libellé Instagram'
+      type: text
+
+    header_instagram_url:
+      label: 'Url Instagram'
+      type: text
+
+    header_book_url:
+      label: 'Url de réservation'
+      type: text
+      required: true
+      postfix: |
+        Ouvert dans un nouvel onglet/une nouvelle fenêtre.
+
+    # Onglet Bandeau : choix image ou vidéos, couleurs etc.
+    hero_video_mp4:
+      group: bandeau
+      label: "Vidéo du bandeau (format .mp4 ou .m4v)"
+      type: file
+      extensions: [ mp4, .m4v ]
+      upload: videos
+      required: false
+      postfix: |
+        La page d'accueil affiche un bandeau sur toute la largeur de la page avec
+        cette vidéo. La vidéo est prioritaire sur l'image qui peut être fournie ci-dessous.
+
+    hero_video_negative_margin_top:
+      label: "Marge (en %) de remontée de la vidéo pour la vue Desktop"
+      type: integer
+      min: 0
+      max: 50
+      postfix: |
+        Si la vidéo est trop haute (ex: 1920px x 1080px), elle prend trop de place en hauteur sur l'accueil.
+        La taille du bandeau a donc été limitée, une partie de la vidéo est donc rendue invisible. Cette marge
+        permet d'ajuster le centrage vertical de la vidéo dans le bandeau.
+
+    hero_image:
+      # header_banner:
+      label: 'Image du bandeau'
+      type: image
+      extensions: [ jpg, jpeg, png ]
+      required: true
+      postfix: |
+        Cette image s'affiche à la place de la vidéo si aucune vidéo n'est fournie et/ou sur
+        les terminaux ne gérant pas la vidéo (mobiles, ...).
+
+    hero_opacity:
+      label: 'Transparence (en %)'
+      type: select
+      values: { '1': "0", '0.9': "10", '0.8': "20", '0.7': "30", '0.6': "40", '0.5': "50", '0.4': "60", '0.3': "70", '0.2': "80" }
+
+    hero_color_mask:
+      label: 'Couleur de transparence'
+      type: select
+      values: { '026094': "Bleu", 'd1a633': "Jaune", '2c2d32': "Foncé" }
+      require: false
+
+    #header_title:
+    hero_title:
+      label: 'Titre du bandeau'
+      type: text
+      required: true
+      postfix: |
+        Ce titre s'affiche par dessus la vidéo ou l'image du bandeau.
+        Il peut contenir des balises HTML. Les lettres mises entre les balises &lt;strong&gt;&lt;/strong&gt; sont
+        mises en avant (taille plus grande).
+
+    hero_title_color:
+      label: 'Couleur du titre'
+      type: select
+      values: { '2c2d32': "Foncé", 'ffffff': "Blanc", '026094': "Bleu", 'd1a633': "Jaune" }
+      required: true
+
+    hero_title_color_shadow:
+      label: 'Couleur de l''ombre du titre'
+      type: select
+      values: { '0a0a0a': "Foncé", 'ffffff': "Clair" }
+      required: false
+
+    #header_baseline:
+    hero_subtitle:
+      label: 'Sous-titre du bandeau'
+      type: text
+      required: false
+      postfix: |
+        Ce sous-titre s'affiche par dessus la vidéo ou l'image du bandeau, sous le titre.
+
+    hero_subtitle_color:
+      label: 'Couleur du sous-titre'
+      type: select
+      values: { '2c2d32': "Foncé", 'ffffff': "Blanc", '026094': "Bleu", 'd1a633': "Jaune" }
+
+    hero_subtitle_color_shadow:
+      label: 'Couleur de l''ombre du sous-titre'
+      type: select
+      values: { '0a0a0a': "Foncé", 'ffffff': "Clair" }
+
+    # Onglet Pied de page du site : personnalisation de certains éléments du pied de page
+    footer_fft_number:
+      group: pied de page du site
+      label: 'Numéro FFT'
+      type: text
+      required: true
+
+    footer_contact_address_text:
+      label: Adresse du club
+      type: textarea
+      required: true
+      height: 100px
+      postfix: |
+        Peut contenir des balises HTML.
+
+    footer_contact_location_link_text:
+      label: Accès au club - Libellé du lien
+      type: text
+      required: true
+
+    footer_contact_location_link_url:
+      label: Accès au club - URL du lien
+      type: text
+      required: true
+
+    footer_contact_link_text:
+      label: Page de contact - Libellé du lien
+      type: text
+      required: true
+
+    footer_contact_link_url:
+      label: Page de contact - URL du lien
+      type: text
+      required: true
+
+    footer_book_slot_url:
+      label: Réservation d'un créneau - URL du lien
+      type: text
+      required: true
+
+    footer_membership_link_text:
+      label: "Page d'inscription: Libellé du lien"
+      type: text
+      required: true
+
+    footer_membership_url:
+      label: "Page d'inscription: URL du lien"
+      type: text
+      required: true
+
+    footer_facebook_link_url:
+      label: "Page Facebook: URL du lien"
+      type: text
+      required: true
+
+    alert_title:
+      label: "Titre du message d'alerte"
+      type: text
+      required: false
+      pattern: "^.{1,20}$"
+      postfix: "20 caractères max."
+
+    alert_text:
+      label: "Message d'alerte"
+      type: html
+      required: false
+
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: true
+      type: image
+      extensions: [ jpg, png ]
+
+    complex_data:
+      label: 'Données structurées'
+      required: false
+      type: textarea
+
+    # Onglet Propriétés
+    slug:
+      group: meta
+      type: slug
+      uses: title
+blocs:
+  name: Blocs simples
+  singular_name: Bloc simple
+  singular_slug: bloc
+  show_on_dashboard: true
+  viewless: true
+  default_status: published
+  record_template: partials/blocs/_bloc.twig
+  record_template_block: partials/blocs/_bloc.twig
+  searchable: false
+  icon_many: "fa:cubes"
+  icon_one: "fa:cube"
+  fields:
+    title:
+      type: text
+      label: 'Titre'
+      class: large
+      required: true
+      group: 'Contenu'
+    subtitle:
+      type: text
+      label: 'Sous-titre'
+      class: large
+    image:
+      type: image
+      label: 'Image (décorative) du bloc'
+      attrib: title
+      extensions: [ jpg, png ]
+      required: true
+    image_width:
+      type: integer
+      label: 'Largeur de l''image décorative'
+      options:
+        min: 200
+        max: 500
+        step: 10
+      required: true
+    image_height:
+      type: integer
+      label: 'Hauteur de l''image décorative'
+      options:
+        min: 300
+        max: 700
+        step: 10
+      required: true
+    content:
+      type: html
+      label: 'Contenu du bloc'
+      height: 300px
+      options:
+        ckeditor:
+          fillEmptyBlocks: true
+      required: true
+    contentlink:
+      type: text
+      label: 'Lien'
+      placeholder: 'Un lien relatif au site (ex: "contenttype/slug") ou absolu (ex: "http://example.org/")'
+      postfix: "Ajoute un lien sur ce bloc vers une page. Ce peut être un lien interne relatif (ex: <tt>page/contact</tt>) ou un lien externe absolu (ex: `https://www.fft.fr/`)."
+    contentlink_label:
+      type: text
+      label: 'Libellé du lien'
+    slug:
+      type: slug
+      uses: [ title ]
+
+calendriers:
+  singular_slug: calendrier
+  name: Calendriers
+  singular_name: Calendrier
+  show_in_menu: Calendriers
+  taxonomy: [ tags ]
+  icon_many: "fa:calendar"
+  fields:
+    name:
+      group: 'Général'
+      label: 'Nom'
+      type: text
+      class: large
+    slug:
+      type: slug
+      uses: name
+    year:
+      label: 'Année de début'
+      type: text
+      class: narrow
+      pattern: "20[1-3][0-9]"
+      error: Merci de saisir une année valide
+      postfix: Le calendrier va de Septembre de l'année A à Juin de l'année A+1
+      placeholder: "Ex: 2019"
+    lessons_from_date:
+      label: 'Date de début des cours collectifs'
+      type: date
+      required: true
+      postfix: 'Les cours débutent en principe un lundi'
+    lessons_to_date:
+      label: 'Date de fin des cours collectifs'
+      postfix: 'Les cours terminent en principe un samedi'
+      type: date
+      required: true
+    holidays:
+      label: 'Dates des petites vacances scolaires'
+      prefix: 'Pour la zone B (Nantes)'
+      type: repeater
+      initial: 4
+      limit: 4
+      fields:
+        name:
+          label: "Nom"
+          type: text
+          required: true
+        holidays_from_date:
+          label: "Début"
+          type: date
+          required: true
+        holidays_to_date:
+          label: "Fin"
+          type: date
+          required: true
+
+    events:
+      group: 'Événements'
+      label: 'Événement'
+      type: repeater
+      fields:
+        evt_title:
+          label: 'Nom'
+          type: text
+        evt_type:
+          label: 'Type'
+          type: select
+          required: true
+          values: type_evenement_calendriers/name
+          sort: name
+          autocomplete: true
+        evt_from_date:
+          label: "Début"
+          type: date
+          required: true
+        evt_duration:
+          label: "Durée (en jours)"
+          type: integer
+          required: true
+          default: 1
+        evt_with_lesson:
+          label: "Cours collectif durant l'événement"
+          type: checkbox
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: true
+      type: image
+      extensions: [ jpg, png ]
+
+documents_divers:
+  singular_slug: document-divers
+  name: Documents divers
+  singular_name: Document divers
+  record_template: template_documents.twig
+  icon_many: "fa:folder-open"
+  fields:
+    title:
+      label: 'Titre'
+      type: text
+      class: large
+      group: Contenu
+    slug:
+      type: slug
+      uses: title
+    text:
+      label: 'Texte'
+      type: html
+      height: 200px
+    documents_group:
+      label: 'Regroupement de documents'
+      type: repeater
+      fields:
+        text:
+          label: 'Texte'
+          type: html
+          height: 100px
+        documents:
+          labels: 'Documents'
+          type: filelist
+          extensions: [ png, pdf ]
+          upload: documents_divers
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofllow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: true
+      type: image
+      extensions: [ jpg, png ]
+
+type_evenement_calendriers:
+  name: Types événement calendrier
+  singular_name: Type événement calendrier
+  viewless: true
+  searchable: false
+  show_in_menu: Calendriers
+  default_status: published
+  icon_many: "fa:tag"
+  fields:
+    name:
+      label: "Libellé"
+      type: text
+      class: large
+      group: content
+      required: true
+    color:
+      label: "Couleur"
+      type: text
+      class: large
+      pattern: "#[0-9a-f]{6}"
+      placeholder: "Ex: #aecf00"
+      required: true
+    position:
+      label: "Position"
+      postfix: "Ordre d'apparition dans la légende des calendriers"
+      type: integer
+      class: narrow
+
+infos_tournoi:
+  singular_slug: infos-tournoi
+  name: Infos tournoi
+  singular_name: Infos tournoi
+  show_on_dashboard: true
+  default_status: published
+  record_template: partials/pages/_infos_tournoi.twig
+  record_template_block: partials/blocs/_infos_tournoi.twig
+  fields:
+    # Onglet "Général"
+    title:
+      type: text
+      label: 'Titre du tournoi'
+      class: large
+      required: true
+      group: "Général"
+      postfix: 'Ex: "Tournoi ASMB 2019 de printemps", "TMC Dames ASMB 2019"'
+    image:
+      type: image
+      label: 'Image (décorative)'
+      attrib: title
+      extensions: [ jpg, png ]
+      required: true
+    image_width:
+      type: integer
+      label: 'Largeur de l''image décorative'
+      options:
+        min: 200
+        max: 500
+        step: 10
+      required: true
+    image_height:
+      type: integer
+      label: 'Hauteur de l''image décorative'
+      options:
+        min: 300
+        max: 700
+        step: 10
+      required: true
+    subtitle:
+      type: text
+      label: 'Dates de la compétition'
+      class: large
+      required: true
+      postfix: 'Ex:<br>"Du 28 mars au 7 avril" ou <br>"Tournoi interne du 21 octobre au 3 novembre"'
+    subtitle2:
+      type: textarea
+      label: 'Catégorie(s) concernée(s)'
+      postfix: 'Ex:<br>"Deux tournois en parallèle : 3ème et 4ème série"<br> ou (sur 2 lignes) :<br> "Seniors Dames, Messieurs (+ consolantes)<br>Jeunes Garçons, Filles : 13/14, 15/16 et 17/18 ans"'
+    slug:
+      type: slug
+      uses: [ title ]
+
+    # Onglet "Détails"
+    description:
+      group: "Détails"
+      label: 'Texte descriptif libre'
+      type: textarea
+    valid_for_ranking:
+      label: 'Compte pour le classement mensuel'
+      type: checkbox
+      postfix: 'Affiche "Ce tournoi compte pour votre classement mensuel !"'
+    balls_provided:
+      label: 'Infos balles fournies/non fournies'
+      type: select
+      values: { 'no': 'balles non fournies', 'yes_head': 'Balles HEAD fournies', 'yes': 'Balles fournies' }
+    location:
+      label: 'Lieu de compétition'
+      type: textarea
+      postfix: 'Ex:<br>"Halle de tennis et courts extérieurs<br>du complexe Mangin Beaulieu<br>au 2 rue des Boires à Nantes"'
+    schedule:
+      label: 'Horaires des matchs'
+      type: textarea
+      postfix: 'Ex:<br>"En semaine, à partir de 17h30 et le week-end de 9h à 22h.<br>Des matchs pourront être programmés en journée la semaine pour ceux qui le peuvent."'
+
+    inscription_online_text:
+      label: 'Inscription en ligne - Titre du lien'
+      type: text
+      postfix: 'Ex: "En ligne sur Ten''Up (site FFT)"'
+
+    inscription_online_url:
+      label: 'Inscription en ligne - URL du lien'
+      type: text
+      pattern: 'url'
+      postfx: 'Attention à saisir une url au format valide.<br>Ex: "https://tenup.fft.fr/tournoi/82212968"'
+
+    inscription_contact_text:
+      label: 'Inscription auprès du JA - Titre'
+      type: text
+      postfix: 'Ex: "Auprès de Frédéric Viotte"'
+
+    inscription_contact_mail:
+      label: 'Inscription auprès du JA - Adresse email'
+      type: text
+      pattern: 'email'
+      postfix: 'Attention à saisir une adresse email au format valide.<br>Ex: "fredviotte@gmail.com"'
+
+    inscription_contact_phone:
+      label: 'Inscription auprès du JA - Numéro de téléphone'
+      type: text
+      pattern: '0[6|7](\s?[0-9]{2}){4}'
+      postfix: 'Attention à saisir un numéro de téléphone au format valide.<br>Ex: "06 01 02 03 04"'
+
+    inscriptions_closing_without_notice:
+      label: 'Afficher "clôture sans préavis"'
+      type: checkbox
+
+    commitment_rights_price:
+      label: 'Droits d''engagement - Tarifs'
+      type: 'text'
+      postfix: 'Ex: "&lt;b&gt;10 €&lt;/b&gt; (adultes), &lt;b&gt;6 €&lt;/b&gt; (jeunes -18 ans)"'
+
+    commitment_rights_elements_to_provide:
+      label: 'Droits d''engagement - Éléments à fournir'
+      type: 'textarea'
+      postfix: 'Ex: "<br>• Nom, prénom, classement, téléphone, email<br>• Indisponibilités durant toute la période du tournoi, heure à partir de laquelle vous pouvez jouer en semaine le soir.<br>"'
+
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: true
+      type: image
+      extensions: [ jpg, png ]
+
+pages:
+  singular_slug: page
+  name: Pages
+  singular_name: Page
+  record_template: template_page.twig
+  recordsperpage: 20
+  taxonomy: [ tags ]
+  fields:
+    title:
+      label: 'Titre'
+      type: text
+      class: large
+      group: Contenu
+    slug:
+      type: slug
+      uses: title
+    block:
+      label: 'Bloc'
+      type: select
+      values: (blocs)/title
+      filter: { status: published }
+    image:
+      type: image
+      placeholder: https://source.unsplash.com/1280x768/?business,workplace/__random__
+    body:
+      label: 'Texte de la page'
+      type: html
+      height: 300px
+    template:
+      type: templateselect
+      filter: 'template_*.twig'
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: true
+      type: image
+      extensions: [ jpg, png ]
+
+competitions:
+  name: Pages compétition
+  singular_name: Page compétition
+  singular_slug: competition
+  icon_many: "fa:trophy"
+  record_template: competitions.twig
+  taxonomy: [ tags ]
+  fields:
+    title:
+      label: 'Titre de la page'
+      type: text
+      class: large
+      group: 'Général'
+    short_title:
+      label: 'Titre court'
+      type: text
+      postfix: |
+        Titre affiché sur le bloc présent sur l'accueil
+    slug:
+      type: slug
+      uses: title
+
+    championship_id:
+      label: 'ID (Bolt) de la compétition'
+      required: false
+      type: integer
+      group: 'Infos Championnat'
+      postfix: |
+        Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/championship">Compétition > Championnats</a>
+    championship_categories:
+      type: select
+      values: ['Hommes','Dames','+35','Jeunes']
+      label: Afficher uniquement les données de cette/ces catégorie(s)
+      multiple: true
+
+    home_meetings_from_date:
+      label: 'Date de début'
+      type: date
+      group: 'Infos Rencontres à domicile'
+      required: false
+    home_meetings_to_date:
+      label: 'Date de fin'
+      type: date
+      required: false
+
+    tournament_id:
+      group: 'Infos Tournoi'
+      label: 'ID (Bolt) du tournoi'
+      required: false
+      type: integer
+      postfix: |
+        Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/tournament">Compétition > Tournois</a>.<br>
+        À utiliser en cas de saisie manuelle des tableaux et résultats.
+    tournament_url_json:
+      label: 'URL vers le JSON ou chemin relatif au dossier public/ du serveur'
+      required: false
+      type: text
+      class: large
+      postfix: |
+        À tenter d'utiliser si le tournoi est géré via JA-Tennis.<br>
+        ATTENTION : si utilisation de dropbox, penser à ajouter <code>?dl=1</code> à la fin.
+
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: true
+      type: image
+      extensions: [ jpg, png ]
+
+statistiques:
+  name: Pages de statistiques
+  singular_name: Page de statistiques
+  singular_slug: statistiques
+  icon_many: "fa:pie-chart"
+  record_template: statistiques.twig
+  taxonomy: [ tags ]
+  fields:
+    name:
+      label: 'Nom de la page'
+      type: text
+      class: large
+      group: 'Contenu'
+    title:
+      label: 'Titre affiché sur la page'
+      type: text
+      class: large
+    slug:
+      type: slug
+      uses: title
+    comment:
+      type: textarea
+      class: large
+    total_members_count:
+      label: 'Nb licencié-e-s total'
+      type: integer
+      min: 1
+      max: 1000
+    men_members_count:
+      label: 'Nb adultes hommes licenciés'
+      type: integer
+      min: 1
+      max: 1000
+    women_members_count:
+      label: 'Nb adultes femmes licenciées'
+      type: integer
+      min: 1
+      max: 1000
+    boys_members_count:
+      label: 'Nb jeunes garçons licenciés'
+      type: integer
+      min: 1
+      max: 1000
+    girls_members_count:
+      label: 'Nb jeunes filles licenciées'
+      type: integer
+      min: 1
+      max: 1000
+    students_count:
+      label: 'Nb élèves'
+      type: integer
+      min: 1
+      max: 1000
+    weekly_lessons_hours_count:
+      label: 'Nb heures de cours collectifs par semaine'
+      type: integer
+      min: 1
+      max: 1000
+    leasure_cards_count:
+      label: 'Nb adhérents carte loisir seule'
+      type: integer
+      min: 1
+      max: 1000
+    winter_teams:
+      label: 'Équipes Hiver'
+      type: repeater
+      fields:
+        team_category:
+          label: 'Type d''équipe'
+          type: text
+        team_count:
+          label: 'Nb d''équipes pour la catégorie'
+          type: integer
+          min: 0
+          max: 100
+    summer_teams:
+      label: 'Équipes Printemps/Été'
+      type: repeater
+      fields:
+        team_category:
+          label: 'Type d''équipe'
+          type: text
+        team_count:
+          label: 'Nb d''équipes pour la catégorie'
+          type: integer
+          min: 0
+          max: 100
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image'
+      required: true
+      type: image
+      extensions: [ jpg, png ]

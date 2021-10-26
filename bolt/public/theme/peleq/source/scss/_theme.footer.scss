@@ -1,0 +1,295 @@
+$col-footer-width-down-sm: 300px;
+
+#footer {
+    background-color: $dark;
+    color: $white;
+    position: relative;
+    margin: auto;
+
+    .sponsors {
+        text-align: center;
+        border-bottom: solid 1px $bg-light;
+        padding: 1rem;
+
+        .sponsor {
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            width: max-content;
+
+            span {
+                border-right: solid 1px $bg-light;
+                padding-right: 1rem;
+                margin-right: 1rem;
+            }
+
+            a {
+                display: block;
+                margin: auto;
+
+                &:hover {
+                    img {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            img {
+                display: block;
+                margin: auto;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .top {
+        display: flex;
+        max-width: $fullhd;
+        margin: auto;
+        padding-left: 1rem;
+        justify-content: space-around;
+
+        .footer-title {
+            font-variant: small-caps;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin: 2rem 0 0.5rem 0;
+
+        }
+
+        i.fa-caret-right {
+            color: $secondary;
+            padding-right: 0.5rem;
+            padding-left: 2px;
+        }
+
+        a {
+            white-space: nowrap;
+
+            i.fa-user-lock {
+                padding-left: 0.2rem;
+            }
+
+            &:hover {
+                color: $light;
+
+                i {
+                    color: $light;
+                }
+            }
+        }
+
+        .col-footer {
+            padding: 0 0.5rem 1rem 0;
+            position: relative;
+        }
+
+        .col-footer-contact {
+            address span {
+                white-space: nowrap;
+            }
+        }
+
+        .embed-icon {
+            border-radius: 15px;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 2px;
+            color: transparent;
+            height: 33px;
+
+            &.ballejaune {
+                background-image: url("../images/dark-ballejaune.png");
+                background-size: 150px 30px;
+                width: 172px;
+                margin-left: -6px;
+            }
+
+            &.facebook {
+                background-image: url("../images/facebook-circle.png");
+                background-size: 33px 33px;
+                width: 33px;
+            }
+
+            &.instagram {
+                background-image: url("../images/instagram.png");
+                background-size: 33px 33px;
+                width: 33px;
+            }
+        }
+
+        a:hover {
+            .ballejaune {
+                background-image: url("../images/light-ballejaune.png");
+            }
+        }
+    }
+
+    .bottom {
+        display: flex;
+        background-color: $primary;
+        padding: 1rem;
+        justify-content: space-between;
+        font-size: 0.9em;
+
+        p {
+            margin-bottom: 0;
+        }
+
+        .copyright {
+            text-align: center;
+
+            a {
+                white-space: nowrap;
+
+                &:hover {
+                    color: $light;
+                }
+            }
+        }
+    }
+
+    .item {
+        address {
+            margin-bottom: 1rem;
+        }
+
+        .num-fft {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .private-access {
+        margin-top: 1rem;
+        opacity: 0.5;
+    }
+
+    .widget-getvisitors {
+        font-style: italic;
+        white-space: nowrap;
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (max-width: $fullhd) {
+    #footer {
+        .top {
+            max-width: $widescreen;
+        }
+    }
+}
+@media screen and (max-width: $widescreen) {
+    #footer {
+        .top {
+            max-width: $desktop;
+        }
+    }
+}
+@media screen and (max-width: $desktop) {
+    #footer {
+        font-size: 0.9rem;
+
+        .top {
+            max-width: $tablet;
+        }
+
+        .bottom {
+            font-size: 0.8rem;
+            .copyright {
+                text-align: right;
+            }
+
+            .empty {
+                display: none;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $tablet) and (max-width: $desktop) {
+    #footer .top {
+        .col-footer {
+            flex: 2;
+
+            &.col-footer-book-join {
+                flex: unset;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+
+                .sub-col {
+                    flex: 2;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tablet) {
+    #footer {
+        .sponsors {
+            .sponsor {
+                flex-direction: column;
+
+                span {
+                    border-right: none;
+                    padding-right: 0;
+                    margin-right: 0;
+                    line-height: normal !important;
+                    padding-bottom: 0.5rem;
+                }
+            }
+        }
+
+        .top {
+            flex-direction: column;
+            padding-left: 0;
+
+            p {
+                margin-bottom: 0.3rem;
+            }
+
+            .col-footer {
+                width: $col-footer-width-down-sm;
+                flex: unset;
+                margin: auto;
+
+                &.col-footer-book-join {
+                    display: block;
+                    width: $col-footer-width-down-sm;
+
+                    .sub-col {
+                        width: 100%;
+                        flex: unset;
+                    }
+                }
+            }
+        }
+
+        .bottom {
+            font-size: 0.8rem;
+
+            .copyright {
+                text-align: right;
+            }
+
+            .empty {
+                display: none;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $desktop) {
+    #footer {
+        .top {
+            padding-bottom: 1rem;
+        }
+    }
+}

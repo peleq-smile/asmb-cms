@@ -1,0 +1,124 @@
+<div id="pool{{ pool.id }}" class="panel panel-default">
+    <div class="panel-heading">
+        <span class="title">{{ pool.name }}</span>
+        {% if pool.getLinkFft() %}
+            &nbsp;&bullet;&nbsp;
+            <a href="{{ pool.getLinkFft() }}" target="_blank">
+                <i class="fa fa-external-link"></i> {{ __('general.phrase.go-to-fft') }}
+            </a>
+        {% endif %}
+
+        <div class="pull-right">
+            {{ include('@AsmbCompetition/championship/pool/_ranking-and-meetings-actions.twig', {'pool': pool}) }}
+        </div>
+    </div>
+    <div class="panel-body">
+        <table class="table table-condensed table-teams">
+            {% if poolRanking is not empty %}
+            <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th class="text-center"
+                    title="{{ __('page.view-championship.points.title') }}">{{ __('page.view-championship.points.short_title') }}</th>
+                <th class="text-center"
+                    title="{{ __('page.view-championship.days_played.title') }}">{{ __('page.view-championship.days_played.very_short_title') }}</th>
+                <th class="text-center"
+                    title="{{ __('page.view-championship.match_diff.title') }}">{{ __('page.view-championship.match_diff.very_short_title') }}</th>
+                <th class="text-center"
+                    title="{{ __('page.view-championship.set_diff.title') }}">{{ __('page.view-championship.set_diff.very_short_title') }}</th>
+                <th class="text-center"
+                    title="{{ __('page.view-championship.game_diff.title') }}">{{ __('page.view-championship.game_diff.very_short_title') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for poolRankingRow in poolRanking %}
+                <tr class="{{ poolRankingRow.team_is_club ? 'is-club' }}">
+                    <td class="text-left">{{ loop.index }}&nbsp;</td>
+                    <td>{{ poolRankingRow.team_name }}</td>
+                    <td class="text-center">{{ poolRankingRow.points }}</td>
+                    <td class="text-center">{{ poolRankingRow.days_played }}</td>
+                    <td class="text-center">{{ poolRankingRow.match_diff }}</td>
+                    <td class="text-center">{{ poolRankingRow.set_diff }}</td>
+                    <td class="text-center">{{ poolRankingRow.game_diff }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            {% else %}
+                <tr>
+                    <td><em>{{ __('general.phrase.nothing-to-display') }}</em></td>
+                </tr>
+            {% endif %}
+        </table>
+
+        <table class="table table-condensed table-meetings">
+            {% for day, meetingsOfDay in meetingsPerDay %}
+                {% set oddOrEvenDay = cycle(['odd', 'even'], loop.index0) %}
+
+                {% for meeting in meetingsOfDay %}
+                    <tr class="{{ oddOrEvenDay }}">
+                        {% if loop.first %}
+                            <th class="text-center" colspan="5"
+                                rowspan="{{ meetingsOfDay|length }}">{{ __('general.phrase.meeting-day-short', {'%day%': day}) }}
+                            </th>
+                        {% endif %}
+
+                        <td class="text-right{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
+                        <td class="text-center">
+                            {% set scoreHtml = meeting|score(true) %}
+                            {% set finalDate = meeting.report_date ? meeting.report_date : meeting.date %}
+
+                            {% if scoreHtml is not empty %}
+                                {% set infoDateContent = __('page.view-championship.meeting-date.text', {'%date%': finalDate|date("d/m/Y")}) %}
+                                {% set infoDateContent = (meeting.time) ? infoDateContent ~ ' ' ~ __('page.view-championship.meeting-time.text', {'%time%': meeting.time|date('H:i')}) : infoDateContent %}
+
+                                <span class="info-pop"
+                                      data-title="{{ __('page.view-championship.meeting-date.title') }}"
+                                      data-content="{{ infoDateContent }}">{{ scoreHtml }}</span>
+                            {% else %}
+                                {% set datetimeHtml = finalDate|date('d/m') %}
+
+                                <span class="datetime{% if finalDate != meeting.date %} is-reported{% endif %}"
+                                      title="{% if finalDate != meeting.date %}{{ __('general.phrase.report-date') }}{% endif %}">
+                                    {{ datetimeHtml }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-left{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
+
+                        {% if scoreHtml is not empty %}
+                            <td class="text-center">{{ meeting|matchesSheetLink }}</td>
+                        {% else %}
+                            <td class="text-center">
+                                {% if meeting.home_team_is_club or meeting.visitor_team_is_club %}
+                                    {% if meeting.time %}
+                                        <span class="info-pop"
+                                              data-title="{{ __('page.view-championship.meeting-time.title') }}"
+                                              data-content="{{ __('page.view-championship.meeting-time.text', {'%time%': meeting.time|date(' H:i')}) }}">
+                                                <i class="fa fa-clock-o success"></i>
+                                        </span>
+                                    {% else %}
+                                        <span class="info-pop"
+                                              data-title="{{ __('page.view-championship.meeting-time.title') }}"
+                                              data-content="<em>{{ __('general.phrase.not-set') }}</em>" data-html="true">
+                                                <i class="fa fa-clock-o danger"></i>
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+    <div class="panel-footer clearfix">
+        {% if pool.updated_at %}
+            {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': pool.updated_at|date('d/m/Y'), '%time%': pool.updated_at|date('H:i')}) %}
+        {% else %}
+            {% set updatedAtToDisplay = __('general.phrase.never') %}
+        {% endif %}
+        <em class="pull-right">{{ __('general.phrase.last_updated_at', {'%updated_at%': updatedAtToDisplay}) }}</em>
+    </div>
+</div>

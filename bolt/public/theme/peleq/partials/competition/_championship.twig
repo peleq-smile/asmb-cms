@@ -1,0 +1,57 @@
+{% set poolsPerCategoryName = getPoolsPerCategoryName(record.championship_id, record.championship_categories) %}
+{% set poolRankingPerPoolId = getPoolRankingPerPoolId(record.championship_id, record.championship_categories) %}
+{% set poolMeetingsPerPoolId = getPoolMeetingsPerPoolId(record.championship_id, record.championship_categories) %}
+
+{% set MAX_PER_ROW = 4 %}
+
+{% set lastUpdatedAt = null %}
+
+<section class="section section-competition section-championship">
+
+        <div class="container">
+            <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+
+            <div class="columns">
+                {% set idx = 0 %}
+                {% for categoryName, pools in poolsPerCategoryName %}
+                    {% if pools is not empty %}
+                        {% for pool in pools %}
+
+                            {% if loop.first and (pools|length + (idx % MAX_PER_ROW)) > MAX_PER_ROW %}
+                                {% set nbEmptyBlock = (pools|length + (idx % MAX_PER_ROW)) - MAX_PER_ROW %}
+                                {% for i in 0..nbEmptyBlock %}
+                                    {% if (idx % MAX_PER_ROW) != 0 %}
+                                        <div class="column is-{{ MAX_PER_ROW-1 }} is-invisible-desktop is-hidden-touch"></div>
+                                        {% set idx = idx+1 %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+
+                            <div class="column is-{{ MAX_PER_ROW-1 }}">
+                                {% if poolsPerCategoryName|length > 1 and (loop.first or prevCategoryName != categoryName) %}
+                                    <h2 class="title">{{ categoryName }}</h2>
+                                    {% set prevCategoryName = categoryName %}
+                                {% elseif poolsPerCategoryName|length > 1 %}
+                                    <h2 class="title is-invisible">{{ categoryName }}</h2>
+                                {% endif %}
+
+                                {{ include('partials/competition/championship/_pool.twig', {
+                                    'poolRanking': poolRankingPerPoolId[pool.id],
+                                    'meetingsPerDay': poolMeetingsPerPoolId[pool.id],
+                                }) }}
+                            </div>
+                            {% set idx = idx+1 %}
+
+                            {# Date de dernière mise à jour#}
+                            {% if lastUpdatedAt == null or lastUpdatedAt < pool.updated_at %}
+                                {% set lastUpdatedAt = pool.updated_at %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+
+                {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': lastUpdatedAt|date('d/m/Y'), '%time%': lastUpdatedAt|date('H\\hi')}) %}
+                <span class="last-updated-at">{{ __('general.phrase.last_updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>
+            </div>
+        </div>
+    </section>

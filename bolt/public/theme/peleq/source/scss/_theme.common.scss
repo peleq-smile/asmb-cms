@@ -1,0 +1,315 @@
+//--- Text
+.text-primary {
+    color: $primary !important;
+}
+
+.text-secondary {
+    color: $secondary !important;
+}
+.text-default {
+    color: $text !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.line-height-1 {
+    line-height: 1;
+}
+
+.pcoord {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
+
+//--- Layout
+#main-content {
+    h1.title {
+        color: $text;
+        font-weight: bold;
+
+        strong {
+            color: $secondary;
+        }
+    }
+}
+
+.container {
+    .pagination {
+        justify-content: center;
+    }
+
+    .messages-container {
+        padding: 2rem;
+        text-align: center;
+
+        .alert-danger {
+            color: $lost;
+        }
+        .alert-success {
+            color: $win;
+        }
+        .close {
+            display: none;
+        }
+    }
+}
+
+/* Message d'alerte statique */
+.static-alert-btn {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    background: $secondary-light-transparent;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-weight: 400;
+    z-index: 10000;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.4);
+    margin-right: 1rem;
+
+    span {
+        font-size: 1.2rem;
+        color: $red;
+        font-weight: bold;
+        cursor: pointer;
+
+        &:before {
+            font-family: "Font Awesome 5 Free";
+            content: "\f05a";
+            padding-right: 0.5rem;
+        }
+    }
+
+    &:active, &.active {
+        background: $secondary-transparent;
+    }
+
+    &.active {
+        span {
+            &:before {
+                font-family: "Font Awesome 5 Free";
+                content: "\f057";
+                padding-right: 0.5rem;
+            }
+        }
+    }
+}
+.static-alert-container {
+    position: fixed;
+    bottom: 5rem;
+    left: 1rem;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-weight: 400;
+    z-index: 10000;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.4);
+    margin-right: 1rem;
+    background: $secondary-transparent;
+
+    h2 {
+        font-size: 1.2rem;
+        color: $red;
+        font-weight: bold;
+        padding-bottom: 1rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+        margin: 0.25rem 0 0 0 ;
+        color: #2c2d32;
+        font-weight: bold;
+    }
+
+    a {
+        font-size: 1.1rem;
+    }
+}
+
+@media screen and (min-width: $desktop) {
+    .static-alert-btn {
+        bottom: 2.25rem;
+        left: 2.25rem;
+    }
+    .static-alert-container {
+        bottom: 6.25rem;
+        left: 2.25rem;
+        max-width: 40%;
+
+        p {
+            font-size: 1rem;
+        }
+    }
+}
+
+.columns.white-framed {
+    align-items: center;
+    background: linear-gradient(to right, $white 50%, $body-background-color);
+    padding: 2.5rem 4rem;
+
+    .column {
+        img {
+            border: solid 8px $primary;
+            display: block;
+            margin: auto;
+        }
+    }
+}
+
+.sticky .hero {
+    margin-top: 5rem;
+}
+
+mark {
+    background-color: $secondary-xlight;
+}
+
+//--- Helpers
+.anchor {
+    display: block;
+    height: 210px;
+    margin-top: -210px;
+    visibility: hidden;
+}
+
+.space {
+    display: block;
+    visibility: hidden;
+    height: 2rem;
+}
+
+.empty-content {
+    min-height: 3rem;
+    padding: 2rem;
+}
+
+.center {
+    text-align: center;
+    margin: auto;
+}
+
+.airy {
+    margin: 1.5rem auto;
+}
+
+//--- Scroll up and down
+.scrollup {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    display: none;
+    color: white;
+    background-color: $secondary;
+    opacity: 0.6;
+    font-size: 1.4rem;
+    text-align: center;
+    line-height: 50px;
+    z-index: 100;
+}
+
+.scrollto {
+    width: 80px;
+    height: 80px;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    display: none;
+    color: white;
+    background-color: $dark;
+    opacity: 0.75;
+    font-size: 1.5rem;
+    text-align: center;
+    line-height: 80px;
+    z-index: 100;
+
+    &:hover {
+        color: $secondary;
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (min-width: $desktop) {
+    #main-content .container {
+        max-width: 94%;
+    }
+
+    .empty-content {
+        min-height: 20rem;
+    }
+
+    .scrollto {
+        span {
+            position: absolute;
+            background: $dark;
+            white-space: nowrap;
+            top: 0;
+            left: 90px;
+            padding: 0 15px;
+            opacity: 0;
+            transition: opacity 0.5s;
+
+            &:before {
+                content: "";
+                position: absolute;
+                right: 100%;
+                top: 26px;
+                width: 0;
+                height: 0;
+                border-top: 13px solid transparent;
+                border-right: 8px solid $dark;
+                border-bottom: 13px solid transparent;
+            }
+        }
+
+        &:hover {
+            span {
+                opacity: 1;
+
+                &:before {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $desktop) {
+    .columns.white-framed {
+        padding: 0;
+    }
+
+    .scrollup {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1rem;
+    }
+
+    .scrollto {
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        font-size: 1.1rem;
+
+        span {
+            display: none;
+        }
+    }
+}

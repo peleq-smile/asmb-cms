@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="{{ htmllang() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    {# make sure we always display a proper title: The record's title if there is one, appended with the
+       sitename. If there is no title, we append the sitename with the payoff, if there is one. #}
+    <title>
+        {%- if record.title is defined %}{{ record.title|striptags }} | {% endif -%}
+        {{ config.get('general/sitename') -}}
+        {% if record.title is not defined and config.get('general/payoff') %} | {{ config.get('general/payoff') }}{% endif -%}
+        {% if block('head_title') is defined %} - {{ block('head_title') }}{% endif -%}
+    </title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png', 'theme') }}"/>
+
+    <link rel="stylesheet" href="{{ asset('css/theme.min.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/bulma.min.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome-free-5.12.1-web/css/all.min.css', 'theme') }}">
+    <link rel="stylesheet" href="{{ asset('css/googlefonts/fonts.min.css', 'theme') }}">
+
+    {% block head %}{% endblock head %}
+</head>
+
+<body>
+    <div id="main-content">
+        {% block main %}
+        {% endblock main %}
+    </div>
+</body>
+</html>

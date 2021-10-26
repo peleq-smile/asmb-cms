@@ -1,0 +1,430 @@
+{% if parsedData.error is defined %}
+    <div class="box empty-content text-left">
+        <p>Impossible d'afficher le contenu du tournoi.</p>
+        <p>{{ parsedData.error }}</p>
+    </div>
+{% else %}
+    {# Navigation #}
+    <nav class="box">
+        <ul class="columns">
+            <li class="column control">
+                <label for="select-table" class="label">Tableaux :</label>
+                <div class="select">
+                    <select id="select-table" data-hash="#tab">
+                        <option value="-">-</option>
+                        {% for idx, tableData in parsedData.tables %}
+                            <option value="table-{{ idx }}">{{ tableData.name|raw }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </li>
+            <li class="column control">
+                <label for="select-planning" class="label">Planning :</label>
+                <div class="select">
+                    <select id="select-planning" data-hash="#pla">
+                        <option value="-">-</option>
+                        {% for day, planningByDayData in parsedData.planning %}
+                            {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
+                            <option
+                                {% if plaDay == cleanedDay %}selected="selected"{% endif %}
+                                value="{{ cleanedDay }}">{{ day }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </li>
+            {% if parsedData.result is not empty %}
+                <li class="column control">
+                    <label class="label is-invisible">&nbsp;</label>
+                    <a href="{{ app.request.uri }}#res" data-hash="#res" class="button">Résultats</a>
+                </li>
+            {% endif %}
+            <li class="column control">
+                <label class="label is-invisible">&nbsp;</label>
+                <a href="{{ app.request.uri }}#jou" data-hash="#jou" class="button">Liste des joueurs</a>
+            </li>
+        </ul>
+    </nav>
+
+    {# Liste de joueurs #}
+    {{ _self.playersListView(parsedData.players) }}
+
+    {# Vue individuelle joueur #}
+    {% for playerData in parsedData.players %}
+        {{ _self.playerView(playerData) }}
+    {% endfor %}
+
+    {# Résultats #}
+    {% set resultsDisplay = (display == '#res') ? 'block' : 'none' %}
+    {{ _self.resultsView(parsedData.result, resultsDisplay) }}
+
+    {# Planning #}
+    {% set planningDisplay = (display starts with '#pla') ? 'block' : 'none' %}
+    {{ _self.planningView(parsedData.planning, planningDisplay, plaDay, displayTimes) }}
+
+    {# Tableaux #}
+    {% for idxTable, tableData in parsedData.tables %}
+        <div class="tables-container" id="table-{{ idxTable }}" style="display: none">
+            <div class="container">
+                <h2 class="title is-size-3 is-size-4-mobile">{{ tableData.name|raw }}</h2>
+            </div>
+
+            <div class="table-container">
+                {% if tableData.isPool is defined and tableData.isPool %}
+                    <div class="container">
+                        <div class="box">
+                            {{ _self.pool(tableData.boxes, parsedData.playersById) }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="table-container-centered">
+                        {% for boxesData in tableData.boxes %}
+                            <div class="table-container-part">
+                                {{ _self.tableItem(boxesData) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    {# Date de der màj #}
+    {% if parsedData.info.updatedAt is defined %}
+        <div>
+            <br><br>
+            <em class="has-text-grey-light is-size-7">Dernière mise à jour le {{ parsedData.info.updatedAt }}</em>
+        </div>
+    {% endif %}
+{% endif %}
+
+{% macro planningView(planning, planningDisplay, planningDay, displayTimes) %}
+    <div class="box planning-container" style="display: {{ planningDisplay }}">
+        {% if planning|length > 1 %}
+            <ul class="planning-nav is-hidden-touch">
+                {% for day, planningByDayData in planning %}
+                    {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
+                    <li><a href="{{ app.request.uri }}#pla:{{ cleanedDay }}"
+                           {{ (planningDay == cleanedDay)? ' class="is-active"' }};
+                           data-hash="#pla"
+                           data-param="{{ cleanedDay }}">{{ day|slice(0, 7) }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% for day, planningByDayData in planning %}
+            {% set cleanedDay = day|replace({'.':'', ' ':'', '1er':'1', 'é':'e', 'û':'u'}) %}
+
+            <div class="container planning-day" id="planning-day-{{ cleanedDay }}"
+                 style="display: {{ (planningDay == cleanedDay) ? 'block':'none' }};">
+                <div class="columns is-gapless">
+                    <div class="column is-one-fifth-mobile"><strong class="day">{{ day }}</strong></div>
+                    <div class="column is-one-quarter-desktop is-hidden-mobile"><strong></strong>
+                    </div>
+                    <div class="column is-one-quarter-desktop is-hidden-mobile"><strong></strong>
+                    </div>
+                    <div class="column is-hidden-mobile"><strong></strong></div>
+                    <div class="column  is-one-quarter-desktop is-hidden-mobile"><strong></strong>
+                    </div>
+                </div>
+
+                {% for time, planningByTimeData in planningByDayData %}
+                    {% for place, planningByPlaceData in planningByTimeData %}
+                        {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
+                            <div class="columns is-gapless is-mobile is-multiline">
+                                {% if displayTimes %}
+                                <div class="column is-one-fifth-mobile">{{ (time != '00h') ? time : '-' }}</div>
+                                {% endif %}
+                                <div class="column is-one-quarter-desktop is-four-fifths-mobile has-text-right-mobile">{{ planningByPlaceData.table|raw }}</div>
+                                <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }} is-two-fifths-mobile">
+                                    {% if planningByPlaceData.player1.name is not empty %}
+                                        <a class="player-link text-secondary"
+                                           href="#jou:{{ planningByPlaceData.player1.jid }}"
+                                           data-hash="#jou" data-param="{{ planningByPlaceData.player1.jid }}"
+                                        >{{ planningByPlaceData.player1.name }}</a>
+                                        <em>{{ planningByPlaceData.player1.rank }}</em>
+                                        <div class="club">{{ planningByPlaceData.player1.club }}</div>
+                                    {% elseif planningByPlaceData.player1.qualif is not empty %}
+                                        <strong class="score is-size-6">
+                                            Q{{ planningByPlaceData.player1.qualif }}</strong>
+                                    {% elseif planningByPlaceData.player2.name is not empty %}
+                                        <a class="player-link text-secondary"
+                                           href="#jou:{{ planningByPlaceData.player2.jid }}"
+                                           data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
+                                        >{{ planningByPlaceData.player2.name }}</a>
+                                        <em>{{ planningByPlaceData.player2.rank }}</em>
+                                        <div class="club">{{ planningByPlaceData.player1.club }}</div>
+                                    {% else %}
+                                        <span>?</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="column has-text-centered-mobile"><strong class="score">{{ planningByPlaceData.score }}</strong></div>
+
+                                <div class="column is-one-quarter-desktop is-two-fifths-mobile">
+                                    {% if planningByPlaceData.player1.name is not empty and planningByPlaceData.player2.name is not empty %}
+                                        <a class="player-link text-secondary"
+                                           href="#jou:{{ planningByPlaceData.player2.jid }}"
+                                           data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
+                                        >{{ planningByPlaceData.player2.name }}</a>
+                                        <em>{{ planningByPlaceData.player2.rank }}</em>
+                                        <div class="club">{{ planningByPlaceData.player2.club }}</div>
+                                    {% elseif planningByPlaceData.player2.qualif is not empty %}
+                                        <strong class="score is-size-6">
+                                            Q{{ planningByPlaceData.player2.qualif }}</strong>
+                                    {% else %}
+                                        <span>?</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro resultsView(results, resultsDisplay) %}
+    {% if results is not empty %}
+        <div class="box results-container" style="display: {{ resultsDisplay }}">
+            <div class="container">
+                <h2 class="title">Résultats du tournoi</h2>
+                {% for resultName, resultData in results %}
+                    <h3 class="title">{{ resultName|raw }}</h3>
+
+                    {% if resultData.winner is defined %}
+                        <div class="columns is-gapless">
+                            <div class="column is-one-fifth-desktop is-size-5"><strong>Vainqueur :</strong></div>
+                            <div class="column is-two-fifths-desktop is-size-5 line-height-1 winner-name">
+                                <a class="player-link text-primary is-size-5 winner-name"
+                                   href="#jou:{{ resultData.winner.jid }}"
+                                   data-hash="#jou" data-param="{{ resultData.winner.jid }}"
+                                >{{ resultData.winner.name }}
+                                    <span class="is-italic">({{ resultData.winner.rank }})</span>
+                                </a>
+                                {% if resultData.winner.club is not empty %}
+                                    <br><span class="is-size-7 is-normal">{{ resultData.winner.club }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="column is-one-fifth-desktop score is-size-5">{{ resultData.winner.score }}</div>
+                        </div>
+                        {% if resultData.finalist is defined %}
+                            <div class="columns is-gapless">
+                                <div class="column is-one-fifth-desktop is-size-5">Finaliste :</div>
+                                <div class="column is-two-fifths-desktop name is-size-5 line-height-1">
+                                    <a class="player-link text-secondary" href="#jou:{{ resultData.finalist.jid }}"
+                                       data-hash="#jou" data-param="{{ resultData.finalist.jid }}"
+                                    >{{ resultData.finalist.name }}
+                                        <span class="is-italic">({{ resultData.finalist.rank }})</span>
+                                    </a>
+                                    {% if resultData.finalist.club is not empty %}
+                                        <br><span
+                                        class="is-size-7 is-normal text-secondary">{{ resultData.finalist.club }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        {% for finalist in resultData.finalists %}
+                            <div class="columns is-gapless">
+                                <div class="column is-one-fifth-desktop">Finaliste :</div>
+                                <div class="column is-two-fifths-desktop name line-height-1">
+                                    <a class="player-link text-secondary" href="#jou:{{ resultData.finalist.jid }}"
+                                       data-hash="#jou" data-param="{{ resultData.finalist.jid }}"
+                                    >{{ finalist.name }}
+                                        <span class="is-italic">({{ finalist.rank }})</span>
+                                    </a>
+                                    {% if finalist.club is not empty %}
+                                        <br><span class="is-size-7 is-normal text-secondary">{{ finalist.club }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro playersListView(players) %}
+    <div class="box players-container" style="display: none;">
+        <div class="container">
+            <h2 class="title">Liste des {{ players|length }} joueurs</h2>
+            <div class="columns is-gapless is-mobile is-multiline">
+                <span class="column is-hidden-mobile">Catégorie</span>
+                <span class="column is-hidden-desktop">Cat.</span>
+                <span class="column is-one-third-desktop is-half-mobile">
+                    NOM<span class="is-hidden-mobile"> Prénom</span>
+                    <span class="is-hidden-desktop">(+ club)</span>
+                </span>
+                <span class="column">Classement</span>
+                <span class="column is-hidden-mobile">Club</span>
+            </div>
+            {% for playersData in players %}
+                <div class="columns is-gapless is-mobile is-multiline">
+                    <span class="column">{{ playersData.cat }}</span>
+                    <span class="column is-one-third-desktop is-half-mobile">
+                         <a class="player-link text-secondary" href="#jou:{{ playersData.jid }}"
+                            data-hash="#jou" data-param="{{ playersData.jid }}"
+                         >{{ playersData.name }}</a>
+                        <span class="is-hidden-desktop">
+                            {% if playersData.club is not empty %}<br>({{ playersData.club }}){% endif %}
+                        </span>
+                    </span>
+                    <span class="column">{{ playersData.rank }}</span>
+                    <span class="column is-hidden-mobile">{{ playersData.club }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro playerView(player) %}
+    {% if player is not empty %}
+        <div class="box one-player-container" id="jou-{{ player.jid }}" style="display: none;">
+            <div class="container">
+                <div class="columns is-multiline is-gapless">
+                    <div class="column is-one-fifth">&nbsp;</div>
+                    <div class="column is-four-fifths"><strong
+                            class="is-size-5 text-secondary player-name">{{ player.name }}</strong></div>
+
+                    <div class="column is-one-fifth is-size-6">Classement :</div>
+                    <div class="column is-four-fifths is-size-6"><em class="rank">{{ player.rank }}</em></div>
+                    <div class="column is-full">&nbsp;</div>
+
+                    <div class="column is-one-fifth is-size-6">Club :</div>
+                    <div class="column is-four-fifths is-size-6"><span>{{ player.club }}</span></div>
+                    <div class="column is-full">&nbsp;</div>
+
+                    <div class="column is-one-fifth is-size-6">Matchs :</div>
+                    <div class="column is-four-fifths">
+                        {% for tableName, matchesByTable in player.matches %}
+                            <div class="table-name">{{ tableName|raw }}</div>
+                            {% for match in matchesByTable %}
+                                <div class="columns is-multiline is-gapless">
+                                    <div class="column">
+                                        <span>{{ match.date }}</span>
+                                    </div>
+                                    <div class="column is-one-third-desktop">
+                                        <span>
+                                            <a class="player-link"
+                                               href="{{ app.request.uri }}#jou:{{ match.player.jid }}"
+                                               data-hash="#jou" data-param="{{ match.player.jid }}"
+                                            >{{ match.player.name }}</a>
+                                            <em>{{ match.player.rank }}</em>
+                                        </span>
+                                    </div>
+                                    <div class="column">
+                                        <span>{{ match.victory is null ? 'à jouer' : match.victory ? 'Victoire':'Défaite' }}</span>
+                                    </div>
+                                    <div class="column">
+                                        <span class="score">{{ match.score }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro tableItem(tableData) %}
+    {% if tableData is not empty %}
+        <div class="item">
+            <div class="item-parent">
+                <p>
+                    {% if tableData.date is defined and tableData.date is not empty %}
+                        <span class="date">{{ tableData.date }}</span><br><br>
+                    {% endif %}
+
+                    {% if tableData.name is defined %}
+                        <span class="name">
+                            <a class="player-link text-default" href="#jou:{{ tableData.jid }}"
+                               data-hash="#jou" data-param="{{ tableData.jid }}"
+                            >{{ tableData.name }}</a>
+                            <em>{{ tableData.rank }}</em>
+                        </span><br>
+                        {% if tableData.club is defined and tableData.club is not empty %}
+                            <span class="club">{{ tableData.club }}</span><br>
+                        {% endif %}
+                    {% elseif tableData.qualif is defined %}
+                        <strong class="name score is-size-6"> Q{{ tableData.qualif }}</strong><br>
+                    {% else %}
+                        <span class="name"> ?</span><br>
+                    {% endif %}
+
+                    {% if tableData.score is defined and tableData.score is not empty %}
+                        <strong class="score">{{ tableData.score }}</strong><br>
+                    {% endif %}
+                </p>
+            </div>
+            {% if tableData.prevBtm is defined or tableData.prevTop is defined %}
+                <div class="item-childrens">
+                    {% if tableData.prevTop is defined %}
+                        <div class="item-child">
+                            {{ _self.tableItem(tableData.prevTop) }}
+                        </div>
+                    {% endif %}
+                    {% if tableData.prevBtm is defined %}
+                        <div class="item-child">
+                            {{ _self.tableItem(tableData.prevBtm) }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro pool(boxesData, playersById) %}
+    <table class="table is-fullwidth">
+        <thead>
+        <tr>
+            {# TODOpeleq :changer le width qui est mis en dur là, car on peut avoir des poules de plus de 3j !!! #}
+            <th width="25%"></th>
+            {% for playerIdRow, boxesRowData in boxesData %}
+                {% set playerInfo = playersById[playerIdRow] %}
+                <th width="25%" style="font-size: 1.4rem">
+                    {{ playerInfo.name }}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for playerIdRow, boxesRowData in boxesData %}
+            <tr>
+                <th style="vertical-align: middle; font-size: 1.4rem;">
+                    <a class="player-link"
+                       href="#jou:{{ playerIdRow }}" style="font-weight: bold; color: #363636;"
+                       data-hash="#jou" data-param="{{ playerIdRow }}"
+                    >{{ playersById[playerIdRow].name }}</a><br>
+                    <em class="rank is-size-6">{{ playersById[playerIdRow].rank }}</em>
+                </th>
+
+                {% for playerIdCol, boxData in boxesRowData %}
+                    {% if boxData is not empty and boxData.date is defined %}
+                        <td class="">
+                            <span class="date" style="color: #d1a633;">{{ boxData.date }}</span>
+                            {% if boxData.jid is not empty %}
+                                <br><strong class="is-size-5" style="color: #6e9c6d">{{ boxData.name }}</strong>
+                                <br><strong class="score">{{ boxData.score }}</strong>
+                            {% else %}
+                                <br><br>
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td style="background: #dbdbdb">
+                            <br><br><br>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}

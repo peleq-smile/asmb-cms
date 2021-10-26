@@ -1,0 +1,161 @@
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_nav 'tournament-menu' %}
+
+{% block page_title __('page.edit-scores.tournament.title') %}
+
+{% block page_main %}
+    <div class="competition-page-main">
+        {% import '@bolt/_macro/_macro.twig' as macro %}
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="panel-title h1">
+                    <strong style="font-size: 3rem"><i class="fa fa-lightbulb-o"></i></strong>
+                    <strong>ASTUCE SAISIE DES SCORES</strong>
+                </div>
+                <p class="h4">
+                    Vous pouvez <strong>omettre les slashes (/) et les espaces</strong> pour une saisie plus rapide.
+                </p>
+                <p class="h5">
+                    Ex : <code>6263</code> devient automatiquement <code>6/2 6/3</code>
+                </p>
+            </div>
+        </div>
+
+        {# Barre d'actions du haut #}
+        {% if tournament is not null %}
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <a href="{{ path('tournament') }}" class="btn btn-default">
+                            <i class="fa fa-chevron-circle-left"></i>
+                            {{ __('general.phrase.back') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if boxesByDay is not empty %}
+            {% form_theme context.form 'form_bolt_layout.twig' %}
+            {{ form_start(context.form) }}
+            {% for day, boxes in boxesByDay %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h2 class="h4">{{ day }}</h2></div>
+                    <div class="panel-body">
+
+                        {% for box in boxes %}
+                            <div class="row row-no-gutters">
+                                {# Heure du match #}
+                                <div class="col-md-1 col-xs-2 col-with-no-form-control text-center-md text-warning">
+                                    <h3>{{ box.datetime|date('H\\hi') }}</h3>
+                                </div>
+
+                                {# Nom du tableau #}
+                                <div class="col-md-3 col-xs-10 col-with-no-form-control text-right-xs">
+                                    <h3>
+                                        {% if tournament is not null %}
+                                        <a href="{{ path('tournamenttable', {'tableId': box.table_id}) }}">
+                                            <i class="fa fa-external-link-square"></i> {{ box.tableName }}
+                                        </a>
+                                        {% else %}
+                                            {{ box.tableName }}
+                                        {% endif %}
+                                    </h3>
+                                </div>
+
+                                {# Nom des joueurs #}
+                                <div class="col-md-5 col-xs-12 col-with-no-form-control d-flex">
+                                    <div class="col-md-3 col-xs-5 text-right-md text-left-xs">
+                                        <span class="text-info">
+                                            {% if box.boxTop.player_name is not empty %}
+                                                {{ box.boxTop.player_name }}
+                                                {% if box.boxTop.player_rank is not empty %}
+                                                    <em>({{ box.boxTop.player_rank }})</em>
+                                                {% endif %}
+                                            {% elseif box.boxBtm.player_name is not empty %}
+                                                {{ box.boxBtm.player_name }}
+                                                {% if box.boxBtm.player_rank is not empty %}
+                                                    <em>({{ box.boxBtm.player_rank }})</em>
+                                                {% endif %}
+                                            {% else %}
+                                                ?
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="col-xs-2 hidden-md visible-xs text-center">&nbsp;-</div>
+
+                                    <span class="separator hidden-xs">&nbsp;-</span>
+
+                                    <span class="text-info">
+                                    {% if box.boxTop.player_name is not empty and box.boxBtm.player_name is not empty %}
+                                        {{ box.boxBtm.player_name }}
+                                        {% if box.boxBtm.player_rank is not empty %}
+                                            <em>({{ box.boxBtm.player_rank }})</em>
+                                        {% endif %}
+                                    {% else %}
+                                        ?
+                                    {% endif %}
+                                    </span>
+                                </div>
+
+                                {# Form du choix du vainqueur + saisie du score #}
+                                <div class="col-md-3 col-xs-12">
+                                    <div class="col-md-7 col-xs-7">
+                                        <label for="{{ context.form['box-' ~ box.id ~ '_winner'].vars.id }}"
+                                               class="control-label winner success">
+                                            <strong>{{ __('page.edit-tournament.box.winner') }} :</strong>
+                                        </label>
+                                        {{ form_widget(context.form['box-' ~ box.id ~ '_winner']) }}
+                                    </div>
+                                    <div class="col-md-5 col-xs-5">
+                                        <label for="{{ context.form['box-' ~ box.id ~ '_score'].vars.id }}"
+                                               class="control-label winner success">
+                                            <strong>{{ __('page.edit-tournament.box.score') }} :</strong>
+                                        </label>
+                                        {{ form_widget(context.form['box-' ~ box.id ~ '_score']) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            {# Barre d'actions du bas #}
+            {% if tournament is not null %}
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <div class="pull-left">
+                            <a href="{{ path('tournament') }}" class="btn btn-default">
+                                <i class="fa fa-chevron-circle-left"></i>
+                                {{ __('general.phrase.back') }}
+                            </a>
+                        </div>
+                        <div class="pull-right">
+                            {{ form_widget(context.form['save_all']) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {{ form_end(context.form) }}
+        {% else %}
+            <div class="panel panel-default">
+                <div class="panel-body bg-success">
+                    <h2 class="mt-md mb-md text-center">Oh... mais tout a déjà été saisi :-)</h2>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+
+    <script src="{{ asset('js/page/backend/competition.js', 'theme') }}"></script>
+    <script>
+        $(function () {
+            $('form input[id$=_score]').bind('change', function (event) {
+                onScoreTyping($(event.target));
+            });
+        });
+    </script>
+{% endblock page_main %}

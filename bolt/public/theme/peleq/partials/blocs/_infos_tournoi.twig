@@ -1,0 +1,70 @@
+{# Make sure the index data is defined. #}
+{% if index is not defined %}
+    {% set index = 1 %}
+{% endif %}
+
+<div class="columns block {% if block.image %}block-with-image{% endif %} block-{{ (index is odd) ? 'odd':'even' }}">
+    <div class="column block-content">
+        {% if block.contentlink %}
+            <h2 class="title"><a href="{{ block.contentlink }}">{{ block.title }}</a></h2>
+        {% else %}
+            <h2 class="title">{{ block.title }}</h2>
+        {% endif %}
+
+        {% if block.subtitle %}
+            <h3 class="title">{{ block.subtitle }}</h3>
+        {% endif %}
+
+        {% if block.subtitle2 %}
+            <h4 class="is-size-5">{{ block.subtitle2|nl2br }}</h4>
+        {% endif %}
+
+        {% if block.description %}
+            <div>{{ block.description|nl2br }}</div>
+        {% endif %}
+
+        <div class="columns">
+            <div class="column inscriptions">
+                <p class="title">{{ __('general.phrase.inscriptions') }}
+                    {% if block.inscriptions_closing_without_notice %}
+                        <span class="notice">({{ __('general.phrase.inscriptions_closing_without_notice') }})</span>
+                    {% endif %}
+                </p>
+                <ul>
+                    {% if block.inscription_online_text and block.inscription_online_url %}
+                    <li class="entry"><a href="{{ block.inscription_online_url }}" target="_blank"
+                           title="{{ block.inscription_online_text|raw }}">{{ block.inscription_online_text|raw }}</a>
+                    </li>
+                    {% endif %}
+
+                    {% if block.inscription_contact_text %}
+                        <li class="entry">{{ block.inscription_contact_text }} :</li>
+                    {% endif %}
+                    {% if block.inscription_contact_mail %}
+                        <li>par email à <a href="mailto:{{ block.inscription_contact_mail }}">{{ block.inscription_contact_mail }}</a></li>
+                    {% endif %}
+                    {% if block.inscription_contact_phone %}
+                        <li>{{ block.inscription_contact_mail ? 'ou ' }}par téléphone au {{ block.inscription_contact_phone }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <a href="{{ block.link }}" class="button see-more"
+           title="{{ block.contentlink_label|default(__('general.phrase.more-details')) }}">
+            {{ block.contentlink_label|default(__('general.phrase.more-details')) }}
+        </a>
+    </div>
+
+    {% if block.image %}
+        {% set height = block.image_height %}
+        {% set width = block.image_width %}
+
+        <div class="column block-image">
+            <a class="image" href="{{ block.link }}"
+               style="background: url('{{ asset(block.image, 'files') }}') no-repeat center; background-size: cover; height: 100%; width: {{ width }}px;">
+                <span class="see-more">{{ __('general.phrase.more-infos') }}</span>
+            </a>
+        </div>
+    {% endif %}
+</div>

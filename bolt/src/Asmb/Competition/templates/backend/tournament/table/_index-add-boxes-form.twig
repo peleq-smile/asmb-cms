@@ -1,0 +1,12 @@
+<form method="get" class="form-inline mt-md"
+      action="{{ path('tournamenttableboxesadd', {'tableId': table.id}) }}">
+    <div class="form-group">
+        <span>{{ __('page.edit-tournament.boxes.add') }}</span>
+        <input id="out" type="number" min="1" max="20" name="out" class="form-control" value="1">
+        <label for="out" class="label">{{ __('page.edit-tournament.boxes.out') }}</label>
+        <span>{{ __('general.phrase.on') }}</span>
+        <input id="round" type="number" min="1" max="20" name="round" class="form-control" value="4">
+        <label for="round" class="label">{{ __('general.phrase.rounds') }}</label>
+        <button type="submit" class="btn btn-primary">{{ __('general.phrase.ok') }}</button>
+    </div>
+</form>

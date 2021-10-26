@@ -1,0 +1,9 @@
+{% if isallowed('competition:edit') %}
+    <a href="{{ path('poolfetch', {'championshipId': pool.championship_id, 'poolId': pool.id}) }}"
+       class="btn btn-sm btn-default"
+       title="{{ __('page.view-pool.fetch-ranking-and-meetings.title') }}"
+    >
+        <i class="fa fa-refresh"></i>
+        <span>{{ __('general.phrase.refresh') }}</span>
+    </a>
+{% endif %}

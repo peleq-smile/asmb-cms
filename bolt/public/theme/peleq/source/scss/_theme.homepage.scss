@@ -1,0 +1,373 @@
+.homepage {
+    .columns.block {
+        flex-direction: row-reverse;
+        margin-bottom: 4rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        h2, h3 {
+            color: $secondary;
+
+            a {
+                color: $secondary;
+
+                &:hover {
+                    color: $dark;
+                }
+            }
+        }
+
+        h4 {
+            font-weight: bold;
+            color: $dark;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+
+            &.title {
+                font-size: 1.7rem;
+            }
+        }
+
+        &.block-with-image {
+            .block-content {
+                margin-top: $block-with-image-gap + 2rem;
+            }
+            .block-image {
+                a.image {
+                    transition: all .2s ease-in-out;
+
+                    .see-more {
+                        display: none;
+                        font-size: 3em;
+                        background: $block-with-image-lg;
+                        color: $dark;
+                        position: absolute;
+                        top: 0;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        margin: auto 20%;
+                        height: 10rem;
+                        line-height: 10rem;
+                        vertical-align: middle;
+                        text-align: center;
+                    }
+
+                    &:hover {
+                        .see-more {
+                            display: inline;
+                        }
+                    }
+                }
+            }
+        }
+
+        .block-content {
+            h3 {
+                font-size: 1.6rem;
+                color: $primary;
+            }
+
+            .see-more {
+                margin-top: 2rem;
+            }
+
+            p {
+                margin-bottom: 0.6rem;
+            }
+
+            ul {
+                margin: 0.5rem 0;
+
+                li {
+
+                    &:before {
+                        vertical-align: top;
+                        padding-right: 8px;
+                        font-family: "Font Awesome 5 Free";
+                        content: '\f058';
+                        font-weight: bold;
+                    }
+
+                    & > span {
+                        display: inline-block;
+                        max-width: 90%;
+                    }
+                }
+            }
+
+            dl {
+                margin: 1rem 0;
+
+                dt {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                    line-height: 1;
+                }
+
+                dd {
+                    line-height: 1.4rem;
+                }
+
+                &.location {
+                    dd {
+                        font-style: italic;
+                    }
+                }
+            }
+
+            .smaller {
+                font-size: 0.85rem;
+            }
+
+            .inscriptions, .commitment-rights {
+                margin-top: 1rem;
+                
+                ul li {
+                    &:before {
+                        visibility: hidden;
+                    }
+                    &.entry:before {
+                        content: '\f0a4';
+                        font-weight: normal;
+                        visibility: visible;
+                    }
+                }
+            }
+
+            .columns {
+                .title {
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    margin-bottom: 1rem;
+                    line-height: 1;
+                    color: $text;
+
+                    .notice {
+                        font-weight: normal;
+                        font-style: italic;
+                        font-size: 0.9rem;
+                    }
+                }
+            }
+        }
+
+        &.block-even {
+            h2 {
+                color: $primary;
+
+                a {
+                    color: $primary;
+
+                    &:hover {
+                        color: $dark;
+                    }
+                }
+            }
+
+            h3 {
+                color: $secondary;
+
+                a {
+                    color: $secondary;
+
+                    &:hover {
+                        color: $dark;
+                    }
+                }
+            }
+        }
+    }
+
+    .matches {
+        background-color: $white;
+    }
+}
+
+/*****************/
+/** RESPONSIVE  **/
+/*****************/
+@media screen and (max-width: $tablet) {
+    .section.welcome {
+        .column:not(:last-child) {
+            padding-top: 2.5rem;
+            padding-bottom: 0;
+        }
+    }
+
+    .columns.block {
+        h4 {
+            font-size: 1.1rem !important;
+        }
+        .block-content {
+            .column:not(:last-child) {
+                margin-bottom: 1.5rem;
+            }
+        }
+    }
+}
+@media screen and (max-width: $desktop) {
+    .columns.white-framed {
+        padding: 0;
+    }
+
+    .homepage {
+        .columns.block {
+            font-size: 1rem;
+            position: relative;
+            margin-top: 0;
+            margin-bottom: -1rem;
+            padding: 1rem;
+            overflow: hidden;
+
+            &.block-with-image {
+                display: flex;
+                flex-direction: column-reverse;
+
+                .block-content {
+                    margin-top: 0;
+                    position: relative;
+                    height: 100%;
+                    z-index: 2;
+                    background: rgba(255, 255, 255, 0.9);
+                    padding: 1.5rem 1rem 1rem 1rem;
+                }
+
+                .block-image {
+                    a.image {
+                        .see-more {
+                            font-size: 1.5rem;
+                            height: 6rem;
+                            line-height: 6rem;
+                        }
+                    }
+                }
+            }
+
+            &:first-child {
+                margin-top: 1.5rem;
+            }
+        }
+
+        .block-image {
+            padding: 0;
+
+            .image {
+                margin: auto;
+                width: 100% !important;
+
+                img {
+                    max-height: 12rem;
+                    object-fit: cover;
+                }
+            }
+        }
+
+        .block-content {
+            h2 {
+                font-size: 1.8rem !important;
+            }
+            h3 {
+                font-size: 1.4rem !important;
+            }
+            hr {
+                margin: 0.5rem 0;
+            }
+            .see-more {
+                margin-bottom: 0;
+            }
+        }
+
+        .section {
+            padding: 0 1.5rem;
+
+            &.blocks {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            &.matches {
+                margin-top: 0;
+                margin-bottom: 1.5rem;
+
+                h2.title {
+                    padding: 1.5rem 0;
+                    margin-bottom: 0.5rem;
+                }
+
+                .box {
+                    padding: 0.5rem;
+
+                    .table {
+                        font-size: 0.8rem;
+
+                        th {
+                            padding: 8px 4px 0 4px;
+                        }
+
+                        td {
+                            padding: 2px 4px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@media screen and (min-width: $desktop) {
+    .homepage {
+        .columns.block {
+            .block-image {
+                background-color: $secondary;
+                margin-right: $block-with-image-gap + 1rem;
+                padding: 3rem 0 3rem 2rem;
+                max-width: 40%;
+
+                .image {
+                    left: $block-with-image-gap;
+                    text-align: center;
+                    max-width: 100% !important;
+                    border: white solid 8px;
+                    overflow: hidden;
+                    height: 100%;
+
+                    img {
+                        object-fit: cover;
+                        height: 100%;
+                    }
+                }
+
+                a.image {
+                    &:hover {
+                        transform: scale(0.95);
+                    }
+                }
+            }
+
+            &.block-even {
+                flex-direction: row;
+
+                .block-image {
+                    margin-left: $block-with-image-gap + 2rem;
+                    padding-left: 0;
+                    background-color: $primary;
+
+                    .image {
+                        left: auto;
+                        right: $block-with-image-gap;
+                    }
+                }
+            }
+        }
+
+        .section {
+            &.matches {
+                margin-top: 1.5rem;
+                margin-bottom: 3rem;
+            }
+        }
+    }
+}
