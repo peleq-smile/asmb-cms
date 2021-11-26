@@ -4,7 +4,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "^5.5.9 || ^7.0",
+        "php": "^7.2",
         "bolt/bolt": "^3.6",
         "passwordlib/passwordlib": "^1.0@beta",
         "bolt/configuration-notices": "^1.0"
