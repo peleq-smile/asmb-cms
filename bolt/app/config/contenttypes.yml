@@ -833,7 +833,7 @@ competitions:
         Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/tournament">Compétition > Tournois</a>.<br>
         À utiliser en cas de saisie manuelle des tableaux et résultats.
     tournament_url_json:
-      label: 'URL vers le JSON ou chemin relatif au dossier public/ du serveur'
+      label: 'URL vers le JS ou chemin relatif au dossier public/ du serveur'
       required: false
       type: text
       class: large
@@ -983,3 +983,45 @@ statistiques:
       required: true
       type: image
       extensions: [ jpg, png ]
+
+partner:
+  name: "Partenaires"
+  singular_name: "Partenaire"
+  viewless: true
+  default_status: published
+  icon_many: "fa:handshake-o"
+  icon_one: "fa:handshake-o"
+  fields:
+    name:
+      group: 'Général'
+      label: 'Nom'
+      type: text
+      class: large
+      required: true
+    logo:
+      label: 'Logo'
+      type: image
+      attrib: [ title, class ]
+      extensions: [ jpg, png ]
+      required: true
+    subtitle:
+      type: text
+      label: 'Sous-titre (affiché dans le pied de page)'
+      class: large
+      required: true
+    url:
+      label: 'Url du site partenaire'
+      type: text
+      pattern: 'url'
+      postfix: 'Doit commencer par https://'
+      required: true
+    url_title:
+      label: 'Texte affiché au survol de l''url'
+      type: text
+      required: true
+    text:
+      label: 'Texte de présentation pour la page Partenaires'
+      type: html
+    slug:
+      type: slug
+      uses: [ name ]

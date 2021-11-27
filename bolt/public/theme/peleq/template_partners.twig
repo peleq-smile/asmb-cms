@@ -1,0 +1,53 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    <section class="section section-partners" data-nosnippet>
+        <div class="container">
+            <article role="article" class="content">
+                <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+
+                {% if record.image is not empty %}
+                    <div class="image">
+                        <img src="{{ record.image|image }}" alt="{{ record.values.image.alt|default() }}"/>
+                    </div>
+                {% endif %}
+
+                {{ record.body }}
+
+
+                {% setcontent partners = 'partner' where { status: 'published' } orderby 'id' %}
+
+                {% if partners is not empty %}
+                    <div class="columns is-multiline">
+                        {% for partner in partners %}
+                        <div class="column">
+                            <div class="partner has-background-primary">
+                                <h2 class="title text-center">
+                                    <a href="{{ partner.url }}" title="{{ partner.url_title }}"
+                                       target="_blank">{{ partner.name }}</a>
+                                </h2>
+                                <div class="partner-details has-background-white">
+                                    <h3 class="subtitle">{{ partner.subtitle }}</h3>
+
+                                    <div class="text">
+                                        {{ partner.text }}
+                                    </div>
+                                </div>
+
+                                <a href="{{ partner.url }}"
+                                   target="_blank" class="logo"
+                                   title="{{ partner.url_title }}">
+                                    <img src="{{ partner.logo|thumbnail(240, 60, 'r') }}" alt="{{ partner.values.logo.title }}"
+                                            {% if partner.values.logo.class is not empty %} class="{{ partner.values.logo.class }}"{% endif %}/>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </article>
+        </div>
+    </section>
+
+{% endblock main %}

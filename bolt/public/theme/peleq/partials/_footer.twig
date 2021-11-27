@@ -1,19 +1,14 @@
 {# Récupération de certains éléments du pied de page contribués dans le contenu "Accueil" #}
 {% setcontent homepage = "homepage" limit 1 returnsingle %}
+{% set isPartnerPage = record.template == 'template_partners.twig'  %}
 
 <footer id="footer">
+    {# SECTION: SPONSORS #}
+    {% if not isPartnerPage %}
     <div class="sponsors">
-        {# TODO : si d'autres partenaires, prévoir un bloc administrable quelque part #}
-        <div class="sponsor">
-            <span style="line-height: 68px;">Notre partenaire matériel tennis sur Nantes</span>
-            <a href="https://break-point.fr/"
-               target="_blank"
-               title="BreakPoint : notre partenaire en matériel et accessoires de tennis sur Nantes">
-                <img width="300px"
-                     src="{{ asset('images/breakpoint_logo_court.jpg', 'theme') }}"/>
-            </a>
-        </div>
+        {{ include('partials/footer/_footer_partners.twig', { 'homepage' : homepage} ) }}
     </div>
+    {% endif %}
 
     <div class="top">
         {# SECTION: CONTACT #}

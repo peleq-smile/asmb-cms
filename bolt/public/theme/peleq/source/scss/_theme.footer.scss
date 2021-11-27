@@ -8,23 +8,34 @@ $col-footer-width-down-sm: 300px;
 
     .sponsors {
         text-align: center;
-        border-bottom: solid 1px $bg-light;
+        display: flex;
+        width: 100%;
+        align-content: space-around;
+        flex-wrap: wrap;
         padding: 1rem;
+        background-color: $darkest;
 
         .sponsor {
             margin: auto;
             display: flex;
             justify-content: center;
-            align-items: stretch;
+            align-items: center;
             width: max-content;
 
-            span {
+            a.span {
                 border-right: solid 1px $bg-light;
                 padding-right: 1rem;
                 margin-right: 1rem;
+                padding-top: 0.25rem;
+                padding-bottom: 0.25rem;
+                color: white;
+
+                &:hover {
+                    color: $light;
+                }
             }
 
-            a {
+            a.logo {
                 display: block;
                 margin: auto;
 
@@ -39,6 +50,10 @@ $col-footer-width-down-sm: 300px;
                 display: block;
                 margin: auto;
                 opacity: 0.5;
+
+                &.rounded {
+                    border-radius: 50%;
+                }
             }
         }
     }
@@ -237,12 +252,22 @@ $col-footer-width-down-sm: 300px;
             .sponsor {
                 flex-direction: column;
 
-                span {
+                a.span {
                     border-right: none;
                     padding-right: 0;
                     margin-right: 0;
                     line-height: normal !important;
                     padding-bottom: 0.5rem;
+                }
+
+                a.logo {
+                    img {
+                        opacity: 1;
+                    }
+                }
+
+                &:not(:first-child) {
+                    padding-top: 1.5rem;
                 }
             }
         }
