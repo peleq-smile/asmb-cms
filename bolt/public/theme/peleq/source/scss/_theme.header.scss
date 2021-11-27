@@ -532,7 +532,7 @@ header {
                                         color: $light;
                                     }
 
-                                    a.navbar-item, a.navbar-link {
+                                    a.navbar-link {
                                         padding-left: 3.5rem;
 
                                         &:hover {
@@ -548,7 +548,7 @@ header {
                                         }
 
                                         .navbar-item {
-                                            padding-left: 5.5rem;
+                                            padding-left: 3.5rem;
                                         }
                                     }
 
