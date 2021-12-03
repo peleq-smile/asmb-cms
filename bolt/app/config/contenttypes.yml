@@ -904,14 +904,25 @@ competitions:
       postfix: |
         Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/tournament">Compétition > Tournois</a>.<br>
         À utiliser en cas de saisie manuelle des tableaux et résultats.
-    tournament_url_json:
-      label: 'URL vers le JS ou chemin relatif au dossier public/ du serveur'
+
+    tournament_url_js:
+      label: 'URL vers le JS exporté depuis JA-Tennis'
       required: false
       type: text
       class: large
       postfix: |
-        À tenter d'utiliser si le tournoi est géré via JA-Tennis.<br>
+        À utiliser si le tournoi est géré via JA-Tennis avec export au format JS (<b>à préférer</b> et <b>prioritaire sur le format JSON</b> !)</b>).<br>
         ATTENTION : si utilisation de dropbox, penser à ajouter <code>?dl=1</code> à la fin.
+
+    tournament_url_json:
+      label: 'URL vers le JSON exporté depuis JA-Tennis'
+      required: false
+      type: text
+      class: large
+      postfix: |
+        À utiliser si le tournoi est géré via JA-Tennis avec export au format JSON.<br>
+        ATTENTION : si utilisation de dropbox, penser à ajouter <code>?dl=1</code> à la fin.<br>
+        NB: Si le champ "URL vers le JS exporté depuis JA-Tennis" est rempli, celui-ci est alors ignoré.
 
     # Ajout onglet "SEO"
     meta_title:

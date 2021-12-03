@@ -2,14 +2,33 @@
 
 namespace Bundle\Asmb\Competition\Extension;
 
+use Bolt\AccessControl\Token\Token;
+use Bolt\Application;
+use Bolt\Exception\InvalidRepositoryException;
+use Bolt\Filesystem\Handler\File;
+use Bolt\Filesystem\Manager;
+use Bolt\Legacy\Content;
+use Bolt\Storage\EntityManagerInterface;
+use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
+use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
+use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
 use Bundle\Asmb\Competition\Parser\Tournament\AbstractParser;
+use Bundle\Asmb\Competition\Parser\Tournament\DbParser;
+use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser;
+use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsParser;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
+use Bundle\Asmb\Competition\Repository\ChampionshipRepository;
 use Carbon\Carbon;
 use Cocur\Slugify\Slugify;
+use Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Déclaration de fonctions Twig.
@@ -21,8 +40,8 @@ trait TwigFunctionsTrait
      *
      * @param integer $pastDays
      *
-     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return PoolMeeting[]
+     * @throws InvalidRepositoryException
      */
     public function getLastMeetings($pastDays)
     {
@@ -41,8 +60,8 @@ trait TwigFunctionsTrait
      *
      * @param integer $futureDays
      *
-     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return PoolMeeting[]
+     * @throws InvalidRepositoryException
      */
     public function getNextMeetings($futureDays)
     {
@@ -55,8 +74,8 @@ trait TwigFunctionsTrait
      *
      * @param integer $pastOrFutureDays
      *
-     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting[]
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return PoolMeeting[]
+     * @throws InvalidRepositoryException
      * @noinspection PhpUndefinedMethodInspection
      */
     protected function getLastOrNextMeetings($pastOrFutureDays)
@@ -74,7 +93,7 @@ trait TwigFunctionsTrait
 
             // On récupère le contenu "Competition" pour regrouper les rencontres par Championnat/catégorie et
             // pour ajouter un lien vers la page
-            /** @var \Bolt\Application $app */
+            /** @var Application $app */
             $app = $this->getContainer();
             foreach ($meetingsOfTheMoment as $meeting) {
                 // On ignore les rencontres dont l'une des équipes contient "Exempt"
@@ -120,12 +139,12 @@ trait TwigFunctionsTrait
     /**
      * @param integer $championshipId
      *
-     * @return \Bundle\Asmb\Competition\Entity\Championship
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return Championship
+     * @throws InvalidRepositoryException
      */
     public function getChampionship($championshipId)
     {
-        /** @var \Bundle\Asmb\Competition\Repository\ChampionshipRepository $championshipRepository */
+        /** @var ChampionshipRepository $championshipRepository */
         $championshipRepository = $this->getStorage()->getRepository('championship');
         $championship = $championshipRepository->find($championshipId);
 
@@ -140,7 +159,7 @@ trait TwigFunctionsTrait
      * @param array   $categoryNames
      *
      * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @throws InvalidRepositoryException
      */
     public function getPoolsPerCategoryName($championshipId, array $categoryNames)
     {
@@ -160,8 +179,8 @@ trait TwigFunctionsTrait
      * @param integer $championshipId
      * @param array   $categoryNames
      *
-     * @return \Bundle\Asmb\Competition\Entity\Championship\PoolRanking[]
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @return PoolRanking[]
+     * @throws InvalidRepositoryException
      */
     public function getPoolRankingPerPoolId($championshipId, array $categoryNames)
     {
@@ -183,7 +202,7 @@ trait TwigFunctionsTrait
      * @param array   $categoryNames
      *
      * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @throws InvalidRepositoryException
      */
     public function getPoolMeetingsPerPoolId($championshipId, array $categoryNames)
     {
@@ -199,21 +218,24 @@ trait TwigFunctionsTrait
     }
 
     /**
-     * @param \Bolt\Legacy\Content $competitionRecord
+     * @param Content $competitionRecord
      *
      * @return string
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderTournament($competitionRecord)
     {
         // Récupération de l'url donnée dans le contenu "Compétition"
         $tournamentId = $competitionRecord->get('tournament_id');
+        $jsFileUrl = $competitionRecord->get('tournament_url_js');
         $jsonFileUrl = $competitionRecord->get('tournament_url_json');
 
         if ($tournamentId) {
             $tournamentContent = $this->renderTournamentFromDb($tournamentId);
+        } elseif ($jsFileUrl) {
+            $tournamentContent = $this->renderTournamentFromJsFile($jsFileUrl);
         } elseif ($jsonFileUrl) {
             $tournamentContent = $this->renderTournamentFromJsonFile($jsonFileUrl);
         } else {
@@ -224,13 +246,57 @@ trait TwigFunctionsTrait
     }
 
     /**
+     * @param string $jsFileUrl
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function renderTournamentFromJsFile(string $jsFileUrl): string
+    {
+        // Chemin vers le fichier .html dont on veut vérifier l'existence / générer le contenu / récupérer le contenu
+        $htmlFilePath = $this->getHtmlFilePath($jsFileUrl);
+        $htmlFile = $this->getFile($htmlFilePath);
+
+        if ($htmlFile->exists()) {
+            $tournamentContent = $htmlFile->read();
+        } else {
+            $jsFileAbsoluteUrl = $this->getFileUrl($jsFileUrl);
+
+            /** @var JaTennisJsParser $parser */
+            $parser = $this->container['ja_tennis_js_parser'];
+            $parser->setFileUrl($jsFileAbsoluteUrl);
+            $parsedData = $parser->parse();
+
+            $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, true);
+
+            // On génère le .html pour la prochaine fois
+            $htmlFilePath = str_replace($htmlFile->getMountPoint(), '', $htmlFilePath);
+            $htmlFile->setPath($htmlFilePath);
+
+            if (!isset($parsedData['error'])) {
+                $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
+                $endDate->setTime(0, 0);
+
+                // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
+                // non à jour.
+                if ($endDate < Carbon::tomorrow()) {
+                    $htmlFile->write($tournamentContent);
+                }
+            }
+        }
+
+        return $tournamentContent;
+    }
+
+    /**
      * @param string $jsonFileUrl
      * @return string
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    protected function renderTournamentFromJsonFile($jsonFileUrl)
+    protected function renderTournamentFromJsonFile(string $jsonFileUrl): string
     {
         // Chemin vers le fichier .html dont on veut vérifier l'existence / générer le contenu / récupérer le contenu
         $htmlFilePath = $this->getHtmlFilePath($jsonFileUrl);
@@ -241,9 +307,9 @@ trait TwigFunctionsTrait
         } else {
             $jsonFileAbsoluteUrl = $this->getFileUrl($jsonFileUrl);
 
-            /** @var \Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser $parser */
-            $parser = $this->container['ja_tennis_parser'];
-            $parser->setJsonFileUrl($jsonFileAbsoluteUrl);
+            /** @var JaTennisJsonParser $parser */
+            $parser = $this->container['ja_tennis_json_parser'];
+            $parser->setFileUrl($jsonFileAbsoluteUrl);
             $parsedData = $parser->parse();
 
             $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, true);
@@ -258,7 +324,7 @@ trait TwigFunctionsTrait
 
                 // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
                 // non à jour.
-                if ($endDate < Carbon::now()) {
+                if ($endDate < Carbon::tomorrow()) {
                     $htmlFile->write($tournamentContent);
                 }
             }
@@ -269,7 +335,7 @@ trait TwigFunctionsTrait
 
     protected function renderTournamentFromDb($tournamentId)
     {
-        /** @var \Bundle\Asmb\Competition\Parser\Tournament\DbParser $parser */
+        /** @var DbParser $parser */
         $parser = $this->container['tournament_db_parser'];
         $parser->setTournamentId($tournamentId);
         $parsedData = $parser->parse();
@@ -279,7 +345,7 @@ trait TwigFunctionsTrait
 
         try {
             $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, $displayTimes);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $tournamentContent = '';
         }
 
@@ -290,18 +356,23 @@ trait TwigFunctionsTrait
      * @param AbstractParser $parser
      * @param array          $parsedData
      * @return string
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     protected function getRenderedTournamentContent(AbstractParser $parser, array $parsedData, bool $displayTimes)
     {
         if (isset($parsedData['error'])) {
-            // pour debug, afficher $parsedData['trace'] en plus !
-            return 'Une erreur est survenue dans le traitement des données du tournoi :<br>'
+            $app = $this->getContainer();
+            $token = $app['session']->get('authentication');
+            if (null !== $token && null !== $token->getUser()) {
+                return 'Une erreur est survenue dans le traitement des données du tournoi :<br>'
                 . $parsedData['error']
                 . '<pre style="text-align: left !important;">'
                 . $parsedData['trace'] . '</pre>';
+            }
+
+            return 'Une erreur est survenue dans le traitement des données du tournoi :((( !';
         }
 
         $display = '#res';
@@ -343,7 +414,7 @@ trait TwigFunctionsTrait
             'displayTimes' => $displayTimes
         ];
 
-        /** @var $twig \Twig\Environment */
+        /** @var $twig Environment */
         $twig = $this->container['twig'];
 
         return $twig->render('@AsmbCompetition/tournament/tournament.twig', $context);
@@ -352,22 +423,25 @@ trait TwigFunctionsTrait
     /**
      * Retourne le chemin du fichier .html à vérifier l'existence / à générer.
      *
-     * @param string $jsonFileUrl
+     * @param string $fileUrl
      *
      * @return string
      */
-    protected function getHtmlFilePath($jsonFileUrl)
+    protected function getHtmlFilePath(string $fileUrl): string
     {
-        $basename = rawurldecode(basename($jsonFileUrl));
+        $basename = rawurldecode(basename($fileUrl));
 
-        // S'il y a des paramètres après l'extension .json, on les retire (en plus de l'extension)
-        $htmlFileName = substr($basename, 0, strpos($basename, '.json'));
+        // S'il y a des paramètres après l'extension .json ou .js, on les retire (en plus de l'extension)
+        if (false !== strpos($basename, '.json')) {
+            // on regarde d'abord l'extension .json car '.json' contient '.js' ;)
+            $htmlFileName = substr($basename, 0, strpos($basename, '.json'));
+        } else {
+            $htmlFileName = substr($basename, 0, strpos($basename, '.js'));
+        }
         // On "slugify" le nom du json (= remplacement des caractères spéciaux)
         $htmlFileName = Slugify::create()->slugify($htmlFileName);
 
-        $htmlFilePath = 'tournois/html/' . $htmlFileName . '.html';
-
-        return $htmlFilePath;
+        return 'tournois/html/' . $htmlFileName . '.html';
     }
 
     /**
@@ -395,13 +469,13 @@ trait TwigFunctionsTrait
      *
      * @param string $filePath
      *
-     * @return \Bolt\Filesystem\Handler\File
+     * @return File
      */
     protected function getFile($filePath)
     {
-        /** @var \Bolt\Filesystem\Manager $fileManager */
+        /** @var Manager $fileManager */
         $fileManager = $this->container['filesystem'];
-        /** @var \Bolt\Filesystem\Handler\File $file */
+        /** @var File $file */
         $path = ltrim(str_replace('files', '', $filePath), '/');
         $file = $fileManager->getFilesystem('files')->getFile($path);
 
@@ -413,7 +487,7 @@ trait TwigFunctionsTrait
      */
     protected function getUrlGenerator()
     {
-        /** @var \Bolt\Application $app */
+        /** @var Application $app */
         $app = $this->getContainer();
 
         /** @var UrlGeneratorInterface $urlGenerator */
@@ -439,13 +513,13 @@ trait TwigFunctionsTrait
     }
 
     /**
-     * @return \Bolt\Storage\EntityManagerInterface
+     * @return EntityManagerInterface
      */
     protected function getStorage()
     {
-        /** @var \Bolt\Application $app */
+        /** @var Application $app */
         $app = $this->getContainer();
-        /** @var \Bolt\Storage\EntityManagerInterface $storage */
+        /** @var EntityManagerInterface $storage */
         $storage = $app['storage'];
 
         return $storage;
@@ -458,7 +532,7 @@ trait TwigFunctionsTrait
      * @param array   $categoryNames
      *
      * @return Pool[]
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @throws InvalidRepositoryException
      * @noinspection PhpUnusedParameterInspection
      */
     protected function getPools($championshipId, array $categoryNames)
@@ -471,10 +545,10 @@ trait TwigFunctionsTrait
     }
 
     /**
-     * @param \Bolt\Legacy\Content $competitionRecord
+     * @param Content $competitionRecord
      *
      * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
+     * @throws InvalidRepositoryException
      */
     public function getHomeMeetings($competitionRecord)
     {

@@ -68,7 +68,7 @@ abstract class AbstractParser
     /**
      * Reformate la date donnée en renvoyant la date uniquement
      *
-     * @param string|Carbon $inputDateTime Date au format "Y-m-d\TH:i:s" ou au format "Y-m-d" ou objet Carbon
+     * @param string|Carbon $inputDateTime Date au format "Y-m-d\TH:i:s" ou "Y-m-d H:i" ou "Y-m-d" ou objet Carbon
      *
      * @return string
      */
@@ -81,6 +81,8 @@ abstract class AbstractParser
             $carbonDate = $inputDateTime;
         } elseif (19 === strlen($inputDateTime)) {
             $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
+        } elseif(16 === strlen($inputDateTime)) {
+            $carbonDate = Carbon::createFromFormat('Y-m-d H:i', $inputDateTime);
         } elseif(10 === strlen($inputDateTime)) {
             $carbonDate = Carbon::createFromFormat('Y-m-d', $inputDateTime);
         }
@@ -111,6 +113,11 @@ abstract class AbstractParser
         // Exemple de date en entrée: 2019-02-21T20:30:00
         if (19 === strlen($inputDateTime)) {
             $carbonDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $inputDateTime);
+        } elseif(16 === strlen($inputDateTime)) {
+            $carbonDate = Carbon::createFromFormat('Y-m-d H:i', $inputDateTime);
+        }
+
+        if (isset($carbonDate)) {
             if ($carbonDate->minute > 0) {
                 $outputFormat = '%Hh%M';
             } else {
@@ -123,7 +130,7 @@ abstract class AbstractParser
         return $formattedTime;
     }
 
-    protected function getUpdatedAtFormatted(Carbon $datetime)
+    protected function getUpdatedAtFormatted(Carbon $datetime): string
     {
         $generateTimeFormatted = $this->getFormattedTime($datetime->format('Y-m-d\TH:i:s'));
 
@@ -190,7 +197,7 @@ abstract class AbstractParser
      *
      * @return array
      */
-    protected function getSortedPlanningData()
+    protected function getSortedPlanningData(): array
     {
         $sortedPlanningData = [];
 
@@ -198,17 +205,11 @@ abstract class AbstractParser
             // On trie puis reformatte les dates/heures
             ksort($this->planningData);
 
-            $sortedPlanningData = [];
             foreach ($this->planningData as $dateTime => $planningDataByPlace) {
                 ksort($planningDataByPlace);
                 foreach ($planningDataByPlace as $place => $planningData) {
-                    try {
-
-                        $formattedDate = $this->getFormattedDate($dateTime);
-                        $formattedTime = $this->getFormattedTime($dateTime);
-                    } catch (\Exception $e) {
-                        $p = 'pause';
-                    }
+                    $formattedDate = $this->getFormattedDate($dateTime);
+                    $formattedTime = $this->getFormattedTime($dateTime);
                     $sortedPlanningData[$formattedDate][$formattedTime][$place] = $planningData;
                 }
             }
@@ -258,7 +259,7 @@ abstract class AbstractParser
      *
      * @return void
      */
-    protected function addResultDataFromFinalBox($tableName, $finalBox)
+    protected function addResultDataFromFinalBox(string $tableName, array $finalBox)
     {
         // On teste s'il on connaît au moins les finalistes, sans cela => pas de résultat
         if (isset($finalBox['prevBtm']['name'], $finalBox['prevTop']['name'])) {

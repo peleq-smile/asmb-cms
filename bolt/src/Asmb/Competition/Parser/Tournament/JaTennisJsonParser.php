@@ -11,53 +11,30 @@ use JsonSchema\Exception\RuntimeException;
  * @author    Perrine Léquipé <perrine.lequipe@smile.fr>
  * @copyright 2019
  */
-class JaTennisJsonParser extends AbstractParser
+class JaTennisJsonParser extends AbstractJaTennisParser
 {
-    /** @var string */
-    protected $jsonFileUrl;
-    /** @var array */
-    protected $jsonData;
-
-    /**
-     * JaTennisJsonParser constructor.
-     *
-     * @param $jsonFileUrl
-     */
-    public function __construct($jsonFileUrl = null)
-    {
-        $this->jsonFileUrl = $jsonFileUrl;
-    }
-
-    /**
-     * @param string $jsonFileUrl
-     */
-    public function setJsonFileUrl($jsonFileUrl)
-    {
-        $this->jsonFileUrl = $jsonFileUrl;
-    }
-
     /**
      * Parse le JSON et extrait les différentes parties pour construire des tableaux PHP exploitables ensuite
      * par un template.
      *
      * @return array
      */
-    public function parse()
+    public function parse(): array
     {
-        if (null === $this->jsonFileUrl) {
+        if (null === $this->fileUrl) {
             throw new RuntimeException('Url vers fichier JSON manquant.');
         }
 
         try {
             // On récupère le contenu JSON depuis le fichier ou l'url donnée
-            $jsonFileContent = file_get_contents($this->jsonFileUrl);
+            $jsonFileContent = file_get_contents($this->fileUrl);
 
             // Corrections à l'arrache du JSON exporté par JA-Tennis !
             $fixedJsonFileContent = str_replace(',team:', ',"team":', $jsonFileContent);
 
-            $this->jsonData = json_decode($fixedJsonFileContent, true);
+            $this->fileData = json_decode($fixedJsonFileContent, true);
 
-            if (null === $this->jsonData || false === $this->jsonData) {
+            if (null === $this->fileData || false === $this->fileData) {
                 throw new \Exception('Le contenu JSON n\'a pas pu être extrait correctement.');
             }
 
@@ -81,30 +58,14 @@ class JaTennisJsonParser extends AbstractParser
     }
 
     /**
-     * Ajoute 1 mois à la date entrante pour corriger le bug de JA Tennis sur les exports.
-     *
-     * @return string
-     */
-    protected function add1month($inputDate)
-    {
-        $outputDate = str_replace(
-            ['-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-'],
-            ['-12-', '-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-'],
-            $inputDate
-        );
-
-        return $outputDate;
-    }
-
-    /**
      * Parse et retourne les données d'infos générales du tournoi.
      *
      * @return array
      */
-    protected function getInfoData()
+    protected function getInfoData(): array
     {
         if (null === $this->infoData) {
-            $this->infoData = $this->jsonData['info'];
+            $this->infoData = $this->fileData['info'];
 
             // JA Tennis décale les date d'1 mois, on rectifie ici
             // Ex: "2019-09-21" devient "2019-10-21"
@@ -113,8 +74,8 @@ class JaTennisJsonParser extends AbstractParser
 
             // Ajout de la date de dernière màj des données
             // Ex: "2019-09-18T01:08:00"
-            $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->add1month($this->jsonData['jat']['generate']));
-            $generateTimeFormatted = $this->getFormattedTime($this->jsonData['jat']['generate']);
+            $generateDate = Carbon::createFromFormat('Y-m-d\TH:i:s', $this->add1month($this->fileData['jat']['generate']));
+            $generateTimeFormatted = $this->getFormattedTime($this->fileData['jat']['generate']);
 
             $this->infoData['updatedAt'] = $generateDate->format('d/m/Y') . " à $generateTimeFormatted";
         }
@@ -127,21 +88,21 @@ class JaTennisJsonParser extends AbstractParser
      *
      * @return array
      */
-    protected function getTablesData()
+    protected function getTablesData(): array
     {
         if (null === $this->tablesData) {
             $this->tablesData = [];
 
             $playersData = $this->getPlayersData();
             if (!empty($playersData)) {
-                foreach ($this->jsonData['events'] as $dataEvent) {
+                foreach ($this->fileData['events'] as $dataEvent) {
                     foreach ($dataEvent['draws'] as $draw) {
                         $nbOut = $draw['nbOut'];
+                        $name = $dataEvent['name'];
 
                         $boxes = $draw['boxes'];
                         $indexesRegister = $this->buildIndexesRegistry($boxes, $nbOut);
 
-                        $name = $dataEvent['name'];
                         if (isset($draw['name'])) {
                             $name .= ' &bull; ' . $draw['name'];
                         }
@@ -162,8 +123,8 @@ class JaTennisJsonParser extends AbstractParser
 
                             // On profite de la boucle pour enregistrer les résultats (= vainqueurs + finalistes)
                             // Avant de trier par ordre décroissant, le vainqueur est la 1ère "boîte" (pour les tableaux
-                            // dont il ressort 1 seule personne, càd où $nbOut=1.
-                            if (1 === $nbOut && isset($boxesData[0])) {
+                            // dont il ressort 1 seule personne, càd où $nbOut=1 + qui contiennent "final" dans leur nom
+                            if (1 === $nbOut && isset($boxesData[0]) && stripos($name, 'final') !== false) {
                                 $this->addResultDataFromFinalBox($name, $boxesData[0]);
                             }
 
@@ -184,7 +145,7 @@ class JaTennisJsonParser extends AbstractParser
         return $this->tablesData;
     }
 
-    protected function getBoxCountForPoolType(int $nbPlayers)
+    protected function getBoxCountForPoolType(int $nbPlayers): int
     {
         if (3 === $nbPlayers) {
             // 3 joueurs => 3 matchs en tout
@@ -194,7 +155,7 @@ class JaTennisJsonParser extends AbstractParser
         }
     }
 
-    protected function buildPoolBoxesData(string $tableName, array $boxes, int $nbPlayers)
+    protected function buildPoolBoxesData(string $tableName, array $boxes, int $nbPlayers): array
     {
         $boxesData = [];
         $boxCount = $this->getBoxCountForPoolType($nbPlayers);
@@ -256,8 +217,8 @@ class JaTennisJsonParser extends AbstractParser
 
                 // On a une date : on enregistre des données sur le planning ici
                 $date = $box['date']; // non formattée ici, c'est ce qu'on veut pour trier
-                $place = isset($box['place']) ? $box['place'] : '';
-                $score = isset($boxData['score']) ? $boxData['score'] : '';
+                $place = $box['place'] ?? '';
+                $score = $boxData['score'] ?? '';
 
                 //TODO refactoriser tout ça !!!!
                 if (isset($winnerPlayerId, $looserPlayerId)) {
@@ -328,23 +289,17 @@ class JaTennisJsonParser extends AbstractParser
      *
      * @return array
      */
-    protected function getPlayersData()
+    protected function getPlayersData(): array
     {
         if (null === $this->playersData) {
             $this->playersData = [];
 
-            if (isset($this->jsonData['players'])) {
-                foreach ($this->jsonData['players'] as $playerData) {
+            if (isset($this->fileData['players'])) {
+                foreach ($this->fileData['players'] as $playerData) {
                     $name = $playerData['name'];
                     $team = null; // par défaut, match en simple
                     if (isset($playerData['firstname'])) {
-                        // On gère les noms trop long...
-                        if (strlen($name) > 15 || strlen($playerData['firstname']) > 12) {
-                            // dans ce cas, on affiche que la 1ère lettre du prénom
-                            $name .= ' ' . substr($playerData['firstname'], 0, 1) . '.';
-                        } else {
-                            $name .= ' ' . $playerData['firstname'];
-                        }
+                        $name = $this->buildNameWithFirstname($name, $playerData['firstname']);
                     } elseif (isset($playerData['team'])) {
                         // gestion des doubles
                         $team = $playerData['team']; // tableau à 2 entrées, contenant les IDs des 2 joueurs
@@ -353,10 +308,9 @@ class JaTennisJsonParser extends AbstractParser
                     $this->playersData[$playerData['id']] = [
                         'jid' => $playerData['id'],
                         'name' => $name,
-                        'rank' => isset($playerData['rank']) ? $playerData['rank'] : '',
-                        'year' => isset($playerData['birth']) ? substr($playerData['birth'], 0, 4) : '',
+                        'rank' => $playerData['rank'] ?? '',
                         'cat' => $playerData['sexe'],
-                        'club' => isset($playerData['club']) ? $playerData['club'] : '',
+                        'club' => $playerData['club'] ?? '',
                         'team' => $team,
                     ];
                 }
@@ -375,7 +329,7 @@ class JaTennisJsonParser extends AbstractParser
      *
      * @return array
      */
-    protected function buildIndexesRegistry(array &$boxes, $nbOut)
+    protected function buildIndexesRegistry(array &$boxes, $nbOut): array
     {
         $indexesRegister = [];
         $cursorIdx = 0; // Curseur d'index transverse
@@ -418,7 +372,7 @@ class JaTennisJsonParser extends AbstractParser
      *
      * @return array
      */
-    protected function parseBox($tableName, array $boxes, $boxIdx, array $indexesRegister)
+    protected function parseBox($tableName, array $boxes, $boxIdx, array $indexesRegister): array
     {
         $boxData = [];
 
@@ -499,78 +453,5 @@ class JaTennisJsonParser extends AbstractParser
         }
 
         return $boxData;
-    }
-
-    /**
-     * Reformate la date donnée en renvoyant la date et l'heure.
-     *
-     * @param string $inputDateTime Date au format "Y-m-d\TH:i:s" ou "Y-m-d"
-     *
-     * @return string
-     */
-    protected function getFormattedDateTime(string $inputDateTime)
-    {
-        $formattedDateTime = $this->getFormattedDate($inputDateTime); // Donne par ex: jeu. 21 (ou chaîne vide)
-
-        $outputTime = $this->getFormattedTime($inputDateTime);
-        if (!empty($outputTime)) {
-            $formattedDateTime .= " - $outputTime"; // Donne par ex: jeu. 21 - 20h30
-        }
-
-        return $formattedDateTime;
-    }
-
-    /**
-     * Ajoute une donnée de planning à partir des éléments fournis.
-     *
-     * @param array $box
-     * @param array $boxBtm
-     * @param array $boxTop
-     */
-    protected function updatePlanningData(array $box, array $boxBtm, array $boxTop)
-    {
-        if (null === $this->planningData) {
-            $this->planningData = [];
-        }
-
-        $date = isset($box['date']) ? $box['date'] : '';
-        $place = isset($box['place']) ? $box['place'] : '';
-        $score = isset($box['score']) ? $box['score'] : '';
-
-        if (!isset($this->planningData[$date][$place])) {
-            $jId = isset($box['playerId']) ? $box['playerId'] : null;
-            $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
-        }
-    }
-
-    /**
-     * Retourne les résultats du tournoi.
-     *
-     * @return array
-     */
-    protected function getResultData()
-    {
-        if (null === $this->resultsData) {
-            $this->resultsData = [];
-        }
-
-        return $this->resultsData;
-    }
-
-    /**
-     * Retourne les données sur les joueurs, triés par nom.
-     * Les clés sont réinitialisées : on perd ici les id utilisés par JA-Tennis.
-     */
-    protected function getSortedByNamePlayersData()
-    {
-        $sortedPlayersData = $this->getPlayersData();
-
-        // On trie les joueurs selon leur nom
-        usort($sortedPlayersData,
-            function ($player1, $player2) {
-                return ($player1['name']) < $player2['name'] ? -1 : 1;
-            });
-
-        return $sortedPlayersData;
     }
 }

@@ -17,6 +17,7 @@ use Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser;
 use Bundle\Asmb\Competition\Parser\Championship\PoolTeamsParser;
 use Bundle\Asmb\Competition\Parser\Tournament\DbParser;
 use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser;
+use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsParser;
 use Pimple as Container;
 use Silex\Application;
 
@@ -36,7 +37,7 @@ class CompetitionExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerExtensionTables()
+    protected function registerExtensionTables(): array
     {
         return [
             'championship'              => Table\Championship::class,
@@ -54,7 +55,7 @@ class CompetitionExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerBackendControllers()
+    protected function registerBackendControllers(): array
     {
         // On récupère le nb de jours passés et à venir contribués dans le contenu "Page d'accueil"
         $meetingsParameters = $this->getMeetingsParameters();
@@ -74,7 +75,7 @@ class CompetitionExtension extends SimpleExtension
      *
      * @return integer[]
      */
-    protected function getMeetingsParameters()
+    protected function getMeetingsParameters(): array
     {
         /** @var \Bolt\Storage\Query\Query $query */
         $query = $this->container['query'];
@@ -90,7 +91,7 @@ class CompetitionExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerMenuEntries()
+    protected function registerMenuEntries(): array
     {
         $permission = 'competition';
 
@@ -130,7 +131,7 @@ class CompetitionExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerRepositoryMappings()
+    protected function registerRepositoryMappings(): array
     {
         return [
             'championship'              => [Entity\Championship::class => Repository\ChampionshipRepository::class],
@@ -173,9 +174,14 @@ class CompetitionExtension extends SimpleExtension
                 return new PoolTeamsParser();
             }
         );
-        $app['ja_tennis_parser'] = $app->share(
+        $app['ja_tennis_json_parser'] = $app->share(
             function () {
                 return new JaTennisJsonParser();
+            }
+        );
+        $app['ja_tennis_js_parser'] = $app->share(
+            function () {
+                return new JaTennisJsParser();
             }
         );
 
@@ -193,7 +199,7 @@ class CompetitionExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerTwigPaths()
+    protected function registerTwigPaths(): array
     {
         /** @see https://stackoverflow.com/questions/52754936/overwrite-backend-template-in-bolt-cms */
         if ($this->getEnd() == 'backend') {
@@ -211,10 +217,11 @@ class CompetitionExtension extends SimpleExtension
     /**
      * {@inheritdoc}
      */
-    protected function registerNutCommands(Container $container)
+    protected function registerNutCommands(Container $container): array
     {
         return [
             new Nut\RefreshCommand($container),
+            new Nut\TestParseCommand($container),
         ];
     }
 }

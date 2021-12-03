@@ -3,7 +3,7 @@
 {% block main %}
     {% if record.championship_id > 0 %}
         {{ include('partials/competition/_championship.twig') }}
-    {% elseif record.tournament_id > 0 or record.tournament_url_json is not empty %}
+    {% elseif record.tournament_id > 0 or record.tournament_url_json is not empty or record.tournament_url_js is not empty %}
         {{ include('partials/competition/_tournament.twig') }}
     {% elseif record.home_meetings_from_date is not empty and record.home_meetings_to_date is not empty %}
         {{ include('partials/competition/_home_meetings.twig') }}
