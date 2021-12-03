@@ -38,6 +38,7 @@ class JaTennisJsParser extends AbstractJaTennisParser
     private static $drawsKeysMapping = [
         'Typ' => 'type',
         'Qua' => 'nbOut',
+        'Col' => 'nbColumn',
     ];
 
     private static $boxesKeysMapping = [
@@ -357,10 +358,11 @@ class JaTennisJsParser extends AbstractJaTennisParser
             $nbOut = (int)$this->tablesData[$drawId]['nbOut'];
             $isPool = (2 === (int) $this->tablesData[$drawId]['type']);
             $name = $this->tablesData[$drawId]['name'];
+            $nbColumn = (int) $this->tablesData[$drawId]['nbColumn'];
 
             $boxesData = [];
             if ($isPool) {
-                // TODO cas non géré pour l'instant :/
+                $boxesData = $this->buildPoolBoxesData($name, $boxes, $nbColumn);
             } else {
                 for ($idx = 0; $idx < $nbOut; $idx++) {
                     $boxesData[] = $this->parseBox($name, $boxes, $idx, $indexesRegister[$drawId]);
@@ -381,6 +383,128 @@ class JaTennisJsParser extends AbstractJaTennisParser
                 'boxes' => $boxesData,
             ];
         }
+    }
+
+    protected function buildPoolBoxesData(string $tableName, array $boxes, int $nbPlayers): array
+    {
+        $boxesData = [];
+        $boxCount = $this->getBoxCountForPoolType($nbPlayers);
+
+        // On fait une première boucle pour récupérer tous les joueurs et construire une matrice de poule
+        $players = [];
+        $idxPlayer = 1;
+        for ($i = count($boxes) - 1; $i >= 0; $i--) {
+            if (!isset($boxes[$i]['jid'])) {
+                continue;
+            }
+            // utilisation d'un for pour parcourir à l'envers, sans utiliser krsort
+            $playerId = $boxes[$i]['jid'];
+            if (!in_array($playerId, $players)) {
+                $players[$idxPlayer++] = $playerId;
+            }
+        }
+
+        // On initialise la matrice avec tous les joueurs
+        foreach ($players as $playerIdRow) {
+            $boxesData[$playerIdRow] = [];
+
+            foreach ($players as $playerIdCol) {
+                $boxesData[$playerIdRow][$playerIdCol] = [];
+            }
+        }
+
+        // On repasse dans toutes les "boxes" pour remplir la matrice avec les résultats, en ne prenant cette fois-ci
+        // que les $boxCount premières, et dans l'ordre inverse de JA-Tennis !
+        $firstReverseBoxes = array_slice($boxes, -0, $boxCount);
+        krsort($firstReverseBoxes);
+
+        $idxRow = 1;
+        $idxCol = 2; // = $idxRow + 1
+        foreach ($firstReverseBoxes as $boxData) {
+            $looserPlayer = null;
+            $playerIdRow = $players[$idxRow];
+            $playerIdCol = $players[$idxCol];
+
+            if (isset($boxData['date'])) {
+                $origBoxDate = $boxData['date'];
+                $boxData['date'] = $this->getFormattedDateTime($origBoxDate);
+
+                if (isset($boxData['score']) && !empty($boxData['score'])) {
+                    if (isset($boxData['jid'])) {
+                        $winnerPlayerId = $boxData['jid'];
+                        $boxData['name'] = $this->playersData[$winnerPlayerId]['name'];
+                        $boxData['rank'] = $this->playersData[$winnerPlayerId]['rank'];
+
+                        $looserPlayerId = ($playerIdRow === $winnerPlayerId) ? $playerIdCol : $playerIdRow;
+                        $looserPlayer = $this->playersData[$looserPlayerId];
+                    }
+                }
+
+                // On ajoute les données de match sur les joueurs
+                $this->addMatchesDataOnPlayersData($playerIdRow, $looserPlayer, $tableName, $origBoxDate, $boxData);
+
+                // On a une date : on enregistre des données sur le planning ici
+                $place = $boxData['place'] ?? '';
+                $score = $boxData['score'] ?? '';
+
+                //TODO refactoriser tout ça !!!!
+                if (isset($winnerPlayerId, $looserPlayerId)) {
+                    // si vainqueur, on le place en 1er
+                    $player1 = [
+                        'jid' => $winnerPlayerId,
+                        'name' => $this->playersData[$winnerPlayerId]['name'],
+                        'rank' => $this->playersData[$winnerPlayerId]['rank'],
+                        'club' => $this->playersData[$winnerPlayerId]['club'] ?? '',
+                        'qualif' => '',
+                    ];
+                    $player2 = [
+                        'jid' => $looserPlayerId,
+                        'name' => $looserPlayer['name'],
+                        'rank' => $looserPlayer['rank'],
+                        'club' => $looserPlayer['club'] ?? '',
+                        'qualif' => '',
+                    ];
+                } else {
+                    // sinon le joueur 1 est le joueur de la ligne
+                    $player1Id = $playerIdRow;
+                    $player1 = [
+                        'jid' => $player1Id,
+                        'name' => $this->playersData[$player1Id]['name'],
+                        'rank' => $this->playersData[$player1Id]['rank'],
+                        'club' => $this->playersData[$player1Id]['club'] ?? '',
+                        'qualif' => '',
+                    ];
+                    // et le joueur 2 est le joueur de la colonne
+                    $player2Id = $playerIdCol ;
+                    $player2 = [
+                        'jid' => $player2Id,
+                        'name' => $this->playersData[$player2Id]['name'],
+                        'rank' => $this->playersData[$player2Id]['rank'],
+                        'club' => $this->playersData[$player2Id]['club'] ?? '',
+                        'qualif' => '',
+                    ];
+                }
+
+                $this->planningData[$origBoxDate][$place] = [
+                    'table' => $tableName,
+                    'player1' => $player1,
+                    'player2' => $player2,
+                    'score' => $score,
+                ];
+            }
+            $boxesData[$playerIdRow][$playerIdCol] = $boxData;
+
+            if ($idxCol < $nbPlayers) {
+                $idxCol++;
+            } else {
+                $idxRow++;
+                $idxCol = $idxRow + 1;
+            }
+
+            unset($winnerPlayerId, $looserPlayerId);
+        }
+
+        return $boxesData;
     }
 
     /**

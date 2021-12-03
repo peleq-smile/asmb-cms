@@ -18,6 +18,7 @@
                     </select>
                 </div>
             </li>
+            {% if parsedData.planning is not empty %}
             <li class="column control">
                 <label for="select-planning" class="label">Planning :</label>
                 <div class="select">
@@ -32,6 +33,7 @@
                     </select>
                 </div>
             </li>
+            {% endif %}
             {% if parsedData.result is not empty %}
                 <li class="column control">
                     <label class="label is-invisible">&nbsp;</label>
@@ -385,10 +387,10 @@
         <thead>
         <tr>
             {# TODOpeleq :changer le width qui est mis en dur là, car on peut avoir des poules de plus de 3j !!! #}
-            <th width="25%"></th>
+            <th></th>
             {% for playerIdRow, boxesRowData in boxesData %}
                 {% set playerInfo = playersById[playerIdRow] %}
-                <th width="25%" style="font-size: 1.4rem">
+                <th>
                     {{ playerInfo.name }}
                 </th>
             {% endfor %}
@@ -398,7 +400,7 @@
 
         {% for playerIdRow, boxesRowData in boxesData %}
             <tr>
-                <th style="vertical-align: middle; font-size: 1.4rem;">
+                <th style="vertical-align: middle;">
                     <a class="player-link"
                        href="#jou:{{ playerIdRow }}" style="font-weight: bold; color: #363636;"
                        data-hash="#jou" data-param="{{ playerIdRow }}"

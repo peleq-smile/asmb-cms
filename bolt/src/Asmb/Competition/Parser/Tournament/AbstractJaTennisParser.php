@@ -145,4 +145,14 @@ abstract class AbstractJaTennisParser extends AbstractParser
             $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
         }
     }
+
+    protected function getBoxCountForPoolType(int $nbPlayers): int
+    {
+        if (3 === $nbPlayers) {
+            // 3 joueurs => 3 matchs en tout
+            return 3;
+        } else {
+            return $this->getBoxCountForPoolType($nbPlayers - 1) + $nbPlayers - 1;
+        }
+    }
 }
