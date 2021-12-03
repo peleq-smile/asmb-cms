@@ -5,6 +5,14 @@
 # ------------------------------------------------------------------------------
 # Place your own routes here, that have a HIGHER priority than the default routes.
 
+# Rédirection page "Le Bureau" pour conserver le référencement !
+bureau:
+    path: /page/le-bureau
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: page-bureau
+        slug: le-bureau
+    recordslug: page-bureau/le-bureau
 
 
 # ------------------------------------------------------------------------------

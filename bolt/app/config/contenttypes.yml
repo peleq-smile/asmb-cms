@@ -313,6 +313,7 @@ homepage:
       group: meta
       type: slug
       uses: title
+
 blocs:
   name: Blocs simples
   singular_name: Bloc simple
@@ -779,6 +780,77 @@ pages:
       type: image
       extensions: [ jpg, png ]
 
+page_bureau:
+  singular_slug: page-bureau
+  name: Page Bureau
+  singular_name: Page Bureau
+  record_template: template_bureau.twig
+  singleton: true
+  icon_many: "fa:address-card"
+  icon_one: "fa:address-card"
+  fields:
+    title:
+      group: Général
+      label: 'Titre'
+      type: text
+      class: large
+    slug:
+      type: slug
+      uses: title
+    body:
+      label: 'Texte affiché avant la composition du bureau (optionnel)'
+      type: html
+      height: 150px
+    members:
+      label: 'Membres du bureau'
+      type: repeater
+      fields:
+        name:
+          label: 'Nom'
+          type: text
+          required: true
+        function:
+          label: 'Fonction'
+          type: text
+          required: true
+          postfix: 'Si plusieurs fonctions dans le club : les séparer par une virgule.'
+        photo:
+          label: 'Photo'
+          type: image
+          extensions: [ jpg, png ]
+          upload: photos/bureau
+        text:
+          label: 'Texte affiché sous la fonction (optionnel)'
+          type: html
+
+    # Ajout onglet "SEO"
+    meta_title:
+      label: 'Meta "title"'
+      type: text
+      required: false
+      group: 'SEO'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
+
+    meta_description:
+      label: 'Meta "description"'
+      type: textarea
+      required: false
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="description" content="VALEUR ICI"&gt;'
+
+    meta_robots:
+      label: 'Meta "robots"'
+      required: true
+      type: select
+      values: [ 'index, follow', 'index, nofollow', 'noindex, follow', 'noindex, nofollow' ]
+      default: 'index, follow'
+      postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;meta name="robots" content="VALEUR ICI"&gt;'
+
+    meta_image:
+      label: 'Meta image (exploitée par Facebook)'
+      required: false
+      type: image
+      extensions: [ jpg, png ]
+
 competitions:
   name: Pages compétition
   singular_name: Page compétition
@@ -865,7 +937,7 @@ competitions:
 
     meta_image:
       label: 'Meta image (exploitée par Facebook)'
-      required: true
+      required: false
       type: image
       extensions: [ jpg, png ]
 
@@ -980,7 +1052,7 @@ statistiques:
 
     meta_image:
       label: 'Meta image'
-      required: true
+      required: false
       type: image
       extensions: [ jpg, png ]
 
