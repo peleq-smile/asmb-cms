@@ -147,7 +147,7 @@ abstract class AbstractParser
             $this->playersData[$jId]['matches'][$tableName][$boxDatetime] = [
                 'player' => $looserPlayer, // le joueur $jId a joué contre $looserPlayer
                 'victory' => true, // cas victoire ici
-                'score' => isset($boxData['score']) ? $boxData['score'] : '',
+                'score' => $boxData['score'] ?? '',
                 'date' => $boxData['date'], // ici, la date joliement formatée !
             ];
 
@@ -159,7 +159,7 @@ abstract class AbstractParser
                     'rank' => $boxData['rank'],
                 ],
                 'victory' => false, // cas défaite ici
-                'score' => isset($boxData['score']) ? $boxData['score'] : '',
+                'score' => $boxData['score'] ?? '',
                 'date' => $boxData['date'], // ici, la date joliement formatée !
             ];
         } else {

@@ -457,6 +457,15 @@ trait TwigFunctionsTrait
             $scheme = $this->getUrlGenerator()->getContext()->getScheme();
             $host = $this->getUrlGenerator()->getContext()->getHost();
             $url = "$scheme://$host$uri";
+
+            /** @var Application $app */
+            $app = $this->getContainer();
+
+            /** @var \Bolt\Filesystem\Manager $fsm */
+            $fsm = $app['filesystem'];
+            $webFs = $fsm->getFilesystem('web');
+            $publicFolder = $webFs->getAdapter()->getPathPrefix();
+            $url = rtrim($publicFolder, '/') . $uri;
         } else {
             $url = $uri;
         }
