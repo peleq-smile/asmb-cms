@@ -227,7 +227,6 @@ class JaTennisJsParser extends AbstractJaTennisParser
     protected function buildPoolBoxesData(string $tableName, array $boxes, int $nbPlayers): array
     {
         $boxesData = [];
-        $boxCount = $this->getBoxCountForPoolType($nbPlayers);
 
         // On fait une première boucle pour récupérer tous les joueurs et construire une matrice de poule
         $players = [];
@@ -257,6 +256,7 @@ class JaTennisJsParser extends AbstractJaTennisParser
         // On remplit notre "matrice" de poule initialisée, en se basant sur la donnée 'boxId' qui correspont à la
         // position de la case dans la matrice
         $boxId = ($nbPlayers * $nbPlayers) - 1;
+
         foreach ($boxesData as $playerIdRow => &$boxDataOnRow) {
             foreach ($boxDataOnRow as $playerIdCol => &$boxData) {
                 $looserPlayer = null;

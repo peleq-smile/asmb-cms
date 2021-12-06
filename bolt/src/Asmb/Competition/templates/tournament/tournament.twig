@@ -397,6 +397,8 @@
         </thead>
         <tbody>
 
+        {% set matchOnRowCount = 0 %}
+        {% set widthColumn = (88/(boxesData|length))|round(0, 'floor') %}
         {% for playerIdRow, boxesRowData in boxesData %}
             <tr>
                 <th style="vertical-align: middle; border-bottom: solid 1px #dbdbdb;">
@@ -408,8 +410,8 @@
                 </th>
 
                 {% for playerIdCol, boxData in boxesRowData %}
-                    {% if boxData is not empty and boxData.score is defined %}
-                        <td style="border-bottom: solid 1px #dbdbdb; border-left: solid 1px #dbdbdb;">
+                    {% if loop.index <= matchOnRowCount%}
+                        <td style="border-bottom: solid 1px #dbdbdb; border-left: solid 1px #dbdbdb; width: {{ widthColumn }}%">
                             {% if boxData.date is defined %}
                             <span class="date" style="color: #d1a633;">{{ boxData.date }}</span><br>
                             {% endif %}
@@ -421,12 +423,13 @@
                             {% endif %}
                         </td>
                     {% else %}
-                        <td style="background: #dbdbdb; border-bottom: solid 1px #dbdbdb; border-left: solid 1px #dbdbdb;">
+                        <td style="background: #dbdbdb; border-bottom: solid 1px #dbdbdb; border-left: solid 1px #dbdbdb; width: {{ widthColumn }}%">
                             <br><br><br>
                         </td>
                     {% endif %}
                 {% endfor %}
             </tr>
+            {% set matchOnRowCount = matchOnRowCount + 1 %}
         {% endfor %}
         </tbody>
     </table>
