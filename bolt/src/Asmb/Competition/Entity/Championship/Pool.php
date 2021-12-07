@@ -117,15 +117,6 @@ class Pool extends Entity
         $this->completeness = $completeness;
     }
 
-    /**
-     * @deprecated
-     * @todo déporter en fonction twig
-     */
-    public function getLinkFft(): string
-    {
-        return "http://www.gs.applipub-fft.fr/fftfr/pouleClassement.do?dispatch=load&pou_iid={$this->getFftId()}";
-    }
-
     public function getUpdatedAt(): ?Carbon
     {
         return $this->updated_at;

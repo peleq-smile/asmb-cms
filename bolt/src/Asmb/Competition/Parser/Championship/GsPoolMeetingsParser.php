@@ -95,14 +95,4 @@ class GsPoolMeetingsParser extends AbstractGsParser
 
         return $matchesSheetParams;
     }
-
-    /**
-     * @return string
-     */
-    protected function getUrl(): string
-    {
-        // TODO déporter dans de la conf
-
-        return 'http://www.gs.applipub-fft.fr/fftfr/pouleRencontres.do?dispatch=load&pou_iid=$fftId$&pagerPage=$page$';
-    }
 }

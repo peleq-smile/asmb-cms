@@ -151,7 +151,6 @@ class CalendarHelper
         if (!isset(self::$frenchPublicHolidaysByYear[$year])) {
             // Jours fériés fixes en France
             self::$frenchPublicHolidaysByYear[$year] = [
-                // TODOpeleq traduire ?!
                 '01-01' => ['date' => Carbon::create($year, 1, 1, 0, 0, 0), 'name' => 'Jour de l\'An'],
                 '05-01' => ['date' => Carbon::create($year, 5, 1, 0, 0, 0), 'name' => 'Fête du travail'],
                 '05-08' => ['date' => Carbon::create($year, 5, 8, 0, 0, 0), 'name' => 'Victoire 45'],

@@ -40,14 +40,4 @@ class GsPoolTeamsParser extends AbstractGsParser
 
         return $poolTeams;
     }
-
-    /**
-     * @return string
-     */
-    protected function getUrl()
-    {
-        // TODO déporter dans de la conf
-
-        return 'http://www.gs.applipub-fft.fr/fftfr/pouleClassement.do?dispatch=load&pou_iid=$fftId$';
-    }
 }

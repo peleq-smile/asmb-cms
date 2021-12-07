@@ -1,6 +1,7 @@
 {% set poolsPerCategoryName = getPoolsPerCategoryName(record.championship_id, record.championship_categories) %}
 {% set poolRankingPerPoolId = getPoolRankingPerPoolId(record.championship_id, record.championship_categories) %}
 {% set poolMeetingsPerPoolId = getPoolMeetingsPerPoolId(record.championship_id, record.championship_categories) %}
+{% set championship = getChampionshipById(record.championship_id) %}
 
 {% set MAX_PER_ROW = 4 %}
 

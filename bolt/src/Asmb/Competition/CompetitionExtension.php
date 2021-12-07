@@ -164,19 +164,20 @@ class CompetitionExtension extends SimpleExtension
         );
 
         // Parsers pour les championnats - depuis la GD
+        $config = $app['config']->get('general/gs');
         $app['pool_teams_gs_parser'] = $app->share(
-            function () {
-                return new GsPoolTeamsParser();
+            function () use ($config) {
+                return new GsPoolTeamsParser($config);
             }
         );
         $app['pool_meetings_gs_parser'] = $app->share(
-            function () {
-                return new GsPoolMeetingsParser();
+            function () use ($config) {
+                return new GsPoolMeetingsParser($config);
             }
         );
         $app['pool_ranking_gs_parser'] = $app->share(
-            function () {
-                return new GsPoolRankingParser();
+            function () use ($config) {
+                return new GsPoolRankingParser($config);
             }
         );
         // Parsers pour les championnats - depuis TENUP

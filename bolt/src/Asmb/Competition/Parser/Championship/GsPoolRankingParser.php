@@ -50,14 +50,4 @@ class GsPoolRankingParser extends AbstractGsParser
 
         return $poolRankings;
     }
-
-    /**
-     * @return string
-     */
-    protected function getUrl(): string
-    {
-        // TODO déporter dans de la conf
-
-        return 'http://www.gs.applipub-fft.fr/fftfr/pouleClassement.do?dispatch=load&pou_iid=$fftId$';
-    }
 }

@@ -119,14 +119,14 @@ class RefreshCommand extends BaseCommand
 
                 if (!$this->isQuietMode) {
                     $output->writeln(
-                        "<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour via <comment>$updateFrom</comment>.</info>\n"
+                        "<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour via <comment>$updateFrom</comment>.</info>"
                     );
                 }
             } catch (Exception $e) {
                 $output->writeln(
                     "<comment>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} : </comment>"
                 );
-                $output->writeln("<error>ERREUR: {$e->getMessage()}</error>\n");
+                $output->writeln("<error>ERREUR: {$e->getMessage()}</error>");
             }
 
 

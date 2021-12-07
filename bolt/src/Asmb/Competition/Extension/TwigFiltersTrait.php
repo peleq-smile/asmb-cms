@@ -65,29 +65,30 @@ trait TwigFiltersTrait
     }
 
     /**
-     * Retourne le lien (HTML) vers la feuille de matchs de la Gestion Sportive (FFT).
-     *
-     * @param PoolMeeting $meeting
-     * @param null|string $withThisContent
-     *
-     * @return string
+     * Retourne le lien (HTML) vers la feuille de matchs de la Gestion Sportive ou de Ten'Up (FFT).
      */
     public function getMatchesSheetLink(PoolMeeting $meeting, $withThisContent = '<i class="fa fa-eye"></i>')
     {
         $paramsFdmFft = $meeting->getParamsFdmFft();
-        if (isset($paramsFdmFft['efm_iid'], $paramsFdmFft['pha_iid'], $paramsFdmFft['pou_iid'], $paramsFdmFft['ren_iid'])) {
-            // TODO : en faire un param global
-            $url = "http://www.gs.applipub-fft.fr/fftfr/match.do?dispatch=load&pou_iid={$paramsFdmFft['pou_iid']}"
-                . "&ren_iid={$paramsFdmFft['ren_iid']}"
-                . "&efm_iid={$paramsFdmFft['efm_iid']}"
-                . "&pha_iid={$paramsFdmFft['pha_iid']}";
+        if (isset($paramsFdmFft['feuille_match_url'])) {
+            $config = $this->getConfigParameter('tenup');
+            $url = $config['url_base'] . $paramsFdmFft['feuille_match_url'];
+        } elseif (isset($paramsFdmFft['efm_iid'], $paramsFdmFft['pha_iid'], $paramsFdmFft['pou_iid'], $paramsFdmFft['ren_iid'])) {
+            $config = $this->getConfigParameter('gs');
+            $url = str_replace(
+                ['{$pou}', '{$ren}', '{$efm}', '{$pha}'],
+                [
+                    $paramsFdmFft['pou_iid'], $paramsFdmFft['ren_iid'], $paramsFdmFft['efm_iid'], $paramsFdmFft['pha_iid']
+                ],
+                $config['url_match_sheet']
+            );
+        }
 
+        if (isset($url)) {
             $title = Trans::__('general.phrase.go-to-matches-sheet');
             $linkContent = '<a href="' . $url . '" class="btn btn-xs btn-link" target="_blank" title="' . $title . '">';
             $linkContent .= $withThisContent . '</a>';
-
         }
-
         $link = (isset($linkContent)) ? new \Twig_Markup($linkContent, 'utf-8') : '';
 
         return $link;
@@ -95,15 +96,9 @@ trait TwigFiltersTrait
 
     /**
      * Formate la date de la rencontre donnée de sorte à avoir une date du type "Dimanche 31 mars".
-     *
-     * @param PoolMeeting $meeting
-     * @param bool $short
-     *
-     * @return string
      */
     public function getFormattedDate(PoolMeeting $meeting, $short = false)
     {
-        /** @var \Carbon\Carbon $meetingDate */
         $meetingDate = $meeting->getDate();
         $dayOfMonth = (int)$meetingDate->format('d');
 
@@ -125,10 +120,10 @@ trait TwigFiltersTrait
     public function getChampionshipPoolGsUrl(Pool $pool): ?string
     {
         $url = null;
-        $linksPattern = $this->getConfigParameter('gs_urls');
+        $linksPattern = $this->getConfigParameter('gs');
 
-        if (isset($linksPattern['pool'])) {
-            $url = $linksPattern['pool'];
+        if (isset($linksPattern['url_pool_ranking'])) {
+            $url = $linksPattern['url_pool_ranking'];
             $url = str_replace(['{$pool}'], [$pool->getFftId()], $url);
         }
 
@@ -171,15 +166,6 @@ trait TwigFiltersTrait
         return $url;
     }
 
-    private function getConfigParameter(string $key)
-    {
-        $app = $this->getContainer();
-        /** @var Config $config */
-        $config = $app['config'];
-
-        return $config->get('general/' . $key);
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -193,5 +179,14 @@ trait TwigFiltersTrait
             'formattedDate' => 'getFormattedDate',
             'score' => 'extractScoreFromResult',
         ];
+    }
+
+    private function getConfigParameter(string $key)
+    {
+        $app = $this->getContainer();
+        /** @var Config $config */
+        $config = $app['config'];
+
+        return $config->get('general/' . $key);
     }
 }

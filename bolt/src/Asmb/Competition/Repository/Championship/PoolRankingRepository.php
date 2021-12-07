@@ -90,7 +90,7 @@ class PoolRankingRepository extends Repository
             if (!$poolTeam) {
                 throw new PoolTeamNotFoundException(
                     sprintf(
-                        'Aucune équipe trouvée avec le nom FFT %s, pour la poule d\'ID %d',
+                        'Aucune équipe trouvée avec le nom FFT "%s", pour la poule d\'ID %d',
                         $poolRanking->getTeamNameFft(),
                         $poolId
                     )

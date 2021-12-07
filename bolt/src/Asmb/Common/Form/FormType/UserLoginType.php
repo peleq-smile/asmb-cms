@@ -13,8 +13,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * TODO commenter
- *
  * @author    Perrine Léquipé <perrine.lequipe@smile.fr>
  * @copyright 2019
  */

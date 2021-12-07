@@ -3,10 +3,17 @@
         <thead>
         <tr>
             <th colspan="2">
-                <a class="pool-name" href="{{ pool.getLinkFft() }}" target="_blank"
-                   title="{{ __('general.phrase.see-pool-on-fft') }}">
-                    <i class="fas fa-external-link-alt"></i> {{ pool.name }}
-                </a>
+                {% if pool.divisionFftId is not null %}
+                    <a class="pool-name" href="{{ championship|championshipPoolTenupUrl(pool) }}" target="_blank"
+                       title="{{ __('general.phrase.see-pool-on-tenup') }}">
+                        <i class="fas fa-external-link-alt"></i> {{ pool.name }}
+                    </a>
+                {% else %}
+                    <a class="pool-name" href="{{ pool|championshipPoolGsUrl }}" target="_blank"
+                       title="{{ __('general.phrase.see-pool-on-gs') }}">
+                        <i class="fas fa-external-link-alt"></i> {{ pool.name }}
+                    </a>
+                {% endif %}
             </th>
             <th class="text-center"
                 title="{{ __('page.view-championship.points.title') }}">{{ __('page.view-championship.points.short_title') }}</th>

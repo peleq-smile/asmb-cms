@@ -39,7 +39,8 @@ class TenupPoolMeetingsParser extends AbstractTenupParser
 
                     // On construit la donnée "résultat" telle qu'on a l'habitude avec la GS
                     $result = PoolMeetingHelper::RESULT_NONE;
-                    if (null !== $row['statut_feuille_match']) {
+                    $paramsFdmFft = [];
+                    if ('T' === $row['statut_feuille_match']) { // 'T' = rencontre validée, a priori
                         // La rencontre a été saisie dans Ten'Up
                         if (true === $row['team_home']['win']) {
                             // Victoire de l'équipe visitée
@@ -60,13 +61,12 @@ class TenupPoolMeetingsParser extends AbstractTenupParser
                         } elseif ($row['team_home']['disqualifie'] || $row['team_visitor']['disqualifie']) {
                             $result .= ' ' . PoolMeetingHelper::RESULT_FLAG_DISQ;
                         }
+
+                        // on sauvegarde ici l'uri de la feuille de match (seulement si un résultat existe)
+                        $paramsFdmFft = ['feuille_match_url' => $row['feuille_match_url'],];
                     }
                     $poolMeeting->setResult($result);
-
-                    // on sauvegarde ici l'uri de la feuille de match depuis ten'up uniquement
-                    $poolMeeting->setParamsFdmFft([
-                        'feuille_match_url' => $row['feuille_match_url'],
-                    ]);
+                    $poolMeeting->setParamsFdmFft($paramsFdmFft);
 
                     $poolMeetings[] = $poolMeeting;
                 }

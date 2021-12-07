@@ -20,6 +20,8 @@ abstract class AbstractGsParser
 {
     const MAX_PER_PAGE = 10;
 
+    /** @var array */
+    protected $config;
     /** @var \DomDocument */
     protected $document;
     /** @var \DomXPath */
@@ -30,8 +32,9 @@ abstract class AbstractGsParser
     /**
      * AbstractParser constructor.
      */
-    public function __construct()
+    public function __construct(array $config)
     {
+        $this->config = $config;
         $this->document = new DomDocument;
         $this->document->preserveWhiteSpace = false;
     }
@@ -81,18 +84,13 @@ abstract class AbstractGsParser
     protected function buildUrlToParse(string $fftId, $page): string
     {
         if (null !== $page) {
-            return str_replace(['$fftId$', '$page$'], [$fftId, $page], $this->getUrl());
+            $url = $this->config['url_pool_meetings'];
+            return str_replace(['{$pool}', '{$page}'], [$fftId, $page], $url);
+        } else {
+            $url = $this->config['url_pool_ranking'];
+            return str_replace('{$pool}', $fftId, $url);
         }
-
-        return str_replace('$fftId$', $fftId, $this->getUrl());
     }
-
-    /**
-     * Url pour la récupération des données
-     *
-     * @return mixed
-     */
-    abstract protected function getUrl();
 
     /**
      * Effectue l'extraction des données lors du parsing.

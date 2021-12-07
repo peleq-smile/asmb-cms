@@ -218,6 +218,17 @@ trait TwigFunctionsTrait
     }
 
     /**
+     * @throws InvalidRepositoryException
+     */
+    public function getChampionshipById(int $championshipId): ?Championship
+    {
+        /** @var ChampionshipRepository $championshipRepository */
+        $championshipRepository = $this->getStorage()->getRepository('championship');
+
+        return $championshipRepository->find($championshipId);
+    }
+
+    /**
      * @param Content $competitionRecord
      *
      * @return string
@@ -517,6 +528,7 @@ trait TwigFunctionsTrait
             'getPoolsPerCategoryName' => 'getPoolsPerCategoryName',
             'getPoolRankingPerPoolId' => 'getPoolRankingPerPoolId',
             'getPoolMeetingsPerPoolId' => 'getPoolMeetingsPerPoolId',
+            'getChampionshipById' => 'getChampionshipById',
             'renderTournament' => 'renderTournament',
         ];
     }
