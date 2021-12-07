@@ -17,6 +17,10 @@ class PoolRanking extends Entity
      */
     protected $pool_id;
     /**
+     * @var integer
+     */
+    protected $ranking;
+    /**
      * @var string
      */
     protected $team_name_fft;
@@ -63,6 +67,16 @@ class PoolRanking extends Entity
     public function setPoolId($poolId)
     {
         $this->pool_id = $poolId;
+    }
+
+    public function getRanking()
+    {
+        return $this->ranking;
+    }
+
+    public function setRanking($ranking)
+    {
+        $this->ranking = $ranking;
     }
 
     /**

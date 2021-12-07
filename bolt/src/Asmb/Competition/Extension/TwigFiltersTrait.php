@@ -2,7 +2,10 @@
 
 namespace Bundle\Asmb\Competition\Extension;
 
+use Bolt\Config;
 use Bolt\Translation\Translator as Trans;
+use Bundle\Asmb\Competition\Entity\Championship;
+use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 
@@ -13,11 +16,6 @@ trait TwigFiltersTrait
 {
     /**
      * Extrait et retourne le score à partir de la rencontre donnée.
-     *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
-     * @param bool                                                     $decorated
-     *
-     * @return mixed|string
      */
     public function extractScoreFromResult(PoolMeeting $meeting, $decorated = false)
     {
@@ -69,16 +67,12 @@ trait TwigFiltersTrait
     /**
      * Retourne le lien (HTML) vers la feuille de matchs de la Gestion Sportive (FFT).
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
-     * @param null|string                                              $withThisContent
+     * @param PoolMeeting $meeting
+     * @param null|string $withThisContent
      *
      * @return string
      */
-    public
-    function getMatchesSheetLink(
-        PoolMeeting $meeting,
-        $withThisContent = '<i class="fa fa-eye"></i>'
-    )
+    public function getMatchesSheetLink(PoolMeeting $meeting, $withThisContent = '<i class="fa fa-eye"></i>')
     {
         $paramsFdmFft = $meeting->getParamsFdmFft();
         if (isset($paramsFdmFft['efm_iid'], $paramsFdmFft['pha_iid'], $paramsFdmFft['pou_iid'], $paramsFdmFft['ren_iid'])) {
@@ -102,8 +96,8 @@ trait TwigFiltersTrait
     /**
      * Formate la date de la rencontre donnée de sorte à avoir une date du type "Dimanche 31 mars".
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
-     * @param bool                                                     $short
+     * @param PoolMeeting $meeting
+     * @param bool $short
      *
      * @return string
      */
@@ -111,7 +105,7 @@ trait TwigFiltersTrait
     {
         /** @var \Carbon\Carbon $meetingDate */
         $meetingDate = $meeting->getDate();
-        $dayOfMonth = (int) $meetingDate->format('d');
+        $dayOfMonth = (int)$meetingDate->format('d');
 
         $formatDay = $short ? '%a' : '%A';
         $formatMonth = $short ? '%b' : '%B';
@@ -126,14 +120,78 @@ trait TwigFiltersTrait
     }
 
     /**
+     * Construit et retourne l'url vers la poule du championnat donné, sur la Gestion Sportive.
+     */
+    public function getChampionshipPoolGsUrl(Pool $pool): ?string
+    {
+        $url = null;
+        $linksPattern = $this->getConfigParameter('gs_urls');
+
+        if (isset($linksPattern['pool'])) {
+            $url = $linksPattern['pool'];
+            $url = str_replace(['{$pool}'], [$pool->getFftId()], $url);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Construit et retourne l'url vers le championnat donné, sur Ten'Up.
+     */
+    public function getChampionshipTenupUrl(Championship $championship): ?string
+    {
+        $url = null;
+        $linksPattern = $this->getConfigParameter('tenup');
+
+        if (isset($linksPattern['url_championship'])) {
+            $url = $linksPattern['url_championship'];
+            $url = str_replace('{$championship}', $championship->getFftId(), $url);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Construit et retourne l'url vers la poule du championnat donné, sur Ten'Up.
+     */
+    public function getChampionshipPoolTenupUrl(Championship $championship, Pool $pool): ?string
+    {
+        $url = null;
+        $linksPattern = $this->getConfigParameter('tenup');
+
+        if (isset($linksPattern['url_pool'])) {
+            $url = $linksPattern['url_pool'];
+            $url = str_replace(
+                ['{$championship}', '{$division}', '{$pool}'],
+                [$championship->getFftId(), $pool->getDivisionFftId(), $pool->getFftId()],
+                $url
+            );
+        }
+
+        return $url;
+    }
+
+    private function getConfigParameter(string $key)
+    {
+        $app = $this->getContainer();
+        /** @var Config $config */
+        $config = $app['config'];
+
+        return $config->get('general/' . $key);
+    }
+
+    /**
      * {@inheritdoc}
      */
-    protected function registerTwigFilters()
+    protected function registerTwigFilters(): array
     {
         return [
+            'championshipPoolGsUrl' => 'getChampionshipPoolGsUrl',
+            'championshipTenupUrl' => 'getChampionshipTenupUrl',
+            'championshipPoolTenupUrl' => 'getChampionshipPoolTenupUrl',
             'matchesSheetLink' => 'getMatchesSheetLink',
-            'formattedDate'    => 'getFormattedDate',
-            'score'            => 'extractScoreFromResult',
+            'formattedDate' => 'getFormattedDate',
+            'score' => 'extractScoreFromResult',
         ];
     }
 }

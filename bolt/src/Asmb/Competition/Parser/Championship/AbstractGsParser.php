@@ -2,6 +2,7 @@
 
 namespace Bundle\Asmb\Competition\Parser\Championship;
 
+use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Carbon\Carbon;
 use DOMDocument;
@@ -23,6 +24,8 @@ abstract class AbstractGsParser
     protected $document;
     /** @var \DomXPath */
     protected $xpath;
+    /** @var int */
+    protected $page = null;
 
     /**
      * AbstractParser constructor.
@@ -33,25 +36,27 @@ abstract class AbstractGsParser
         $this->document->preserveWhiteSpace = false;
     }
 
+    public function setPage(?int $page)
+    {
+        $this->page = $page;
+    }
+
     /**
      * Parse et retourne les données sous forme d'un tableau d'objet.
-     *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
-     * @param int|null                                          $page
-     *
-     * @return array
+     * @noinspection PhpUnusedParameterInspection
      */
-    final public function parse(Pool $pool, $page = null)
+    final public function parse(Championship $championship, Pool $pool): array
     {
         $allPagesParsedData = [];
 
         if (null !== $pool->getFftId()) {
             while (true) {
-                $url = $this->buildUrlToParse($pool->getFftId(), $page);
+                $url = $this->buildUrlToParse($pool->getFftId(), $this->page);
 
                 try {
                     $this->document->loadHTMLFile($url);
-                } catch (ContextErrorException $e) {
+                } /** @noinspection PhpRedundantCatchClauseInspection */
+                catch (ContextErrorException $e) {
                     // There is some error but we don't care, it works.
                 }
 
@@ -60,10 +65,10 @@ abstract class AbstractGsParser
                 $parsedData = $this->doParse($pool);
                 $allPagesParsedData = array_merge($allPagesParsedData, $parsedData);
 
-                if (null === $page || empty($parsedData)) {
+                if (null === $this->page || empty($parsedData)) {
                     break;
                 }
-                $page++;
+                $this->page++;
             }
         }
 
@@ -72,16 +77,11 @@ abstract class AbstractGsParser
 
     /**
      * Construit l'url finale à parser à partir de l'id FFT d'une poule.
-     *
-     * @param string $fftId
-     * @param        $page
-     *
-     * @return string
      */
-    protected function buildUrlToParse($fftId, $page)
+    protected function buildUrlToParse(string $fftId, $page): string
     {
         if (null !== $page) {
-            return str_replace(['$fftId$','$page$'], [$fftId, $page], $this->getUrl());
+            return str_replace(['$fftId$', '$page$'], [$fftId, $page], $this->getUrl());
         }
 
         return str_replace('$fftId$', $fftId, $this->getUrl());
@@ -101,18 +101,12 @@ abstract class AbstractGsParser
      *
      * @return array
      */
-    abstract protected function doParse(Pool $pool);
+    abstract protected function doParse(Pool $pool): array;
 
     /**
      * Extrait le texte à partir de la requête XPATH donnée dans le contexte du noeud donné.
-     *
-     * @param string      $xpathQuery
-     * @param \DOMElement $node
-     * @param bool        $doStripTags
-     *
-     * @return string|string[]
      */
-    protected function getTextContentFromXpath($xpathQuery, \DOMElement $node, $doStripTags = true)
+    protected function getTextContentFromXpath(string $xpathQuery, \DOMElement $node, bool $doStripTags = true): string
     {
         $subNode = $this->xpath->query($xpathQuery, $node)->item(0);
 
@@ -131,22 +125,18 @@ abstract class AbstractGsParser
 
         return $textContent;
     }
+
     /**
      * Extrait la date à partir de la requête XPATH donnée dans le contexte du noeud donné.
      * Format attendu : d/m/y.
-     *
-     * @param string      $xpathQuery
-     * @param \DOMElement $node
-     *
-     * @return Carbon
      */
-    protected function getDateContentFromXpath($xpathQuery, \DOMElement $node)
+    protected function getDateContentFromXpath(string $xpathQuery, \DOMElement $node): ?Carbon
     {
         $textContent = $this->getTextContentFromXpath($xpathQuery, $node);
         // TODO gérer les reports de date ? (en gras et/ou avec un * devant)
 
         preg_match('#\d\d/\d\d/\d\d#', $textContent, $matches);
-        if (! empty($matches)) {
+        if (!empty($matches)) {
             $dateParsed = $matches[0];
 
             try {
@@ -154,8 +144,9 @@ abstract class AbstractGsParser
             } catch (InvalidArgumentException $e) {
                 $date = null;
             }
+        } else {
+            $date = null;
         }
-
 
         return $date;
     }

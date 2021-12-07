@@ -2,17 +2,16 @@
 
 namespace Bundle\Asmb\Competition\Parser\Championship;
 
+use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
-use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
-use Bundle\Asmb\Competition\Helpers\CalendarHelper;
 
 /**
  * Service d'extraction des données FFT pour la récupération des rencontres dans une poule.
  *
  * @copyright 2019
  */
-class PoolMeetingsParser extends AbstractGsParser
+class GsPoolMeetingsParser extends AbstractGsParser
 {
     /**
      * Requete pour la récupération du tableau des rencontres de chaque équipe
@@ -24,7 +23,7 @@ class PoolMeetingsParser extends AbstractGsParser
     /**
      * {@inheritdoc}
      */
-    protected function doParse(Pool $pool)
+    protected function doParse(Pool $pool): array
     {
         $nodesMeetings = $this->xpath->query($this->xpathMeetingsContext);
 
@@ -100,7 +99,7 @@ class PoolMeetingsParser extends AbstractGsParser
     /**
      * @return string
      */
-    protected function getUrl()
+    protected function getUrl(): string
     {
         // TODO déporter dans de la conf
 

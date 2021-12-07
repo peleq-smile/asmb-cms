@@ -2,9 +2,6 @@
 
 namespace Bundle\Asmb\Competition\Entity;
 
-use Bolt\Storage\Entity\Entity;
-use Bundle\Asmb\Competition\Entity\AbstractShortNamedEntity;
-
 /**
  * Entity for championship.
  *
@@ -21,36 +18,38 @@ class Championship extends AbstractShortNamedEntity
      * @var boolean
      */
     protected $is_active;
-
     /**
-     * @return int
+     * @var string
      */
-    public function getYear()
+    protected $fft_id;
+
+    public function getYear(): ?int
     {
         return $this->year;
     }
 
-    /**
-     * @param int $year
-     */
-    public function setYear($year)
+    public function setYear(?int $year)
     {
         $this->year = $year;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isActive()
+    public function isActive(): ?bool
     {
         return $this->is_active;
     }
 
-    /**
-     * @param boolean $isActive
-     */
-    public function setIsActive($isActive)
+    public function setIsActive(?bool $isActive)
     {
         $this->is_active = $isActive;
+    }
+
+    public function getFftId(): ?string
+    {
+        return $this->fft_id;
+    }
+
+    public function setFftId(?string $linkFft)
+    {
+        $this->fft_id = $linkFft;
     }
 }

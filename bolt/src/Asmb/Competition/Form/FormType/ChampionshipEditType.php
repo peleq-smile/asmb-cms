@@ -60,6 +60,14 @@ class ChampionshipEditType extends AbstractType
                 ]
             )
             ->add(
+                'fft_id',
+                Type\TextType::class,
+                [
+                    'label'     => Trans::__('general.phrase.fft_id.tenup'),
+                    'required'  => false,
+                ]
+            )
+            ->add(
                 'is_active',
                 Type\ChoiceType::class,
                 [

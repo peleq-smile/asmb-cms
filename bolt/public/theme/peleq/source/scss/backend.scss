@@ -106,6 +106,14 @@ a:visited {
     width: 100%;
 }
 
+label.required {
+    &::after {
+        content: "*";
+        padding-left: 2px;
+        color: $danger;
+    }
+}
+
 .danger {
     color: $danger;
 }

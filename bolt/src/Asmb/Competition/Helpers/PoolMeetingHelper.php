@@ -18,6 +18,7 @@ class PoolMeetingHelper
     const RESULT_FLAG_DEFEAT  = 'D';
     const RESULT_FLAG_DRAW    = 'N';
     const RESULT_WO           = 'wo';
+    const RESULT_FLAG_DISQ    = 'Disq.';
 
     /**
      * Extrait et retourne le score à partir de la rencontre donnée.
@@ -48,7 +49,7 @@ class PoolMeetingHelper
     /**
      * Retourne VRAI si la rencontre est une victoire pour l'équipe donnée, si celle-ci fait partie du club.
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
+     * @param PoolMeeting $meeting
      *
      * @return bool
      */
@@ -86,7 +87,7 @@ class PoolMeetingHelper
     /**
      * Retourne VRAI si la rencontre est une défaite pour l'équipe donnée, si celle-ci fait partie du club.
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
+     * @param PoolMeeting $meeting
      *
      * @return bool
      */
@@ -109,7 +110,7 @@ class PoolMeetingHelper
     /**
      * Retourne VRAI si la rencontre est une égalité pour l'équipe donnée, si celle-ci fait partie du club.
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\PoolMeeting $meeting
+     * @param PoolMeeting $meeting
      *
      * @return bool
      */

@@ -4,13 +4,16 @@ namespace Bundle\Asmb\Competition\Controller\Backend\Championship;
 
 use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Controller\Backend\AbstractController;
+use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
 use Bundle\Asmb\Competition\Form\FormType;
+use Bundle\Asmb\Competition\Parser\Championship\TenupPoolMeetingsParser;
 use Exception;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The controller for Pool routes.
@@ -27,9 +30,6 @@ class PoolController extends AbstractController
         return 'competition:edit';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addRoutes(ControllerCollection $c)
     {
         $c->post('/add/{championshipId}', 'add')
@@ -203,29 +203,38 @@ class PoolController extends AbstractController
      * Récupération des équipes de la poule d'id donné depuis la FFT.
      *
      * @param Request $request
-     * @param integer                                   $championshipId
+     * @param integer $championshipId
      * @param integer                                   $poolId
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @noinspection PhpUnusedParameterInspection
      */
-    public function fetchTeams(Request $request, $championshipId, $poolId)
+    public function fetchTeams(Request $request, int $championshipId, int $poolId): Response
     {
-        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]) . "#pool{$poolId}";
+        $url = $this->generateUrl('championshipedit', ['id' => $championshipId]) . "#pool$poolId";
 
         try {
             /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
             $poolRepository = $this->getRepository('championship_pool');
+            /** @var Pool $pool */
             $pool = $poolRepository->find($poolId);
+            $championshipRepository = $this->getRepository('championship');
+            /** @var Championship $championship */
+            $championship = $championshipRepository->find($pool->getChampionshipId());
 
             /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
             $poolTeamRepository = $this->getRepository('championship_pool_team');
 
-            // Récupération des données depuis la Gestion Sportive de la FFT
-            /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolTeamsParser $poolTeamsParser */
-            $poolTeamsParser = $this->app['pool_teams_parser'];
+            // Récupération des données depuis Ten'Up ou la GS
             /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam[] $poolTeams */
-            $poolTeams = $poolTeamsParser->parse($pool);
+            if ($championship->getFftId() && $pool->getDivisionFftId()) {
+                /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolTeamsParser $poolTeamsParser */
+                $poolTeamsParser = $this->app['pool_teams_tenup_parser'];
+            } else {
+                /** @var \Bundle\Asmb\Competition\Parser\Championship\GsPoolTeamsParser $poolTeamsParser */
+                $poolTeamsParser = $this->app['pool_teams_gs_parser'];
+            }
+            $poolTeams = $poolTeamsParser->parse($championship, $pool);
 
             foreach ($poolTeams as $poolTeam) {
                 // On sauvegarde dans un premier temps toutes les équipes
@@ -272,19 +281,38 @@ class PoolController extends AbstractController
             $poolRepository = $this->getRepository('championship_pool');
             /** @var Pool $pool */
             $pool = $poolRepository->find($poolId);
+            $championshipRepository = $this->getRepository('championship');
+            /** @var Championship $championship */
+            $championship = $championshipRepository->find($pool->getChampionshipId());
 
             // Données CLASSEMENT
-            // Récupération des données depuis la Gestion Sportive de la FFT
-            /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser $poolRankingParser */
-            $poolRankingParser = $this->app['pool_ranking_parser'];
-            $poolRankingParsed = $poolRankingParser->parse($pool);
+            // Récupération des données depuis Ten'up ou la Gestion Sportive de la FFT
+            if ($championship->getFftId() && $pool->getDivisionFftId()) {
+                // Récupération depuis Ten'Up
+                /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolRankingParser $poolRankingParser */
+                $poolRankingParser = $this->app['pool_ranking_tenup_parser'];
+            } else {
+                // Récupération depuis la GS
+                /** @var \Bundle\Asmb\Competition\Parser\Championship\GsPoolRankingParser $poolRankingParser */
+                $poolRankingParser = $this->app['pool_ranking_gs_parser'];
+            }
+            $poolRankingParsed = $poolRankingParser->parse($championship, $pool);
+
             // Sauvegarde des classements en base
             $this->savePoolRanking($pool, $poolRankingParsed);
 
             // Données RENCONTRES
-            /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser $poolMeetingsParser */
-            $poolMeetingsParser = $this->app['pool_meetings_parser'];
-            $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 0);
+            if ($championship->getFftId() && $pool->getDivisionFftId()) {
+                // Récupération depuis Ten'Up
+                /** @var TenupPoolMeetingsParser $poolMeetingsParser */
+                $poolMeetingsParser = $this->app['pool_meetings_tenup_parser'];
+            } else {
+                // Récupération depuis la GS
+                /** @var \Bundle\Asmb\Competition\Parser\Championship\GsPoolMeetingsParser $poolMeetingsParser */
+                $poolMeetingsParser = $this->app['pool_meetings_gs_parser'];
+                $poolMeetingsParser->setPage(0);
+            }
+            $poolMeetingsParsed = $poolMeetingsParser->parse($championship, $pool);
             // Sauvegarde des rencontres en base
             $this->saveMeetings($pool, $poolMeetingsParsed);
 

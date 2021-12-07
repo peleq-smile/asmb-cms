@@ -6,10 +6,11 @@
         <table class="table-condensed">
             <thead>
             <tr>
-                <th><label for="championship_edit_year">{{ __('general.phrase.year') }}</label></th>
-                <th><label for="championship_edit_name">{{ __('general.phrase.name') }}</label></th>
+                <th><label class="required" for="championship_edit_year">{{ __('general.phrase.year') }}</label></th>
+                <th><label class="required" for="championship_edit_name">{{ __('general.phrase.name') }}</label></th>
                 <th><label for="championship_edit_short_name">{{ __('general.phrase.short_name') }}</label></th>
-                <th><label for="championship_edit_is_active">{{ __('general.phrase.is_active') }}</label></th>
+                <th><label for="championship_edit_fft_id">{{ __('general.phrase.fft_id.tenup') }}</label></th>
+                <th><label class="required" for="championship_edit_is_active">{{ __('general.phrase.is_active') }}</label></th>
                 <th></th>
             </tr>
             </thead>
@@ -27,9 +28,15 @@
                 <td class="short_name">
                     {{ form_widget(form.short_name) }}
                 </td>
+
+                <td>
+                    {{ form_widget(form.fft_id) }}
+                </td>
+
                 <td>
                     {{ form_widget(form.is_active) }}
                 </td>
+
                 <td class="actions">
                     {{ form_widget(form.save) }}
                 </td>

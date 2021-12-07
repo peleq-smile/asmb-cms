@@ -1,12 +1,18 @@
 <div id="pool{{ pool.id }}" class="panel panel-default">
     <div class="panel-heading">
         <span class="title">{{ pool.name }}</span>
-        {% if pool.getLinkFft() %}
-            &nbsp;&bullet;&nbsp;
-            <a href="{{ pool.getLinkFft() }}" target="_blank">
-                <i class="fa fa-external-link"></i> {{ __('general.phrase.go-to-fft') }}
-            </a>
+
+        {% if pool.divisionFftId is not null %}
+        &nbsp;&bullet;&nbsp;
+        <a href="{{ championship|championshipPoolTenupUrl(pool) }}" target="_blank"
+           title="{{ __('general.phrase.go-to-tenup-link') }}">
+            <i class="fa fa-external-link"></i> {{ __('general.phrase.tenup') }}
+        </a>
         {% endif %}
+        &nbsp;&bullet;&nbsp;
+        <a href="{{ pool|championshipPoolGsUrl }}" target="_blank">
+            <i class="fa fa-external-link"></i> {{ __('general.phrase.go-to-gs') }}
+        </a>
 
         <div class="pull-right">
             {{ include('@AsmbCompetition/championship/pool/_teams-actions.twig', {'pool': pool}) }}

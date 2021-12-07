@@ -3,8 +3,7 @@
 namespace Bundle\Asmb\Competition\Nut;
 
 use Bolt\Nut\BaseCommand;
-use Bundle\Asmb\Competition\Helpers\PoolHelper;
-use Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser;
+use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
 use Exception;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,7 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Commande Nut pour rafraîchir les données des compétitions à partir de la Gestion Sportive de la FFT.
+ * Commande Nut pour rafraîchir les données des compétitions à partir de la Gestion Sportive de la FFT ou de TenUp.
  *
  * @author    Perrine Léquipé <perrine.lequipe@smile.fr>
  * @copyright 2019
@@ -72,44 +71,64 @@ class RefreshCommand extends BaseCommand
         /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository $poolMeetingRepository */
         $poolMeetingRepository = $storage->getRepository('championship_pool_meeting');
 
-        // PARSERS
-        /** @var \Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser $poolRankingParser */
-        $poolRankingParser = $this->app['pool_ranking_parser'];
-        /** @var PoolMeetingsParser $poolMatchesParser */
-        $poolMeetingsParser = $this->app['pool_meetings_parser'];
-
-
         // Récupération des poules qui ont besoin d'être mises à jour
         $pools = $poolRepository->findAllToRefresh();
         foreach ($pools as $pool) {
             try {
+                /** @var Championship $championship */
+                $championship = $championshipRepository->find($pool->getChampionshipId());
+
+                // PARSERS
+                if ($championship->getFftId() && $pool->getDivisionFftId()) {
+                    // Rafraichissement depuis Ten'Up
+                    /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolRankingParser $poolRankingParser */
+                    $poolRankingParser = $this->app['pool_ranking_tenup_parser'];
+                    /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolMeetingsParser $poolMeetingsParser */
+                    $poolMeetingsParser = $this->app['pool_meetings_tenup_parser'];
+
+                    $updateFrom = 'Ten\'Up';
+                } else {
+                    // Rafraichissement depuis la GS
+                    /** @var \Bundle\Asmb\Competition\Parser\Championship\GsPoolRankingParser $poolRankingParser */
+                    $poolRankingParser = $this->app['pool_ranking_gs_parser'];
+                    /** @var \Bundle\Asmb\Competition\Parser\Championship\GsPoolMeetingsParser $poolMeetingsParser */
+                    $poolMeetingsParser = $this->app['pool_meetings_gs_parser'];
+                    $poolMeetingsParser->setPage(0);
+
+                    $updateFrom = 'la Gestion Sportive';
+                }
+
+
                 // Données CLASSEMENT
                 // Récupération des données depuis la Gestion Sportive de la FFT
-                $poolRankingParsed = $poolRankingParser->parse($pool);
+                $poolRankingParsed = $poolRankingParser->parse($championship, $pool);
 
                 // Sauvegarde des classements en base
                 $poolRankingRepository->saveAll($poolRankingParsed, $pool->getId());
 
                 // Données RENCONTRES
                 // On parse les différentes pages des rencontres
-                $poolMeetingsParsed = $poolMeetingsParser->parse($pool, 0);
+                $poolMeetingsParsed = $poolMeetingsParser->parse($championship, $pool);
+
                 // On sauvegarde en base
                 $poolMeetingRepository->saveAll($poolMeetingsParsed, $pool->getId());
 
                 // On met à jour la date de mise à jour de la poule
                 $pool->setUpdatedAt();
                 $poolRepository->save($pool);
+
+                if (!$this->isQuietMode) {
+                    $output->writeln(
+                        "<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour via <comment>$updateFrom</comment>.</info>\n"
+                    );
+                }
             } catch (Exception $e) {
-                $output->writeln(sprintf("<error>ERREUR: {$e->getMessage()}</error>"));
+                $output->writeln(
+                    "<comment>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} : </comment>"
+                );
+                $output->writeln("<error>ERREUR: {$e->getMessage()}</error>\n");
             }
 
-            if (!$this->isQuietMode) {
-                /** @var \Bundle\Asmb\Competition\Entity\Championship $championship */
-                $championship = $championshipRepository->find($pool->getChampionshipId());
-                $output->writeln(
-                    sprintf("<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour.</info>")
-                );
-            }
 
             // On temporise entre chaque poule, pour éviter de parser plusieurs pages en peu de temps sur la FFT :-)
             sleep(2);

@@ -18,6 +18,7 @@ class ChampionshipPoolRanking extends BaseTable
     protected function addColumns()
     {
         $this->table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $this->table->addColumn('ranking', 'integer', ['notnull' => false]);
         $this->table->addColumn('pool_id', 'integer', ['notnull' => true]);
         $this->table->addColumn('team_name_fft', 'string', ['length' => 255, 'notnull' => true]);
         $this->table->addColumn('team_is_club', 'boolean', ['default' => false, 'notnull' => true]);
@@ -48,7 +49,7 @@ class ChampionshipPoolRanking extends BaseTable
     {
         $this->table->addUniqueIndex(['pool_id', 'team_name_fft']);
         $this->table->addIndex(['team_is_club']);
-        $this->table->addIndex(['points', 'days_played', 'match_diff', 'set_diff', 'game_diff']);
+        $this->table->addIndex(['ranking', 'points', 'days_played', 'match_diff', 'set_diff', 'game_diff']);
     }
 
     /**

@@ -75,6 +75,15 @@ class PoolEditType extends AbstractType
                 ]
             )
             ->add(
+                'division_fft_id',
+                Type\TextType::class,
+                [
+                    'label'     => Trans::__('general.phrase.division_fft_id'),
+                    'required'  => false,
+                    'read_only' => $options['has_teams'],
+                ]
+            )
+            ->add(
                 'save',
                 Type\SubmitType::class,
                 [

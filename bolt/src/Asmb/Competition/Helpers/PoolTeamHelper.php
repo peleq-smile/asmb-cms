@@ -10,6 +10,6 @@ namespace Bundle\Asmb\Competition\Helpers;
  */
 class PoolTeamHelper
 {
-    const ASMB_TEAM_PREFIX = 'AS MANGIN NTES';
+    const ASMB_TEAM_PREFIX = 'AS MANGIN ';
     const EXEMPT_TEAM_PREFIX = 'COMITE LOIRE ATLANTIQUE TENNIS';
 }

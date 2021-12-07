@@ -35,7 +35,7 @@
 
             {% for poolRankingRow in poolRanking %}
                 <tr class="{{ poolRankingRow.team_is_club ? 'is-club' }}">
-                    <td class="text-left">{{ loop.index }}&nbsp;</td>
+                    <td class="text-left">{{ poolRankingRow.ranking ?? loop.index }}&nbsp;</td>
                     <td>{{ poolRankingRow.team_name }}</td>
                     <td class="text-center">{{ poolRankingRow.points }}</td>
                     <td class="text-center">{{ poolRankingRow.days_played }}</td>

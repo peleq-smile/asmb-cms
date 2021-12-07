@@ -32,6 +32,10 @@ class Pool extends Entity
     /**
      * @var string
      */
+    protected $division_fft_id;
+    /**
+     * @var string
+     */
     protected $fft_id;
     /**
      * @var Carbon
@@ -43,126 +47,91 @@ class Pool extends Entity
      */
     private $completeness;
 
-    /**
-     * @return string
-     */
-    public function getChampionshipId()
+    public function getChampionshipId(): ?string
     {
         return $this->championship_id;
     }
 
-    /**
-     * @param string $championshipId
-     */
-    public function setChampionshipId($championshipId)
+    public function setChampionshipId(?string $championshipId)
     {
         $this->championship_id = $championshipId;
     }
 
-    /**
-     * @return int
-     */
-    public function getPosition()
+    public function getPosition(): ?int
     {
         return $this->position;
     }
 
-    /**
-     * @param int $position
-     */
-    public function setPosition($position)
+    public function setPosition(?int $position)
     {
         $this->position = $position;
     }
 
-    /**
-     * @return string
-     */
-    public function getCategoryName()
+    public function getCategoryName(): ?string
     {
         return $this->category_name;
     }
 
-    /**
-     * @param string $categoryName
-     */
-    public function setCategoryName($categoryName)
+    public function setCategoryName(?string $categoryName)
     {
         $this->category_name = $categoryName;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(?string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getFftId()
+    public function getDivisionFftId(): ?string
+    {
+        return $this->division_fft_id;
+    }
+
+    public function setDivisionFftId(?string $divisionFftId)
+    {
+        $this->division_fft_id = $divisionFftId;
+    }
+
+    public function getFftId(): ?string
     {
         return $this->fft_id;
     }
 
-    /**
-     * @param $linkFft
-     */
-    public function setFftId($linkFft)
+    public function setFftId(?string $fftId)
     {
-        $this->fft_id = $linkFft;
+        $this->fft_id = $fftId;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCompleteness()
+    public function getCompleteness(): ?int
     {
         return $this->completeness;
     }
 
-    /**
-     * @param $completeness
-     */
-    public function setCompleteness($completeness)
+    public function setCompleteness(?int $completeness)
     {
         $this->completeness = $completeness;
     }
 
     /**
-     * @return string
      * @deprecated
      * @todo déporter en fonction twig
      */
-    public function getLinkFft()
+    public function getLinkFft(): string
     {
         return "http://www.gs.applipub-fft.fr/fftfr/pouleClassement.do?dispatch=load&pou_iid={$this->getFftId()}";
     }
 
-    /**
-     * @return Carbon
-     */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?Carbon
     {
         return $this->updated_at;
     }
 
-    /**
-     * @param Carbon|null $updateAt
-     *
-     * @return void
-     */
-    public function setUpdatedAt($updateAt = null)
+    public function setUpdatedAt(?Carbon $updateAt = null)
     {
         if (null === $updateAt) {
             $updateAt = new Carbon();

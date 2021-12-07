@@ -10,7 +10,7 @@ use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
  *
  * @copyright 2019
  */
-class PoolRankingParser extends AbstractGsParser
+class GsPoolRankingParser extends AbstractGsParser
 {
     /**
      * Requete pour la récupération du tableau de classement de chaque équipe
@@ -22,7 +22,7 @@ class PoolRankingParser extends AbstractGsParser
     /**
      * {@inheritdoc}
      */
-    protected function doParse(Pool $pool)
+    protected function doParse(Pool $pool): array
     {
         $nodesRanking = $this->xpath->query($this->xpathRankingContext);
 
@@ -54,7 +54,7 @@ class PoolRankingParser extends AbstractGsParser
     /**
      * @return string
      */
-    protected function getUrl()
+    protected function getUrl(): string
     {
         // TODO déporter dans de la conf
 

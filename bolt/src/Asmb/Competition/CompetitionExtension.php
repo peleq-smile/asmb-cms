@@ -12,9 +12,12 @@ use Bundle\Asmb\Competition\Entity;
 use Bundle\Asmb\Competition\Extension\TwigFiltersTrait;
 use Bundle\Asmb\Competition\Extension\TwigFunctionsTrait;
 use Bundle\Asmb\Competition\Guesser\PoolTeamsGuesser;
-use Bundle\Asmb\Competition\Parser\Championship\PoolMeetingsParser;
-use Bundle\Asmb\Competition\Parser\Championship\PoolRankingParser;
-use Bundle\Asmb\Competition\Parser\Championship\PoolTeamsParser;
+use Bundle\Asmb\Competition\Parser\Championship\GsPoolMeetingsParser;
+use Bundle\Asmb\Competition\Parser\Championship\GsPoolRankingParser;
+use Bundle\Asmb\Competition\Parser\Championship\GsPoolTeamsParser;
+use Bundle\Asmb\Competition\Parser\Championship\TenupPoolMeetingsParser;
+use Bundle\Asmb\Competition\Parser\Championship\TenupPoolRankingParser;
+use Bundle\Asmb\Competition\Parser\Championship\TenupPoolTeamsParser;
 use Bundle\Asmb\Competition\Parser\Tournament\DbParser;
 use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser;
 use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsParser;
@@ -154,26 +157,47 @@ class CompetitionExtension extends SimpleExtension
         $this->extendDatabaseSchemaServices();
         $this->extendRepositoryMapping();
 
-        $app['pool_meetings_parser'] = $app->share(
-            function () {
-                return new PoolMeetingsParser();
-            }
-        );
-        $app['pool_ranking_parser'] = $app->share(
-            function () {
-                return new PoolRankingParser();
-            }
-        );
         $app['pool_teams_guesser'] = $app->share(
             function () {
                 return new PoolTeamsGuesser();
             }
         );
-        $app['pool_teams_parser'] = $app->share(
+
+        // Parsers pour les championnats - depuis la GD
+        $app['pool_teams_gs_parser'] = $app->share(
             function () {
-                return new PoolTeamsParser();
+                return new GsPoolTeamsParser();
             }
         );
+        $app['pool_meetings_gs_parser'] = $app->share(
+            function () {
+                return new GsPoolMeetingsParser();
+            }
+        );
+        $app['pool_ranking_gs_parser'] = $app->share(
+            function () {
+                return new GsPoolRankingParser();
+            }
+        );
+        // Parsers pour les championnats - depuis TENUP
+        $config = $app['config']->get('general/tenup');
+        $fileSystem = $app['filesystem'];
+        $app['pool_teams_tenup_parser'] = $app->share(
+            function () use ($config, $fileSystem) {
+                return new TenupPoolTeamsParser($config, $fileSystem);
+            }
+        );
+        $app['pool_meetings_tenup_parser'] = $app->share(
+            function () use ($config, $fileSystem) {
+                return new TenupPoolMeetingsParser($config, $fileSystem);
+            }
+        );
+        $app['pool_ranking_tenup_parser'] = $app->share(
+            function () use ($config, $fileSystem) {
+                return new TenupPoolRankingParser($config, $fileSystem);
+            }
+        );
+        // Parsers pour les tournois
         $app['ja_tennis_json_parser'] = $app->share(
             function () {
                 return new JaTennisJsonParser();
@@ -184,7 +208,6 @@ class CompetitionExtension extends SimpleExtension
                 return new JaTennisJsParser();
             }
         );
-
         $app['tournament_db_parser'] = $app->share(
             function ($app) {
                 $tournamentRepository = $app['storage']->getRepository('tournament');
@@ -221,7 +244,6 @@ class CompetitionExtension extends SimpleExtension
     {
         return [
             new Nut\RefreshCommand($container),
-            new Nut\TestParseCommand($container),
         ];
     }
 }

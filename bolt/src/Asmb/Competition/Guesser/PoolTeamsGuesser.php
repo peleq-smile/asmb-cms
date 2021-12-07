@@ -41,7 +41,7 @@ class PoolTeamsGuesser
      *
      * @return string
      */
-    protected function buildNameFromNameFft($nameFft)
+    protected function buildNameFromNameFft(string $nameFft): string
     {
         if (strpos($nameFft, PoolTeamHelper::EXEMPT_TEAM_PREFIX) === 0) {
             // L'équipe est une "fausse" équipe pour faire un nombre pair d'équipes dans la poule.

@@ -22,6 +22,7 @@ class Championship extends BaseTable
         $this->table->addColumn('name', 'string', ['length' => 255, 'notnull' => true]);
         $this->table->addColumn('short_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('is_active', 'boolean', ['default' => 0, 'notnull' => true]);
+        $this->table->addColumn('fft_id', 'string', ['length' => 12, 'notnull' => false]);
     }
 
     /**

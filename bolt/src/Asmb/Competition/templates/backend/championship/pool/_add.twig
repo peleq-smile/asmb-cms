@@ -7,9 +7,10 @@
         <table class="table-condensed">
             <thead>
             <tr>
-                <th class="col-xs-2"><label for="{{ form.category_name.vars.id }}">{{ __('general.phrase.category_name') }}</label></th>
-                <th class="col-xs-3"><label for="{{ form.name.vars.id }}">{{ __('general.phrase.name') }}</label></th>
-                <th class="col-xs-2"><label for="{{ form.fft_id.vars.id }}">{{ __('general.phrase.fft_id') }}</label></th>
+                <th class="col-xs-2"><label class="required" for="{{ form.category_name.vars.id }}">{{ __('general.phrase.category_name') }}</label></th>
+                <th class="col-xs-3"><label class="required" for="{{ form.name.vars.id }}">{{ __('general.phrase.name') }}</label></th>
+                <th class="col-xs-2"><label class="required" for="{{ form.fft_id.vars.id }}">{{ __('general.phrase.pool_fft_id') }}</label></th>
+                <th class="col-xs-2"><label for="{{ form.division_fft_id.vars.id }}">{{ __('general.phrase.division_fft_id') }}</label></th>
                 <th></th>
             </tr>
             </thead>
@@ -25,7 +26,11 @@
                 </td>
 
                 <td class="link_fft">
-                    {{ form_widget(form.fft_id) }}
+                {{ form_widget(form.fft_id) }}
+                </td>
+
+                <td class="link_fft">
+                    {{ form_widget(form.division_fft_id) }}
                 </td>
 
                 <td class="actions">
