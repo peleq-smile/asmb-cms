@@ -119,6 +119,7 @@ class PoolMeetingRepository extends Repository
 
         $qb = $this->getLoadQuery();
         $qb->addSelect("{$this->getAlias()}.time as time");
+        $qb->addSelect("{$this->getAlias()}.is_reported as isReported");
 
         // Récupération de l'id + du nom (court et long) du championnat
         $qb->innerJoin(

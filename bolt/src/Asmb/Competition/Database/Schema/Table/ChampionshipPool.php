@@ -54,7 +54,6 @@ class ChampionshipPool extends BaseTable
         $this->table->addIndex(['championship_id']);
         $this->table->addIndex(['position']);
         $this->table->addIndex(['category_name']);
-        $this->table->addUniqueIndex(['championship_id', 'name', 'category_name']);
     }
 
     /**

@@ -47,7 +47,11 @@
             {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
 
             <tr>
-                <td class="hour" title="{{ __('home.meetings.time') }}">{{ hour }}</td>
+                {% if meeting.isReported %}
+                    <td class="hour text-danger is-italic" title="{{ __('general.phrase.reported') }}">{{ __('general.phrase.reported') }}</td>
+                {% else %}
+                    <td class="hour" title="{{ __('home.meetings.time') }}">{{ hour }}</td>
+                {% endif %}
                 <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                 <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                 <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
