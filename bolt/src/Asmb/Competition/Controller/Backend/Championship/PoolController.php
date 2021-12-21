@@ -227,7 +227,7 @@ class PoolController extends AbstractController
 
             // Récupération des données depuis Ten'Up ou la GS
             /** @var \Bundle\Asmb\Competition\Entity\Championship\PoolTeam[] $poolTeams */
-            if ($championship->getFftId() && $pool->getDivisionFftId()) {
+            if ($pool->getChampionshipFftId() && $pool->getDivisionFftId()) {
                 /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolTeamsParser $poolTeamsParser */
                 $poolTeamsParser = $this->app['pool_teams_tenup_parser'];
             } else {
@@ -287,7 +287,7 @@ class PoolController extends AbstractController
 
             // Données CLASSEMENT
             // Récupération des données depuis Ten'up ou la Gestion Sportive de la FFT
-            if ($championship->getFftId() && $pool->getDivisionFftId()) {
+            if ($pool->getChampionshipFftId() && $pool->getDivisionFftId()) {
                 // Récupération depuis Ten'Up
                 /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolRankingParser $poolRankingParser */
                 $poolRankingParser = $this->app['pool_ranking_tenup_parser'];
@@ -302,7 +302,7 @@ class PoolController extends AbstractController
             $this->savePoolRanking($pool, $poolRankingParsed);
 
             // Données RENCONTRES
-            if ($championship->getFftId() && $pool->getDivisionFftId()) {
+            if ($pool->getChampionshipFftId() && $pool->getDivisionFftId()) {
                 // Récupération depuis Ten'Up
                 /** @var TenupPoolMeetingsParser $poolMeetingsParser */
                 $poolMeetingsParser = $this->app['pool_meetings_tenup_parser'];

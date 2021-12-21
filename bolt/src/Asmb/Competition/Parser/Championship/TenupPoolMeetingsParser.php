@@ -65,7 +65,9 @@ class TenupPoolMeetingsParser extends AbstractTenupParser
                         }
 
                         // on sauvegarde ici l'uri de la feuille de match (seulement si un résultat existe)
-                        $paramsFdmFft = ['feuille_match_url' => $row['feuille_match_url'],];
+                        if (null !== $row['statut_feuille_match']) {
+                            $paramsFdmFft = ['feuille_match_url' => $row['feuille_match_url']];
+                        }
                     }
                     $poolMeeting->setResult($result);
                     $poolMeeting->setParamsFdmFft($paramsFdmFft);

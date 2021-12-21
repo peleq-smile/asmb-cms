@@ -3,8 +3,8 @@
         <thead>
         <tr>
             <th colspan="2">
-                {% if pool.divisionFftId is not null %}
-                    <a class="pool-name" href="{{ championship|championshipPoolTenupUrl(pool) }}" target="_blank"
+                {% if pool.championshipFftId is not null and pool.divisionFftId is not null %}
+                    <a class="pool-name" href="{{ pool|championshipPoolTenupUrl }}" target="_blank"
                        title="{{ __('general.phrase.see-pool-on-tenup') }}">
                         <i class="fas fa-external-link-alt"></i> {{ pool.name }}
                     </a>

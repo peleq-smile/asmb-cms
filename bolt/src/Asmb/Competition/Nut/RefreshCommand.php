@@ -79,7 +79,7 @@ class RefreshCommand extends BaseCommand
                 $championship = $championshipRepository->find($pool->getChampionshipId());
 
                 // PARSERS
-                if ($championship->getFftId() && $pool->getDivisionFftId()) {
+                if ($pool->getChampionshipFftId() && $pool->getDivisionFftId()) {
                     // Rafraichissement depuis Ten'Up
                     /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolRankingParser $poolRankingParser */
                     $poolRankingParser = $this->app['pool_ranking_tenup_parser'];

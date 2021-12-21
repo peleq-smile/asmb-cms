@@ -2,9 +2,9 @@
     <div class="panel-heading">
         <span class="title">{{ pool.name }}</span>
 
-        {% if pool.divisionFftId is not null %}
+        {% if pool.championshipFftId is not null and pool.divisionFftId is not null %}
         &nbsp;&bullet;&nbsp;
-        <a href="{{ championship|championshipPoolTenupUrl(pool) }}" target="_blank"
+        <a href="{{ pool|championshipPoolTenupUrl }}" target="_blank"
            title="{{ __('general.phrase.go-to-tenup-link') }}">
             <i class="fa fa-external-link"></i> {{ __('general.phrase.tenup') }}
         </a>

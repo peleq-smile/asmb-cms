@@ -22,6 +22,7 @@ class ChampionshipPool extends BaseTable
         $this->table->addColumn('position', 'integer');
         $this->table->addColumn('category_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('name', 'string', ['length' => 20, 'notnull' => true]);
+        $this->table->addColumn('championship_fft_id', 'string', ['length' => 12, 'notnull' => false]);
         $this->table->addColumn('division_fft_id', 'string', ['length' => 12, 'notnull' => false]);
         $this->table->addColumn('fft_id', 'string', ['length' => 12, 'notnull' => true]);
         $this->table->addColumn('updated_at', 'datetime', ['notnull' => false, 'default' => null]);

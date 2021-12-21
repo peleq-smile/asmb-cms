@@ -39,12 +39,12 @@ abstract class AbstractTenupParser
         $parsedData = null;
 
         // On tente tout d'abord de récupérer le JSON stocké en local contenant la réponse au parsing demandé
-        $jsonContent = $this->getJsonContentFromLocal($championship, $pool->getFftId());
+        $jsonContent = $this->getJsonContentFromLocal($championship, $pool);
         if (null === $jsonContent) {
             // le JSON n'existe pas ou sa date de création est devenue obsolète : on réinterroge TenUp et on sauvegarde
             // la réponse en local
             $fields = [
-                'fiche_championnat' => $championship->getFftId(),
+                'fiche_championnat' => $pool->getChampionshipFftId(),
                 'division' => $pool->getDivisionFftId(),
                 'poule' => $pool->getFftId(),
                 'formSubmit' => 'true'
@@ -52,7 +52,7 @@ abstract class AbstractTenupParser
             $jsonContent = $this->callPost($fields);
 
             if (null !== $jsonContent) {
-                $this->putJsonContentToLocal($championship, $pool->getFftId(), $jsonContent);
+                $this->putJsonContentToLocal($championship, $pool, $jsonContent);
             }
         }
 
@@ -94,9 +94,9 @@ abstract class AbstractTenupParser
         return null;
     }
 
-    protected function getJsonContentFromLocal(Championship $championship, $identifier): ?string
+    protected function getJsonContentFromLocal(Championship $championship, Pool $pool): ?string
     {
-        $fileName = $championship->getYear() . '/' . $championship->getFftId() . '/' . $identifier . '.json';
+        $fileName = $championship->getYear() . '/' . $pool->getChampionshipFftId() . '_' . $pool->getFftId() . '.json';
 
         try {
             /** @var JsonFile $jsonFile */
@@ -115,9 +115,9 @@ abstract class AbstractTenupParser
         }
     }
 
-    protected function putJsonContentToLocal(Championship $championship, string $identifier, string $content)
+    protected function putJsonContentToLocal(Championship $championship, Pool $pool, string $content)
     {
-        $fileName = $championship->getYear() . '/' . $championship->getFftId() . '/' . $identifier . '.json';
+        $fileName = $championship->getYear() . '/' . $pool->getChampionshipFftId() . '_' . $pool->getFftId() . '.json';
         $this->fileSystemManager->put('cache://tenup/' . $fileName, $content);
     }
 }

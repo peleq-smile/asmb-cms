@@ -66,11 +66,11 @@ class PoolEditType extends AbstractType
                 ]
             )
             ->add(
-                'fft_id',
+                'championship_fft_id',
                 Type\TextType::class,
                 [
-                    'label'     => Trans::__('general.phrase.fft_id'),
-                    'required'  => true,
+                    'label'     => Trans::__('general.phrase.championship_fft_id'),
+                    'required'  => false,
                     'read_only' => $options['has_teams'],
                 ]
             )
@@ -80,6 +80,15 @@ class PoolEditType extends AbstractType
                 [
                     'label'     => Trans::__('general.phrase.division_fft_id'),
                     'required'  => false,
+                    'read_only' => $options['has_teams'],
+                ]
+            )
+            ->add(
+                'fft_id',
+                Type\TextType::class,
+                [
+                    'label'     => Trans::__('general.phrase.fft_id'),
+                    'required'  => true,
                     'read_only' => $options['has_teams'],
                 ]
             )

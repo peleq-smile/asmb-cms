@@ -131,25 +131,9 @@ trait TwigFiltersTrait
     }
 
     /**
-     * Construit et retourne l'url vers le championnat donné, sur Ten'Up.
-     */
-    public function getChampionshipTenupUrl(Championship $championship): ?string
-    {
-        $url = null;
-        $linksPattern = $this->getConfigParameter('tenup');
-
-        if (isset($linksPattern['url_championship'])) {
-            $url = $linksPattern['url_championship'];
-            $url = str_replace('{$championship}', $championship->getFftId(), $url);
-        }
-
-        return $url;
-    }
-
-    /**
      * Construit et retourne l'url vers la poule du championnat donné, sur Ten'Up.
      */
-    public function getChampionshipPoolTenupUrl(Championship $championship, Pool $pool): ?string
+    public function getChampionshipPoolTenupUrl(Pool $pool): ?string
     {
         $url = null;
         $linksPattern = $this->getConfigParameter('tenup');
@@ -158,7 +142,7 @@ trait TwigFiltersTrait
             $url = $linksPattern['url_pool'];
             $url = str_replace(
                 ['{$championship}', '{$division}', '{$pool}'],
-                [$championship->getFftId(), $pool->getDivisionFftId(), $pool->getFftId()],
+                [$pool->getChampionshipFftId(), $pool->getDivisionFftId(), $pool->getFftId()],
                 $url
             );
         }
@@ -173,7 +157,6 @@ trait TwigFiltersTrait
     {
         return [
             'championshipPoolGsUrl' => 'getChampionshipPoolGsUrl',
-            'championshipTenupUrl' => 'getChampionshipTenupUrl',
             'championshipPoolTenupUrl' => 'getChampionshipPoolTenupUrl',
             'matchesSheetLink' => 'getMatchesSheetLink',
             'formattedDate' => 'getFormattedDate',

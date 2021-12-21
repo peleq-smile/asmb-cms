@@ -32,6 +32,10 @@ class Pool extends Entity
     /**
      * @var string
      */
+    protected $championship_fft_id;
+    /**
+     * @var string
+     */
     protected $division_fft_id;
     /**
      * @var string
@@ -95,6 +99,16 @@ class Pool extends Entity
     public function setDivisionFftId(?string $divisionFftId)
     {
         $this->division_fft_id = $divisionFftId;
+    }
+
+    public function getChampionshipFftId(): ?string
+    {
+        return $this->championship_fft_id;
+    }
+
+    public function setChampionshipFftId(?string $championshipFftId)
+    {
+        $this->championship_fft_id = $championshipFftId;
     }
 
     public function getFftId(): ?string

@@ -18,10 +18,6 @@ class Championship extends AbstractShortNamedEntity
      * @var boolean
      */
     protected $is_active;
-    /**
-     * @var string
-     */
-    protected $fft_id;
 
     public function getYear(): ?int
     {
@@ -41,15 +37,5 @@ class Championship extends AbstractShortNamedEntity
     public function setIsActive(?bool $isActive)
     {
         $this->is_active = $isActive;
-    }
-
-    public function getFftId(): ?string
-    {
-        return $this->fft_id;
-    }
-
-    public function setFftId(?string $linkFft)
-    {
-        $this->fft_id = $linkFft;
     }
 }
