@@ -38,20 +38,22 @@ class TenupPoolMeetingsParser extends AbstractTenupParser
                     $poolMeeting->setVisitorTeamNameFft($row['team_visitor']['name']);
 
                     // On construit la donnée "résultat" telle qu'on a l'habitude avec la GS
-                    $result = PoolMeetingHelper::RESULT_NONE;
+                    $result = null;
                     $paramsFdmFft = [];
-                    if ('T' === $row['statut_feuille_match']) { // 'T' = rencontre validée, a priori
-                        // La rencontre a été saisie dans Ten'Up
-                        if (true === $row['team_home']['win']) {
-                            // Victoire de l'équipe visitée
-                            $result = PoolMeetingHelper::RESULT_FLAG_VICTORY;
-                        } elseif (true === $row['team_visitor']['win']) {
-                            // Défaite de l'équipe visitée
-                            $result = PoolMeetingHelper::RESULT_FLAG_DEFEAT;
-                        } elseif ($row['team_home']['score'] === $row['team_visitor']['score']) {
-                            // Égalité
-                            $result = PoolMeetingHelper::RESULT_FLAG_DRAW;
-                        }
+                    // La rencontre a été saisie dans Ten'Up
+                    if (true === $row['team_home']['win']) {
+                        // Victoire de l'équipe visitée
+                        $result = PoolMeetingHelper::RESULT_FLAG_VICTORY;
+                    } elseif (true === $row['team_visitor']['win']) {
+                        // Défaite de l'équipe visitée
+                        $result = PoolMeetingHelper::RESULT_FLAG_DEFEAT;
+                    } elseif ('T' === $row['statut_feuille_match'] &&
+                        $row['team_home']['score'] === $row['team_visitor']['score']
+                    ) {
+                        // Égalité
+                        $result = PoolMeetingHelper::RESULT_FLAG_DRAW;
+                    }
+                    if (null !== $result) {
                         $score = $row['team_home']['score'] . '/' . $row['team_visitor']['score'];
                         $result .= ' ' . $score;
 
