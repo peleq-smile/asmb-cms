@@ -24,6 +24,10 @@ class Pool extends Entity
     /**
      * @var string
      */
+    protected $category_identifier;
+    /**
+     * @var string
+     */
     protected $category_name;
     /**
      * @var string
@@ -79,6 +83,16 @@ class Pool extends Entity
     public function setCategoryName(?string $categoryName)
     {
         $this->category_name = $categoryName;
+    }
+
+    public function getCategoryIdentifier(): ?string
+    {
+        return $this->category_identifier;
+    }
+
+    public function setCategoryIdentifier(?string $categoryIdentifier)
+    {
+        $this->category_identifier = $categoryIdentifier;
     }
 
     public function getName(): ?string

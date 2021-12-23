@@ -8,7 +8,7 @@
             <thead>
             <tr>
                 <th class="col-xs-2"><label class="required"
-                                            for="{{ form.category_name.vars.id }}">{{ __('general.phrase.category_name') }}</label>
+                                            for="{{ form.category_identifier.vars.id }}">{{ __('general.phrase.category') }}</label>
                 </th>
                 <th class="col-xs-3"><label class="required"
                                             for="{{ form.name.vars.id }}">{{ __('general.phrase.name') }}</label></th>
@@ -28,7 +28,7 @@
             <tbody>
             <tr>
                 <td class="name">
-                    {{ form_widget(form.category_name) }}
+                    {{ form_widget(form.category_identifier) }}
                 </td>
 
                 <td class="year">

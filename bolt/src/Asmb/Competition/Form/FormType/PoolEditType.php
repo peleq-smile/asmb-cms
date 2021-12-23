@@ -45,12 +45,12 @@ class PoolEditType extends AbstractType
 
         $builder
             ->add(
-                'category_name',
+                'category_identifier',
                 Type\ChoiceType::class,
                 [
                     'choices_as_values' => true,
-                    'choices'           => $options['category_names'],
-                    'label'             => Trans::__('general.phrase.category_name'),
+                    'choices'           => $options['categories'],
+                    'label'             => Trans::__('general.phrase.category'),
                     'required'          => true,
                 ]
             )
@@ -111,7 +111,7 @@ class PoolEditType extends AbstractType
         $resolver->setDefined(
             [
                 'championship_id',
-                'category_names',
+                'categories',
                 'has_teams',
             ]
         );

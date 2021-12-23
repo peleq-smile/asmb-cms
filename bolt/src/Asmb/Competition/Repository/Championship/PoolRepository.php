@@ -18,38 +18,31 @@ class PoolRepository extends Repository
 {
     /**
      * Return all pools of given championship id group by category name.
-     *
-     * @param integer $championshipId
-     * @param array   $categoryNames
-     *
-     * @return array
-     * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function findByChampionshipIdGroupByCategoryName($championshipId, $categoryNames = [])
+    public function findByChampionshipIdGroupByCategory($championshipId, $categories = [])
     {
         $poolsGroupedByCategoryName = [];
+        $categoryNamesByIdentifier = [];
 
-        if (!empty($categoryNames)) {
-            // Init $poolsGroupedByCategoryName with given category name(s)
-            /** @var Category $category */
-            foreach ($categoryNames as $categoryName) {
-                $poolsGroupedByCategoryName[$categoryName] = [];
-            }
-        } else {
+        if (empty($categories)) {
             $categories = $this->getEntityManager()->getRepository('championship_category')
                 ->findBy([], ['position', 'ASC']);
-
-            // Init $poolsGroupedByCategoryName with category name SORTED BY POSITION
-            /** @var Category $category */
-            foreach ($categories as $category) {
-                $poolsGroupedByCategoryName[$category->getName()] = [];
-            }
         }
 
-        /** @var \Bundle\Asmb\Competition\Entity\Championship\Pool $pool */
+        // On initialise le tableau de poules par catégorie
+        /** @var Category $category */
+        foreach ($categories as $category) {
+            $poolsGroupedByCategoryName[$category->getName()] = [];
+            $categoryNamesByIdentifier[$category->getIdentifier()] = $category->getName();
+        }
+
+        /** @var Pool $pool */
         foreach ($this->findByChampionshipId($championshipId) as $pool) {
-            if (isset($poolsGroupedByCategoryName[$pool->getCategoryName()])) {
-                $poolsGroupedByCategoryName[$pool->getCategoryName()][$pool->getId()] = $pool;
+            if (isset($categoryNamesByIdentifier[$pool->getCategoryIdentifier()])) {
+                $poolCategoryName = $categoryNamesByIdentifier[$pool->getCategoryIdentifier()];
+                if (isset($poolsGroupedByCategoryName[$poolCategoryName])) {
+                    $poolsGroupedByCategoryName[$poolCategoryName][$pool->getId()] = $pool;
+                }
             }
         }
 

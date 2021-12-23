@@ -17,6 +17,7 @@ class ChampionshipCategory extends BaseTable
      */
     protected function addColumns()
     {
+        $this->table->addColumn('identifier', 'string', ['length' => 20, 'notnull' => true]);
         $this->table->addColumn('name', 'string', ['length' => 20, 'notnull' => true]);
         $this->table->addColumn('position', 'smallint');
     }
@@ -34,6 +35,6 @@ class ChampionshipCategory extends BaseTable
      */
     protected function setPrimaryKey()
     {
-        $this->table->setPrimaryKey(['name']);
+        $this->table->setPrimaryKey(['identifier']);
     }
 }

@@ -15,11 +15,31 @@ class Category extends Entity
     /**
      * @var string
      */
+    protected $identifier;
+    /**
+     * @var string
+     */
     protected $name;
     /**
      * @var integer
      */
     protected $position;
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * @param string $identifier
+     */
+    public function setIdentifier(string $identifier)
+    {
+        $this->identifier = $identifier;
+    }
 
     /**
      * @return string

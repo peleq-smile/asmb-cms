@@ -128,7 +128,7 @@ class PoolController extends AbstractController
         $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
 
         $formOptions = [
-            'category_names'  => $this->getRepository('championship_category')->findAllAsChoices(),
+            'categories'  => $this->getRepository('championship_category')->findAllAsChoices(),
             'championship_id' => $pool->getChampionshipId(),
             'has_teams'       => ($teamsCount > 0),
         ];
@@ -151,9 +151,7 @@ class PoolController extends AbstractController
 
                 return $this->redirectToRoute('championshipedit', ['id' => $pool->getChampionshipId()]);
             } catch (Exception $e) {
-                $this->flashes()->error(
-                    Trans::__('page.edit-pool.message.saving-team', ['%name%' => $pool->getName()])
-                );
+                $this->flashes()->error($e->getMessage());
             }
         }
 

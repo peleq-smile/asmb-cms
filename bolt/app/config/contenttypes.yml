@@ -882,7 +882,7 @@ competitions:
         Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/championship">Compétition > Championnats</a>
     championship_categories:
       type: select
-      values: ['Hommes','Dames','+35','Jeunes']
+      values: { 'dames': "Dames", 'jeunes': "Jeunes", 'messieurs': "Messieurs", 'messieurs35': "Messieurs +35" }
       label: Afficher uniquement les données de cette/ces catégorie(s)
       multiple: true
 

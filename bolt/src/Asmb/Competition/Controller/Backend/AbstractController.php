@@ -87,7 +87,7 @@ abstract class AbstractController extends BackendBase
         $formOptions = [
             'action'          => $this->generateUrl('pooladd', ['championshipId' => $championshipId]),
             'championship_id' => $championshipId,
-            'category_names'  => $this->getRepository('championship_category')->findAllAsChoices(),
+            'categories'  => $this->getRepository('championship_category')->findAllAsChoices(),
             'has_teams'       => false,
         ];
 
@@ -233,7 +233,7 @@ abstract class AbstractController extends BackendBase
         if (null !== $championshipId) {
             /** @var PoolRepository $poolRepository */
             $poolRepository = $this->getRepository('championship_pool');
-            $pools = $poolRepository->findByChampionshipIdGroupByCategoryName($championshipId);
+            $pools = $poolRepository->findByChampionshipIdGroupByCategory($championshipId);
         }
 
         return $pools;

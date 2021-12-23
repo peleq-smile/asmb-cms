@@ -17,6 +17,7 @@ use Bundle\Asmb\Competition\Parser\Tournament\AbstractParser;
 use Bundle\Asmb\Competition\Parser\Tournament\DbParser;
 use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser;
 use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsParser;
+use Bundle\Asmb\Competition\Repository\Championship\CategoryRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
@@ -154,21 +155,17 @@ trait TwigFunctionsTrait
     /**
      * Retourne les poules de la compétation d'id donné, groupées par nom de catégorie, avec éventuellement un filtre
      * sur les catégories à prendre en compte.
-     *
-     * @param integer $championshipId
-     * @param array   $categoryNames
-     *
-     * @return array
-     * @throws InvalidRepositoryException
      */
-    public function getPoolsPerCategoryName($championshipId, array $categoryNames)
+    public function getPoolsPerCategory(int $championshipId, array $categoryIdentifiers = [])
     {
+        // On récupère les catégories à partir des identifiants
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $this->getStorage()->getRepository('championship_category');
+        $categories = $categoryRepository->findByIdentifiers($categoryIdentifiers);
+
         /** @var PoolRepository $poolRepository */
         $poolRepository = $this->getStorage()->getRepository('championship_pool');
-        $poolsPerCategoryName = $poolRepository->findByChampionshipIdGroupByCategoryName(
-            $championshipId,
-            $categoryNames
-        );
+        $poolsPerCategoryName = $poolRepository->findByChampionshipIdGroupByCategory($championshipId, $categories);
 
         return $poolsPerCategoryName;
     }
@@ -176,15 +173,11 @@ trait TwigFunctionsTrait
     /**
      * Retourne le classement des équipes des poules du championnat d'id donné.
      *
-     * @param integer $championshipId
-     * @param array   $categoryNames
-     *
      * @return PoolRanking[]
-     * @throws InvalidRepositoryException
      */
-    public function getPoolRankingPerPoolId($championshipId, array $categoryNames)
+    public function getPoolRankingPerPoolId(int $championshipId)
     {
-        $pools = $this->getPools($championshipId, $categoryNames);
+        $pools = $this->getPools($championshipId);
         $poolIds = array_keys($pools);
         $poolRankingByPool = array_fill_keys($poolIds, []);
 
@@ -198,15 +191,11 @@ trait TwigFunctionsTrait
     /**
      * Retourne le tableau des rencontres des poules du championnat d'id donné.
      *
-     * @param integer $championshipId
-     * @param array   $categoryNames
-     *
-     * @return array
      * @throws InvalidRepositoryException
      */
-    public function getPoolMeetingsPerPoolId($championshipId, array $categoryNames)
+    public function getPoolMeetingsPerPoolId(int $championshipId)
     {
-        $pools = $this->getPools($championshipId, $categoryNames);
+        $pools = $this->getPools($championshipId);
         $poolIds = array_keys($pools);
         $poolMeetingsByPool = array_fill_keys($poolIds, []);
 
@@ -525,7 +514,7 @@ trait TwigFunctionsTrait
             'getHomeMeetings' => 'getHomeMeetings',
             'getLastMeetings' => 'getLastMeetings',
             'getNextMeetings' => 'getNextMeetings',
-            'getPoolsPerCategoryName' => 'getPoolsPerCategoryName',
+            'getPoolsPerCategory' => 'getPoolsPerCategory',
             'getPoolRankingPerPoolId' => 'getPoolRankingPerPoolId',
             'getPoolMeetingsPerPoolId' => 'getPoolMeetingsPerPoolId',
             'getChampionshipById' => 'getChampionshipById',
@@ -549,14 +538,9 @@ trait TwigFunctionsTrait
     /**
      * Recupère les poules à partir de l'id de compétition donné.
      *
-     * @param integer $championshipId
-     * @param array   $categoryNames
-     *
      * @return Pool[]
-     * @throws InvalidRepositoryException
-     * @noinspection PhpUnusedParameterInspection
      */
-    protected function getPools($championshipId, array $categoryNames)
+    protected function getPools(int $championshipId)
     {
         /** @var PoolRepository $poolRepository */
         $poolRepository = $this->getStorage()->getRepository('championship_pool');

@@ -20,6 +20,7 @@ class ChampionshipPool extends BaseTable
         $this->table->addColumn('id', 'integer', ['autoincrement' => true]);
         $this->table->addColumn('championship_id', 'integer');
         $this->table->addColumn('position', 'integer');
+        $this->table->addColumn('category_identifier', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('category_name', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('name', 'string', ['length' => 20, 'notnull' => true]);
         $this->table->addColumn('championship_fft_id', 'string', ['length' => 12, 'notnull' => false]);
@@ -39,12 +40,12 @@ class ChampionshipPool extends BaseTable
             ['id'],
             ['onDelete' => 'CASCADE']
         );
-        $this->table->addForeignKeyConstraint(
-            'bolt_championship_category',
-            ['category_name'],
-            ['name'],
-            ['onDelete' => 'SET NULL']
-        );
+//        $this->table->addForeignKeyConstraint(
+//            'bolt_championship_category',
+//            ['category_identifier'],
+//            ['identifier'],
+//            ['onDelete' => 'SET NULL']
+//        );
     }
 
     /**
@@ -54,7 +55,7 @@ class ChampionshipPool extends BaseTable
     {
         $this->table->addIndex(['championship_id']);
         $this->table->addIndex(['position']);
-        $this->table->addIndex(['category_name']);
+        $this->table->addIndex(['category_identifier']);
     }
 
     /**

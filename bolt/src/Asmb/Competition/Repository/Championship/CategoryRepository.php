@@ -23,9 +23,30 @@ class CategoryRepository extends Repository
 
         /** @var \Bundle\Asmb\Competition\Entity\Championship\Category $category */
         foreach ($categories as $category) {
-            $asChoices[$category->getName()] = $category->getName();
+            $asChoices[$category->getName()] = $category->getIdentifier();
         }
 
         return $asChoices;
+    }
+
+    /**
+     * Retournr les catégories du/des identifiants donnés.
+     */
+    public function findByIdentifiers(array $identifiers = [])
+    {
+        $qb = $this->createQueryBuilder();
+        if (! empty($identifiers)) {
+            $qb->where($qb->expr()->in('identifier', ':identifiers'));
+            $qb->setParameter(':identifiers', implode(',', $identifiers));
+        }
+        $qb->orderBy('position', 'ASC');
+
+        $result = $qb->execute()->fetchAll();
+
+        if ($result) {
+            return $this->hydrateAll($result, $qb);
+        }
+
+        return [];
     }
 }
