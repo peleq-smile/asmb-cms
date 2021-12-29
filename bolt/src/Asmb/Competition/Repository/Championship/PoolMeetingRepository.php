@@ -128,7 +128,15 @@ class PoolMeetingRepository extends Repository
             'pool',
             $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
         );
-        $qb->addSelect('pool.category_name as category_name');
+        // Jointure sur la catégorie pour avoir le nom
+        $qb->innerJoin(
+            'pool',
+            'bolt_championship_category',
+            'category',
+            $qb->expr()->eq('pool.category_identifier', 'category.identifier')
+        );
+        $qb->addSelect('category.name as category_name');
+
         // On profite de la jointure sur la Pool pour récupérer la date de dernière mise à jour de chaque poule
         $qb->addSelect('pool.updated_at as updated_at');
 

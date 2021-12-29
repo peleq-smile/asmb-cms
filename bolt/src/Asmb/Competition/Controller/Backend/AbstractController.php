@@ -28,7 +28,7 @@ abstract class AbstractController extends BackendBase
     /**
      * Retourne la route par défaut utiliser pour la gestion des permissions.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return string
      */
@@ -75,15 +75,14 @@ abstract class AbstractController extends BackendBase
     /**
      * Build add pool to a championship form.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param integer                                   $championshipId
-     * @param string|null                               $categoryName
+     * @param Request $request
+     * @param integer $championshipId
+     * @param string|null $categoryIdentifier
      *
      * @return FormInterface
      */
-    protected function buildAddPoolForm(Request $request, $championshipId, $categoryName = null)
+    protected function buildAddPoolForm(Request $request, int $championshipId, ?string $categoryIdentifier = null)
     {
-        /** @noinspection PhpUndefinedMethodInspection */
         $formOptions = [
             'action'          => $this->generateUrl('pooladd', ['championshipId' => $championshipId]),
             'championship_id' => $championshipId,
@@ -93,8 +92,8 @@ abstract class AbstractController extends BackendBase
 
         // Generate the form
         $pool = new Pool();
-        if (null !== $categoryName) {
-            $pool->setCategoryName($categoryName);
+        if (null !== $categoryIdentifier) {
+            $pool->setCategoryIdentifier($categoryIdentifier);
         }
         $form = $this->createFormBuilder(FormType\PoolEditType::class, $pool, $formOptions)
             ->getForm()
@@ -106,8 +105,8 @@ abstract class AbstractController extends BackendBase
     /**
      * Construction du formulaire d'édition des équipes des poules données.
      *
-     * @param \Symfony\Component\HttpFoundation\Request                 $request
-     * @param \Bundle\Asmb\Competition\Entity\Championship              $championship
+     * @param Request $request
+     * @param Championship $championship
      * @param \Bundle\Asmb\Competition\Entity\Championship\PoolTeam[][] $poolTeamsPerPoolId
      *
      * @return FormInterface
@@ -242,13 +241,13 @@ abstract class AbstractController extends BackendBase
     /**
      * Retourne le nombre total de rencontres pour une poule donnée.
      *
-     * @param \Bundle\Asmb\Competition\Entity\Championship\Pool $pool
+     * @param Pool $pool
      *
      * @return int
      */
     protected function getTotalMeetingsCount(Pool $pool)
     {
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolTeamRepository $poolTeamRepository */
+        /** @var PoolTeamRepository $poolTeamRepository */
         $poolTeamRepository = $this->getRepository('championship_pool_team');
         $teamsCount = $poolTeamRepository->countByPoolId($pool->getId());
         $totalMeetingsCount = PoolHelper::getTotalMeetingsCount($teamsCount);

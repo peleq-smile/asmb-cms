@@ -76,21 +76,21 @@ class PoolRepository extends Repository
      * Return count of pools for championship with given id.
      *
      * @param integer $championshipId
-     * @param string  $categoryName
+     * @param string  $categoryIdentifier
      *
      * @return int
      */
-    public function countByChampionshipIdAndCategoryName($championshipId, $categoryName)
+    public function countByChampionshipIdAndCategory(int $championshipId, string $categoryIdentifier)
     {
         $qb = $this->getLoadQuery()
             ->select('COUNT(' . $this->getAlias() . '.id) as count')
             ->resetQueryParts(['groupBy', 'join'])
             ->where('championship_id = :championshipId')
-            ->andWhere('category_name = :categoryName')
+            ->andWhere('category_identifier = :categoryIdentifier')
             ->setParameter('championshipId', $championshipId)
-            ->setParameter('categoryName', $categoryName)
+            ->setParameter('categoryIdentifier', $categoryIdentifier)
         ;
-        $result = $qb->execute()->fetchColumn(0);
+        $result = $qb->execute()->fetchColumn();
 
         return (int) $result;
     }

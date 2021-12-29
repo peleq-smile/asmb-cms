@@ -62,7 +62,7 @@ class PoolController extends AbstractController
      * @param integer $championshipId
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function add(Request $request, $championshipId)
+    public function add(Request $request, int $championshipId)
     {
         $url = $this->generateUrl('championshipedit', ['id' => $championshipId]);
 
@@ -72,13 +72,13 @@ class PoolController extends AbstractController
             /** @var Pool $pool */
             $pool = $form->getData();
             $position = $pool->getPosition();
-            if (null === $position || !$position) {
+            if (!$position) {
                 // Set position to count of pool of same championship + 1
                 /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRepository $poolRepository */
                 $poolRepository = $this->getRepository('championship_pool');
-                $countOfPools = $poolRepository->countByChampionshipIdAndCategoryName(
+                $countOfPools = $poolRepository->countByChampionshipIdAndCategory(
                     $championshipId,
-                    $pool->getCategoryName()
+                    $pool->getCategoryIdentifier()
                 );
                 $pool->setPosition($countOfPools + 1);
             }
@@ -97,8 +97,8 @@ class PoolController extends AbstractController
             }
 
             $url = $this->generateUrl(
-                'championshipeditwithcategoryname',
-                ['id' => $championshipId, 'categoryName' => $pool->getCategoryName()]
+                'championshipeditwithcategory',
+                ['id' => $championshipId, 'categoryIdentifier' => $pool->getCategoryIdentifier()]
             );
             $url .= '#pool' . $pool->getId();
         }
@@ -170,12 +170,12 @@ class PoolController extends AbstractController
 
     /**
      * @param Request $request
-     * @param int                                       $poolId
+     * @param int $poolId
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @noinspection PhpUnusedParameterInspection
      */
-    public function delete(Request $request, $poolId)
+    public function delete(Request $request, int $poolId)
     {
         /** @var Pool $pool */
         $pool = $this->getRepository('championship_pool')->find($poolId);
@@ -270,7 +270,7 @@ class PoolController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @noinspection PhpUnusedParameterInspection
      */
-    public function fetchRankingAndMeetings(Request $request, $championshipId, $poolId)
+    public function fetchRankingAndMeetings(Request $request, int $championshipId, int $poolId)
     {
         $url = $this->generateUrl('championshipview', ['id' => $championshipId]);
 

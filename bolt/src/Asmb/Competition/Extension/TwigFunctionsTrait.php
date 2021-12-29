@@ -92,10 +92,14 @@ trait TwigFunctionsTrait
             $futureDays = ($pastOrFutureDays > 0) ? $pastOrFutureDays : 0;
             $meetingsOfTheMoment = $poolMeetingRepository->findClubMeetingsOfTheMoment($pastDays, $futureDays);
 
-            // On récupère le contenu "Competition" pour regrouper les rencontres par Championnat/catégorie et
-            // pour ajouter un lien vers la page
             /** @var Application $app */
             $app = $this->getContainer();
+
+            // On récupère l'association nom de catégorie => identifiant de catégorie
+            $categoriesMap = $app['storage']->getRepository('championship_category')->findAllAsChoices();
+
+            // On récupère le contenu "Competition" pour regrouper les rencontres par Championnat/catégorie et
+            // pour ajouter un lien vers la page
             foreach ($meetingsOfTheMoment as $meeting) {
                 // On ignore les rencontres dont l'une des équipes contient "Exempt"
                 if (
@@ -105,17 +109,21 @@ trait TwigFunctionsTrait
                     continue;
                 }
 
+                if (!isset($categoriesMap[$meeting->getCategoryName()])) {
+                    continue;
+                }
+
                 /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
                 $competitionPage = $app['query']->getContent(
                     'competition',
                     [
                         'championship_id' => $meeting->getChampionshipId(),
-                        'championship_categories' => '%' . $meeting->getCategoryName() . '%',
+                        'championship_categories' => '%' . $categoriesMap[$meeting->getCategoryName()] . '%',
                         'returnsingle' => true
                     ]
                 );
 
-                if (null !== $competitionPage && $competitionPage) {
+                if ($competitionPage) {
                     $meetingDate = $meeting->getFinalDate()->format('Ymd');
 
                     $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());

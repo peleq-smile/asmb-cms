@@ -32,10 +32,10 @@ class ChampionshipController extends AbstractController
             ->assert('id', '\d*')
             ->bind('championshipedit');
 
-        $c->match('/edit/{id}/{categoryName}', 'edit')
+        $c->match('/edit/{id}/{categoryIdentifier}', 'edit')
             ->assert('id', '\d*')
-            ->assert('categoryName', '[\+\w]+')
-            ->bind('championshipeditwithcategoryname');
+            ->assert('categoryIdentifier', '[\+\w]+')
+            ->bind('championshipeditwithcategory');
 
         $c->match('/view/{id}', 'view')
             ->assert('id', '\d+')
@@ -86,13 +86,13 @@ class ChampionshipController extends AbstractController
 
     /**
      * @param Request $request
-     * @param string                                    $id
-     * @param string|null                               $categoryName
+     * @param string $id
+     * @param string|null                               $categoryIdentifier
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Bolt\Exception\InvalidRepositoryException
      */
-    public function edit(Request $request, $id = '', $categoryName = null)
+    public function edit(Request $request, string $id = '', ?string $categoryIdentifier = null)
     {
         /** @var Championship $championship */
         $championship = $this->getRepository('championship')->find($id);
@@ -117,7 +117,7 @@ class ChampionshipController extends AbstractController
             $poolTeamsPerPoolId = $this->getPoolTeamsPerPoolId($championship->getId());
 
             // FORM 2: ajout d'une poule
-            $addPoolForm = $this->buildAddPoolForm($request, $championship->getId(), $categoryName);
+            $addPoolForm = $this->buildAddPoolForm($request, $championship->getId(), $categoryIdentifier);
             $context += [
                 'addPoolForm' => $addPoolForm->createView(),
             ];
