@@ -34,7 +34,7 @@
             <section class="section blocks">
                 <div class="container">
                     {% for item in record.blocks_top %}
-                        {% setcontent block = item.block %}
+                        {% setcontent block = 'blocs' where {'id': item.block} returnsingle %}
                         {# On vérifie que block est bien instancié, il peut s'agir d'un contenu dépublié... #}
                         {% if block != false %}
                             {% include block.contenttype.record_template_block with {'block': block, 'index': index} %}
@@ -54,7 +54,7 @@
             <section class="section blocks">
                 <div class="container">
                     {% for item in record.blocks_bottom %}
-                        {% setcontent block = item.block %}
+                        {% setcontent block = 'blocs' where {'id': item.block} returnsingle %}
                         {# On vérifie que block est bien instancié, il peut s'agir d'un contenu dépublié... #}
                         {% if block != false %}
                             {% include block.contenttype.record_template_block with {'block': block, 'index': index} %}
