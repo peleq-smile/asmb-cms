@@ -99,7 +99,7 @@ trait TwigFiltersTrait
      */
     public function getFormattedDate(PoolMeeting $meeting, $short = false)
     {
-        $meetingDate = $meeting->getDate();
+        $meetingDate = $meeting->getFinalDate();
         $dayOfMonth = (int)$meetingDate->format('d');
 
         $formatDay = $short ? '%a' : '%A';

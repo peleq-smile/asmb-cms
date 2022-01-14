@@ -15,6 +15,7 @@
             color: $dark;
         }
     }
+
     .columns {
         margin: 1rem -1.5rem;
         flex-wrap: wrap;
@@ -66,6 +67,7 @@
 
                 &.table-meetings {
                     border-top: solid 2px $border-color-table;
+
                     th, td {
                         line-height: 30px;
                     }
@@ -164,6 +166,7 @@
             $bg-color: $white;
             $border-color: $medium;
             $border-size: 1px;
+
             .table-container-part {
                 display: flex;
                 justify-content: flex-end;
@@ -173,6 +176,7 @@
                     display: flex;
                     flex-direction: row-reverse;
                     margin-bottom: 4px;
+
                     p {
                         padding: 6px;
                         margin: 0;
@@ -205,6 +209,7 @@
                         margin-left: $side-margin;
                         display: flex;
                         align-items: center;
+
                         &:after {
                             position: absolute;
                             content: '';
@@ -216,11 +221,13 @@
                             transform: translateX(-100%);
                         }
                     }
+
                     &-childrens {
                         display: flex;
                         flex-direction: column;
                         justify-content: center;
                     }
+
                     &-child {
                         display: flex;
                         align-items: flex-start;
@@ -228,6 +235,7 @@
                         margin-top: $vertical-margin;
                         margin-bottom: $vertical-margin;
                         position: relative;
+
                         &:before {
                             content: '';
                             position: absolute;
@@ -238,6 +246,7 @@
                             width: 25px;
                             height: $border-size;
                         }
+
                         &:after {
                             content: '';
                             position: absolute;
@@ -247,11 +256,13 @@
                             width: $border-size;
                             top: 50%;
                         }
+
                         &:last-child {
                             &:after {
                                 transform: translateY(-100%);
                             }
                         }
+
                         &:only-child:after {
                             display: none;
                         }
@@ -280,13 +291,14 @@
             li {
                 display: inline-flex;
                 margin-bottom: 1rem;
+
                 a {
                     white-space: nowrap;
                     border: solid 1px $secondary;
                     text-decoration: none;
                     padding: 0.5rem 0;
                     text-align: center;
-                    width:4rem;
+                    width: 4rem;
                     font-size: 0.85rem;
 
                     &:hover, &.is-active {
@@ -361,28 +373,81 @@
 }
 
 .section-home-meetings {
-    .box {
-        padding: 0;
-        margin-top: 1.5rem;
+    .pagination-previous {
+        color: $primary;
+        position: absolute;
+        top: 1.5rem;
+        left: 0;
+        margin: 0;
 
-        h2 {
-            margin-top: 0;
+        span {
+            padding-left: 0.5rem;
         }
     }
-    .date {
-        display: inline-block;
-        width: 70px;
-        font-size: 1.3rem;
-    }
-    .home-meeting {
-        margin-top: -3px;
 
-        .time {
-            display: inline-block;
-            width: 62px;
-            color: $win;
-            font-style: italic;
-            font-size: 1.2rem;
+    .pagination-next {
+        color: $primary;
+        position: absolute;
+        top: 1.5rem;
+        right: 0;
+        margin: 0;
+
+        span {
+            padding-right: 0.5rem;
+        }
+    }
+
+    table {
+        caption {
+            position: relative;
+
+            h2 {
+                font-weight: bold;
+            }
+        }
+
+        tr {
+            th {
+                background-color: $grey-lighter;
+                color: $secondary;
+                padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+            }
+
+            &.home-meeting {
+                td {
+                    border-top: none;
+
+                    &:not(:first-child) {
+                        border-left: none;
+                    }
+
+                    &:not(:last-child) {
+                        border-right: none;
+                    }
+
+                    &.is-club {
+                        font-weight: bold;
+                        color: $primary;
+                        text-align: right;
+                    }
+
+                    &.score {
+                        span.score {
+                            line-height: normal;
+                        }
+                    }
+                }
+
+                &:not(:last-child) {
+                    td {
+                        border-bottom: none;
+                    }
+                }
+            }
+
+            td .empty {
+                padding: 3rem;
+            }
         }
     }
 
@@ -435,23 +500,15 @@
             }
         }
     }
-
-    .section-home-meetings {
-        .home-meeting {
-            .meeting {
-                display: block;
-            }
-        }
-    }
 }
 
 @media screen and (min-width: $desktop) {
     .section-home-meetings {
-        .home-meeting {
-            white-space: nowrap;
-
-            .meeting {
-                display: inline-block;
+        table {
+            tr.home-meeting {
+                td {
+                    font-size: 1.3rem;
+                }
             }
         }
     }
@@ -464,6 +521,7 @@
         h2.title {
             font-size: 1.7rem;
         }
+
         h3.title {
             font-size: 1rem;
         }
@@ -532,6 +590,7 @@
                 font-size: 1.1rem;
                 font-weight: bold;
             }
+
             .winner-rank, .rank {
                 font-style: italic;
                 color: $primary;
@@ -541,9 +600,20 @@
     }
 
     .section-home-meetings {
-        .box {
-            margin-left: 0;
-            margin-right: 0;
+        .pagination-previous, .pagination-next {
+            top: 1rem;
+
+            span {
+                display: none;
+            }
+        }
+
+        tr.home-meeting {
+            td {
+                font-size: 13px;
+                padding-left: 0.25rem;
+                padding-right: 0.25rem;
+            }
         }
     }
 }

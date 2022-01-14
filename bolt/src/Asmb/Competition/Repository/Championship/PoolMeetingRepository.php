@@ -325,8 +325,6 @@ class PoolMeetingRepository extends Repository
         // Prise en compte de la date de report en priorité, sinon la date définie dans la GS
         $qb->addSelect("IFNULL({$this->getAlias()}.report_date, {$this->getAlias()}.date) as final_date");
 
-        $qb->where($qb->expr()->isNotNull("{$this->getAlias()}.time"));
-
         $qb->having($qb->expr()->gte('final_date', ':fromDate'));
         $qb->setParameter('fromDate', $fromDate);
 

@@ -606,7 +606,7 @@ pages:
       type: select
       values: blocs/title
       filter: { status: published }
-      sort: name
+      sort: title
     image:
       type: image
       placeholder: https://source.unsplash.com/1280x768/?business,workplace/__random__

@@ -24,7 +24,7 @@ class CalendarExtension extends SimpleExtension
     public function getCalendarData($calendarRecord)
     {
         // On construit le calendrier des dates du 1er sept au 30 juin
-        $year = (int) $calendarRecord->get('year');
+        $year = (int)$calendarRecord->get('year');
 
         $lessonsFromDate = Carbon::createFromFormat('Y-m-d', $calendarRecord->get('lessons_from_date'));
         $lessonsToDate = Carbon::createFromFormat('Y-m-d', $calendarRecord->get('lessons_to_date'));
@@ -40,13 +40,13 @@ class CalendarExtension extends SimpleExtension
             /** @var Carbon $evtFromDate */
             $evtFromDate = $this->getCarbonDate($this->getElementData($event, 'evt_from_date'));
             $evtDuration = $this->getElementData($event, 'evt_duration');
-            $evtWithLesson = (bool) ($this->getElementData($event, 'evt_with_lesson'));
+            $evtWithLesson = (bool)($this->getElementData($event, 'evt_with_lesson'));
 
             $evtMonthLabel = CalendarHelper::buildCalendarDateMonthLabel($evtFromDate);
             $evtDayLabel = CalendarHelper::buildCalendarDateDayLabel($evtFromDate);
             $calendar[$evtMonthLabel][$evtDayLabel]['event'] = [
-                'name'     => $evtTitle,
-                'color'    => $this->getEventTypeColor($event),
+                'name' => $evtTitle,
+                'color' => $this->getEventTypeColor($event),
                 'duration' => $evtDuration,
             ];
 
@@ -93,7 +93,7 @@ class CalendarExtension extends SimpleExtension
      * Gère le cas où $element est un objet (mode "vue normale") ou un tableau (mode "prévisualisation").
      *
      * @param \Bolt\Storage\Field\Collection\LazyFieldCollection|array $element
-     * @param string                                                   $dataKey
+     * @param string $dataKey
      *
      * @return mixed
      */
@@ -149,7 +149,7 @@ class CalendarExtension extends SimpleExtension
                 'type_evenement_calendriers',
                 [
                     'status' => 'published',
-                    'order'  => 'position',
+                    'order' => 'position',
                 ]
             );
             /** @var \Bolt\Storage\Entity\Content $content */
@@ -162,10 +162,21 @@ class CalendarExtension extends SimpleExtension
     }
 
     /**
+     * Transforme la date donnée au format AAAA-MM-JJ vers le format demandé, en tenant compte de la locale courante.
+     */
+    public function formatLocalized(string $date, string $format)
+    {
+        $date = Carbon::createFromFormat('Y-m-d', $date);
+        $formattedDate = $date->formatLocalized($format);
+
+        return ucfirst($formattedDate);
+    }
+
+    /**
      * Gère le découpage d'un événement sur plusieurs mois.
      *
      * @param LazyFieldCollection|array $event
-     * @param array                     $calendar
+     * @param array $calendar
      */
     protected function handleSplitEvent($event, &$calendar)
     {
@@ -181,14 +192,14 @@ class CalendarExtension extends SimpleExtension
             $evtMonthEndLabel = CalendarHelper::buildCalendarDateMonthLabel($evtToDate);
             if ($evtMonthLabel != $evtMonthEndLabel) {
                 // La durée de l'événement du mois suivant est égal au jour du mois, car c'est du 1er au X du mois
-                $evtDurationOnNextMonth = (int) $evtToDate->format('d');
+                $evtDurationOnNextMonth = (int)$evtToDate->format('d');
 
                 $evtFirstDayOfNextMonth = $evtToDate->addDay(-1 * $evtDurationOnNextMonth + 1);
                 $evtNextMonthDayLabel = CalendarHelper::buildCalendarDateDayLabel($evtFirstDayOfNextMonth);
 
                 $calendar[$evtMonthEndLabel][$evtNextMonthDayLabel]['event'] = [
-                    'name'     => $this->getElementData($event, 'evt_title'),
-                    'color'    => $this->getEventTypeColor($event),
+                    'name' => $this->getElementData($event, 'evt_title'),
+                    'color' => $this->getEventTypeColor($event),
                     'duration' => $evtDurationOnNextMonth,
                 ];
 
@@ -202,11 +213,11 @@ class CalendarExtension extends SimpleExtension
      * Ajoute les infos sur les vacances scolaires, à partir des données saisies dans le contenu Calendrier.
      *
      * @param \Bolt\Legacy\Content $calendarRecord
-     * @param array                $calendar
+     * @param array $calendar
      */
     protected function handleHolidays($calendarRecord, &$calendar)
     {
-        $values = is_array($calendarRecord->get('holidays')) ?  $calendarRecord->get('holidays') : $calendarRecord->get('holidays')->getValues();
+        $values = is_array($calendarRecord->get('holidays')) ? $calendarRecord->get('holidays') : $calendarRecord->get('holidays')->getValues();
 
         /** @var \Bolt\Storage\Field\Collection\LazyFieldCollection $holidays */
         foreach ($values as $holidays) {
@@ -234,8 +245,18 @@ class CalendarExtension extends SimpleExtension
     protected function registerTwigFunctions()
     {
         return [
-            'getCalendarData'       => 'getCalendarData',
+            'getCalendarData' => 'getCalendarData',
             'getCalendarEventTypes' => 'getEventTypes',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigFilters()
+    {
+        return [
+            'formatLocalized' => 'formatLocalized',
         ];
     }
 }

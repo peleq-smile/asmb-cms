@@ -47,7 +47,7 @@
             {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
 
             <tr>
-                {% if meeting.isReported %}
+                {% if meeting.isReported and meeting.reportDate is null %}
                     <td class="hour text-danger is-italic" title="{{ __('general.phrase.reported') }}">{{ __('general.phrase.reported') }}</td>
                 {% else %}
                     <td class="hour" title="{{ __('home.meetings.time') }}">{{ hour }}</td>
