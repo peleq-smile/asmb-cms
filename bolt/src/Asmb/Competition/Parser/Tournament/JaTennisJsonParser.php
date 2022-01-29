@@ -54,6 +54,15 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             ];
         }
 
+        // retrait du tableau dame final à l'arrache !!!!!
+        if (isset($parsedData['tables'])) {
+            foreach ($parsedData['tables'] as $idx => $data) {
+                if ($data['name'] === 'Simple Dames Senior &bull; 30 - 15/1') {
+                    unset($parsedData['tables'][$idx]);
+                }
+            }
+        }
+
         return $parsedData;
     }
 
@@ -217,16 +226,14 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         'jid' => $winnerPlayerId,
                         'name' => $this->playersData[$winnerPlayerId]['name'],
                         'rank' => $this->playersData[$winnerPlayerId]['rank'],
-//                        'club' => $this->playersData[$winnerPlayerId]['club'],
-                        'club' => '',
+                        'club' => $this->playersData[$winnerPlayerId]['club'],
                         'qualif' => '',
                     ];
                     $player2 = [
                         'jid' => $looserPlayerId,
                         'name' => $looserPlayer['name'],
                         'rank' => $looserPlayer['rank'],
-//                        'club' => $looserPlayer['club'],
-                        'club' => '',
+                        'club' => $looserPlayer['club'],
                         'qualif' => '',
                     ];
                 } else {
@@ -236,8 +243,8 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         'jid' => $player1Id,
                         'name' => $this->playersData[$player1Id]['name'],
                         'rank' => $this->playersData[$player1Id]['rank'],
-//                        'club' => $this->playersData[$player1Id]['club'],
-                        'club' => '',
+                        'club' => $this->playersData[$player1Id]['club'],
+//                        'club' => '',
                         'qualif' => '',
                     ];
                     // et le joueur 2 est le joueur de la colonne
@@ -246,8 +253,8 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         'jid' => $player2Id,
                         'name' => $this->playersData[$player2Id]['name'],
                         'rank' => $this->playersData[$player2Id]['rank'],
-//                        'club' => $this->playersData[$player2Id]['club'],
-                        'club' => '',
+                        'club' => $this->playersData[$player2Id]['club'],
+//                        'club' => '',
                         'qualif' => '',
                     ];
                 }
@@ -364,6 +371,9 @@ class JaTennisJsonParser extends AbstractJaTennisParser
      */
     protected function parseBox($tableName, array $boxes, $boxIdx, array $indexesRegister): array
     {
+        $today = Carbon::today()->setTime(23,59,59)->format('Y-m-d\TH:i:s');
+        $tomorrow = Carbon::tomorrow()->setTime(23,59,59)->format('Y-m-d\TH:i:s');
+
         $boxData = [];
 
         if (isset($boxes[$boxIdx])) {
@@ -379,9 +389,17 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 $boxData['jid'] = $jId;
                 $boxData['name'] = $this->playersData[$box['playerId']]['name'];
                 $boxData['rank'] = $this->playersData[$box['playerId']]['rank'];
+                $boxData['club'] = $this->playersData[$box['playerId']]['club'] ?? '';
             }
             if (isset($box['date'])) {
-                $boxData['date'] = $this->getFormattedDateTime($box['date']);
+                // TODOPeleq revoir tout ça !!
+                $boxData['date'] = '?';
+
+                if (!empty($box['date']) && $box['date'] <= $today) {
+                    $boxData['date'] = $this->getFormattedDateTime($box['date']);
+                } elseif (!empty($box['date']) && $box['date'] <= $tomorrow) {
+                    $boxData['date'] = $this->getFormattedDate($box['date']);
+                }
             }
             if (isset($box['score'])) {
                 $boxData['score'] = $box['score'];
@@ -406,6 +424,7 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         'jid' => $boxData['prevBtm']['jid'],
                         'name' => $boxData['prevBtm']['name'],
                         'rank' => $boxData['prevBtm']['rank'],
+                        'club' => $boxData['prevBtm']['club'] ?? '',
                     ];
                 }
             }
@@ -424,6 +443,7 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         'jid' => $boxData['prevTop']['jid'],
                         'name' => $boxData['prevTop']['name'],
                         'rank' => $boxData['prevTop']['rank'],
+                        'club' => $boxData['prevTop']['club'] ?? '',
                     ];
                 }
             }

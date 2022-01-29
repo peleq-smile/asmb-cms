@@ -47,7 +47,9 @@
                             colspan="4">{{ homeMeetingOfDay[0]|formattedDate }}</th>
                     </tr>
                     {% for homeMeeting in homeMeetingOfDay %}
-                        {{ _self.meetingView(homeMeeting) }}
+                        {% if homeMeeting.id != 1544 %} {# CODE à l'arrache à supprimer !!!!!!!!! #}
+                            {{ _self.meetingView(homeMeeting) }}
+                        {% endif %}
                     {% endfor %}
                 {% endfor %}
 

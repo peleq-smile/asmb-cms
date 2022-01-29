@@ -340,6 +340,11 @@ class PoolMeetingRepository extends Repository
             $homeMeetings = $this->hydrateAll($result, $qb);
             /** @var PoolMeeting $homeMeeting */
             foreach ($homeMeetings as $idx => $homeMeeting) {
+                if ($homeMeeting->getIsReported() && null === $homeMeeting->getReportDate()) {
+                    // on ignore les rencontres remportées dont on ignore la date !
+                    unset($homeMeetings[$idx]);
+                    continue;
+                }
                 $homeMeeting->setHomeTeamIsClub(true);
                 $homeMeeting->setHomeTeamName($result[$idx]['team_home_name']);
                 $homeMeeting->setVisitorTeamName($result[$idx]['team_visitor_name']);

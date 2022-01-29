@@ -230,7 +230,7 @@ abstract class AbstractParser
             $boxPlayer2 = $boxBtm;
         }
 
-        // Si pas encore de donnée sur cette rencontre, à cette date + heure + lieu : on ajoute le 1er joueurs
+        // Si pas encore de donnée sur cette rencontre, à cette date + heure + lieu : on ajoute le 1er joueur
         $this->planningData[$date][$place] = [
             'table' => $boxPlayer1['table'] ?? '',
             'player1' => [

@@ -19,6 +19,7 @@ class ChampionshipCategory extends BaseTable
     {
         $this->table->addColumn('identifier', 'string', ['length' => 20, 'notnull' => true]);
         $this->table->addColumn('name', 'string', ['length' => 20, 'notnull' => true]);
+        $this->table->addColumn('short_name', 'string', ['length' => 5, 'notnull' => true]);
         $this->table->addColumn('position', 'smallint');
     }
 

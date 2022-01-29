@@ -93,6 +93,10 @@
     {# Date de der màj #}
     {% if parsedData.info.updatedAt is defined %}
         <div>
+            <em class="has-text-danger is-size-6">
+                Les dates et horaires des matchs sont affichés ici à titre purement indicatif.<br>
+                Seules les convocations officielles du juge-arbitre font foi.
+            </em>
             <br><br>
             <em class="has-text-grey-light is-size-7">Dernière mise à jour le {{ parsedData.info.updatedAt }}</em>
         </div>
@@ -155,7 +159,7 @@
                                            data-hash="#jou" data-param="{{ planningByPlaceData.player2.jid }}"
                                         >{{ planningByPlaceData.player2.name }}</a>
                                         <em>{{ planningByPlaceData.player2.rank }}</em>
-                                        <div class="club">{{ planningByPlaceData.player1.club }}</div>
+                                        <div class="club">{{ planningByPlaceData.player2.club }}</div>
                                     {% else %}
                                         <span>?</span>
                                     {% endif %}
@@ -253,7 +257,7 @@
 {% macro playersListView(players) %}
     <div class="box players-container" style="display: none;">
         <div class="container">
-            <h2 class="title">Liste des {{ players|length }} joueurs</h2>
+            <h2 class="title">Liste des {{ players|length }} joueurs<span class="is-size-5"> (dont liste d'attente)</span></h2>
             <div class="columns is-gapless is-mobile is-multiline">
                 <span class="column is-hidden-mobile">Catégorie</span>
                 <span class="column is-hidden-desktop">Cat.</span>

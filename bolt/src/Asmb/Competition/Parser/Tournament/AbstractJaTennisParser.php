@@ -3,7 +3,6 @@
 namespace Bundle\Asmb\Competition\Parser\Tournament;
 
 use Carbon\Carbon;
-use JsonSchema\Exception\RuntimeException;
 
 /**
  * Parseur de fichiers exportés depuis JA-Tennis
@@ -41,8 +40,8 @@ abstract class AbstractJaTennisParser extends AbstractParser
     protected function add1month($inputDate): string
     {
         $outputDate = str_replace(
-            ['-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-'],
-            ['-12-', '-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-'],
+            ['-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-', '-00-'],
+            ['-12-', '-11-', '-10-', '-09-', '-08-', '-07-', '-06-', '-05-', '-04-', '-03-', '-02-', '-01-'],
             $inputDate
         );
 
@@ -137,10 +136,18 @@ abstract class AbstractJaTennisParser extends AbstractParser
         }
 
         $date = $box['date'] ?? '';
-        $place = $box['place'] ?? '';
+        $place = $box['place'] ?? $box['position']; // si pas de court de spécifié, on essaie d'avoir une donnée "unique" pour la rencontre
         $score = $box['score'] ?? '';
 
-        if (!isset($this->planningData[$date][$place])) {
+        $today = Carbon::today()->setTime(23,59,59)->format('Y-m-d\TH:i:s');
+        $tomorrow = Carbon::tomorrow()->setTime(23,59,59)->format('Y-m-d\TH:i:s');
+        if ((empty($date) || $date <= $tomorrow) && !isset($this->planningData[$date][$place])) {
+
+            // on cache les horaires sauf si c'est le jour même
+            if (empty($date) || $date > $today) {
+                $date = substr($date, 0, 10);
+            }
+
             $jId = $box['playerId'] ?? $box['jid'] ?? null;
             $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
         }

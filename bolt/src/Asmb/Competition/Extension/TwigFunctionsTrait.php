@@ -127,6 +127,9 @@ trait TwigFunctionsTrait
 
                     $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
                     $meeting->setCompetitionRecordSlug($competitionPage->getSlug());
+                    if (null !== $meeting->getCategoryName()) {
+                        $meeting->setCategoryIdentifier($categoriesMap[$meeting->getCategoryName()]);
+                    }
 
                     if (!isset($groupedMeetings[$meetingDate . '-' . $competitionPage->getId()])) {
                         $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()] = [$meeting];
@@ -250,6 +253,22 @@ trait TwigFunctionsTrait
         }
 
         return $tournamentContent;
+    }
+
+    public function getChampionshipCategories()
+    {
+        $categoriesByIdentifier = [];
+
+        /** @var CategoryRepository $repository */
+        $repository = $this->getStorage()->getRepository('championship_category');
+        $categories = $repository->findBy([], ['position', 'ASC']);
+
+        /** @var \Bundle\Asmb\Competition\Entity\Championship\Category $category */
+        foreach ($categories as $category) {
+            $categoriesByIdentifier[$category->getIdentifier()] = $category;
+        }
+
+        return$categoriesByIdentifier;
     }
 
     /**
@@ -526,6 +545,7 @@ trait TwigFunctionsTrait
             'getPoolMeetingsPerPoolId' => 'getPoolMeetingsPerPoolId',
             'getChampionshipById' => 'getChampionshipById',
             'renderTournament' => 'renderTournament',
+            'getChampionshipCategories' => 'getChampionshipCategories',
         ];
     }
 

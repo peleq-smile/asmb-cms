@@ -4,18 +4,19 @@
 <div class="box">
     <table class="table is-fullwidth">
         {% for meeting in meetings %}
-            {% if (previousDate is not defined or previousDate != meeting.date)
-                or (previousCompetitionPageSlug is not defined or previousCompetitionPageSlug != meeting.competition_record_slug)
-            %}
-                {% if loop.index != 1 %}
-                    </tbody>
-                {% endif %}
+            {% if meeting.isReported == false or meeting.reportDate is not null %}
+                {% if (previousDate is not defined or previousDate != meeting.date)
+                    or (previousCompetitionPageSlug is not defined or previousCompetitionPageSlug != meeting.competition_record_slug)
+                %}
+                    {% if loop.index != 1 %}
+                        </tbody>
+                    {% endif %}
 
-                <thead>
-                <tr>
-                    <th colspan="4">
-                        <span class="is-hidden-touch">
-                            {{ meeting|formattedDate }}
+                    <thead>
+                    <tr>
+                        <th colspan="4">
+                            <span class="is-hidden-touch">
+                                {{ meeting|formattedDate }}
 
                             {% if meeting.competition_record_slug is defined %}
                             <em>
@@ -37,28 +38,37 @@
                 </tr>
                 </thead>
 
-                {% set previousDate = meeting.date %}
-                <tbody>
-            {% endif %}
-            {% set previousCompetitionPageSlug = meeting.competition_record_slug %}
-
-            {% set scoreHtml = meeting|score(true)|default(' - ') %}
-            {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
-            {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
-
-            <tr>
-                {% if meeting.isReported and meeting.reportDate is null %}
-                    <td class="hour text-danger is-italic" title="{{ __('general.phrase.reported') }}">{{ __('general.phrase.reported') }}</td>
-                {% else %}
-                    <td class="hour" title="{{ __('home.meetings.time') }}">{{ hour }}</td>
+                    {% set previousDate = meeting.date %}
+                    <tbody>
                 {% endif %}
-                <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
-                <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
-                <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
-            </tr>
+                {% set previousCompetitionPageSlug = meeting.competition_record_slug %}
 
-            {% if lastUpdatedAt == null or lastUpdatedAt < meeting.updated_at %}
-                {% set lastUpdatedAt = meeting.updated_at %}
+                {% set scoreHtml = meeting|score(true)|default(' - ') %}
+                {% set matchesSheetLinkHtml = meeting|matchesSheetLink(scoreHtml) %}
+                {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
+
+                <tr>
+                    {% if meeting.isReported and meeting.reportDate is null %}
+                        <td class="hour text-danger is-italic" title="{{ __('general.phrase.reported') }}">{{ __('general.phrase.reported') }}</td>
+                    {% else %}
+                        <td class="hour" title="{{ __('home.meetings.time') }}">
+                            {# CODE à l'arrache à supprimer !!!!!!!!! #}
+                            {% if meeting.id == 1544 %}
+                                {{ hour }}*<br>
+                                <em style="font-size: 10px; line-height: 12px; display: block">* se déroule à Bouaye</em>
+                            {% else %}
+                                {{ hour }}
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                    <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
+                    <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
+                    <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
+                </tr>
+
+                {% if lastUpdatedAt == null or lastUpdatedAt < meeting.updated_at %}
+                    {% set lastUpdatedAt = meeting.updated_at %}
+                {% endif %}
             {% endif %}
         {% endfor %}
     </table>

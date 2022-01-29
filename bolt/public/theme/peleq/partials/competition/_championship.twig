@@ -13,6 +13,8 @@
 {% set poolMeetingsPerPoolId = getPoolMeetingsPerPoolId(record.championship_id) %}
 {% set championship = getChampionshipById(record.championship_id) %}
 
+{% set categoriesByIdentifier = getChampionshipCategories() %}
+
 {% set MAX_PER_ROW = 4 %}
 
 {% set lastUpdatedAt = null %}
@@ -20,6 +22,23 @@
 <section class="section section-competition section-championship">
     <div class="container">
         <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
+
+        {% if record.championship_categories|length > 1 %}
+        <div class="tabs is-boxed is-right">
+            <ul>
+                {% for categoryIdentifier, category in categoriesByIdentifier %}
+                    {% if categoryIdentifier in record.championship_categories %}
+                    <li class="{% if currentCategory == categoryIdentifier %}is-active{% endif %}">
+                        <a href="{{ app.request.pathinfo }}?cat={{ categoryIdentifier }}" title="Voir les poules de la catégorie {{ category.name }}">
+                            <span class="is-hidden-touch">{{ category.name }}</span>
+                            <span class="is-hidden-desktop">{{ category.shortName }}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
         <div class="columns">
             {% set idx = 0 %}

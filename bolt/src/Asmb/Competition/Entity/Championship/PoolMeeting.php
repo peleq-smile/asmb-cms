@@ -54,6 +54,8 @@ class PoolMeeting extends Entity
     /** @var string */
     protected $category_name;
     /** @var string */
+    protected $category_identifier;
+    /** @var string */
     protected $competition_record_title;
     /** @var string */
     protected $competition_record_slug;
@@ -362,6 +364,21 @@ class PoolMeeting extends Entity
     public function setCategoryName($categoryName)
     {
         $this->category_name = $categoryName;
+    }
+    /**
+     * @return string
+     */
+    public function getCategoryIdentifier()
+    {
+        return $this->category_identifier;
+    }
+
+    /**
+     * @param string $categoryIdentifier
+     */
+    public function setCategoryIdentifier($categoryIdentifier)
+    {
+        $this->category_identifier = $categoryIdentifier;
     }
 
     /**

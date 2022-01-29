@@ -440,6 +440,12 @@ class JaTennisJsParser extends AbstractJaTennisParser
                         $boxesByDraw[$drawId][$boxId]['table'] = $tableName ?? '';
                         $boxesByDraw[$drawId][$boxId]['boxId'] = $contextId; // nécessaire pour les poules !
                         $boxesByDraw[$drawId][$boxId]['jid'] = 'j' . $this->extractDataFromRow($row, $rowKey);
+                    } elseif('QS' === $rowKey) {
+                        $boxId++;
+                        $indexesRegister[$drawId][$boxId] = [];
+                        $boxesByDraw[$drawId][$boxId]['table'] = $tableName ?? '';
+                        $qualifId = $this->extractDataFromRow($row, $rowKey);
+                        $boxesByDraw[$drawId][$boxId]['qualif'] = $qualifId;
                     } elseif (isset(self::$boxesKeysMapping[$rowKey])) {
                         if ('Sco' === $rowKey && !$isPool) {
                             $nbOut = (int)$this->tablesData[$drawId]['nbOut'];
@@ -533,6 +539,15 @@ class JaTennisJsParser extends AbstractJaTennisParser
 
             if (substr_count($value, ',') === 4) {
                 // cas avec heure
+                if ($explodedValue[3] < 10 && strlen($explodedValue[3] === 1)) {
+                    // cas heure sans zéro initial
+                    $explodedValue[3] = '0'. $explodedValue[3];
+                }
+                if ($explodedValue[4] < 10 && strlen($explodedValue[4] === 1)) {
+                    // cas heure sans zéro initial
+                    $explodedValue[4] = '0'. $explodedValue[4];
+                }
+                $value = implode(',', $explodedValue);
                 $value = Carbon::createFromFormat('(Y,m,d,H,i)', substr($value, strlen('new Date')))
                     ->format('Y-m-d H:i');
             } elseif (substr_count($value, ',') === 3) {

@@ -21,6 +21,10 @@ class Category extends Entity
      */
     protected $name;
     /**
+     * @var string
+     */
+    protected $short_name;
+    /**
      * @var integer
      */
     protected $position;
@@ -50,11 +54,27 @@ class Category extends Entity
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      */
-    public function setName($name)
+    public function setName(?string $name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortName(): ?string
+    {
+        return $this->short_name;
+    }
+
+    /**
+     * @param string|null $shortName
+     */
+    public function setShortName(?string $shortName)
+    {
+        $this->short_name = $shortName;
     }
 
     /**
