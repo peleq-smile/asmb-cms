@@ -218,7 +218,7 @@ abstract class AbstractParser
         return $sortedPlanningData;
     }
 
-    protected function addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop)
+    protected function addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop, $indexIntoPlanning)
     {
         if (null !== $jId && isset($boxBtm['jid']) && $jId === $boxBtm['jid']) {
             // Ici, le vainqueur de la rencontre est dans la boîte du bas
@@ -231,7 +231,7 @@ abstract class AbstractParser
         }
 
         // Si pas encore de donnée sur cette rencontre, à cette date + heure + lieu : on ajoute le 1er joueur
-        $this->planningData[$date][$place] = [
+        $this->planningData[$date][$indexIntoPlanning] = [
             'table' => $boxPlayer1['table'] ?? '',
             'player1' => [
                 'jid' => $boxPlayer1['jid'] ?? '',
@@ -248,6 +248,7 @@ abstract class AbstractParser
                 'qualif' => $boxPlayer2['qualif'] ?? '',
             ],
             'score' => $score,
+            'place' => $place,
         ];
     }
 

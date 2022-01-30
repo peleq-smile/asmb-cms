@@ -339,10 +339,11 @@ class DbParser extends AbstractParser
         if ($box->getDatetime()->format('Y-m-d') <= $today || $this->getTournament()->getDisplayTimes()) {
             $score = (null !== $box->getScore()) ? $box->getScore() : '';
             $place = $box->getId(); // Tentons d'utiliser cette donnée...
+            $indexIntoPlanning = $place;
 
-            if (!isset($this->planningData[$date][$box->getId()])) {
+            if (!isset($this->planningData[$date][$indexIntoPlanning])) {
                 $jId = $this->getPlayerUniqIdFromBox($box);
-                $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
+                $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop, $indexIntoPlanning);
             }
         }
     }

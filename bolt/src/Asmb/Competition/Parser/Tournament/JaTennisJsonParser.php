@@ -217,6 +217,7 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 // On a une date : on enregistre des données sur le planning ici
                 $date = $box['date']; // non formattée ici, c'est ce qu'on veut pour trier
                 $place = $box['place'] ?? '';
+                $place = '';
                 $score = $boxData['score'] ?? '';
 
                 //TODO refactoriser tout ça !!!!
@@ -400,6 +401,9 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 } elseif (!empty($box['date']) && $box['date'] <= $tomorrow) {
                     $boxData['date'] = $this->getFormattedDate($box['date']);
                 }
+            }
+            if (isset($box['place'])) {
+                $boxData['place'] = $box['place'];
             }
             if (isset($box['score'])) {
                 $boxData['score'] = $box['score'];

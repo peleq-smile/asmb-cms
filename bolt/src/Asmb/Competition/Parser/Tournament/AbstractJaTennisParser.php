@@ -136,12 +136,14 @@ abstract class AbstractJaTennisParser extends AbstractParser
         }
 
         $date = $box['date'] ?? '';
-        $place = $box['place'] ?? $box['position']; // si pas de court de spécifié, on essaie d'avoir une donnée "unique" pour la rencontre
+        $place = $box['place'] ?? '';
+        $indexIntoPlanning = $place;
+        $indexIntoPlanning .= '_' . ($box['position'] ?? '');
         $score = $box['score'] ?? '';
 
         $today = Carbon::today()->setTime(23,59,59)->format('Y-m-d\TH:i:s');
         $tomorrow = Carbon::tomorrow()->setTime(23,59,59)->format('Y-m-d\TH:i:s');
-        if ((empty($date) || $date <= $tomorrow) && !isset($this->planningData[$date][$place])) {
+        if ((empty($date) || $date <= $tomorrow) && !isset($this->planningData[$date][$indexIntoPlanning])) {
 
             // on cache les horaires sauf si c'est le jour même
             if (empty($date) || $date > $today) {
@@ -149,7 +151,7 @@ abstract class AbstractJaTennisParser extends AbstractParser
             }
 
             $jId = $box['playerId'] ?? $box['jid'] ?? null;
-            $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop);
+            $this->addPlanningData($date, $score, $place, $jId, $boxBtm, $boxTop, $indexIntoPlanning);
         }
     }
 

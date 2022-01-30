@@ -92,9 +92,9 @@
 
     {# Date de der màj #}
     {% if parsedData.info.updatedAt is defined %}
-        <div>
+        <div class="bottom-warning">
             <em class="has-text-danger is-size-6">
-                Les dates et horaires des matchs sont affichés ici à titre purement indicatif.<br>
+                Les dates, horaires et lieux des matchs sont affichés ici à titre purement indicatif.<br>
                 Seules les convocations officielles du juge-arbitre font foi.
             </em>
             <br><br>
@@ -139,9 +139,28 @@
                         {% if planningByPlaceData.table is defined and planningByPlaceData.table is not empty %}
                             <div class="columns is-gapless is-mobile is-multiline">
                                 {% if displayTimes %}
-                                <div class="column is-one-fifth-mobile">{{ (time != '00h') ? time : '-' }}</div>
+                                <div class="column is-one-fifth-mobile">
+                                    {{ (time != '00h') ? time : '-' }}
+                                    {% if planningByPlaceData.place is defined and planningByPlaceData.place is not empty and planningByPlaceData.place|lower != 'mangin' %}
+                                    <span class="has-text-danger is-size-7 has-text-weight-bold is-hidden-mobile">
+                                        <br>
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        Lieu : {{ planningByPlaceData.place }}
+                                    </span>
+                                    {% endif %}
+                                </div>
                                 {% endif %}
                                 <div class="column is-one-quarter-desktop is-four-fifths-mobile has-text-right-mobile">{{ planningByPlaceData.table|raw }}</div>
+
+                                <div class="column is-full-mobile is-hidden-desktop" style="margin-top: -0.75rem !important;">
+                                    {% if planningByPlaceData.place is defined and planningByPlaceData.place is not empty and planningByPlaceData.place|lower != 'mangin' %}
+                                        <span class="has-text-danger is-size-7 has-text-weight-bold">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                            Lieu : {{ planningByPlaceData.place }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
                                 <div class="column is-one-quarter-desktop{{ (planningByPlaceData.score is not empty)? ' is-winner' }} is-two-fifths-mobile">
                                     {% if planningByPlaceData.player1.name is not empty %}
                                         <a class="player-link text-secondary"
@@ -344,7 +363,18 @@
             <div class="item-parent">
                 <p>
                     {% if tableData.date is defined and tableData.date is not empty %}
-                        <span class="date">{{ tableData.date }}</span><br><br>
+                        <span class="date">{{ tableData.date }}</span>
+                        {% if tableData.place is defined and tableData.place is not empty and planningByPlaceData.place|lower != 'mangin' %}
+                            <br>
+                            <span class="place">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Lieu : {{ tableData.place }}
+                            </span>
+                            <br>
+                        {% else %}
+                            <br>
+                        {% endif %}
+                        <br>
                     {% endif %}
 
                     {% if tableData.name is defined %}

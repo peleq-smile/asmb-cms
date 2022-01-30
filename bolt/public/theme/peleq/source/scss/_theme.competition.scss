@@ -3,6 +3,10 @@
         margin: 1rem 0;
         color: $text;
     }
+
+    .bottom-warning {
+        margin-top: 1rem;
+    }
 }
 
 .section-championship {
@@ -210,7 +214,14 @@
 
                         .date {
                             color: $secondary;
-                            font-weight: bold;
+                            font-weight: 600;
+                            font-size: 0.9rem;
+                        }
+
+                        .place {
+                            color: $secondary;
+                            font-weight: 700;
+                            font-size: 0.65rem;
                         }
 
                         .club {
