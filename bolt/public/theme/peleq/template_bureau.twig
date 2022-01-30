@@ -11,15 +11,15 @@
 
             <div class="columns is-multiline">
                 {% for member in record.members %}
-                    <div class="column">
+                    <div class="column is-one-third-tablet is-one-third-desktop-desktop is-one-quarter-widescreen is-full-mobile">
                         <div class="member has-background-white">
                             <img src="{{ member.photo|thumbnail(250, 250, 'r') }}" alt="{{ member.name }}">
-                            <h2 class="title text-center text-primary">{{ member.name }}</h2>
+                            <h2 class="title text-center text-primary is-size-3">{{ member.name }}</h2>
 
                             {% set functions = member.function|split(',') %}
                             <div class="functions">
                                 {% for function in functions %}
-                                    <h3 class="title text-secondary">{{ function|trim }}</h3>
+                                    <h3 class="title text-secondary is-size-6">{{ function|trim }}</h3>
                                 {% endfor %}
                             </div>
 
