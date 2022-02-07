@@ -137,8 +137,7 @@ abstract class AbstractJaTennisParser extends AbstractParser
 
         $date = $box['date'] ?? '';
         $place = $box['place'] ?? '';
-        $indexIntoPlanning = $place;
-        $indexIntoPlanning .= '_' . ($box['position'] ?? '');
+        $indexIntoPlanning = $place . '_' . ($box['position'] ?? '');
         $score = $box['score'] ?? '';
 
         $today = Carbon::today()->setTime(23,59,59)->format('Y-m-d\TH:i:s');

@@ -54,15 +54,6 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             ];
         }
 
-        // retrait du tableau dame final à l'arrache !!!!!
-        if (isset($parsedData['tables'])) {
-            foreach ($parsedData['tables'] as $idx => $data) {
-                if ($data['name'] === 'Simple Dames Senior &bull; 30 - 15/1') {
-                    unset($parsedData['tables'][$idx]);
-                }
-            }
-        }
-
         return $parsedData;
     }
 
@@ -195,11 +186,14 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             $playerIdRow = $players[$idxRow];
             $playerIdCol = $players[$idxCol];
 
-            if (isset($box['date'])) {
-                $boxData['date'] = $this->getFormattedDateTime($box['date']);
+            if (isset($box['date']) || isset($box['score'])) {
+                $place = $box['place'] ?? '';
+                $score = $box['score'] ?? '';
+                $date = $box['date'] ?? null;
+                $boxData['date'] = !empty($date) ? $this->getFormattedDateTime($box['date']) : null;
 
-                if (isset($box['score']) && !empty($box['score'])) {
-                    $boxData['score'] = $box['score'];
+                if (!empty($score)) {
+                    $boxData['score'] = $score;
                     if (isset($box['playerId'])) {
                         $winnerPlayerId = $box['playerId'];
                         $boxData['jid'] = $winnerPlayerId;
@@ -212,60 +206,58 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 }
 
                 // On ajoute les données de match sur les joueurs
-                $this->addMatchesDataOnPlayersData($playerIdRow, $looserPlayer, $tableName, $box['date'], $boxData);
+                $this->addMatchesDataOnPlayersData($playerIdRow, $looserPlayer, $tableName, $date, $boxData);
 
-                // On a une date : on enregistre des données sur le planning ici
-                $date = $box['date']; // non formattée ici, c'est ce qu'on veut pour trier
-                $place = $box['place'] ?? '';
-                $place = '';
-                $score = $boxData['score'] ?? '';
+                if (!empty($date)) {
+                    // On a une date : on enregistre des données sur le planning ici
+                    // $date est non formattée ici, c'est ce qu'on veut pour trier
 
-                //TODO refactoriser tout ça !!!!
-                if (isset($winnerPlayerId, $looserPlayerId)) {
-                    // si vainqueur, on le place en 1er
-                    $player1 = [
-                        'jid' => $winnerPlayerId,
-                        'name' => $this->playersData[$winnerPlayerId]['name'],
-                        'rank' => $this->playersData[$winnerPlayerId]['rank'],
-                        'club' => $this->playersData[$winnerPlayerId]['club'],
-                        'qualif' => '',
-                    ];
-                    $player2 = [
-                        'jid' => $looserPlayerId,
-                        'name' => $looserPlayer['name'],
-                        'rank' => $looserPlayer['rank'],
-                        'club' => $looserPlayer['club'],
-                        'qualif' => '',
-                    ];
-                } else {
-                    // sinon le joueur 1 est le joueur de la ligne
-                    $player1Id = $playerIdRow;
-                    $player1 = [
-                        'jid' => $player1Id,
-                        'name' => $this->playersData[$player1Id]['name'],
-                        'rank' => $this->playersData[$player1Id]['rank'],
-                        'club' => $this->playersData[$player1Id]['club'],
-//                        'club' => '',
-                        'qualif' => '',
-                    ];
-                    // et le joueur 2 est le joueur de la colonne
-                    $player2Id = $playerIdCol ;
-                    $player2 = [
-                        'jid' => $player2Id,
-                        'name' => $this->playersData[$player2Id]['name'],
-                        'rank' => $this->playersData[$player2Id]['rank'],
-                        'club' => $this->playersData[$player2Id]['club'],
-//                        'club' => '',
-                        'qualif' => '',
+                    //TODO refactoriser tout ça !!!!
+                    if (isset($winnerPlayerId, $looserPlayerId)) {
+                        // si vainqueur, on le place en 1er
+                        $player1 = [
+                            'jid' => $winnerPlayerId,
+                            'name' => $this->playersData[$winnerPlayerId]['name'],
+                            'rank' => $this->playersData[$winnerPlayerId]['rank'],
+                            'club' => $this->playersData[$winnerPlayerId]['club'],
+                            'qualif' => '',
+                        ];
+                        $player2 = [
+                            'jid' => $looserPlayerId,
+                            'name' => $looserPlayer['name'],
+                            'rank' => $looserPlayer['rank'],
+                            'club' => $looserPlayer['club'],
+                            'qualif' => '',
+                        ];
+                    } else {
+                        // sinon le joueur 1 est le joueur de la ligne
+                        $player1Id = $playerIdRow;
+                        $player1 = [
+                            'jid' => $player1Id,
+                            'name' => $this->playersData[$player1Id]['name'],
+                            'rank' => $this->playersData[$player1Id]['rank'],
+                            'club' => $this->playersData[$player1Id]['club'],
+                            'qualif' => '',
+                        ];
+                        // et le joueur 2 est le joueur de la colonne
+                        $player2Id = $playerIdCol ;
+                        $player2 = [
+                            'jid' => $player2Id,
+                            'name' => $this->playersData[$player2Id]['name'],
+                            'rank' => $this->playersData[$player2Id]['rank'],
+                            'club' => $this->playersData[$player2Id]['club'],
+                            'qualif' => '',
+                        ];
+                    }
+
+                    $indexIntoPlanning = $place . '_' . ($box['position'] ?? '');
+                    $this->planningData[$date][$indexIntoPlanning] = [
+                        'table' => $tableName,
+                        'player1' => $player1,
+                        'player2' => $player2,
+                        'score' => $score,
                     ];
                 }
-
-                $this->planningData[$date][$place] = [
-                    'table' => $tableName,
-                    'player1' => $player1,
-                    'player2' => $player2,
-                    'score' => $score,
-                ];
             }
             $boxesData[$playerIdRow][$playerIdCol] = $boxData;
 
