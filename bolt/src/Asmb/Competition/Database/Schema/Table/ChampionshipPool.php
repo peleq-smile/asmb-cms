@@ -27,6 +27,7 @@ class ChampionshipPool extends BaseTable
         $this->table->addColumn('division_fft_id', 'string', ['length' => 12, 'notnull' => false]);
         $this->table->addColumn('fft_id', 'string', ['length' => 12, 'notnull' => true]);
         $this->table->addColumn('updated_at', 'datetime', ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('calendar_color', 'string', ['length' => 9, 'default' => null]);
     }
 
     /**
@@ -40,12 +41,6 @@ class ChampionshipPool extends BaseTable
             ['id'],
             ['onDelete' => 'CASCADE']
         );
-//        $this->table->addForeignKeyConstraint(
-//            'bolt_championship_category',
-//            ['category_identifier'],
-//            ['identifier'],
-//            ['onDelete' => 'SET NULL']
-//        );
     }
 
     /**

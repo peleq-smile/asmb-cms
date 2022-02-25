@@ -93,6 +93,17 @@ class PoolEditType extends AbstractType
                 ]
             )
             ->add(
+                'calendar_color',
+                Type\ChoiceType::class,
+                [
+                    'label'             => Trans::__('general.phrase.calendar_color'),
+                    'required'          => false,
+                    'choices_as_values' => true,
+                    'choices'           => $options['calendarEventTypes'],
+                ]
+            )
+
+            ->add(
                 'save',
                 Type\SubmitType::class,
                 [
@@ -113,6 +124,7 @@ class PoolEditType extends AbstractType
                 'championship_id',
                 'categories',
                 'has_teams',
+                'calendarEventTypes',
             ]
         );
     }

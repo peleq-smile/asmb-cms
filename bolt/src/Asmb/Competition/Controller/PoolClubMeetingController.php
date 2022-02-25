@@ -55,10 +55,6 @@ class PoolClubMeetingController extends Base
             $poolsByCategory = $poolRepository->findByChampionshipIdGroupByCategory($championship->getId());
 
             foreach ($poolsByCategory as $categoryName => $pools) {
-                if (empty($pools)) {
-                    continue;
-                }
-
                 /** @var Pool $pool */
                 foreach ($pools as $pool) {
                     $poolMeetings = $poolMeetingRepository->findClubMeetingsOfPool($pool->getId());

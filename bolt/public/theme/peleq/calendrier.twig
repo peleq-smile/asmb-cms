@@ -25,9 +25,27 @@
                                         <td class="cal-day" title="{{ dayData.title|default('') }}">{{ dayLabel }}</td>
                                         {% if dayData.event is not empty %}
                                             <td class="cal-event"{% if dayData.event.duration > 1 %} rowspan="{{ dayData.event.duration }}"{% endif %}
-                                                {% if dayData.event.color %} style="background: {{ dayData.event.color }}"{% endif %}
+                                                {% if dayData.event.color and dayData.event.color is iterable %}
+                                                    {% set colors = dayData.event.color|keys %}
+                                                    {% if dayData.event.color|length == 2 %}
+                                                        {% set color1 = colors[0] %}
+                                                        {% set color2 = colors[1] %}
+                                                        style="background: linear-gradient(-45deg, {{ color1 }} 0, {{ color1 }} 50%, {{ color2 }} 50%, {{ color2 }} 66% 100%);"
+                                                    {% elseif dayData.event.color|length == 3 %}
+                                                        {% set color1 = colors[0] %}
+                                                        {% set color2 = colors[1] %}
+                                                        {% set color3 = colors[2] %}
+                                                        style="background: linear-gradient(-45deg, {{ color1 }} 0, {{ color1 }} 33%, {{ color2 }} 33%, {{ color2 }} 66%, {{ color3 }} 66%, {{ color3 }} 100%);"
+                                                    {% endif %}
+
+                                                {% elseif dayData.event.color %}
+                                                    style="background: {{ dayData.event.color }}"
+                                                {% endif %}
                                             >
-                                                {{ dayData.event.name }}
+                                                <div class="flex-column">
+                                                    <span {% if dayData.event.name|length > 20 %}class="small"{% endif %}
+                                                    >{{ dayData.event.name }}</span>
+                                                </div>
                                             </td>
                                             {% set skipCalEventTd = dayData.event.duration-1 %}
                                         {% elseif skipCalEventTd == 0 %}

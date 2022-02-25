@@ -45,6 +45,10 @@ class Pool extends Entity
      * @var Carbon
      */
     protected $updated_at;
+    /**
+     * @var string
+     */
+    protected $calendar_color;
 
     /**
      * @var integer
@@ -143,5 +147,15 @@ class Pool extends Entity
         }
 
         $this->updated_at = $updateAt;
+    }
+
+    public function getCalendarColor(): ?string
+    {
+        return $this->calendar_color;
+    }
+
+    public function setCalendarColor(?string $calendarColor)
+    {
+        $this->calendar_color = $calendarColor;
     }
 }

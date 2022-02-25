@@ -87,6 +87,7 @@ abstract class AbstractController extends BackendBase
             'action'          => $this->generateUrl('pooladd', ['championshipId' => $championshipId]),
             'championship_id' => $championshipId,
             'categories'  => $this->getRepository('championship_category')->findAllAsChoices(),
+            'calendarEventTypes'  => $this->getCalendarEventTypes(),
             'has_teams'       => false,
         ];
 
@@ -253,5 +254,27 @@ abstract class AbstractController extends BackendBase
         $totalMeetingsCount = PoolHelper::getTotalMeetingsCount($teamsCount);
 
         return $totalMeetingsCount;
+    }
+
+    protected function getCalendarEventTypes()
+    {
+        $eventTypes = [];
+
+        /** @var \Bolt\Storage\Query\Query $query */
+        $query = $this->app['query'];
+        /** @var \Bolt\Storage\Query\QueryResultset $queryResultSet */
+        $queryResultSet = $query->getContent(
+            'type_evenement_calendriers',
+            [
+                'order' => 'position',
+            ]
+        );
+        /** @var \Bolt\Storage\Entity\Content $content */
+        foreach ($queryResultSet as $content) {
+            $eventTypeFieldValues = $content->getValues();
+            $eventTypes[$eventTypeFieldValues['name']] = $eventTypeFieldValues['color'];
+        }
+
+        return $eventTypes;
     }
 }

@@ -409,7 +409,7 @@ class PoolMeetingRepository extends Repository
         $qb->addSelect("IF(team_home.is_club, 1, 0) as team_home_is_club");
 
         $qb->orderBy('final_date');
-        $qb->addOrderBy('time');
+        $qb->addOrderBy('day');
 
         $result = $qb->execute()->fetchAll();
 

@@ -129,6 +129,7 @@ class PoolController extends AbstractController
 
         $formOptions = [
             'categories'  => $this->getRepository('championship_category')->findAllAsChoices(),
+            'calendarEventTypes'  => $this->getCalendarEventTypes(),
             'championship_id' => $pool->getChampionshipId(),
             'has_teams'       => ($teamsCount > 0),
         ];
