@@ -54,6 +54,19 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             ];
         }
 
+        // On retire les joueurs qui n'ont pas joué, si le tournoi est terminé !
+        $now = Carbon::now()->format('Y-m-d');
+        if ($this->infoData['end'] < $now) {
+            foreach ($parsedData['players'] as $idxPlayer => $playerData) {
+                if (empty($playerData['matches'])) {
+                    unset($parsedData['players'][$idxPlayer]);
+                }
+            }
+        }
+
+        // On tri les données de résultat par clé
+        krsort($parsedData['result']);
+
         return $parsedData;
     }
 
@@ -96,9 +109,20 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             $playersData = $this->getPlayersData();
             if (!empty($playersData)) {
                 foreach ($this->fileData['events'] as $dataEvent) {
-                    foreach ($dataEvent['draws'] as $draw) {
+                    foreach ($dataEvent['draws'] as $idxDraw => $draw) {
                         $nbOut = $draw['nbOut'];
                         $name = $dataEvent['name'];
+
+                        // TODOpeleq à retirer -- pour surcharger les noms pas top de l'asmb cup ds JA tennis
+                        if ($name === 'ASMB Cup 2022' || $name === 'ASMB Cup') {
+                            if ('F' === $dataEvent['sexe']) {
+                                $name = 'ASMB Cup Dames';
+                            } elseif ('H' === $dataEvent['sexe']) {
+                                $name = 'ASMB Cup Messieurs';
+                            } else {
+                                $name = 'ASMB Cup 2022';
+                            }
+                        }
 
                         $boxes = $draw['boxes'];
                         $indexesRegister = $this->buildIndexesRegistry($boxes, $nbOut);
@@ -123,8 +147,8 @@ class JaTennisJsonParser extends AbstractJaTennisParser
 
                             // On profite de la boucle pour enregistrer les résultats (= vainqueurs + finalistes)
                             // Avant de trier par ordre décroissant, le vainqueur est la 1ère "boîte" (pour les tableaux
-                            // dont il ressort 1 seule personne, càd où $nbOut=1 + qui contiennent "final" dans leur nom
-                            if (1 === $nbOut && isset($boxesData[0]) && stripos($name, 'final') !== false) {
+                            // dont il ressort 1 seule personne et qui est le dernier de l'épreuve)
+                            if (1 === $nbOut && isset($boxesData[0]) && $idxDraw === (count($dataEvent['draws']) - 1)) {
                                 $this->addResultDataFromFinalBox($name, $boxesData[0]);
                             }
 
@@ -136,6 +160,7 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                             'name' => $name,
                             'isPool' => $isPool,
                             'boxes' => $boxesData,
+                            'sexe' => $dataEvent['sexe']
                         ];
                     }
                 }
@@ -154,6 +179,8 @@ class JaTennisJsonParser extends AbstractJaTennisParser
         $players = [];
         $idxPlayer = 1;
         for ($i = count($boxes) - 1; $i >= 0; $i--) {
+            // les X dernières "boîtes" correspondent en qq sorte à la colonne des noms des joueurs (X = nb de joueurs
+            // de la poule)
             if (!isset($boxes[$i]['playerId'])) {
                 continue;
             }
@@ -161,6 +188,11 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             $playerId = $boxes[$i]['playerId'];
             if (!in_array($playerId, $players)) {
                 $players[$idxPlayer++] = $playerId;
+
+                // on initialise également les données de classement
+                $this->resultsData['pool'][$tableName][$playerId]['points'] = 0;
+                $this->resultsData['pool'][$tableName][$playerId]['setsDiff'] = 0;
+                $this->resultsData['pool'][$tableName][$playerId]['gamesDiff'] = 0;
             }
         }
 
@@ -178,8 +210,8 @@ class JaTennisJsonParser extends AbstractJaTennisParser
         $firstReverseBoxes = array_slice($boxes, -0, $boxCount);
         krsort($firstReverseBoxes);
 
-        $idxRow = 1;
         $idxCol = 2; // = $idxRow + 1
+        $idxRow = 1;
         foreach ($firstReverseBoxes as $box) {
             $boxData = [];
             $looserPlayer = null;
@@ -191,6 +223,7 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 $score = $box['score'] ?? '';
                 $date = $box['date'] ?? null;
                 $boxData['date'] = !empty($date) ? $this->getFormattedDateTime($box['date']) : null;
+                $boxData['score'] = null;
 
                 if (!empty($score)) {
                     $boxData['score'] = $score;
@@ -198,10 +231,36 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         $winnerPlayerId = $box['playerId'];
                         $boxData['jid'] = $winnerPlayerId;
                         $boxData['name'] = $this->playersData[$winnerPlayerId]['name'];
+                        $boxData['shortName'] = $this->playersData[$winnerPlayerId]['shortName'];
                         $boxData['rank'] = $this->playersData[$winnerPlayerId]['rank'];
 
                         $looserPlayerId = ($playerIdRow === $winnerPlayerId) ? $playerIdCol : $playerIdRow;
                         $looserPlayer = $this->playersData[$looserPlayerId];
+
+                        // On compte les points du joueur dans la poule pour le classement (on utilise $resultsData)
+                        // 3 points une victoire, 1 point pour une défaite en 3set
+                        $this->resultsData['pool'][$tableName][$winnerPlayerId]['points'] += 3;
+
+                        if (substr_count($score, ' ') === 2 && strpos($score, ' 1/0') > 1) {
+                            // score en 3 sets
+                            $this->resultsData['pool'][$tableName][$looserPlayerId]['points'] += 1;
+                            $this->resultsData['pool'][$tableName][$winnerPlayerId]['setsDiff'] += 1;
+                            $this->resultsData['pool'][$tableName][$looserPlayerId]['setsDiff'] -= 1;
+
+                            // extraction des jeux
+                            $winnerGames = intval($score[0]) + intval($score[4]) + intval($score[8]);
+                            $looserGames = intval($score[2]) + intval($score[6]) + intval($score[10]);
+                        } else {
+                            // score en 2 sets
+                            $this->resultsData['pool'][$tableName][$winnerPlayerId]['setsDiff'] += 2;
+                            $this->resultsData['pool'][$tableName][$looserPlayerId]['setsDiff'] -= 2;
+
+                            // extraction des jeux
+                            $winnerGames = intval($score[0]) + intval($score[4]);
+                            $looserGames = intval($score[2]) + intval($score[6]);
+                        }
+                        $this->resultsData['pool'][$tableName][$winnerPlayerId]['gamesDiff'] += ($winnerGames - $looserGames);
+                        $this->resultsData['pool'][$tableName][$looserPlayerId]['gamesDiff'] += ($looserGames - $winnerGames);
                     }
                 }
 
@@ -261,15 +320,29 @@ class JaTennisJsonParser extends AbstractJaTennisParser
             }
             $boxesData[$playerIdRow][$playerIdCol] = $boxData;
 
-            if ($idxCol < $nbPlayers) {
+            if ($idxCol === ($idxRow+1)) {
+                $idxRow = 1;
                 $idxCol++;
             } else {
                 $idxRow++;
-                $idxCol = $idxRow + 1;
             }
 
             unset($winnerPlayerId, $looserPlayerId);
         }
+
+        // on tri le tableau de classement selon les points, puis le setsDiff et le gamesDiff
+        $points = $setsDiff = $gamesDiff = [];
+        foreach ($this->resultsData['pool'][$tableName] as $playerId => $resultsData) {
+            $points[$playerId]  = $resultsData['points'];
+            $setsDiff[$playerId]  = $resultsData['setsDiff'];
+            $gamesDiff[$playerId]  = $resultsData['gamesDiff'];
+        }
+        array_multisort(
+            $points, SORT_DESC,
+            $setsDiff, SORT_DESC,
+            $gamesDiff, SORT_DESC,
+            $this->resultsData['pool'][$tableName]
+        );
 
         return $boxesData;
     }
@@ -295,9 +368,15 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                         $team = $playerData['team']; // tableau à 2 entrées, contenant les IDs des 2 joueurs
                     }
 
+                    $nameParts = explode(' ', $name);
+                    $namePartsCountButLast = count($nameParts) - 1;
+                    $namePartsButLast = implode(' ', array_slice($nameParts, 0, $namePartsCountButLast));
+                    $shortName = $namePartsButLast . ' ' . $nameParts[$namePartsCountButLast][0] . '.';
+
                     $this->playersData[$playerData['id']] = [
                         'jid' => $playerData['id'],
                         'name' => $name,
+                        'shortName' => $shortName,
                         'rank' => $playerData['rank'] ?? '',
                         'cat' => $playerData['sexe'],
                         'club' => $playerData['club'] ?? '',

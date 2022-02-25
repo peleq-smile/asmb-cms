@@ -19,8 +19,8 @@ COPY ./docker/php-apache/php.ini-development /usr/local/etc/php/conf.d/php.ini
 COPY ./docker/php-apache/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 # On ajoute dynamiquement le port et l'IP de debug pour xdebug, car dépend de l'environnement
 RUN echo "" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.remote_host=${XDEBUG_REMOTE_HOST}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.remote_port=${XDEBUG_REMOTE_PORT}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.client_host=${XDEBUG_REMOTE_HOST}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.client_port=${XDEBUG_REMOTE_PORT}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

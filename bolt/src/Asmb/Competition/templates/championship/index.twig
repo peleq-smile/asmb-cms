@@ -1,0 +1,58 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+    <section class="section section-page section-championship">
+        <div class="container">
+            <h1 class="title is-size-1 is-size-3-mobile">{{ headTitle }}</h1>
+
+            <div class="content">
+                {% for championshipTitle, clubMeetingsOfChampionship in clubMeetings %}
+                    <div class="box">
+                        <h2 class="text-primary">{{ championshipTitle }}</h2>
+
+                        <table class="table is-bordered is-responsive">
+                            <thead class="is-hidden-touch">
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Équipe</th>
+                                {% for idxDay in 1..nbMaxDaysByChampionship[championshipTitle] %}
+                                    <th>{{ 'J' ~ idxDay }}</th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for categoryName, clubMeetingsOfCategory in clubMeetingsOfChampionship %}
+                                {% set isFirstTeamOfCategory = true %}
+
+                                <tr>
+                                {% for teamName, clubMeetingsOfTeam in clubMeetingsOfCategory %}
+                                    <tr>
+                                        {% if isFirstTeamOfCategory %}
+                                            <th rowspan="{{ clubMeetingsOfCategory|length }}" class="is-size-4">
+                                                {{ categoryName }}
+                                            </th>
+                                            {% set isFirstTeamOfCategory = false %}
+                                        {% endif %}
+                                        <th class="is-size-5 text-secondary">{{ teamName }}</th>
+
+                                        {% for idxDay, clubMeeting in clubMeetingsOfTeam %}
+                                            {% set isMeetingInPast = clubMeeting.finalDate|date('Y-m-d') < ('now'|date('Y-m-d')) %}
+                                            {% set isMeetingToday = clubMeeting.finalDate|date('Y-m-d') == ('now'|date('Y-m-d')) %}
+
+                                            <td class="is-size-6{{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
+                                                <span class="is-hidden-desktop has-text-weight-bold">{{ 'J' ~ idxDay }} : </span>
+                                                {{ clubMeeting|formattedDate(true) }}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock main %}

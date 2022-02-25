@@ -3,9 +3,11 @@
 namespace Bundle\Asmb\Calendar;
 
 use Bolt\Extension\SimpleExtension;
+use Bolt\Storage\Entity\Content;
 use Bolt\Storage\Field\Collection\LazyFieldCollection;
 use Bundle\Asmb\Calendar\Helpers\CalendarHelper;
 use Carbon\Carbon;
+use Twig\Markup;
 
 /**
  * Asmb Calendar bundle extension loader.
@@ -17,28 +19,60 @@ class CalendarExtension extends SimpleExtension
     protected $eventTypes;
 
     /**
-     * @param \Bolt\Legacy\Content $calendarRecord
+     * @param \Bolt\Legacy\Content|Content $calendarRecord
+     * @param string $field
+     *
+     * @return false|mixed|string
+     */
+    private function getCalendarRecordFieldContent($calendarRecord, string $field)
+    {
+        $fieldContent = $calendarRecord->get($field);
+        if ($fieldContent instanceof Markup) {
+            $fieldContent = $fieldContent->__toString();
+        }
+
+        return $fieldContent;
+    }
+
+    /**
+     * @param \Bolt\Legacy\Content|Content $calendarRecord
      *
      * @return array
      */
     public function getCalendarData($calendarRecord)
     {
-        // On construit le calendrier des dates du 1er sept au 30 juin
-        $year = (int)$calendarRecord->get('year');
+        $calendar = [];
 
-        $lessonsFromDate = Carbon::createFromFormat('Y-m-d', $calendarRecord->get('lessons_from_date'));
-        $lessonsToDate = Carbon::createFromFormat('Y-m-d', $calendarRecord->get('lessons_to_date'));
+        // On construit le calendrier des dates du 1er sept au 30 juin
+        $year = (int)$this->getCalendarRecordFieldContent($calendarRecord, 'year');
+
+        $lessonsFromDate = $this->getCalendarRecordFieldContent($calendarRecord, 'lessons_from_date');
+        $lessonsToDate = $this->getCalendarRecordFieldContent($calendarRecord, 'lessons_to_date');
+
+        if (empty($year) || empty($lessonsFromDate) || empty($lessonsToDate)) {
+            return $calendar;
+        }
+
+        $lessonsFromDate = Carbon::createFromFormat('Y-m-d', $lessonsFromDate);
+        $lessonsToDate = Carbon::createFromFormat('Y-m-d', $this->getCalendarRecordFieldContent($calendarRecord, 'lessons_to_date'));
         $calendar = CalendarHelper::buildAnnualCalendar($year, $lessonsFromDate, $lessonsToDate);
+        $calendarStartDate = Carbon::createFromFormat('Y-m-d', "$year-9-1")->setTime(0, 0);
 
         // On y ajoute les événements à afficher
         /** @var \Bolt\Storage\Field\Collection\RepeatingFieldCollection|array $events */
-        $events = $calendarRecord->get('events'); // On n'obtient pas la même chose en mode "preview" qu'en mode réel...
+        $events = $this->getCalendarRecordFieldContent($calendarRecord, 'events'); // On n'obtient pas la même chose en mode "preview" qu'en mode réel...
         $values = is_array($events) ? $events : $events->getValues();
-        /** @var \Bolt\Storage\Field\Collection\LazyFieldCollection|array $event */
+        /** @var LazyFieldCollection|array $event */
         foreach ($values as $event) {
-            $evtTitle = $this->getElementData($event, 'evt_title');
             /** @var Carbon $evtFromDate */
             $evtFromDate = $this->getCarbonDate($this->getElementData($event, 'evt_from_date'));
+
+            if ($evtFromDate < $calendarStartDate) {
+                // si on duplique un calendrier, on peutse retrouver avec des vieux évts : on les ignore.
+                continue;
+            }
+
+            $evtTitle = $this->getElementData($event, 'evt_title');
             $evtDuration = $this->getElementData($event, 'evt_duration');
             $evtWithLesson = (bool)($this->getElementData($event, 'evt_with_lesson'));
 
@@ -75,7 +109,7 @@ class CalendarExtension extends SimpleExtension
     /**
      * Retourne la couleur de l'événement donné, selon son type.
      *
-     * @param \Bolt\Storage\Field\Collection\LazyFieldCollection|array $event
+     * @param LazyFieldCollection|array $event
      *
      * @return string
      */
@@ -92,7 +126,7 @@ class CalendarExtension extends SimpleExtension
      * Retourne la valeur de la donnée demandée pour l'élément donné.
      * Gère le cas où $element est un objet (mode "vue normale") ou un tableau (mode "prévisualisation").
      *
-     * @param \Bolt\Storage\Field\Collection\LazyFieldCollection|array $element
+     * @param LazyFieldCollection|array $element
      * @param string $dataKey
      *
      * @return mixed
@@ -212,14 +246,15 @@ class CalendarExtension extends SimpleExtension
     /**
      * Ajoute les infos sur les vacances scolaires, à partir des données saisies dans le contenu Calendrier.
      *
-     * @param \Bolt\Legacy\Content $calendarRecord
+     * @param \Bolt\Legacy\Content|Content $calendarRecord $calendarRecord
      * @param array $calendar
      */
-    protected function handleHolidays($calendarRecord, &$calendar)
+    protected function handleHolidays($calendarRecord, array &$calendar)
     {
-        $values = is_array($calendarRecord->get('holidays')) ? $calendarRecord->get('holidays') : $calendarRecord->get('holidays')->getValues();
+        $values = is_array($this->getCalendarRecordFieldContent($calendarRecord, 'holidays')) ?
+            $this->getCalendarRecordFieldContent($calendarRecord, 'holidays') : $this->getCalendarRecordFieldContent($calendarRecord, 'holidays')->getValues();
 
-        /** @var \Bolt\Storage\Field\Collection\LazyFieldCollection $holidays */
+        /** @var LazyFieldCollection $holidays */
         foreach ($values as $holidays) {
             /** @var Carbon $fromDate */
             $fromDate = $this->getCarbonDate($this->getElementData($holidays, 'holidays_from_date'));

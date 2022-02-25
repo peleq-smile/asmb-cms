@@ -8,6 +8,7 @@ use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
+use Carbon\Carbon;
 
 /**
  * Déclaration de filtres Twig.
@@ -85,7 +86,8 @@ trait TwigFiltersTrait
         }
 
         if (isset($url)) {
-            $title = Trans::__('general.phrase.go-to-matches-sheet');
+            $date = $meeting->getFinalDate() ? $meeting->getFinalDate()->format('d/m/Y') : '?';
+            $title = Trans::__('general.phrase.go-to-matches-sheet', ['%date%' => $date]);
             $linkContent = '<a href="' . $url . '" class="btn btn-xs btn-link" target="_blank" title="' . $title . '">';
             $linkContent .= $withThisContent . '</a>';
         }

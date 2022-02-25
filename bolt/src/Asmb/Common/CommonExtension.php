@@ -2,7 +2,6 @@
 
 namespace Bundle\Asmb\Common;
 
-use Bolt\Events\AccessControlEvents;
 use Bolt\Extension\SimpleExtension;
 use Bundle\Asmb\Common\EventListener\RedirectListener;
 use Bundle\Asmb\Common\Extension\TwigBackendTrait;

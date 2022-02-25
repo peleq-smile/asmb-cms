@@ -3,8 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    {# On prend en priorité la donnée "meta_title" si elle existe, puis la donnée "title" ensuite. #}
-    {% set headTitle = '' %}
+    {# On prend en priorité la donnée headTitle si elle existe, sinon "meta_title" si elle existe,
+       puis la donnée "title" ensuite. #}
+    {% if headTitle is not defined %}
+        {% set headTitle = '' %}
+    {% endif %}
     {% if record.meta_title is defined and record.meta_title is not empty %}
         {% set headTitle = record.meta_title %}
     {% elseif record.title is defined and record.title is not empty %}

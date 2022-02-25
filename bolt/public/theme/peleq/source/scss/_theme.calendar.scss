@@ -31,13 +31,19 @@
 
                 tr.no-lessons {
                     td {
-                        background: $grey-lighter;
+                        background: #d9d9d9;
+                    }
+
+                    &:not(:last-child) {
+                        td {
+                            border-bottom: none;
+                        }
                     }
                 }
 
                 tr.is-sunday {
                     td {
-                        background: $grey-lighter;
+                        background: #d9d9d9;
 
                         &.cal-day {
                             font-weight: bold;
@@ -47,7 +53,7 @@
 
                 tr.is-public-holiday {
                     td {
-                        background: $grey-lighter;
+                        background: #d9d9d9;
 
                         &.cal-day, &.cal-event:not([rowspan]):not([style]) {
                             font-weight: bold;
@@ -58,7 +64,7 @@
 
                 tr.is-holidays {
                     td {
-                        background: $grey-lighter;
+                        background: #d9d9d9;
                         border-top: none;
                         border-bottom: none;
 
@@ -96,7 +102,7 @@
 
                 .color {
                     display: inline-block;
-                    border: solid 1px $grey-lighter;
+                    border: solid 1px #d9d9d9;
                     width: 6% !important;
                     height: 100%;
                     margin-right: 5px;

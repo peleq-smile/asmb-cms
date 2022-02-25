@@ -50,13 +50,13 @@ class PoolRepository extends Repository
     }
 
     /**
- * Return all pools of given championship id, sorted by name.
- *
- * @param integer $championshipId
- *
- * @return bool|Pool[]
- */
-    public function findByChampionshipId($championshipId)
+     * Return all pools of given championship id, sorted by name.
+     *
+     * @param integer $championshipId
+     *
+     * @return bool|Pool[]
+     */
+    public function findByChampionshipId(int $championshipId)
     {
         $poolsSortedByName = [];
 
@@ -93,6 +93,36 @@ class PoolRepository extends Repository
         $result = $qb->execute()->fetchColumn();
 
         return (int) $result;
+    }
+
+    /**
+     * Retourne toutes les poules de la saison correspondant à l'année de départ donnée.
+     *
+     * @return Pool[]
+     */
+    public function findAllOfSeason(int $fromYear)
+    {
+        $pools = [];
+
+        $qb = $this->getLoadQuery();
+        // Filtre sur les poules des championnats de l'année donnée seulement
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship',
+            'championship',
+            $qb->expr()->eq("{$this->getAlias()}.championship_id", 'championship.id')
+        );
+        $qb->where('championship.year = :fromYear');
+        $qb->setParameter(':fromYear', $fromYear);
+
+        $qb->groupBy("{$this->getAlias()}.id");
+
+        $result = $qb->execute()->fetchAll();
+        if ($result) {
+            $pools = $this->hydrateAll($result, $qb);
+        }
+
+        return $pools;
     }
 
     /**

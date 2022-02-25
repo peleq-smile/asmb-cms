@@ -302,7 +302,7 @@ trait TwigFunctionsTrait
 
             if (!isset($parsedData['error'])) {
                 $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
-                $endDate->setTime(0, 0);
+                $endDate->setTime(23, 59);
 
                 // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
                 // non à jour.
@@ -346,7 +346,7 @@ trait TwigFunctionsTrait
 
             if (!isset($parsedData['error'])) {
                 $endDate = Carbon::createFromFormat('Y-m-d', $parsedData['info']['end']);
-                $endDate->setTime(0, 0, 0);
+                $endDate->setTime(23, 59);
 
                 // On ne sauvegarde pas la version HTML si le tournoi est en cours, afin d'éviter d'avoir des données
                 // non à jour.

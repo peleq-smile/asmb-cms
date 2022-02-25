@@ -74,6 +74,16 @@ class CompetitionExtension extends SimpleExtension
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function registerFrontendControllers()
+    {
+        return [
+            '/competition/dates-des-rencontres-par-equipe' => new Controller\PoolClubMeetingController(),
+        ];
+    }
+
+    /**
      * Retourne les paramètres "nb de jours passés" et "nb de jours à venir" pour la remontée des rencontres du moment.
      *
      * @return integer[]

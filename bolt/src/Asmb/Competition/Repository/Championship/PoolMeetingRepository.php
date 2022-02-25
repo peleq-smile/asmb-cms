@@ -5,6 +5,7 @@ namespace Bundle\Asmb\Competition\Repository\Championship;
 use Bolt\Storage\Repository;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
+use Bundle\Asmb\Competition\Helpers\PoolTeamHelper;
 use Carbon\Carbon;
 
 /**
@@ -102,19 +103,20 @@ class PoolMeetingRepository extends Repository
      * Récupère et retourne les rencontres du moment concernant le club, en filtrant sur $pastDays jours en arrière
      * et $futureDays en avant.
      *
-     * @param int  $pastDays
-     * @param int  $futureDays
+     * @param int $pastDays
+     * @param int $futureDays
      * @param bool $onlyActiveChampionship
      * @param bool $withReportDates
      *
      * @return PoolMeeting[]
      */
     public function findClubMeetingsOfTheMoment(
-        $pastDays,
-        $futureDays,
-        $onlyActiveChampionship = true,
-        $withReportDates = true
-    ) {
+        int  $pastDays,
+        int  $futureDays,
+        bool $onlyActiveChampionship = true,
+        bool $withReportDates = true
+    )
+    {
         $clubMeetingsOfTheMoment = [];
 
         $qb = $this->getLoadQuery();
@@ -220,7 +222,7 @@ class PoolMeetingRepository extends Repository
 
                 if ($meeting->getHomeTeamIsClub() || $meeting->getVisitorTeamIsClub()) {
                     // Ajout à la volée de données sur le Championnat concerné
-                    $meeting->setChampionshipId((int) $result[$idx]['championship_id']);
+                    $meeting->setChampionshipId((int)$result[$idx]['championship_id']);
                     $meeting->setChampionshipName($result[$idx]['championship_name']);
                     $meeting->setChampionshipShortName($result[$idx]['championship_short_name']);
 
@@ -230,7 +232,7 @@ class PoolMeetingRepository extends Repository
                     // Mise à jour de la date avec la date de report éventuelle
                     if ($withReportDates && null !== $result[$idx]['final_date']) {
                         $date = Carbon::createFromFormat('Y-m-d', $result[$idx]['final_date']);
-                        $date->setTime(0, 0, 0);
+                        $date->setTime(0, 0);
                         $meeting->setDate($date);
                     }
 
@@ -253,17 +255,17 @@ class PoolMeetingRepository extends Repository
      * Sauvegarde les rencontres données en paramètre, pour la poule d'id donné.
      *
      * @param PoolMeeting[] $poolMeetings
-     * @param int           $poolId
+     * @param int $poolId
      */
-    public function saveAll(array $poolMeetings, $poolId)
+    public function saveAll(array $poolMeetings, int $poolId)
     {
         foreach ($poolMeetings as $poolMeeting) {
             // Création ou mise à jour ? On vérifie sur l'id de poule + le nom des 2 équipes
             /** @var PoolMeeting $existingPoolRanking */
             $existingPoolMeeting = $this->findOneBy(
                 [
-                    'pool_id'               => $poolId,
-                    'home_team_name_fft'    => $poolMeeting->getHomeTeamNameFft(),
+                    'pool_id' => $poolId,
+                    'home_team_name_fft' => $poolMeeting->getHomeTeamNameFft(),
                     'visitor_team_name_fft' => $poolMeeting->getVisitorTeamNameFft(),
                 ]
             );
@@ -285,8 +287,8 @@ class PoolMeetingRepository extends Repository
     }
 
     /**
-     * @param \Carbon\Carbon      $fromDate
-     * @param \Carbon\Carbon|null $toDate
+     * @param Carbon $fromDate
+     * @param Carbon|null $toDate
      *
      * @return PoolMeeting[]
      */
@@ -296,7 +298,6 @@ class PoolMeetingRepository extends Repository
 
         $qb = $this->getLoadQuery();
 
-        /** @var \Bundle\Asmb\Competition\Repository\Championship\PoolRankingRepository $poolTeamRepository */
         // Filtre sur les rencontres du club à domicile + récupération du "nom interne"
         $qb->addSelect('team_home.name as team_home_name');
         $qb->innerJoin(
@@ -341,7 +342,7 @@ class PoolMeetingRepository extends Repository
             /** @var PoolMeeting $homeMeeting */
             foreach ($homeMeetings as $idx => $homeMeeting) {
                 if ($homeMeeting->getIsReported() && null === $homeMeeting->getReportDate()) {
-                    // on ignore les rencontres remportées dont on ignore la date !
+                    // on ignore les rencontres reportées dont on ignore la date !
                     unset($homeMeetings[$idx]);
                     continue;
                 }
@@ -352,5 +353,82 @@ class PoolMeetingRepository extends Repository
         }
 
         return $homeMeetings;
+    }
+
+    /**
+     * Retourne les rencontres de poules concernant l'équipe du club, pour la poule d'id donné.
+     *
+     * @return PoolMeeting[]
+     */
+    public function findClubMeetingsOfPool(int $poolId)
+    {
+        $clubMeetings = [];
+
+        $qb = $this->getLoadQuery();
+
+        // Récupération des rencontres du club à domicile + récupération du "nom interne"
+        $qb->addSelect('team_home.name as team_home_name');
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'team_home',
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'team_home.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'team_home.name_fft')
+            )
+        );
+
+        // Récupération des rencontres du club à l'extérieur + récupération du "nom interne"
+        $qb->addSelect('team_visitor.name as team_visitor_name');
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'team_visitor',
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'team_visitor.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'team_visitor.name_fft')
+            )
+        );
+
+        // On exclut les rencontres avec les "fausses équipes"
+        $exemptTeamPrefix = PoolTeamHelper::EXEMPT_TEAM_PREFIX;
+        $qb->andWhere($this->getAlias() . ".home_team_name_fft NOT LIKE '$exemptTeamPrefix%'");
+        $qb->andWhere($this->getAlias() . ".visitor_team_name_fft NOT LIKE '$exemptTeamPrefix%'");
+
+        // Filtre sur la poule donnée
+        $qb->andWhere($qb->expr()->eq($this->getAlias() . '.pool_id', $poolId));
+
+        // Filtre sur l'équipe domicile ou extérieure : l'une des 2 doit être du club
+        $qb->andWhere("(team_home.is_club = :isClub OR team_visitor.is_club = :isClub)");
+        $qb->setParameter(':isClub', true);
+
+        // Prise en compte de la date de report en priorité, sinon la date définie dans la GS
+        $qb->addSelect("IFNULL({$this->getAlias()}.report_date, {$this->getAlias()}.date) as final_date");
+
+        // On garde la donnée comme quoi l'équipe du club est à domicile ou à l'extérieur
+        $qb->addSelect("IF(team_home.is_club, 1, 0) as team_home_is_club");
+
+        $qb->orderBy('final_date');
+        $qb->addOrderBy('time');
+
+        $result = $qb->execute()->fetchAll();
+
+        if ($result) {
+            $clubMeetings = $this->hydrateAll($result, $qb);
+            /** @var PoolMeeting $clubMeeting */
+            foreach ($clubMeetings as $idx => $clubMeeting) {
+                if ($result[$idx]['team_home_is_club']) {
+                    $clubMeeting->setHomeTeamIsClub(true);
+                    $clubMeeting->setVisitorTeamIsClub(false);
+                    $clubMeeting->setHomeTeamName($result[$idx]['team_home_name']);
+                } else {
+                    $clubMeeting->setVisitorTeamIsClub(true);
+                    $clubMeeting->setHomeTeamIsClub(false);
+                    $clubMeeting->setVisitorTeamName($result[$idx]['team_visitor_name']);
+                }
+            }
+        }
+
+        return $clubMeetings;
     }
 }
