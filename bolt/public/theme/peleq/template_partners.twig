@@ -21,7 +21,7 @@
                 {% if partners is not empty %}
                     <div class="columns is-multiline">
                         {% for partner in partners %}
-                        <div class="column">
+                        <div class="column{{ loop.index is not odd ? ' is-half':'' }}">
                             <div class="partner has-background-primary">
                                 <h2 class="title text-center">
                                     <a href="{{ partner.url }}" title="{{ partner.url_title }}"

@@ -100,6 +100,12 @@
                                     Une victoire rapporte <strong class="has-text-grey">3 points</strong>.<br class="is-hidden-desktop">
                                     Un <strong class="has-text-grey">bonus de 1 point</strong> est accordé en cas de défaite en 3 sets.
                                 </p>
+                                <p class="has-text-grey is-size-7-touch is-hidden-desktop">
+                                    <b>Pts</b> = Points<br>
+                                    <b>S±</b> = Différence de sets<br>
+                                    <b>J±</b> = Différence de jeux<br>
+                                    <b>MJ</b> = Matchs joués<br>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -250,6 +256,12 @@
                             <span class="has-text-danger is-hidden-touch">*</span>
                             Une victoire rapporte <strong class="has-text-grey">3 points</strong>.<br class="is-hidden-desktop">
                             Un <strong class="has-text-grey">bonus de 1 point</strong> est accordé en cas de défaite en 3 sets.
+                        </p>
+                        <p class="has-text-grey is-size-7-touch is-hidden-desktop">
+                            <b>Pts</b> = Points<br>
+                            <b>S±</b> = Différence de sets<br>
+                            <b>J±</b> = Différence de jeux<br>
+                            <b>MJ</b> = Matchs joués<br>
                         </p>
                     </div>
 
@@ -534,6 +546,10 @@
                     <span class="is-hidden-touch">Différence de jeux</span>
                     <span class="is-hidden-desktop" title="Différence de jeux">J±</span>
                 </th>
+                <th>
+                    <span class="has-text-grey is-hidden-touch">Matchs joués</span>
+                    <span class="has-text-grey is-hidden-desktop" title="Matchs joués">MJ</span>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -544,6 +560,7 @@
                 <td>{{ playerRankingData.points }}</td>
                 <td>{{ playerRankingData.setsDiff }}</td>
                 <td>{{ playerRankingData.gamesDiff }}</td>
+                <td class="has-text-grey">{{ playerRankingData.matchCount }}</td>
             </tr>
         {% endfor %}
         </tbody>

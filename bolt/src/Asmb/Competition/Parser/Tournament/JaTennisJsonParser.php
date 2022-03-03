@@ -190,6 +190,7 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 $players[$idxPlayer++] = $playerId;
 
                 // on initialise également les données de classement
+                $this->resultsData['pool'][$tableName][$playerId]['matchCount'] = 0;
                 $this->resultsData['pool'][$tableName][$playerId]['points'] = 0;
                 $this->resultsData['pool'][$tableName][$playerId]['setsDiff'] = 0;
                 $this->resultsData['pool'][$tableName][$playerId]['gamesDiff'] = 0;
@@ -259,6 +260,8 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                             $winnerGames = intval($score[0]) + intval($score[4]);
                             $looserGames = intval($score[2]) + intval($score[6]);
                         }
+                        $this->resultsData['pool'][$tableName][$looserPlayerId]['matchCount'] += 1;
+                        $this->resultsData['pool'][$tableName][$winnerPlayerId]['matchCount'] += 1;
                         $this->resultsData['pool'][$tableName][$winnerPlayerId]['gamesDiff'] += ($winnerGames - $looserGames);
                         $this->resultsData['pool'][$tableName][$looserPlayerId]['gamesDiff'] += ($looserGames - $winnerGames);
                     }

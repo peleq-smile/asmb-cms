@@ -14,6 +14,15 @@ bureau:
         slug: le-bureau
     recordslug: page-bureau/le-bureau
 
+# Rédirection pages calendrier
+calendrier:
+    path: /calendrier
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: calendrier
+        slug: 2021-2022
+    recordslug: calendrier/2021-2022
+
 
 # ------------------------------------------------------------------------------
 # These are the routes defining the default behaviour of Bolt's frontend.

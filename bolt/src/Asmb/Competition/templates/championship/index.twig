@@ -39,10 +39,11 @@
                                         {% for idxDay, clubMeeting in clubMeetingsOfTeam %}
                                             {% set isMeetingInPast = clubMeeting.finalDate|date('Y-m-d') < ('now'|date('Y-m-d')) %}
                                             {% set isMeetingToday = clubMeeting.finalDate|date('Y-m-d') == ('now'|date('Y-m-d')) %}
+                                            {% set time = clubMeeting.time ? clubMeeting.time|date('H') ~ 'h' ~ clubMeeting.time|date('i') : '' %}
 
                                             <td class="is-size-6{{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
                                                 <span class="is-hidden-desktop has-text-weight-bold">{{ 'J' ~ idxDay }} : </span>
-                                                {{ clubMeeting|formattedDate(true) }}
+                                                <span style="white-space: nowrap;">{{ clubMeeting|formattedDate(true) }} {{ time }}</span>
                                             </td>
                                         {% endfor %}
                                     </tr>

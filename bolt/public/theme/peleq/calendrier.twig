@@ -16,7 +16,7 @@
                             <table class="table is-fullwidth is-narrow">
                                 <thead>
                                 <tr>
-                                    <th colspan="2">{{ month }}</th>
+                                    <th colspan="2">{{ month|upper }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -43,7 +43,8 @@
                                                 {% endif %}
                                             >
                                                 <div class="flex-column">
-                                                    <span {% if dayData.event.name|length > 20 %}class="small"{% endif %}
+                                                    <span {% if dayData.event.duration == 1 and dayData.event.name|length > 19 %}
+                                                        class="small"{% endif %}
                                                     >{{ dayData.event.name }}</span>
                                                 </div>
                                             </td>

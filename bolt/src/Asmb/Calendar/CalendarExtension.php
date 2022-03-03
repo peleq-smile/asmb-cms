@@ -181,7 +181,14 @@ class CalendarExtension extends SimpleExtension
             $evtFromDate = $meetingData['date'];
             $evtTitle = $meetingData['title'];
             $evtDuration = 1; // toujours sur 1 journée
-            $evtWithLesson = !$evtFromDate->isDayOfWeek(0); // oui si autre jour que dimanche
+
+            //TODOpeleq à retirer...
+            if ($evtFromDate->format('Y-m-d') === '2022-02-04') {
+                $evtOutOfHolidays = true;
+            } else {
+                $evtOutOfHolidays = false;
+            }
+            $evtWithLesson = !$evtFromDate->isDayOfWeek(0) && !$evtOutOfHolidays; // oui si autre jour que dimanche
 
             $colors = $meetingData['colors']; // il peut y avoir plusieurs couleurs...
 
@@ -350,6 +357,7 @@ class CalendarExtension extends SimpleExtension
                 $dayLabel = CalendarHelper::buildCalendarDateDayLabel($date); // ex: "01 lun"
 
                 $calendar[$monthLabel][$dayLabel]['classNames'][] = 'is-holidays';
+                $calendar[$monthLabel][$dayLabel]['classNames'][] = 'no-lessons';
                 $calendar[$monthLabel][$dayLabel]['title'] = $this->getElementData($holidays, 'name');
 
                 $date->addDay();
