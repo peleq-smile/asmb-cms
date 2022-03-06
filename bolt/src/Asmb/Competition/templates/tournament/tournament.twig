@@ -92,7 +92,7 @@
                 <div class="table-container">
                     <div class="container">
                         <div class="box">
-                            {{ _self.poolResult(parsedData.playersById, parsedData.result.pool[tableData.name], tableData.sexe) }}
+                            {{ _self.poolResult(parsedData.playersById, parsedData.result.pool[tableData.name], tableData.sexe, false) }}
 
                             <div class="bottom-warning">
                                 <p class="has-text-grey is-size-6 is-size-7-touch">
@@ -243,11 +243,21 @@
             <div class="container">
                 {% if results.pool is defined and results|length == 1 %}
                     <h2 class="title">Résultats des poules</h2>
-                    {% for resultName, resultData in results.pool %}
-                        <h3 class="title">{{ resultName|raw }}</h3>
 
-                        {{ _self.poolResult(playersById, resultData) }}
-                    {% endfor %}
+                    <div class="columns is-multiline">
+                        {% for resultName, resultData in results.pool %}
+                            <div class="column is-12 is-6-desktop">
+                                <h3 class="title">
+                                    <a href="#tab:table-{{ loop.index0 }}">
+                                        {{ resultName|raw }}
+                                    </a>
+                                </h3>
+                                {% set firstPlayerId = resultData|keys|first %}
+                                {% set firstPlayerSexe = playersById[firstPlayerId]['cat'] %}
+                                {{ _self.poolResult(playersById, resultData, firstPlayerSexe, true) }}
+                            </div>
+                        {% endfor %}
+                    </div>
 
                     <hr>
 
@@ -257,7 +267,7 @@
                             Une victoire rapporte <strong class="has-text-grey">3 points</strong>.<br class="is-hidden-desktop">
                             Un <strong class="has-text-grey">bonus de 1 point</strong> est accordé en cas de défaite en 3 sets.
                         </p>
-                        <p class="has-text-grey is-size-7-touch is-hidden-desktop">
+                        <p class="has-text-grey is-size-6 is-size-7-touch">
                             <b>Pts</b> = Points<br>
                             <b>S±</b> = Différence de sets<br>
                             <b>J±</b> = Différence de jeux<br>
@@ -508,7 +518,7 @@
                             {% endif %}
                             {% if boxData.jid is not empty %}
                                 <strong style="color: #6e9c6d">{{ boxData.shortName }}</strong>
-                                <div class="has-text-right"><strong class="score">{{ boxData.score }}</strong></div>
+                                <div class="has-text-right"><strong class="has-text-danger">{{ boxData.score }}</strong></div>
                             {% else %}
                                 <br><br>
                             {% endif %}
@@ -528,27 +538,44 @@
     </table>
 {% endmacro %}
 
-{% macro poolResult(playersById, rankingData, sexe) %}
+{% macro poolResult(playersById, rankingData, sexe, isNarrow) %}
     <table class="table is-fullwidth">
         <thead>
             <tr>
                 <th>#</th>
                 <th>{{ sexe is defined and sexe == 'F' ? 'Joueuse':'Joueur' }}</th>
                 <th>
-                    <span class="is-hidden-touch">Points<span class="has-text-danger"> *</span></span>
-                    <span class="is-hidden-desktop">Pts</span>
+                    {% if isNarrow %}
+                        <span title="Points">Pts</span>
+                    {% else %}
+                        <span class="is-hidden-touch">Points<span class="has-text-danger"> *</span>
+                    </span>
+                        <span class="is-hidden-desktop" title="Points">Pts</span>
+                    {% endif %}
                 </th>
                 <th>
-                    <span class="is-hidden-touch">Différence de sets</span>
-                    <span class="is-hidden-desktop" title="Différence de sets">S±</span>
+                    {% if isNarrow %}
+                        <span title="Différence de sets">S±</span>
+                    {% else %}
+                        <span class="is-hidden-touch">Différence de sets</span>
+                        <span class="is-hidden-desktop" title="Différence de sets">S±</span>
+                    {% endif %}
                 </th>
                 <th>
-                    <span class="is-hidden-touch">Différence de jeux</span>
-                    <span class="is-hidden-desktop" title="Différence de jeux">J±</span>
+                    {% if isNarrow %}
+                        <span title="Différence de jeux">J±</span>
+                    {% else %}
+                        <span class="is-hidden-touch">Différence de jeux</span>
+                        <span class="is-hidden-desktop" title="Différence de jeux">J±</span>
+                    {% endif %}
                 </th>
                 <th>
-                    <span class="has-text-grey is-hidden-touch">Matchs joués</span>
-                    <span class="has-text-grey is-hidden-desktop" title="Matchs joués">MJ</span>
+                    {% if isNarrow %}
+                        <span class="has-text-grey" title="Matchs joués">MJ</span>
+                    {% else %}
+                        <span class="has-text-grey is-hidden-touch">Matchs joués</span>
+                        <span class="has-text-grey is-hidden-desktop" title="Matchs joués">MJ</span>
+                    {% endif %}
                 </th>
             </tr>
         </thead>
