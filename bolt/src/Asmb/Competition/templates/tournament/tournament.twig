@@ -70,7 +70,7 @@
                 <h2 class="title is-size-3 is-size-4-mobile">{{ tableData.name|raw }}</h2>
             </div>
 
-            <div class="table-container">
+            <div class="table-container has-background-white">
                 {% if tableData.isPool is defined and tableData.isPool %}
                     <div class="container">
                         <div class="box">
@@ -482,13 +482,13 @@
 {% endmacro %}
 
 {% macro pool(boxesData, playersById) %}
-    <table class="table is-fullwidth">
+    <table class="table is-fullwidth is-narrow">
         <thead>
         <tr>
             <th></th>
             {% for playerIdRow, boxesRowData in boxesData %}
                 {% set playerInfo = playersById[playerIdRow] %}
-                <th>
+                <th class="has-text-nowrap">
                     {{ playerInfo.shortName }}
                 </th>
             {% endfor %}
@@ -513,19 +513,16 @@
                 {% for playerIdCol, boxData in boxesRowData %}
                     {% if idxRow < idxCol %}
                         <td style="border-bottom: solid 1px #f3f6f9; border-left: solid 1px #f3f6f9; width: {{ widthColumn }}%">
-                            {% if boxData.date is defined and boxData.date is not empty %}
-                                <span class="date" style="color: #d1a633;">{{ boxData.date }}</span><br>
-                            {% endif %}
                             {% if boxData.jid is not empty %}
-                                <strong style="color: #6e9c6d">{{ boxData.shortName }}</strong>
+                                <strong style="color: #6e9c6d" class="has-text-nowrap">{{ boxData.shortName }}</strong>
                                 <div class="has-text-right"><strong class="has-text-danger">{{ boxData.score }}</strong></div>
                             {% else %}
-                                <br><br>
+                                <br>
                             {% endif %}
                         </td>
                     {% else %}
                         <td style="background: #dbdbdb; border-bottom: solid 1px #dbdbdb; border-left: solid 1px #f3f6f9; width: {{ widthColumn }}%">
-                            <br><br><br>
+                            <br><br>
                         </td>
                     {% endif %}
 
