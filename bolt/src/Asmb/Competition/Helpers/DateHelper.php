@@ -1,23 +1,32 @@
 <?php
+
 namespace Bundle\Asmb\Competition\Helpers;
 
 use Carbon\Carbon;
 
 class DateHelper
 {
-    public static function formatWithLocalizedDayAndMonth(Carbon $date)
+    public static function formatWithLocalizedDayAndMonth(?Carbon $date, bool $short = true): ?string
     {
-        if ($date->daysInMonth == 1) {
-            $outputFormat = '%a %eer %b';
-        } else {
-            $outputFormat = '%a %e %b';
+        if (null !== $date) {
+            if ($date->daysInMonth == 1) {
+                $outputFormat = $short ? '%a %eer %b' : '%A %eer %B';
+            } else {
+                $outputFormat = $short ? '%a %e %b' : '%A %e %B';
+            }
+
+            return $date->formatLocalized($outputFormat);
         }
 
-        return $date->formatLocalized($outputFormat);
+        return null;
     }
 
-    public static function formatWithLocalizedDayMonthAndYear(Carbon $date)
+    public static function formatWithLocalizedDayMonthAndYear(?Carbon $date, bool $short = true): ?string
     {
-        return self::formatWithLocalizedDayAndMonth($date) . ' ' . $date->year;
+        if (null !== $date) {
+            return self::formatWithLocalizedDayAndMonth($date) . ' ' . $date->year;
+        }
+
+        return null;
     }
 }

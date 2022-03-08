@@ -254,6 +254,7 @@ class CompetitionExtension extends SimpleExtension
     protected function registerNutCommands(Container $container): array
     {
         return [
+            new Nut\NotifyCommand($container),
             new Nut\RefreshCommand($container),
         ];
     }

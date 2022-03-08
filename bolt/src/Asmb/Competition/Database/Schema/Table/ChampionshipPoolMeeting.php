@@ -29,6 +29,8 @@ class ChampionshipPoolMeeting extends BaseTable
         $this->table->addColumn('result', 'string', ['length' => 20, 'notnull' => false]);
         $this->table->addColumn('club_flag', 'smallint', ['default' => 0, 'notnull' => true]);
         $this->table->addColumn('params_fdm_fft', 'json', []);
+        $this->table->addColumn('matches_sheet_fft_id', 'string', ['length' => 12, 'notnull' => false]);
+        $this->table->addColumn('notify_status', 'smallint', ['default' => 0, 'notnull' => true]);
     }
 
     /**

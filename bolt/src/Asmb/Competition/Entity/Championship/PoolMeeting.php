@@ -13,6 +13,9 @@ use Carbon\Carbon;
  */
 class PoolMeeting extends Entity
 {
+    const STATUS_NOTIFY_DONE = 1;
+    const STATUS_NOTIFY_TODO = 0;
+
     /** @var int */
     protected $pool_id;
     /** @var string */
@@ -33,8 +36,12 @@ class PoolMeeting extends Entity
     protected $result;
     /** @var string */
     protected $club_flag;
+    /** @var string */
+    protected $matches_sheet_fft_id;
     /** @var array */
     protected $params_fdm_fft = [];
+
+    protected $notify_status = self::STATUS_NOTIFY_TODO;
 
     // Following properties are not stored in DB, but used as simple object data.
     /** @var string */
@@ -220,6 +227,16 @@ class PoolMeeting extends Entity
     public function setClubFlag($clubFlag)
     {
         $this->club_flag = $clubFlag;
+    }
+
+    public function getMatchesSheetFftId(): ?string
+    {
+        return $this->matches_sheet_fft_id;
+    }
+
+    public function setMatchesSheetFftId(?string $matchesSheetFftId)
+    {
+        $this->matches_sheet_fft_id = $matchesSheetFftId;
     }
 
     /**
@@ -439,5 +456,15 @@ class PoolMeeting extends Entity
         }
 
         return $this->date;
+    }
+
+    public function setNotifyStatus(?int $notifyStatus)
+    {
+        $this->notify_status = $notifyStatus;
+    }
+
+    public function getNotifyStatus(): ?int
+    {
+        return $this->notify_status;
     }
 }
