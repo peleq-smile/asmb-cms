@@ -28,10 +28,10 @@ RUN npm install
 RUN npm install -g yarn
 RUN npm install -g gulp
 
-ARG UID
-ARG GID
-RUN usermod -u ${UID} www-data
-RUN groupmod -g ${GID} www-data
+ARG USER_UID
+ARG USER_GID
+RUN usermod -u ${USER_UID} www-data
+RUN groupmod -g ${USER_GID} www-data
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
