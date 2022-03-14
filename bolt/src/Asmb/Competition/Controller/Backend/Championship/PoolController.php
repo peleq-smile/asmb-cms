@@ -9,6 +9,7 @@ use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
 use Bundle\Asmb\Competition\Form\FormType;
+use Bundle\Asmb\Competition\Parser\Championship\TenupMatchesSheetParser;
 use Bundle\Asmb\Competition\Parser\Championship\TenupPoolMeetingsParser;
 use Exception;
 use Silex\ControllerCollection;
@@ -280,6 +281,7 @@ class PoolController extends AbstractController
             $poolRepository = $this->getRepository('championship_pool');
             /** @var Pool $pool */
             $pool = $poolRepository->find($poolId);
+
             $championshipRepository = $this->getRepository('championship');
             /** @var Championship $championship */
             $championship = $championshipRepository->find($pool->getChampionshipId());
@@ -305,6 +307,10 @@ class PoolController extends AbstractController
                 // Récupération depuis Ten'Up
                 /** @var TenupPoolMeetingsParser $poolMeetingsParser */
                 $poolMeetingsParser = $this->app['pool_meetings_tenup_parser'];
+
+                /** @var TenupMatchesSheetParser $matchesSheetParser */
+                $matchesSheetParser = $this->app['pool_matches_sheet_tenup_parser'];
+
             } else {
                 // Récupération depuis la GS
                 /** @var \Bundle\Asmb\Competition\Parser\Championship\GsPoolMeetingsParser $poolMeetingsParser */
@@ -314,6 +320,20 @@ class PoolController extends AbstractController
             $poolMeetingsParsed = $poolMeetingsParser->parse($championship, $pool);
             // Sauvegarde des rencontres en base
             $this->saveMeetings($pool, $poolMeetingsParsed);
+
+            // On parse les feuilles de match (cas Ten'up seulement)
+            if (isset($matchesSheetParser)) {
+                $poolMeetingMatchRepository = $this->getRepository('championship_pool_meeting_match');
+                $matchesSheetsParsed = [];
+                /** @var Championship\PoolMeeting $poolMeeting */
+                foreach ($poolMeetingsParsed as $poolMeeting) {
+                    if (!empty($poolMeeting->getMatchesSheetFftId())) {
+                        $matchesSheetsParsed = $matchesSheetParser->parse($championship, $pool, $poolMeeting);
+                    }
+                    // On sauvegarde en base, pour chaque rencontre
+                    $poolMeetingMatchRepository->saveAll($matchesSheetsParsed, $poolMeeting->getId());
+                }
+            }
 
             $pool->setUpdatedAt();
             $poolRepository->save($pool);

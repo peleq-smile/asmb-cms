@@ -14,9 +14,9 @@ use InvalidArgumentException;
  *
  * @copyright 2019
  */
-class TenupPoolMeetingsParser extends AbstractTenupParser
+class TenupPoolMeetingsParser extends AbstractTenupJsonParser
 {
-    protected function doParse(Championship $championship, Pool $pool, array $jsonData): array
+    protected function doParse(Championship $championship, Pool $pool, ?PoolMeeting $poolMeeting, array $jsonData): array
     {
         $poolMeetings = [];
 
@@ -39,7 +39,7 @@ class TenupPoolMeetingsParser extends AbstractTenupParser
 
                     // On construit la donnée "résultat" telle qu'on a l'habitude avec la GS
                     $result = null;
-                    $paramsFdmFft = [];
+                    $paramsFdmFft = []; //TODOpeleq à supprimer qd FDM interne
                     // La rencontre a été saisie dans Ten'Up
                     if (true === $row['team_home']['win']) {
                         // Victoire de l'équipe visitée
@@ -65,12 +65,16 @@ class TenupPoolMeetingsParser extends AbstractTenupParser
                         }
 
                         // on sauvegarde ici l'uri de la feuille de match (seulement si un résultat existe)
-                        if (null !== $row['statut_feuille_match']) {
+                        if (null !== $row['statut_feuille_match']) { //TODOpeleq à supprimer qd FDM interne
                             $paramsFdmFft = ['feuille_match_url' => $row['feuille_match_url']];
                         }
                     }
                     $poolMeeting->setResult($result);
-                    $poolMeeting->setParamsFdmFft($paramsFdmFft);
+                    $poolMeeting->setParamsFdmFft($paramsFdmFft); //TODOpeleq à supprimer qd FDM interne
+
+                    if (isset($row['feuille_match'][0])) {
+                        $poolMeeting->setMatchesSheetFftId($row['feuille_match'][0]);
+                    }
 
                     $poolMeetings[] = $poolMeeting;
                 }

@@ -4,6 +4,7 @@ namespace Bundle\Asmb\Competition\Nut;
 
 use Bolt\Nut\BaseCommand;
 use Bundle\Asmb\Competition\Entity\Championship;
+use Bundle\Asmb\Competition\Parser\Championship\TenupMatchesSheetParser;
 use Bundle\Asmb\Competition\Repository\Championship\PoolRepository;
 use Exception;
 use Symfony\Component\Console\Input\InputArgument;
@@ -39,17 +40,7 @@ class RefreshCommand extends BaseCommand
         $this
             ->setName('asmb:competition:refresh')
             ->setDescription('Rafraîchir les données des compétitions')
-            ->addArgument(
-                'id',
-                InputArgument::OPTIONAL,
-                'Id (bolt) de la compétition à rafraîchir (optionnel)'
-            )
-            ->addOption(
-                'force',
-                null,
-                InputOption::VALUE_NONE,
-                'Force le rafraîchissement, sans tenir comptes des dates et/ou données déjà récupérées'
-            );
+        ;
     }
 
     /**
@@ -86,6 +77,9 @@ class RefreshCommand extends BaseCommand
                     /** @var \Bundle\Asmb\Competition\Parser\Championship\TenupPoolMeetingsParser $poolMeetingsParser */
                     $poolMeetingsParser = $this->app['pool_meetings_tenup_parser'];
 
+                    /** @var TenupMatchesSheetParser $matchesSheetParser */
+                    $matchesSheetParser = $this->app['pool_matches_sheet_tenup_parser'];
+
                     $updateFrom = 'Ten\'Up';
                 } else {
                     // Rafraichissement depuis la GS
@@ -113,18 +107,33 @@ class RefreshCommand extends BaseCommand
                 // On sauvegarde en base
                 $poolMeetingRepository->saveAll($poolMeetingsParsed, $pool->getId());
 
+                // On parse les feuilles de match (cas Ten'up seulement)
+                if (isset($matchesSheetParser)) {
+                    $poolMeetingMatchRepository = $storage->getRepository('championship_pool_meeting_match');
+
+                    /** @var Championship\PoolMeeting $poolMeeting */
+                    foreach ($poolMeetingsParsed as $poolMeeting) {
+                        if (!empty($poolMeeting->getMatchesSheetFftId())) {
+                            $matchesSheetsParsed = $matchesSheetParser->parse($championship, $pool, $poolMeeting);
+
+                            // On sauvegarde en base, pour chaque rencontre
+                            $poolMeetingMatchRepository->saveAll($matchesSheetsParsed, $poolMeeting->getId());
+                        }
+                    }
+                }
+
                 // On met à jour la date de mise à jour de la poule
                 $pool->setUpdatedAt();
                 $poolRepository->save($pool);
 
                 if (!$this->isQuietMode) {
                     $output->writeln(
-                        "<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} mise à jour via <comment>$updateFrom</comment>.</info>"
+                        "<info>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryIdentifier()} > {$pool->getName()} mise à jour via <comment>$updateFrom</comment>.</info>"
                     );
                 }
             } catch (Exception $e) {
                 $output->writeln(
-                    "<comment>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryName()} > {$pool->getName()} : </comment>"
+                    "<comment>{$championship->getName()} {$championship->getYear()} : Poule {$pool->getCategoryIdentifier()} > {$pool->getName()} : </comment>"
                 );
                 $output->writeln("<error>ERREUR: {$e->getMessage()}</error>");
             }

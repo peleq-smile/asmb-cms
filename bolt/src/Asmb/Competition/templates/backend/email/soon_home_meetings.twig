@@ -1,0 +1,39 @@
+<h1 style="color: #026094;">
+    Rencontres à domicile du {{ fromDateFormatted|lower }}
+    {% if toDateFormatted is not null %}
+        au {{ toDateFormatted|lower }}
+    {% endif %}
+</h1>
+
+<table style="border-style:solid; border-width:10px; border-color:#2c2d32; font-size: 14px; margin-bottom: 20px;"
+       cellspacing="0" cellpadding="0"
+>
+    <thead>
+    <tr style="font-size: 16px; text-align: left;">
+        <th style="padding: 10px 20px; border-bottom: solid 2px #2c2d32;">Date</th>
+        <th style="padding: 10px 20px; border-bottom: solid 2px #2c2d32;">Heure</th>
+        <th style="padding: 10px 20px; border-bottom: solid 2px #2c2d32;">Compétition</th>
+        <th style="padding: 10px 20px; border-bottom: solid 2px #2c2d32;">Cat.</th>
+        <th style="padding: 10px 20px; border-bottom: solid 2px #2c2d32;">Équipe ASMB</th>
+        <th style="padding: 10px 20px; border-bottom: solid 2px #2c2d32;">Équipe visiteur</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for poolMeeting in poolMeetings %}
+        <tr>
+            <td style="padding: 10px 20px;{% if not loop.last %} border-bottom: solid 2px #2c2d32;{% endif %}">{{ poolMeeting.finalDate|date('d/m') }}</td>
+            <td style="padding: 10px 20px;{% if not loop.last %} border-bottom: solid 2px #2c2d32;{% endif %}">{{ poolMeeting.time ? poolMeeting.time|date('H:i') : '?' }}</td>
+            <td style="padding: 10px 20px;{% if not loop.last %} border-bottom: solid 2px #2c2d32;{% endif %}">{{ poolMeeting.championshipName }}</td>
+            <td style="padding: 10px 20px;{% if not loop.last %} border-bottom: solid 2px #2c2d32;{% endif %}">{{ poolMeeting.categoryName }}</td>
+            <td style="padding: 10px 20px;{% if not loop.last %} border-bottom: solid 2px #2c2d32;{% endif %} white-space: nowrap">{{ poolMeeting.homeTeamName }}</td>
+            <td style="padding: 10px 20px;{% if not loop.last %} border-bottom: solid 2px #2c2d32;{% endif %} white-space: nowrap">{{ poolMeeting.visitorTeamName }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p style="font-size: 16px;">
+    <span style="font-weight: bolder;">Rencontres à domicile du mois :</span><br>
+    <a href="https://www.asmbtennis.fr/competition/rencontres-a-domicile" style="color: #d1a633;">https://www.asmbtennis.fr/competition/rencontres-a-domicile</a>
+</p>

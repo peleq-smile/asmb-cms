@@ -1,123 +1,137 @@
 main:
-    - label: 'Le Club'
-      submenu:
-        - label: 'Édito'
-          path: page/edito
-        - label: 'Infrastructures'
-          path: page/infrastructures
-        - label: 'Le bureau'
-          path: page/le-bureau
-        - label: 'Les chiffres'
-          path: statistiques/les-chiffres
-        - label: 'Règlement intérieur'
-          path: page/reglement-interieur
+  - label: 'Le Club'
+    path: page/edito
+    submenu:
+      - label: 'Édito'
+        path: page/edito
+      - label: 'Infrastructures'
+        path: page/infrastructures
+      - label: 'Le bureau'
+        path: page/le-bureau
+      - label: 'Les chiffres'
+        path: statistiques/les-chiffres
+      - label: 'Règlement intérieur'
+        path: page/reglement-interieur
+      - label: 'Nos partenaires'
+        path: page/nos-partenaires
 
-    - label: 'Jouer'
-      submenu:
-        - label: 'Inscriptions'
-          path: page/inscriptions
-        - label: 'Formules et tarifs'
-          path: page/tarifs
-        - label: 'Tennis Loisir'
-          submenu:
-            - label: 'La carte'
-              path: page/tennis-loisir-carte
-            - label: 'Les créneaux'
-              path: page/tennis-loisir-creneaux
-            - label: 'Réservation'
-              path: page/tennis-loisir-reservation
+  - label: 'Jouer'
+    path: page/inscriptions
+    submenu:
+      - label: 'Inscriptions'
+        path: page/inscriptions
+      - label: 'Formules et tarifs'
+        path: page/tarifs
+      - label: 'Tennis Loisir'
+        path: page/tennis-loisir-carte
+        submenu:
+          - label: 'La carte'
+            path: page/tennis-loisir-carte
+          - label: 'Les créneaux'
+            path: page/tennis-loisir-creneaux
+          - label: 'Réservation'
+            path: page/tennis-loisir-reservation
 
-    - label: 'Compétitions'
-      submenu:
-        - label: 'Championnat d''Hiver'
-          submenu:
-            - label: 'Championnat Régional'
-              path: competition/championnat-hiver-regional-2019-2020
+  - label: 'Compétitions'
+    path: competition/
+    submenu:
+      - label: 'Championnats & Coupes'
+        path: competition/championnat-d-hiver-2021-2022
+        submenu:
+          - label: 'Championnat d''Hiver'
+            path: competition/championnat-d-hiver-2021-2022
+          - label: 'Coupe d''Hiver féminine'
+            path: competition/coupe-d-hiver-feminine-2021-2022
+          - label: 'ASMB Cup'
+            path: competition/asmb-cup-2022#res
 
-            - label: 'Championnat Départemental +35 ans'
-              path: competition/championnat-hiver-departemental-35-ans-2019-2020
-#
-#            - label: 'Jeunes'
-#              path: competition/championnat-hiver-jeunes-2019-2020
+      - label: 'Rencontres à domicile'
+        path: competition/rencontres-a-domicile
 
-        - label: 'Championnat d''Été'
-          path: competition/championnat-ete-2019
+      - label: 'Tournois'
+        path: competition/trophee-philippe-le-gouic-2021
+        submenu:
+          - label: 'Open février 2022'
+            path: competition/tournoi-open-fevrier-2022
+          - label: 'Trophée Philippe Le Gouic 2021'
+            path: competition/trophee-philippe-le-gouic-2021
 
-        - label: 'Coupe de Printemps'
-          path: competition/coupe-printemps-2019
+      - label: '[Archives] Saison 2020-2021'
+        path: competition/tournoi-open-ete-2021
+        submenu:
+          - label: 'Tournoi Open été 2021'
+            path: competition/tournoi-open-ete-2021
+          - label: 'ASMB Cup 2021'
+            path: competition/asmb-cup-2021
+          - label: 'Trophée Philippe Le Gouic 2020'
+            path: competition/trophee-philippe-le-gouic-2020
+          - label: 'Tournoi interne de reprise 2020'
+            path: competition/tournoi-interne-de-reprise-2020
 
-        - label: 'Rencontres à domicile'
-          path: competition/rencontres-a-domicile
+      - label: '[Archives] Saison 2019-2020'
+        submenu:
+          - label: 'TMC 13/14 ans mars 2020'
+            path: competition/tmc-13-14-ans-2020
+          - label: 'Tournoi Open Messieurs février 2020'
+            path: competition/tournoi-open-messieurs-fevrier-2020
+          - label: 'Trophée Philippe Le Gouic 2019'
+            path: competition/trophee-philippe-le-gouic-2019
 
-        - label: '[Archives] Chpt Hiver 2018/2019'
-          path: competition/championnat-hiver-2018-2019
-          class: separated
-
-#        - label: '[Archives] Tournoi février 2019'
-#          path: competition/tournoi-interne-fevrier-2019
-
-        - label: 'Tournois'
-          path: competition/tournoi-interne-de-reprise-2020  
-          submenu:
-            - label: 'Tournoi interne de reprise 2020'
-              path: competition/tournoi-interne-de-reprise-2020
-
-#    - label: 'Actualités'
-#      path: page/evenements
-#      submenu:
-#        - label: 'Événements'
-#          path: page/evenements
-#
-#        - label: 'Calendrier'
-#          path: calendrier/2018-2019
-#
-#        - label: 'Galerie photos'
-#          path: page/galerie-photos
+  #    - label: 'Actualités'
+  #      path: page/evenements
+  #      submenu:
+  #        - label: 'Événements'
+  #          path: page/evenements
+  #
+  #        - label: 'Calendrier'
+  #          path: calendrier/2018-2019
+  #
+  #        - label: 'Galerie photos'
+  #          path: page/galerie-photos
 
 
-    - label: 'Publications'
-      submenu:
-        - label: 'Infos pratiques'
-          path: tags/infos-pratiques
+  - label: 'Publications'
+    path: tags/infos-pratiques
+    submenu:
+      - label: 'Infos pratiques'
+        path: tags/infos-pratiques
 
-        - label: 'Documents divers'
-          path: document-divers/tous
+      - label: 'Documents divers'
+        path: document-divers/tous
 
-        - label: 'Histoire du Tennis'
-          submenu:
-            - label: 'Le jeu de Paume'
-              path: page/le-jeu-de-paume
-            - label: 'Invention du Lawn-Tennis'
-              path: page/invention-du-lawn-tennis
-            - label: 'Conquête du Lawn-Tennis'
-              path: page/conquete-du-lawn-tennis
-            - label: 'Tennis Moderne'
-              path: page/tennis-moderne
+      - label: 'Histoire du Tennis'
+        path: page/le-jeu-de-paume
+        submenu:
+          - label: 'Le jeu de Paume'
+            path: page/le-jeu-de-paume
+          - label: 'Invention du Lawn-Tennis'
+            path: page/invention-du-lawn-tennis
+          - label: 'Conquête du Lawn-Tennis'
+            path: page/conquete-du-lawn-tennis
+          - label: 'Tennis Moderne'
+            path: page/tennis-moderne
 
-    - label: 'Calendrier'
-      path: calendrier/2019-2020
+  - label: 'Calendrier'
+    path: calendrier
 
 footer_external_links:
-    - label: 'Liens externes'
-      class: liens-utiles
-      submenu:
-        - label: 'Fédération Française de Tennis'
-          link: https://www.fft.fr
+  - label: 'Liens externes'
+    class: liens-utiles
+    submenu:
+      - label: 'Mon espace tennis'
+        link: https://tenup.fft.fr/
 
-        - label: 'Comité Départemental'
-          link: http://www.comite.fft.fr/loire-atlantique/02L00440_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
+      - label: 'Fédération Française de Tennis'
+        link: https://www.fft.fr
 
-        - label: 'Ligue des Pays de Loire'
-          link: http://www.ligue.fft.fr/pays-loire/pays-loire_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
+      - label: 'Comité Départemental'
+        link: http://www.comite.fft.fr/loire-atlantique/02L00440_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
 
-        - label: 'Gestion Sportive (Championnat)'
-          link: http://www.gs.applipub-fft.fr/fftfr/frameset.do?dispatch=load
+      - label: 'Ligue des Pays de Loire'
+        link: http://www.ligue.fft.fr/pays-loire/pays-loire_a/cms/index_public.php?us_action=show_note_site&login_off=1&ui_id_site=1
 
-        - label: 'Mon espace tennis'
-          link: https://mon-espace-tennis.fft.fr/
+      - label: 'Rechercher une compétition par équipe'
+        link: https://tenup.fft.fr/recherche/equipes
 
-        - label: 'Championnat individuel'
-          link: https://mon-espace-tennis.fft.fr/tournoi/82120115
-
-        - label: 'Rechercher une compétition'
-          link: https://tenup.fft.fr/recherche/tournois/all?dispatch=afficher
+      - label: 'Rechercher un tournoi'
+        link: https://tenup.fft.fr/recherche/tournois

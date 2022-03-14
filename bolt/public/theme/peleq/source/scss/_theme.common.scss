@@ -26,6 +26,22 @@
     line-height: 1;
 }
 
+.has-text-nowrap {
+    white-space: nowrap;
+}
+
+.has-border-radius-medium {
+    border-radius: 1rem;
+}
+
+.has-rotate-90deg {
+    transform: rotate(-90deg);
+}
+
+.is-vcentered {
+    vertical-align: middle !important;
+}
+
 .pcoord {
     unicode-bidi: bidi-override;
     direction: rtl;

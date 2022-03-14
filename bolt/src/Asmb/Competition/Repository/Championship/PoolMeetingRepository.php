@@ -114,9 +114,9 @@ class PoolMeetingRepository extends Repository
         int  $pastDays,
         int  $futureDays,
         bool $onlyActiveChampionship = true,
-        bool $withReportDates = true
-    )
-    {
+        bool $withReportDates = true,
+        bool $onlyAtHome = false
+    ) {
         $clubMeetingsOfTheMoment = [];
 
         $qb = $this->getLoadQuery();
@@ -163,7 +163,12 @@ class PoolMeetingRepository extends Repository
         } else {
             $qb->addSelect("{$this->getAlias()}.date as final_date");
         }
-        $qb->having("final_date >= (CURDATE() - INTERVAL $pastDays DAY)");
+        if ($pastDays < 0) {
+            $qb->having("final_date >= (CURDATE() + INTERVAL " . abs($pastDays) . " DAY)");
+        } else {
+            $qb->having("final_date >= (CURDATE() - INTERVAL $pastDays DAY)");
+        }
+
         $qb->andHaving("final_date <= (CURDATE() + INTERVAL $futureDays DAY)");
 
         // Si $pastDays est >0, alors on veut les derniers résultats donc des rencontres avec le score.
@@ -191,6 +196,11 @@ class PoolMeetingRepository extends Repository
                 $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
             )
         );
+
+        // CAS OÙ ON VEUT LES RENCONTRES À DOMICILE UNIQUEMENT
+        if ($onlyAtHome) {
+            $qb->andWhere('pt_home.is_club = 1');
+        }
 
         // ÉQUIPE VISITEUR
         $qb->addSelect("pt_visitor.name as visitor_team_name");
@@ -430,5 +440,72 @@ class PoolMeetingRepository extends Repository
         }
 
         return $clubMeetings;
+    }
+
+    public function findOneByWithClubTeamNames(array $criteria, array $orderBy = null)
+    {
+        $qb = $this->findWithCriteria($criteria, $orderBy);
+
+        // On veut le nom des équipes donné en interne (donc dans la table des PoolTeam) + savoir si c'est une
+        // équipe du club
+        // ÉQUIPE DOMICILE
+        $qb->addSelect("pt_home.name as home_team_name");
+        $qb->addSelect("pt_home.is_club as home_team_is_club");
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'pt_home',
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_home.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.home_team_name_fft', 'pt_home.name_fft')
+            )
+        );
+
+        // ÉQUIPE VISITEUR
+        $qb->addSelect("pt_visitor.name as visitor_team_name");
+        $qb->addSelect("pt_visitor.is_club as visitor_team_is_club");
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool_team',
+            'pt_visitor',
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getAlias() . '.pool_id', 'pt_visitor.pool_id'),
+                $qb->expr()->eq($this->getAlias() . '.visitor_team_name_fft', 'pt_visitor.name_fft')
+            )
+        );
+
+        // Jointure sur la poule et sa catégorie pour avoir le nom
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool',
+            'pool',
+            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
+        );
+        $qb->innerJoin(
+            'pool',
+            'bolt_championship_category',
+            'category',
+            $qb->expr()->eq('pool.category_identifier', 'category.identifier')
+        );
+        $qb->addSelect('category.name as category_name');
+
+        $result = $qb->execute()->fetch();
+        if ($result) {
+            /** @var PoolMeeting $poolMeeting */
+            $poolMeeting = $this->hydrate($result, $qb);
+
+            // Ajout à la volée du nom interne des équipes + indicateur "fait partie du club"
+            $poolMeeting->setHomeTeamName($result['home_team_name']);
+            $poolMeeting->setHomeTeamIsClub($result['home_team_is_club']);
+            $poolMeeting->setVisitorTeamName($result['visitor_team_name']);
+            $poolMeeting->setVisitorTeamIsClub($result['visitor_team_is_club']);
+
+            // Ajout à la volée de données sur la Poule concernée
+            $poolMeeting->setCategoryName($result['category_name']);
+
+            return $poolMeeting;
+        }
+
+        return false;
     }
 }

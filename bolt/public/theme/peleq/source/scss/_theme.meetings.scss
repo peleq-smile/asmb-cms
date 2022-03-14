@@ -107,7 +107,7 @@ table {
         white-space: nowrap;
         text-align: center;
     }
-    span.score {
+    .score {
         line-height: 30px;
         color: $text;
         border-radius: 12px;
@@ -119,6 +119,11 @@ table {
             color: $white;
             padding: 5px 10px;
             border: none;
+            font-weight: 600;
+
+            strong {
+                color: $white;
+            }
         }
 
         &.victory {
@@ -135,6 +140,10 @@ table {
 
         &.with-wo {
             cursor: help;
+        }
+
+        strong {
+            font-weight: 900;
         }
     }
 }

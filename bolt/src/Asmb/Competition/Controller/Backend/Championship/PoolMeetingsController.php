@@ -6,6 +6,8 @@ use Bolt\Translation\Translator as Trans;
 use Bundle\Asmb\Competition\Controller\Backend\AbstractController;
 use Bundle\Asmb\Competition\Form\FormType\PoolMeetingsEditType;
 use Bundle\Asmb\Competition\Repository\Championship\PoolMeetingRepository;
+use Bundle\Asmb\Competition\Service\Notifier;
+use League\Flysystem\Exception;
 use Silex\ControllerCollection;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +50,9 @@ class PoolMeetingsController extends AbstractController
         $c->match('/edit/past', 'editPast')
             ->bind('poolmeetingseditpast');
 
+        $c->match('/notify', 'notify')
+            ->bind('poolmeetingsnotify');
+
         return $c;
     }
 
@@ -62,8 +67,8 @@ class PoolMeetingsController extends AbstractController
             '@AsmbCompetition/pool-meetings/index.twig',
             [],
             [
-                'pastDays'     => $this->meetingsPastDays,
-                'futureDays'   => $this->meetingsFutureDays,
+                'pastDays' => $this->meetingsPastDays,
+                'futureDays' => $this->meetingsFutureDays,
                 'lastMeetings' => $this->getPastOrFutureMeetings(-1 * $this->meetingsPastDays),
                 'nextMeetings' => $this->getPastOrFutureMeetings($this->meetingsFutureDays),
             ]
@@ -71,7 +76,7 @@ class PoolMeetingsController extends AbstractController
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -102,7 +107,7 @@ class PoolMeetingsController extends AbstractController
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return \Bolt\Response\TemplateResponse|\Bolt\Response\TemplateView|\Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -130,11 +135,31 @@ class PoolMeetingsController extends AbstractController
         );
     }
 
+    public function notify()
+    {
+        /** @var Notifier $notifier */
+        $notifier = $this->app['notifier'];
+
+        // Récupération des rencontres à domicile prochaines
+        $poolMeetings = $notifier->getSoonPoolMeetings();
+
+        try {
+            $notifier->notify($this->getUser()->getEmail(), $poolMeetings);
+            $this->flashes()->success(
+                Trans::__('page.notification-sent', ['%email%' => $this->getUser()->getEmail()])
+            );
+        } catch (Exception $e) {
+            $this->flashes()->error($e->getMessage());
+        }
+
+        return $this->redirectToRoute('poolmeetings');
+    }
+
     /**
      * Construction du formulaire d'édition des horaires des rencontres du club passées en paramètre.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param array                                     $meetings
+     * @param Request $request
+     * @param array $meetings
      *
      * @return FormInterface
      */
@@ -207,7 +232,7 @@ class PoolMeetingsController extends AbstractController
      * Retourne les rencontres du moment, dans le passé ou le futur selon que $pastOrFutureDays soit négatif (passé)
      * ou positif (futur).
      *
-     * @param int  $pastOrFutureDays
+     * @param int $pastOrFutureDays
      * @param bool $onlyActiveChampionship
      * @param bool $withReportDates
      *
@@ -217,7 +242,8 @@ class PoolMeetingsController extends AbstractController
         $pastOrFutureDays,
         $onlyActiveChampionship = true,
         $withReportDates = true
-    ) {
+    )
+    {
         /** @var PoolMeetingRepository $poolMeetingRepository */
         $poolMeetingRepository = $this->getRepository('championship_pool_meeting');
         $pastDays = ($pastOrFutureDays < 0) ? (-1 * $pastOrFutureDays) : 0;

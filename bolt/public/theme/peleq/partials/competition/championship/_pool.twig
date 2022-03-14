@@ -1,5 +1,5 @@
 {% if poolRanking is not empty %}
-    <table class="table table-ranking is-fullwidth">
+    <table class="table table-ranking is-fullwidth is-narrow">
         <thead>
         <tr>
             <th colspan="2">
@@ -43,7 +43,7 @@
         </tbody>
     </table>
 
-    <table class="table table-meetings is-fullwidth">
+    <table class="table table-meetings is-fullwidth is-narrow">
         <tbody>
         {% for day, meetingsOfDay in meetingsPerDay %}
             {% set oddOrEvenDay = cycle(['odd', 'even'], loop.index0) %}

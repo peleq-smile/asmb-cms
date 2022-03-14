@@ -12,4 +12,10 @@
             {{ __('panel.championship-actions.button.edit-datetime-past') }}
         </a>
     </div>
+
+    {# Envoi notification par mail des prochaines rencontres #}
+    <a class="btn btn-primary" href="{{ path('poolmeetingsnotify') }}">
+        <i class="fa fa-envelope"></i>
+        {{ __('panel.championship-actions.button.notify') }}
+    </a>
 {% endif %}

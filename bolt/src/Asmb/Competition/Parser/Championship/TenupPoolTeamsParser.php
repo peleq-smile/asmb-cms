@@ -4,6 +4,7 @@ namespace Bundle\Asmb\Competition\Parser\Championship;
 
 use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
+use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
 
 /**
@@ -11,9 +12,9 @@ use Bundle\Asmb\Competition\Entity\Championship\PoolTeam;
  *
  * @copyright 2021
  */
-class TenupPoolTeamsParser extends AbstractTenupParser
+class TenupPoolTeamsParser extends AbstractTenupJsonParser
 {
-    public function doParse(Championship $championship, Pool $pool, array $jsonData): ?array
+    public function doParse(Championship $championship, Pool $pool, ?PoolMeeting $poolMeeting, array $jsonData): ?array
     {
         $poolTeams = [];
 

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Contrôleur pour tests.
+ * Contrôleur de toutes les jounées de rencontres des équipes du club.
  *
  * @copyright 2022
  */
@@ -19,7 +19,7 @@ class PoolClubMeetingController extends Base
 {
     public function addRoutes(ControllerCollection $c)
     {
-        $c->match('/', 'index')->bind('dev');
+        $c->match('/', 'index')->bind('club_meeting');
 
         return $c;
     }

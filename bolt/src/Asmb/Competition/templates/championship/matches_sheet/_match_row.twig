@@ -1,0 +1,75 @@
+{% set homePlayerIsWinner = matchesSheet.score|slice(0,1) == 'V' %}
+<tr>
+    <td class="has-text-weight-bold has-text-nowrap">{{ matchesSheet.label }}</td>
+
+    <td>
+        <div class="has-text-nowrap">
+            <span class="player-name{{ homePlayerIsWinner ? ' has-text-weight-bold':'' }}">{{ matchesSheet.homePlayerName }}</span>
+            <span class="rank is-block">({{ matchesSheet.homePlayerRank }})</span>
+        </div>
+
+        {% if matchesSheet.homePlayer2Name is not empty %}
+            <div class="has-text-nowrap">
+                <span class="player-name{{ homePlayerIsWinner ? ' has-text-weight-bold':'' }}">{{ matchesSheet.homePlayer2Name }}</span>
+                <span class="rank is-block">({{ matchesSheet.homePlayer2Rank }})</span>
+            </div>
+        {% endif %}
+    </td>
+
+    <td class="text-center">{{ _self.renderScoreHtml(poolMeeting, matchesSheet, homePlayerIsWinner) }}</td>
+
+    <td>
+        <div class="has-text-nowrap">
+            <span class="player-name{{ homePlayerIsWinner ? '':' has-text-weight-bold' }}">{{ matchesSheet.visitorPlayerName }}</span>
+            <span class="rank is-block">({{ matchesSheet.visitorPlayerRank }})</span>
+        </div>
+
+        {% if matchesSheet.visitorPlayer2Name is not empty %}
+            <div class="has-text-nowrap">
+                <span class="player-name{{ homePlayerIsWinner ? '':' has-text-weight-bold' }}">{{ matchesSheet.visitorPlayer2Name }}</span>
+                <span class="rank is-block">({{ matchesSheet.visitorPlayer2Rank }})</span>
+            </div>
+        {% endif %}
+    </td>
+</tr>
+
+{# MACRO de rendu du score dans une ligne de feuille de match #}
+{% macro renderScoreHtml(poolMeeting, matchesSheet, homePlayerIsWinner) %}
+    {# on extrait les scores par set et par joueur ici #}
+    {% set setsScores = matchesSheet.score|slice(2) %}
+    {% set setParts = setsScores|split(' ') %}
+
+    {% set isPlayerClubVictory = poolMeeting.homeTeamIsClub and homePlayerIsWinner or poolMeeting.visitorTeamIsClub and not homePlayerIsWinner %}
+    {% set isPlayerClubDefeat = poolMeeting.homeTeamIsClub and not homePlayerIsWinner or poolMeeting.visitorTeamIsClub and homePlayerIsWinner %}
+
+    <div class="columns is-multiline is-gapless is-size-6 score{{ isPlayerClubVictory ? ' victory':'' }}{{ isPlayerClubDefeat ? ' defeat':'' }}">
+        {% for i in 0..2 %}
+            <div class="column is-12">
+                {% if setParts[i] is defined %}
+                    {% set setScoreParts = setParts[i]|split('/') %}
+
+                    {% if setScoreParts|length == 2 %}
+                        {% set homeSetScore = setScoreParts[0] %}
+                        {% set visitorSetScore = setScoreParts[1] %}
+
+                        {% if homeSetScore > visitorSetScore %}
+                            <strong>{{ homeSetScore }}</strong> / {{ visitorSetScore }}
+                        {% elseif visitorSetScore > homeSetScore %}
+                            {{ homeSetScore }} / <strong>{{ visitorSetScore }}</strong>
+                        {% else %}
+                            {{ homeSetScore }} / {{ visitorSetScore }}
+                        {% endif %}
+
+                        {% if setParts[i+1] is defined and setParts[i+1] == 'Ab.' %}
+                            <span>Ab.</span>
+                        {% endif %}
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% else %}
+                    &nbsp;
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}

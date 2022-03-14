@@ -50,17 +50,20 @@
             }
 
             table {
+                &.is-narrow {
+                    th, td {
+                        padding: 2px;
+                        font-size: 0.8rem;
+                        vertical-align: middle;
+                    }
+                }
+
                 tr {
                     &.is-club {
                         background-color: $secondary;
                         font-weight: bold;
                     }
-
                     th, td {
-                        padding: 2px;
-                        font-size: 0.8rem;
-                        vertical-align: middle;
-
                         &.is-club {
                             font-weight: bold;
                         }
@@ -84,6 +87,21 @@
 
                     th, td {
                         line-height: 30px;
+                    }
+                }
+
+                .columns {
+                    padding-bottom: 5px;
+
+                    &.player-name {
+                        font-size: 1.5rem;
+                        white-space: nowrap;
+                    }
+
+                    &.score {
+                        margin: auto;
+                        border-radius: 30px;
+                        line-height: 1.1;
                     }
                 }
             }

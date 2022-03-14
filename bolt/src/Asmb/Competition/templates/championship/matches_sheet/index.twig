@@ -1,0 +1,76 @@
+{% extends 'partials/_master.twig' %}
+
+{% set matchesSheetsCount = matchesSheets|length %}
+
+{% block main %}
+<section class="section section-competition section-championship">
+    <div class="container">
+        <h1 class="title is-size-1 is-size-3-mobile">{{ championship.fullName }}</h1>
+
+        <div class="columns is-multiline">
+            <div class="column is-12">
+                <h2 class="title">{{ poolMeeting.categoryName }} &bullet; {{ pool.name }}</h2>
+            </div>
+
+            <div class="column is-12 is-8-desktop is-offset-2-desktop">
+                <table class="table is-responsive is-fullwidth has-background-grey-lighter">
+                    <thead>
+                    <tr>
+                        <th colspan="4">
+                            <div class="columns is-gapless has-background-grey-lighter is-vcentered">
+                                <div class="column is-5 is-size-4 text-secondary text-right">{{ poolMeeting.homeTeamName }}</div>
+                                <div class="column is-2 is-size-4 text-center">
+                                    {{ poolMeeting|score(true) }}
+                                </div>
+                                <div class="column is-5 is-size-4 text-secondary">{{ poolMeeting.visitorTeamName }}</div>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">
+                            <div class="columns is-gapless has-background-grey-lighter is-vcentered">
+                                <div class="column text-primary is-size-5 has-text-nowrap is-6">J{{ poolMeeting.day }} - {{ poolMeeting.finalDate|date('d/m/y') }}</div>
+                                <div class="column text-right is-6">
+                                    <a href="{{ pool|fftMatchesSheetUrl(poolMeeting) }}" target="_blank"
+                                       title="Feuille de match sur Ten'Up" class="text-primary">
+                                        Voir sur Ten'Up <i class="fas fa-external-link-square-alt"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {# Affichage des matchs SIMPLES #}
+                    {% set showDayColumn = true %}
+
+                    {% for matchesSheet in matchesSheets %}
+                        {% if matchesSheet.isSimple %}
+                            {% include '@AsmbCompetition/championship/matches_sheet/_match_row.twig' with {
+                                'matchesSheet': matchesSheet,
+                                'showDayColumn': showDayColumn,
+                                'matchesSheetsCount':  matchesSheetsCount
+                            } %}
+
+                            {% set showDayColumn = false %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {# Affichage du match de DOUBLE #}
+                    {% for matchesSheet in matchesSheets %}
+                        {% if matchesSheet.isDouble %}
+                            {% include '@AsmbCompetition/championship/matches_sheet/_match_row.twig' with {
+                                'matchesSheet': matchesSheet,
+                                'showDayColumn': false
+                            } %}
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{#    {{ dump(poolMeeting) }}#}
+{% endblock main %}

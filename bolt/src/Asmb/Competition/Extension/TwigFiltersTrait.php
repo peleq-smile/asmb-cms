@@ -65,13 +65,32 @@ trait TwigFiltersTrait
         return $score;
     }
 
+    public function getFftMatchesSheetUrl(Pool $pool, PoolMeeting $poolMeeting): ?string
+    {
+        $url = null;
+
+        if (!empty($poolMeeting->getMatchesSheetFftId())) {
+            $config = $this->getConfigParameter('tenup');
+            $url = str_replace(
+                ['{$championship}', '{$matchSheet}'],
+                [$pool->getChampionshipFftId(), $poolMeeting->getMatchesSheetFftId()],
+                $config['url_match_sheet']
+            );
+        }
+
+        return $url;
+    }
+
     /**
      * Retourne le lien (HTML) vers la feuille de matchs de la Gestion Sportive ou de Ten'Up (FFT).
      */
     public function getMatchesSheetLink(PoolMeeting $meeting, $withThisContent = '<i class="fa fa-eye"></i>')
     {
         $paramsFdmFft = $meeting->getParamsFdmFft();
-        if (isset($paramsFdmFft['feuille_match_url'])) {
+
+        if ($meeting->getMatchesSheetFftId() && false) { //TODOpeleq retirer condition "false"
+            $url = '/competition/feuille-de-match/' . $meeting->getMatchesSheetFftId();
+        } elseif (isset($paramsFdmFft['feuille_match_url'])) {
             $config = $this->getConfigParameter('tenup');
             $url = $config['url_base'] . $paramsFdmFft['feuille_match_url'];
         } elseif (isset($paramsFdmFft['efm_iid'], $paramsFdmFft['pha_iid'], $paramsFdmFft['pou_iid'], $paramsFdmFft['ren_iid'])) {
@@ -161,6 +180,7 @@ trait TwigFiltersTrait
             'championshipPoolGsUrl' => 'getChampionshipPoolGsUrl',
             'championshipPoolTenupUrl' => 'getChampionshipPoolTenupUrl',
             'matchesSheetLink' => 'getMatchesSheetLink',
+            'fftMatchesSheetUrl' => 'getFftMatchesSheetUrl',
             'formattedDate' => 'getFormattedDate',
             'score' => 'extractScoreFromResult',
         ];

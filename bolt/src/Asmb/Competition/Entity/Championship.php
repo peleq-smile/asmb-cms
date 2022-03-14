@@ -38,4 +38,15 @@ class Championship extends AbstractShortNamedEntity
     {
         $this->is_active = $isActive;
     }
+
+    public function getFullName()
+    {
+        $finalName = $this->getName();
+
+        if (strpos($finalName, $this->getYear()) === false) {
+            $finalName .= ' ' . $this->getYear();
+        }
+
+        return $finalName;
+    }
 }
