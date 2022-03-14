@@ -70,9 +70,9 @@ class NotifyCommand extends BaseCommand
             }
         }
 
-//        if (!$abort) {
+        if (!$abort) {
             $notifier->notify($mailTo, $poolMeetings);
-//        }
+        }
 
         return 0;
     }
