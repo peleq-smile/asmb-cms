@@ -27,7 +27,7 @@ services:
       dockerfile: docker/php-apache/Dockerfile
       args:
         - USER_UID=1000
-        - USER_UID=1000
+        - USER_GID=1000
     environment:
       PHP_IDE_CONFIG: serverName=asmb_php
     restart: on-failure

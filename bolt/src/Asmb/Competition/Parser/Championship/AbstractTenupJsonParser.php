@@ -38,6 +38,7 @@ abstract class AbstractTenupJsonParser
     final public function parse(Championship $championship, Pool $pool, ?PoolMeeting $poolMeeting = null): ?array
     {
         $parsedData = null;
+        $jsonData = null;
 
         // On tente tout d'abord de récupérer le JSON stocké en local contenant la réponse au parsing demandé
         $jsonContent = $this->getJsonContentFromLocal($championship, $pool, $poolMeeting);
@@ -77,12 +78,16 @@ abstract class AbstractTenupJsonParser
             }
 
             if (null !== $jsonContent) {
-                $this->putJsonContentToLocal($championship, $pool, $poolMeeting, $jsonContent);
+                $jsonData = json_decode($jsonContent, true);
+                if ($jsonData) { // on sauvegarde le json dans un fichier que s'il est correctemet formé
+                    $this->putJsonContentToLocal($championship, $pool, $poolMeeting, $jsonContent);
+                }
             }
+        } else {
+            $jsonData = json_decode($jsonContent, true);
         }
 
-        if (null !== $jsonContent) {
-            $jsonData = json_decode($jsonContent, true);
+        if ($jsonData) {
             $parsedData = $this->doParse($championship, $pool, $poolMeeting, $jsonData);
         }
 
@@ -95,7 +100,7 @@ abstract class AbstractTenupJsonParser
     {
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, [
             CURLOPT_URL => $this->config['url_ajax'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -106,7 +111,7 @@ abstract class AbstractTenupJsonParser
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_USERAGENT => 'BoltCms/Perrine',
             CURLOPT_POSTFIELDS => $fields,
-        ));
+        ]);
 
         $response = curl_exec($curl);
         $infos = curl_getinfo($curl);
@@ -123,7 +128,7 @@ abstract class AbstractTenupJsonParser
     {
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -133,7 +138,7 @@ abstract class AbstractTenupJsonParser
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_USERAGENT => 'BoltCms/Perrine',
-        ));
+        ]);
 
         $response = curl_exec($curl);
         $infos = curl_getinfo($curl);

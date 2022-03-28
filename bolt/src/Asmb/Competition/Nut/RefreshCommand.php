@@ -108,19 +108,19 @@ class RefreshCommand extends BaseCommand
                 $poolMeetingRepository->saveAll($poolMeetingsParsed, $pool->getId());
 
                 // On parse les feuilles de match (cas Ten'up seulement)
-                if (isset($matchesSheetParser)) {
-                    $poolMeetingMatchRepository = $storage->getRepository('championship_pool_meeting_match');
-
-                    /** @var Championship\PoolMeeting $poolMeeting */
-                    foreach ($poolMeetingsParsed as $poolMeeting) {
-                        if (!empty($poolMeeting->getMatchesSheetFftId())) {
-                            $matchesSheetsParsed = $matchesSheetParser->parse($championship, $pool, $poolMeeting);
-
-                            // On sauvegarde en base, pour chaque rencontre
-                            $poolMeetingMatchRepository->saveAll($matchesSheetsParsed, $poolMeeting->getId());
-                        }
-                    }
-                }
+//                if (isset($matchesSheetParser)) {
+//                    $poolMeetingMatchRepository = $storage->getRepository('championship_pool_meeting_match');
+//
+//                    /** @var Championship\PoolMeeting $poolMeeting */
+//                    foreach ($poolMeetingsParsed as $poolMeeting) {
+//                        if (!empty($poolMeeting->getMatchesSheetFftId())) {
+//                            $matchesSheetsParsed = $matchesSheetParser->parse($championship, $pool, $poolMeeting);
+//
+//                            // On sauvegarde en base, pour chaque rencontre
+//                            $poolMeetingMatchRepository->saveAll($matchesSheetsParsed, $poolMeeting->getId());
+//                        }
+//                    }
+//                }
 
                 // On met à jour la date de mise à jour de la poule
                 $pool->setUpdatedAt();
@@ -137,10 +137,6 @@ class RefreshCommand extends BaseCommand
                 );
                 $output->writeln("<error>ERREUR: {$e->getMessage()}</error>");
             }
-
-
-            // On temporise entre chaque poule, pour éviter de parser plusieurs pages en peu de temps sur la FFT :-)
-            sleep(2);
         }
     }
 }
