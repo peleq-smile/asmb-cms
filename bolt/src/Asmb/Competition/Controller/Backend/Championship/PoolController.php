@@ -300,7 +300,9 @@ class PoolController extends AbstractController
             $poolRankingParsed = $poolRankingParser->parse($championship, $pool);
 
             // Sauvegarde des classements en base
-            $this->savePoolRanking($pool, $poolRankingParsed);
+            if (null !== $poolRankingParsed) {
+                $this->savePoolRanking($pool, $poolRankingParsed);
+            }
 
             // Données RENCONTRES
             if ($pool->getChampionshipFftId() && $pool->getDivisionFftId()) {

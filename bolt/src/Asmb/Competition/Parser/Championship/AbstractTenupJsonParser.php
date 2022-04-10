@@ -9,6 +9,7 @@ use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Carbon\Carbon;
+use League\Flysystem\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -109,19 +110,29 @@ abstract class AbstractTenupJsonParser
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_USERAGENT => 'BoltCms/Perrine',
+            CURLOPT_USERAGENT => 'BoltCMS/Perrine',
             CURLOPT_POSTFIELDS => $fields,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
         ]);
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($curl);
         $infos = curl_getinfo($curl);
+        $error = curl_error($curl);
+
         curl_close($curl);
 
         if (Response::HTTP_OK === $infos['http_code']) {
             return $response;
-        } // TODO gérer erreurs ?
+        }
 
-        return null;
+        throw new Exception('Impossible de récupérer les résultats depuis Ten\'Up avec les données '
+            . json_encode($fields) . ' : ' . $error
+        );
     }
 
     protected function callGet(string $url): ?string
@@ -137,18 +148,21 @@ abstract class AbstractTenupJsonParser
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_USERAGENT => 'BoltCms/Perrine',
+            CURLOPT_USERAGENT => 'BoltCMS/Perrine',
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
         ]);
 
         $response = curl_exec($curl);
         $infos = curl_getinfo($curl);
+        $error = curl_error($curl);
         curl_close($curl);
 
         if (Response::HTTP_OK === $infos['http_code']) {
             return $response;
-        } // TODO gérer erreurs ?
+        }
 
-        return null;
+        throw new Exception('Impossible de récupérer les données depuis ' . $url . ' : ' . $error);
     }
 
     protected function getJsonContentFromLocal(Championship $championship, Pool $pool, ?PoolMeeting $poolMeeting): ?string
