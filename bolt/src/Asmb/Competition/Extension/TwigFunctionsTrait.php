@@ -76,7 +76,6 @@ trait TwigFunctionsTrait
      *
      * @return PoolMeeting[]
      * @throws InvalidRepositoryException
-     * @noinspection PhpUndefinedMethodInspection
      */
     protected function getLastOrNextMeetings($pastOrFutureDays)
     {

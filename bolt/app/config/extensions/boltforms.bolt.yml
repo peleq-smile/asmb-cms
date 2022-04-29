@@ -36,7 +36,7 @@ csrf: true
 #
 templates:
     ajax: extensions/boltforms/asset/_ajax.twig
-    email: extensions/boltforms/email/email.twig
+    email: extensions/boltforms/email/contact.twig
 #    form: extensions/boltforms/form/form.twig
     subject: extensions/boltforms/email/subject.twig
     # See \Bolt\Extension\Bolt\BoltForms\BoltFormsExtension::getDefaultConfig for other templates...

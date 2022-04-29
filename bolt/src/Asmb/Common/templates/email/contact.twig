@@ -1,0 +1,26 @@
+{#
+ # Passed in variables:
+ #  'contactMail'
+ #  'contactName'
+ #  'subject'
+ #  'message'
+ #}
+<p>Le formulaire de contact a été soumis avec les informations suivantes :</p>
+<hr>
+<ul>
+    <li>
+        <strong>Nom :</strong><br>{{ contactName }}
+    </li>
+
+    <li>
+        <strong>Adresse e-mail :</strong><br>{{ contactMail }}
+    </li>
+
+    <li>
+        <strong>Sujet :</strong><br>{{ subject }}
+    </li>
+
+    <li>
+        <strong>Message :</strong><br>{{ message|nl2br }}
+    </li>
+</ul>

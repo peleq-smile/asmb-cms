@@ -6,6 +6,9 @@ use Bolt\Extension\SimpleExtension;
 use Bundle\Asmb\Common\EventListener\RedirectListener;
 use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 use Bundle\Asmb\Common\Extension\TwigFiltersTrait;
+use Bundle\Asmb\Common\Extension\TwigFunctionsTrait;
+use Bundle\Asmb\Common\Service\MailSender;
+use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -17,6 +20,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class CommonExtension extends SimpleExtension
 {
     use TwigBackendTrait;
+    use TwigFunctionsTrait;
     use TwigFiltersTrait;
 
     /**
@@ -27,7 +31,7 @@ class CommonExtension extends SimpleExtension
         /** @see https://stackoverflow.com/questions/52754936/overwrite-backend-template-in-bolt-cms */
         if ($this->getEnd() == 'backend') {
             return [
-                'view/backend'      => ['position' => 'prepend', 'namespace' => 'bolt'],
+                'view/backend' => ['position' => 'prepend', 'namespace' => 'bolt'],
                 'templates/backend' => ['namespace' => 'AsmbCommon'],
             ];
         }
@@ -44,6 +48,7 @@ class CommonExtension extends SimpleExtension
     {
         return [
             '/acces-bureau' => new Controller\AuthenticationController(),
+            '/page/contact' => new Controller\ContactController(),
         ];
     }
 
@@ -61,5 +66,23 @@ class CommonExtension extends SimpleExtension
             $app['access_control']
         );
         $dispatcher->addListener(KernelEvents::RESPONSE, [$redirectListener, 'onResponse']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerServices(Application $app)
+    {
+        $app['mail_sender'] = $app->share(
+            function () use ($app) {
+                return new MailSender(
+                    $app['config'],
+                    $app['mailer'],
+                    $app['swiftmailer.transport'],
+                    $app['swiftmailer.spooltransport'],
+                    $app['twig']
+                );
+            }
+        );
     }
 }

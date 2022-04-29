@@ -1,4 +1,13 @@
 # --- Untranslated messages FROM BOLT ---------------------------------------------------------------------------------
+contact.email.label: 'Adresse e-mail'
+contact.email.placeholder: 'Merci d''indiquer votre adresse e-mail'
+contact.name.label: 'Nom'
+contact.name.placeholder: 'Merci d''indiquer vos nom et prénom'
+contact.subject.label: 'Sujet'
+contact.subject.placeholder: 'Merci d''indiquer l''objet de votre demande'
+contact.message.label: 'Message'
+contact.message.placeholder: 'Veuillez saisir votre message'
+contact.button.send: 'Envoyer'
 contenttypes.generic.consecutive-underscores: # "In the ContentType for '%contenttype%', the field '%field%' has consecutive underscores, which is not supported. Please edit contenttypes.yml and use a single underscore."
 contenttypes.generic.invalid-hyphen: # "In the ContentType for '%contenttype%', you have used a hyphen in the definition which is not supported. Please edit contenttypes.yml and remove the hyphen or alternatively replace with an underscore."
 contenttypes.generic.view: "%contenttypes%"

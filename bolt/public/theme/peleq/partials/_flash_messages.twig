@@ -1,0 +1,37 @@
+{% macro flashbag(user) %}
+    {% import _self as self %}
+
+    {# we only want to show these flashes to logged on users. #}
+    {% if user|default %}
+        {{ self.messages('danger') }}
+        {{ self.messages('warning') }}
+    {% endif %}
+
+    {{ self.messages('error', 'danger') }}
+    {{ self.messages('success') }}
+    {{ self.messages('info') }}
+{% endmacro %}
+
+{% macro messages(key, class) %}
+    {% set shown = [] %}
+    {% for msg in app['logger.flash'].get(key) %}
+        {% if msg not in shown %}
+            <div class="notification is-{{ class|default(key) }}">
+                <button class="delete"></button>
+                {{ msg|ymllink }}
+            </div>
+            {% set shown = shown|merge([msg]) %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% import _self as self %}
+<div class="row">
+    {% if wrapper is defined and wrapper and app['logger.flash'].keys() is not empty %}
+        <div class="col-md-8">
+            {{ self.flashbag(user) }}
+        </div>
+    {% else %}
+        {{ self.flashbag(user) }}
+    {% endif %}
+</div>

@@ -80,6 +80,16 @@
     }
 }
 
+.notification {
+    margin: 0 1.5rem;
+
+    &.is-success {
+        border: 1px solid #D6E9C6 !important;
+        color: #468847 !important;
+        background-color: #DFF0D8 !important;
+    }
+}
+
 /* Message d'alerte statique */
 .static-alert-btn {
     position: fixed;
