@@ -1,39 +1,53 @@
 {% set lastMeetings = getLastMeetings(pastDays) %}
-{% set nextMeetings = getNextMeetings(futureDays) %}
+{% set nextHomeMeetings = getNextMeetings(futureDays, true) %}
+{% set nextVisitorMeetings = getNextMeetings(futureDays, false, true) %}
 
 {% if lastMeetings is not empty or nextMeetings is not empty %}
 <section id="actual-meetings" class="section matches">
     <div class="container">
         <h2 class="title">{{ __("home.meetings_of_the_moment.title") }}</h2>
 
-        {% set oneColumn = false %}
-        {% if lastMeetings is empty or nextMeetings is empty %}
-            {% set oneColumn = true %}
-        {% endif %}
+        {% set columnCount = 0 %}
         <div class="columns">
             {% if lastMeetings is not empty %}
-            <div class="column is-half{% if oneColumn %} one-column{% endif %}">
-                {% include 'partials/home/meetings/_meetings_by_date.twig' with {
-                        'title': __("home.last-meetings.title"),
-                        'meetings': lastMeetings,
-                        'showLastUpdatedAt': (nextMeetings is empty)
-                    }
-                %}
-            </div>
+                <div class="column is-one-third is-narrow">
+                    {% include 'partials/home/meetings/_meetings_by_date.twig' with {
+                            'title': __("home.last-meetings.title"),
+                            'meetings': lastMeetings,
+                            'showLastUpdatedAt': (nextHomeMeetings is empty and nextVisitorMeetings is empty),
+                            'showHour': false
+                        }
+                    %}
+                </div>
+                {% set columnCount = columnCount + 1 %}
             {% endif %}
 
-            {% if nextMeetings is not empty %}
-            <div class="column is-half{% if oneColumn %} one-column{% endif %}">
-                {% include 'partials/home/meetings/_meetings_by_date.twig' with {
-                        'title': __("home.next-meetings.title"),
-                        'meetings': nextMeetings,
-                        'showLastUpdatedAt': true
-                    }
-                %}
-            </div>
+            {% if nextHomeMeetings is not empty %}
+                <div class="column is-one-third is-narrow">
+                    {% include 'partials/home/meetings/_meetings_by_date.twig' with {
+                            'title': __("home.next-home-meetings.title"),
+                            'meetings': nextHomeMeetings,
+                            'showLastUpdatedAt': (lastMeetings is empty and nextVisitorMeetings is empty)
+                        }
+                    %}
+                </div>
+                {% set columnCount = columnCount + 1 %}
             {% endif %}
 
-            {% if lastMeetings is empty or nextMeetings is empty %}
+            {% if nextVisitorMeetings is not empty %}
+                <div class="column is-one-third is-narrow">
+                    {% include 'partials/home/meetings/_meetings_by_date.twig' with {
+                            'title': __("home.next-visitor-meetings.title"),
+                            'meetings': nextVisitorMeetings,
+                            'showLastUpdatedAt': true,
+                            'showHour': false
+                        }
+                    %}
+                </div>
+                {% set columnCount = columnCount + 1 %}
+            {% endif %}
+
+            {% if columnCount == 1 %}
                 <i class="fas fa-trophy"></i>
                 <i class="fas fa-trophy"></i>
             {% endif %}

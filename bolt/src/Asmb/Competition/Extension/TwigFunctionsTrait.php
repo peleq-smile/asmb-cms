@@ -12,6 +12,7 @@ use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
 use Bundle\Asmb\Competition\Entity\Championship\PoolRanking;
+use Bundle\Asmb\Competition\Helpers\PoolMeetingHelper;
 use Bundle\Asmb\Competition\Parser\Tournament\AbstractParser;
 use Bundle\Asmb\Competition\Parser\Tournament\DbParser;
 use Bundle\Asmb\Competition\Parser\Tournament\JaTennisJsonParser;
@@ -59,13 +60,14 @@ trait TwigFunctionsTrait
      * Retourne les prochaines rencontres du club.
      *
      * @param integer $futureDays
-     *
+     * @param bool $homeOnly
+     * @param bool $visitorOnly
      * @return PoolMeeting[]
      * @throws InvalidRepositoryException
      */
-    public function getNextMeetings($futureDays)
+    public function getNextMeetings(int $futureDays, bool $homeOnly = false, bool $visitorOnly = false)
     {
-        return $this->getLastOrNextMeetings($futureDays);
+        return $this->getLastOrNextMeetings($futureDays, $homeOnly, $visitorOnly);
     }
 
     /**
@@ -73,11 +75,12 @@ trait TwigFunctionsTrait
      * ou positif (futur).
      *
      * @param integer $pastOrFutureDays
-     *
+     * @param bool $homeOnly
+     * @param bool $visitorOnly
      * @return PoolMeeting[]
      * @throws InvalidRepositoryException
      */
-    protected function getLastOrNextMeetings($pastOrFutureDays)
+    protected function getLastOrNextMeetings(int $pastOrFutureDays, bool $homeOnly = false, bool $visitorOnly = false)
     {
         $sortedMeetings = [];
 
@@ -111,21 +114,16 @@ trait TwigFunctionsTrait
                     continue;
                 }
 
-                /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
-                $competitionPage = $app['query']->getContent(
-                    'competition',
-                    [
-                        'championship_id' => $meeting->getChampionshipId(),
-                        'championship_categories' => '%' . $categoriesMap[$meeting->getCategoryName()] . '%',
-                        'returnsingle' => true
-                    ]
-                );
+                if ($homeOnly && !$meeting->getHomeTeamIsClub() || $visitorOnly && !$meeting->getVisitorTeamIsClub()) {
+                    // filtre sur rencontres à domicile / à l'extérieur
+                    continue;
+                }
+
+                $competitionPage = $this->addCompetitionPageToMeeting($meeting, $categoriesMap);
 
                 if ($competitionPage) {
                     $meetingDate = $meeting->getFinalDate()->format('Ymd');
 
-                    $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
-                    $meeting->setCompetitionRecordSlug($competitionPage->getSlug());
                     if (null !== $meeting->getCategoryName()) {
                         $meeting->setCategoryIdentifier($categoriesMap[$meeting->getCategoryName()]);
                     }
@@ -144,6 +142,46 @@ trait TwigFunctionsTrait
         }
 
         return $sortedMeetings;
+    }
+
+    /**
+     * Ajoute les infos sur la page de compétition liée à la rencontre donnée.
+     */
+    private function addCompetitionPageToMeeting(PoolMeeting $meeting, array $categoriesMap, bool $withShortTitle = true)
+    {
+        $competitionPage = null;
+
+        /** @var Application $app */
+        $app = $this->getContainer();
+
+        $categoryIdentifier = $meeting->getCategoryIdentifier();
+        if (!$categoryIdentifier && isset($categoriesMap[$meeting->getCategoryName()])) {
+            $categoryIdentifier = $categoriesMap[$meeting->getCategoryName()];
+        }
+
+        if ($categoryIdentifier) {
+            /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
+            $competitionPage = $app['query']->getContent(
+                'competition',
+                [
+                    'championship_id' => $meeting->getChampionshipId(),
+                    'championship_categories' => '%' . $categoriesMap[$meeting->getCategoryName()] . '%',
+                    'returnsingle' => true
+                ]
+            );
+
+            if ($competitionPage) {
+                if ($withShortTitle) {
+                    $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
+                } else {
+                    $meeting->setCompetitionRecordTitle($competitionPage->getTitle());
+                }
+                $meeting->setCompetitionRecordSlug($competitionPage->getSlug());
+            }
+        }
+
+
+        return $competitionPage;
     }
 
     /**
@@ -576,8 +614,8 @@ trait TwigFunctionsTrait
     }
 
     /**
-     * @param Content $competitionRecord
-     *
+     * @param int|null $month
+     * @param int|null $year
      * @return array
      * @throws InvalidRepositoryException
      */
@@ -599,7 +637,22 @@ trait TwigFunctionsTrait
         $poolMeetingRepository = $this->getStorage()->getRepository('championship_pool_meeting');
         $homeMeetingsOfMonth = $poolMeetingRepository->findHomeMeetingsBetweenDate($firstDayOfMonth, $lastDayOfMonth);
 
+        $woLength = strlen(PoolMeetingHelper::RESULT_WO);
+        // On récupère l'association nom de catégorie => identifiant de catégorie
+        $categoriesMap = $this->getContainer()['storage']->getRepository('championship_category')->findAllAsChoices();
+
         foreach ($homeMeetingsOfMonth as $homeMeeting) {
+
+            // Ajout page de compétition
+            $this->addCompetitionPageToMeeting($homeMeeting, $categoriesMap, false);
+
+            // cas forfait
+            if (null !== $homeMeeting->getResult()
+                && PoolMeetingHelper::RESULT_WO === substr($homeMeeting->getResult(), -1 * $woLength)
+            ) {
+                $homeMeeting->setIsWo(true);
+            }
+
             $homeMeetings[$homeMeeting->getFinalDate()->format('y-m-d')][] = $homeMeeting;
         }
 

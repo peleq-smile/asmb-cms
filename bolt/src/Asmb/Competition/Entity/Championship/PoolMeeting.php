@@ -68,6 +68,8 @@ class PoolMeeting extends Entity
     protected $competition_record_slug;
     /** @var Carbon */
     protected $updated_at;
+    /** @var bool */
+    protected $isWo = false;
 
     /**
      * @return mixed
@@ -466,5 +468,15 @@ class PoolMeeting extends Entity
     public function getNotifyStatus(): ?int
     {
         return $this->notify_status;
+    }
+
+    public function isWo(): ?bool
+    {
+        return $this->isWo;
+    }
+
+    public function setIsWo(?bool $isWo)
+    {
+        $this->isWo = $isWo;
     }
 }

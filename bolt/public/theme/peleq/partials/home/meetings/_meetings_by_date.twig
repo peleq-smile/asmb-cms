@@ -1,4 +1,7 @@
 {% set lastUpdatedAt = null %}
+{% if showHour is not defined %}
+    {% set showHour = true %}
+{% endif %}
 
 <h3 class="title">{{ title }}</h3>
 <div class="box">
@@ -14,29 +17,29 @@
 
                     <thead>
                     <tr>
-                        <th colspan="4">
+                        <th colspan="{{ showHour ? 4:3 }}">
                             <span class="is-hidden-touch">
                                 {{ meeting|formattedDate }}
 
-                            {% if meeting.competition_record_slug is defined %}
-                            <em>
-                                <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}">
-                                <i class="fas fa-chevron-circle-right"></i> {{ meeting.competition_record_title }}</a>
-                            </em>
-                            {% endif %}
-                        </span>
-                        <span class="is-hidden-desktop">
-                            {{ meeting|formattedDate(true) }}
+                                {% if meeting.competition_record_slug is defined %}
+                                <em>
+                                    <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}">
+                                    <i class="fas fa-chevron-circle-right"></i> {{ meeting.competition_record_title }}</a>
+                                </em>
+                                {% endif %}
+                            </span>
+                            <span class="is-hidden-desktop">
+                                {{ meeting|formattedDate(true) }}
 
-                            {% if meeting.competition_record_slug is defined %}
-                            <em><a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}">
-                                <i class="fas fa-chevron-circle-right"></i> {{ meeting.competition_record_title }}</a>
-                            </em>
-                            {% endif %}
-                        </span>
-                    </th>
-                </tr>
-                </thead>
+                                {% if meeting.competition_record_slug is defined %}
+                                <em><a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}">
+                                    <i class="fas fa-chevron-circle-right"></i> {{ meeting.competition_record_title }}</a>
+                                </em>
+                                {% endif %}
+                            </span>
+                        </th>
+                    </tr>
+                    </thead>
 
                     {% set previousDate = meeting.date %}
                     <tbody>
@@ -48,18 +51,14 @@
                 {% set hour = meeting.time ? meeting.time|date('H') ~ 'h' ~ meeting.time|date('i') : '-' %}
 
                 <tr>
-                    {% if meeting.isReported and meeting.reportDate is null %}
-                        <td class="hour text-danger is-italic" title="{{ __('general.phrase.reported') }}">{{ __('general.phrase.reported') }}</td>
-                    {% else %}
-                        <td class="hour" title="{{ __('home.meetings.time') }}">
-                            {# CODE à l'arrache à supprimer !!!!!!!!! #}
-                            {% if meeting.id == 1544 %}
-                                {{ hour }}*<br>
-                                <em style="font-size: 10px; line-height: 12px; display: block">* se déroule<br class="is-hidden-desktop">à Bouaye</em>
-                            {% else %}
+                    {% if showHour %}
+                        {% if meeting.isReported and meeting.reportDate is null %}
+                            <td class="hour text-danger is-italic" title="{{ __('general.phrase.reported') }}">{{ __('general.phrase.reported') }}</td>
+                        {% else %}
+                            <td class="hour" title="{{ __('home.meetings.time') }}">
                                 {{ hour }}
-                            {% endif %}
-                        </td>
+                            </td>
+                        {% endif %}
                     {% endif %}
                     <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                     <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>

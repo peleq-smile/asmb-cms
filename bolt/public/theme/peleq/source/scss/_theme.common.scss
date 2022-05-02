@@ -47,6 +47,10 @@
     direction: rtl;
 }
 
+a.underline-hover:hover {
+    text-decoration: underline;
+}
+
 //--- Layout
 #main-content {
     h1.title {

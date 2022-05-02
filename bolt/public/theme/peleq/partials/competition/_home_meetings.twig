@@ -40,11 +40,12 @@
                         </a>
                     {% endif %}
                 </caption>
+
                 <tbody>
                 {% for homeMeetingOfDay in homeMeetings %}
                     <tr>
                         <th class="is-size-3 is-size-5-mobile"
-                            colspan="4">{{ homeMeetingOfDay[0]|formattedDate }}</th>
+                            colspan="5">{{ homeMeetingOfDay[0]|formattedDate }}</th>
                     </tr>
                     {% for homeMeeting in homeMeetingOfDay %}
                         {% if homeMeeting.id != 1544 %} {# CODE à l'arrache à supprimer !!!!!!!!! #}
@@ -70,7 +71,9 @@
     <tr class="home-meeting">
         {% if homeMeeting.time is not null %}
             <td class="time text-center">{{ homeMeeting.time|date('H\\hi') }}</td>
-        {% else %}
+        {% elseif homeMeeting.isWo %}
+            <td class="time text-center"><em>{{ 'general.phrase.wo'|trans }}</em></td>
+            {% else %}
             <td class="time text-center"></td>
         {% endif %}
         <td class="is-club">
@@ -79,6 +82,19 @@
         <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
         <td>
             {{ homeMeeting.visitor_team_name }}
+        </td>
+
+        {# Lien vers la page de compétition #}
+        <td>
+            {% if homeMeeting.competition_record_slug is defined and homeMeeting.competition_record_slug is not empty %}
+                <em class="is-hidden-mobile">
+                    <i class="fas fa-chevron-circle-right"></i>
+                    <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': homeMeeting.competition_record_slug}) }}"
+                       class="text-default underline-hover" target="_blank">
+                        {{ homeMeeting.competition_record_title }}
+                    </a>
+                </em>
+            {% endif %}
         </td>
     </tr>
 {% endmacro %}

@@ -336,6 +336,33 @@ class PoolMeetingRepository extends Repository
         // Prise en compte de la date de report en priorité, sinon la date définie dans la GS
         $qb->addSelect("IFNULL({$this->getAlias()}.report_date, {$this->getAlias()}.date) as final_date");
 
+        // Jointure sur la poule et sa catégorie pour avoir le nom
+        $qb->innerJoin(
+            $this->getAlias(),
+            'bolt_championship_pool',
+            'pool',
+            $qb->expr()->eq($this->getAlias() . '.pool_id', 'pool.id')
+        );
+        $qb->innerJoin(
+            'pool',
+            'bolt_championship_category',
+            'category',
+            $qb->expr()->eq('pool.category_identifier', 'category.identifier')
+        );
+        $qb->addSelect('category.name as category_name');
+
+        // Jointure pour les données du championnat
+        $qb->innerJoin(
+            'pool',
+            'bolt_championship',
+            'championship',
+            $qb->expr()->eq('pool.championship_id', 'championship.id')
+        );
+        $qb->addSelect('championship.id as championship_id');
+        $qb->addSelect('championship.name as championship_name');
+        $qb->addSelect('championship.short_name as championship_short_name');
+
+
         $qb->having($qb->expr()->gte('final_date', ':fromDate'));
         $qb->setParameter('fromDate', $fromDate);
 
@@ -359,6 +386,12 @@ class PoolMeetingRepository extends Repository
                 $homeMeeting->setHomeTeamIsClub(true);
                 $homeMeeting->setHomeTeamName($result[$idx]['team_home_name']);
                 $homeMeeting->setVisitorTeamName($result[$idx]['team_visitor_name']);
+
+                // Ajout à la volée de données sur la Poule concernée
+                $homeMeeting->setChampionshipId($result[$idx]['championship_id']);
+                $homeMeeting->setChampionshipName($result[$idx]['championship_name']);
+                $homeMeeting->setChampionshipShortName($result[$idx]['championship_short_name']);
+                $homeMeeting->setCategoryName($result[$idx]['category_name']);
             }
         }
 
