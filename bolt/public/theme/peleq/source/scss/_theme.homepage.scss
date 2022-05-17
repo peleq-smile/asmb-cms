@@ -258,11 +258,6 @@
             .image {
                 margin: auto;
                 width: 100% !important;
-
-                img {
-                    max-height: 20rem;
-                    object-fit: cover;
-                }
             }
         }
 
@@ -292,6 +287,7 @@
             &.matches {
                 margin-top: 0;
                 margin-bottom: 1.5rem;
+                font-size: 0.9rem;
 
                 h2.title {
                     padding: 1.5rem 0;
@@ -367,7 +363,41 @@
             &.matches {
                 margin-top: 1.5rem;
                 margin-bottom: 3rem;
+                font-size: 0.9rem;
+
+                .column {
+                    padding-left: 0.75rem;
+                    padding-right: 0.75rem;
+                }
+
+                .column:first-of-type {
+                    padding-left: 1.5rem;
+                }
+
+                .column:last-of-type {
+                    padding-right: 1.5rem;
+                }
+
+                table {
+                    tr {
+                        th {
+                            padding-left: 0;
+                            padding-right: 0;
+                        }
+                    }
+                }
             }
         }
     }
 }
+
+@media screen and (min-width: $fullhd) {
+    .homepage {
+        .section {
+            &.matches {
+                font-size: 1rem;
+            }
+        }
+    }
+}
+

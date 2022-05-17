@@ -346,22 +346,17 @@ blocs:
       attrib: title
       extensions: [ jpg, png ]
       required: true
-    image_width:
+    image_object_fit:
+      type: select
+      label: 'Propriété CSS de remplissage de l''image "object-fit"'
+      values: [ 'contain', 'cover', 'fill', 'none' ]
+      default: 'contain'
+    block_image_width:
       type: integer
-      label: 'Largeur de l''image décorative'
-      options:
-        min: 200
-        max: 500
-        step: 10
-      required: true
-    image_height:
+      label: 'Largeur max (en %) du bloc image, vue desktop'
+    block_content_width:
       type: integer
-      label: 'Hauteur de l''image décorative'
-      options:
-        min: 300
-        max: 700
-        step: 10
-      required: true
+      label: 'Largeur max (en %) du bloc de contenu, vue desktop'
     content:
       type: html
       label: 'Contenu du bloc'

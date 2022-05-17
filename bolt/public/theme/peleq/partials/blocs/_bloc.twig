@@ -9,6 +9,7 @@
 
 <div class="columns block {% if block.image %}block-with-image{% endif %} block-{{ (index is odd) ? 'odd':'even' }}">
     <div class="column block-content">
+{#    <div class="column block-content"{% if block.block_content_width > 0 %} style="max-width: {{ block.block_content_width }}%;"{%endif%}>#}
         {% if not embedIntoPage and block.contentlink %}
             <h2 class="title"><a href="{{ block.contentlink }}">{{ block.title }}</a></h2>
         {% else %}
@@ -30,17 +31,19 @@
     </div>
 
     {% if block.image %}
-        {% set height = block.image_height %}
-        {% set width = block.image_width %}
-
         <div class="column block-image">
+{#        <div class="column block-image"{% if block.block_image_width > 0 %} style="max-width: {{ block.block_image_width }}%;"{%endif%}>#}
             {% if not embedIntoPage and block.contentlink %}
                 <a class="image" href="{{ block.contentlink }}">
-                    <img src="{{ asset(block.image, 'files') }}" alt="{{ block.values.image.title }}" width="{{ width }}">
+                    <img src="{{ asset(block.image, 'files') }}" alt="{{ block.values.image.title }}"
+                         style="background-color: white; object-fit: {{ block.image_object_fit }};">
                     <span class="see-more">&plus; d'infos</span>
                 </a>
             {% else %}
-                <div class="image"><img src="{{ asset(block.image, 'files') }}" alt="{{ block.values.image.title }}" width="{{ width }}"></div>
+                <div class="image">
+                    <img src="{{ asset(block.image, 'files') }}" alt="{{ block.values.image.title }}"
+                         style="background-color: white; object-fit: {{ block.image_object_fit }};">
+                </div>
             {% endif %}
         </div>
     {% endif %}
