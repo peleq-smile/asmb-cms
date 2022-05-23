@@ -80,9 +80,9 @@ class Tournament extends AbstractShortNamedEntity
     }
 
     /**
-     * @return \Datetime
+     * @return Carbon|null
      */
-    public function getToDate()
+    public function getToDate(): ?\DateTime
     {
         return $this->to_date;
     }

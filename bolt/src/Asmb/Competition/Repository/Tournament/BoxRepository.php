@@ -161,10 +161,16 @@ class BoxRepository extends Repository
                         $box->setBoxTop($boxes[$box->getBoxTopId()]);
                     }
 
+                    $formattedDate = null;
                     if (null !== $box->getDatetime()) {
                         // On formate la date
                         $formattedDate = DateHelper::formatWithLocalizedDayMonthAndYear($box->getDatetime());
+                    } elseif (null !== $tournament->getToDate()) {
+                        // cas boîte sans date prévue : on considère la date de fin du tournoi !
+                        $formattedDate = DateHelper::formatWithLocalizedDayMonthAndYear($tournament->getToDate());
+                    }
 
+                    if (null !== $formattedDate) {
                         // Si on n'a pas de tournoi donné, on ajoute le nom du tournoi en suffixe de la date
                         if (!empty($box->getTournamentName())) {
                             $boxesWithMissingScore[$formattedDate . ' - ' . $box->getTournamentName()][$box->getId()] = $box;

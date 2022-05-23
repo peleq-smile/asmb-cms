@@ -200,6 +200,8 @@ class DbParser extends AbstractParser
     {
         if (null === $this->resultsData) {
             $this->resultsData = [];
+        } else {
+            ksort($this->resultsData);
         }
 
         return $this->resultsData;

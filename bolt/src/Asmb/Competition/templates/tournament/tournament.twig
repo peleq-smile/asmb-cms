@@ -70,7 +70,7 @@
                 <h2 class="title is-size-3 is-size-4-mobile">{{ tableData.name|raw }}</h2>
             </div>
 
-            <div class="table-container has-background-white">
+            <div class="table-container{% if tableData.isPool is defined and tableData.isPool %} has-background-white{% endif %}">
                 {% if tableData.isPool is defined and tableData.isPool %}
                     <div class="container">
                         <div class="box">

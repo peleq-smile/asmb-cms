@@ -189,7 +189,7 @@ class TournamentController extends AbstractController
     protected function buildEditScoresForm(Request $request, array $boxesByDay)
     {
         $boxes = [];
-        foreach ($boxesByDay as $day => $boxesOfDay) {
+        foreach ($boxesByDay as $boxesOfDay) {
             $boxes += $boxesOfDay;
         }
 
