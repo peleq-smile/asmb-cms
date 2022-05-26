@@ -10,7 +10,7 @@
 
             <h1 class="title is-size-1 is-size-3-mobile">{{ record.title }}</h1>
 
-            {# Section sur les licencié-e-s #}
+            {# Section sur les membres #}
             <div class="section-stats">
                 <div class="tile is-ancestor">
                     <div class="tile is-parent">
@@ -67,6 +67,7 @@
             </div>
 
             {# Section sur le nb d'élèves / cartes loisirs / heures de cours #}
+            {% if record.students_count > 0 and record.weekly_lessons_hours_count > 0 and record.leasure_cards_count > 0%}
             <div class="section-stats even">
                 <div class="tile is-ancestor is-parent">
                     <div class="tile is-child box">
@@ -77,6 +78,7 @@
                             'legend': __('page.stats.students'),
                         } %}
                     </div>
+
                     <div class="tile is-child box">
                         {% include 'partials/stats/_progress_ring.twig' with {
                             'image': 'heures.png',
@@ -85,6 +87,7 @@
                             'legend': __('page.stats.weekly-hours'),
                         } %}
                     </div>
+
                     <div class="tile is-child box">
                         {% include 'partials/stats/_progress_ring.twig' with {
                             'image': 'cartes_loisir.png',
@@ -95,23 +98,24 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
 
-            {# Section sur les équipes Hiver #}
-            {% if record.winter_teams is not empty %}
-                {% set winterTeamCountTotal = 0 %}
-                {% for teamStats in record.winter_teams %}
-                    {% set winterTeamCountTotal = winterTeamCountTotal + teamStats.get('team_count') %}
+            {# Section sur les équipes JEUNE #}
+            {% if record.young_teams is not empty %}
+                {% set teamCountTotal = 0 %}
+                {% for teamStats in record.young_teams %}
+                    {% set teamCountTotal = teamCountTotal + teamStats.get('team_count') %}
                 {% endfor %}
 
-                {% if winterTeamCountTotal > 0 and record.winter_teams|length > 1%}
+                {% if teamCountTotal > 0 and record.young_teams|length > 1%}
                     <hr class="is-invisible">
-                    <h2 class="title text-default">{{ __('page.stats.winter-teams') }}</h2>
+                    <h2 class="title text-default">Équipes jeune</h2>
                     <div class="section-stats">
                         <div class="tile is-ancestor is-parent">
-                            {% for teamStats in record.winter_teams %}
+                            {% for teamStats in record.young_teams %}
                                 <div class="tile is-child box">
                                     {% include 'partials/stats/_progress_ring.twig' with {
-                                        'percent': (teamStats.get('team_count')/winterTeamCountTotal)*100,
+                                        'percent': (teamStats.get('team_count')/teamCountTotal)*100,
                                         'text': teamStats.get('team_count'),
                                         'legend': teamStats.get('team_category'),
                                     } %}
@@ -122,22 +126,22 @@
                 {% endif %}
             {% endif %}
 
-            {# Section sur les équipes Printemps #}
-            {% if record.spring_teams is not empty %}
-                {% set springTeamCountTotal = 0 %}
-                {% for teamStats in record.spring_teams %}
-                    {% set springTeamCountTotal = springTeamCountTotal + teamStats.get('team_count') %}
+            {# Section sur les équipes SENIOR #}
+            {% if record.senior_teams is not empty %}
+                {% set teamCountTotal = 0 %}
+                {% for teamStats in record.senior_teams %}
+                    {% set teamCountTotal = teamCountTotal + teamStats.get('team_count') %}
                 {% endfor %}
 
-                {% if springTeamCountTotal > 0 and record.spring_teams|length > 1 %}
+                {% if teamCountTotal > 0 and record.senior_teams|length > 1 %}
                     <hr class="is-invisible">
-                    <h2 class="title text-default">{{ __('page.stats.spring-teams') }}</h2>
+                    <h2 class="title text-default">Équipes senior</h2>
                     <div class="section-stats">
                         <div class="tile is-ancestor is-parent">
-                            {% for teamStats in record.spring_teams %}
+                            {% for teamStats in record.senior_teams %}
                                 <div class="tile is-child box">
                                     {% include 'partials/stats/_progress_ring.twig' with {
-                                        'percent': (teamStats.get('team_count')/winterTeamCountTotal)*100,
+                                        'percent': (teamStats.get('team_count')/teamCountTotal)*100,
                                         'text': teamStats.get('team_count'),
                                         'legend': teamStats.get('team_category'),
                                     } %}
@@ -148,22 +152,22 @@
                 {% endif %}
             {% endif %}
 
-            {# Section sur les équipe Été #}
-            {% if record.summer_teams is not empty %}
-                {% set summerTeamCountTotal = 0 %}
-                {% for teamStats in record.summer_teams %}
-                    {% set summerTeamCountTotal = summerTeamCountTotal + teamStats.get('team_count') %}
+            {# Section sur les équipes SENIOR+ #}
+            {% if record.seniorplus_teams is not empty %}
+                {% set teamCountTotal = 0 %}
+                {% for teamStats in record.seniorplus_teams %}
+                    {% set teamCountTotal = teamCountTotal + teamStats.get('team_count') %}
                 {% endfor %}
 
-                {% if summerTeamCountTotal > 0 and record.summer_teams|length > 1 %}
+                {% if teamCountTotal > 0 and record.seniorplus_teams|length > 1 %}
                     <hr class="is-invisible">
-                    <h2 class="title text-default">{{ __('page.stats.summer-teams') }}</h2>
-                    <div class="section-stats {% if winterTeamCountTotal > 0 %}even{% endif %}">
+                    <h2 class="title text-default">Équipes senior +35</h2>
+                    <div class="section-stats">
                         <div class="tile is-ancestor is-parent">
-                            {% for teamStats in record.summer_teams %}
+                            {% for teamStats in record.seniorplus_teams %}
                                 <div class="tile is-child box">
                                     {% include 'partials/stats/_progress_ring.twig' with {
-                                        'percent': (teamStats.get('team_count')/summerTeamCountTotal)*100,
+                                        'percent': (teamStats.get('team_count')/teamCountTotal)*100,
                                         'text': teamStats.get('team_count'),
                                         'legend': teamStats.get('team_category'),
                                     } %}

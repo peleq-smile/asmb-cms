@@ -866,20 +866,20 @@ statistiques:
     students_count:
       label: 'Nb élèves'
       type: integer
-      min: 1
+      min: 0
       max: 1000
     weekly_lessons_hours_count:
       label: 'Nb heures de cours collectifs par semaine'
       type: integer
-      min: 1
+      min: 0
       max: 1000
     leasure_cards_count:
       label: 'Nb adhérents carte loisir seule'
       type: integer
-      min: 1
+      min: 0
       max: 1000
-    winter_teams:
-      label: 'Équipes Hiver'
+    young_teams:
+      label: 'Équipes Jeune'
       type: repeater
       fields:
         team_category:
@@ -890,8 +890,20 @@ statistiques:
           type: integer
           min: 0
           max: 100
-    summer_teams:
-      label: 'Équipes Printemps/Été'
+    senior_teams:
+      label: 'Équipes Senior'
+      type: repeater
+      fields:
+        team_category:
+          label: 'Type d''équipe'
+          type: text
+        team_count:
+          label: 'Nb d''équipes pour la catégorie'
+          type: integer
+          min: 0
+          max: 100
+    seniorplus_teams:
+      label: 'Équipes Senior+'
       type: repeater
       fields:
         team_category:
