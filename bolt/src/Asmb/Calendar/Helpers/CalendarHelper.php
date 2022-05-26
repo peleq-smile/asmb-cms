@@ -78,6 +78,8 @@ class CalendarHelper
             }
             if ($date->isToday()) {
                 $classNames[] = 'is-today';
+            } elseif ($date->isPast()) {
+                $classNames[] = 'is-past';
             }
 
             $annualCalendar[$monthLabel][$dayLabel] = [

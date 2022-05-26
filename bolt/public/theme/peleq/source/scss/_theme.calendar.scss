@@ -1,4 +1,8 @@
 .section-calendar {
+    .columns.nav {
+        justify-content: space-between;
+        padding: 1rem;
+    }
     .columns {
         flex-wrap: wrap;
 
@@ -97,6 +101,12 @@
                             color: $primary;
                             padding-left: 2px;
                         }
+                    }
+                }
+
+                tr.is-past {
+                    td {
+                        opacity: 0.5;
                     }
                 }
             }

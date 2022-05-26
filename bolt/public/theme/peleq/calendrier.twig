@@ -1,5 +1,13 @@
 {% extends 'partials/_master.twig' %}
 
+{% set currentMonth = 'now'|date('m') %}
+{# 1er semestre : de septembre à janvier #}
+{# 2ème semestre : de février à juin #}
+{% set currentSemester = (currentMonth > 1 and currentMonth < 9) ? 2:1 %}
+
+{# On récupère le semestre dans l'url ou le semestre actuel par défaut ! #}
+{% set semester = app.request.query.get('semestre') ?? currentSemester %}
+
 {% block main %}
     {% set MAX_PER_ROW = 5 %}
 
@@ -9,10 +17,34 @@
 
             {% set calendarData = getCalendarData(record) %}
             {% set skipCalEventTd = 0 %}
+
             <div class="box">
+                <div class="columns nav">
+                {# Lien vers le semestre précédent TODOpeleq : virer la classe section-home-meetings #}
+                    <div class="col-6">
+                        {% if semester == 2 %}
+                            <a href="{{ record.link }}?semestre=1" class="pagination-previous text-primary">
+                                <i class="fas fa-angle-left"></i>
+                                <span>&nbsp;&nbsp;Semestre précédent</span>
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-6">
+                        {% if semester == 1 %}
+                            <a href="{{ record.link }}?semestre=2" class="pagination-next  text-primary">
+                                <span>Semestre suivant&nbsp;&nbsp;</span>
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <div class="columns">
+                    {% set idxMonth = 1 %}
                     {% for month, monthDays in calendarData %}
-                        <div class="column{% if loop.index0 % MAX_PER_ROW == 0 %} first{% endif %}">
+                        {% if semester == 1 and idxMonth <= 5 or semester == 2 and idxMonth > 5 %}
+                        <div class="column{% if loop.index0 % MAX_PER_ROW == 0 %} first{% endif %}" id="{{ month }}">
                             <table class="table is-fullwidth is-narrow">
                                 <thead>
                                 <tr>
@@ -25,22 +57,22 @@
                                         <td class="cal-day" title="{{ dayData.title|default('') }}">{{ dayLabel }}</td>
                                         {% if dayData.event is not empty %}
                                             <td class="cal-event"{% if dayData.event.duration > 1 %} rowspan="{{ dayData.event.duration }}"{% endif %}
-                                                {% if dayData.event.color and dayData.event.color is iterable %}
-                                                    {% set colors = dayData.event.color|keys %}
-                                                    {% if dayData.event.color|length == 2 %}
-                                                        {% set color1 = colors[0] %}
-                                                        {% set color2 = colors[1] %}
-                                                        style="background: linear-gradient(-45deg, {{ color1 }} 0, {{ color1 }} 50%, {{ color2 }} 50%, {{ color2 }} 66% 100%);"
-                                                    {% elseif dayData.event.color|length == 3 %}
-                                                        {% set color1 = colors[0] %}
-                                                        {% set color2 = colors[1] %}
-                                                        {% set color3 = colors[2] %}
-                                                        style="background: linear-gradient(-45deg, {{ color1 }} 0, {{ color1 }} 33%, {{ color2 }} 33%, {{ color2 }} 66%, {{ color3 }} 66%, {{ color3 }} 100%);"
-                                                    {% endif %}
+                                                    {% if dayData.event.color and dayData.event.color is iterable %}
+                                                        {% set colors = dayData.event.color|keys %}
+                                                        {% if dayData.event.color|length == 2 %}
+                                                            {% set color1 = colors[0] %}
+                                                            {% set color2 = colors[1] %}
+                                                            style="background: linear-gradient(-45deg, {{ color1 }} 0, {{ color1 }} 50%, {{ color2 }} 50%, {{ color2 }} 66% 100%);"
+                                                        {% elseif dayData.event.color|length == 3 %}
+                                                            {% set color1 = colors[0] %}
+                                                            {% set color2 = colors[1] %}
+                                                            {% set color3 = colors[2] %}
+                                                            style="background: linear-gradient(-45deg, {{ color1 }} 0, {{ color1 }} 33%, {{ color2 }} 33%, {{ color2 }} 66%, {{ color3 }} 66%, {{ color3 }} 100%);"
+                                                        {% endif %}
 
-                                                {% elseif dayData.event.color %}
-                                                    style="background: {{ dayData.event.color }}"
-                                                {% endif %}
+                                                    {% elseif dayData.event.color %}
+                                                        style="background: {{ dayData.event.color }}"
+                                                    {% endif %}
                                             >
                                                 <div class="flex-column">
                                                     <span {% if dayData.event.duration == 1 and dayData.event.name|length > 19 %}
@@ -59,6 +91,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% endif %}
+
+                        {% set idxMonth = idxMonth+1 %}
                     {% endfor %}
                 </div>
             </div>
