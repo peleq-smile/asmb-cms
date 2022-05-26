@@ -128,10 +128,16 @@ trait TwigFunctionsTrait
                         $meeting->setCategoryIdentifier($categoriesMap[$meeting->getCategoryName()]);
                     }
 
-                    if (!isset($groupedMeetings[$meetingDate . '-' . $competitionPage->getId()])) {
-                        $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()] = [$meeting];
+                    if ($meeting->getHomeTeamIsClub() && null !== $meeting->getTime()) {
+                        $suffixKey = $meeting->getTime()->format('Hi');
                     } else {
-                        $groupedMeetings[$meetingDate . '-' . $competitionPage->getId()][] = $meeting;
+                        $suffixKey = 'Z';
+                    }
+
+                    if (!isset($groupedMeetings[$meetingDate . '-' . $suffixKey])) {
+                        $groupedMeetings[$meetingDate . '-' . $suffixKey] = [$meeting];
+                    } else {
+                        $groupedMeetings[$meetingDate . '-' . $suffixKey][] = $meeting;
                     }
                 }
             }

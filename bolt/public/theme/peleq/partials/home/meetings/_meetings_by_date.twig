@@ -8,34 +8,19 @@
     <table class="table is-fullwidth">
         {% for meeting in meetings %}
             {% if meeting.isReported == false or meeting.reportDate is not null %}
-                {% if (previousDate is not defined or previousDate != meeting.date)
-                    or (previousCompetitionPageSlug is not defined or previousCompetitionPageSlug != meeting.competition_record_slug)
-                %}
+                {% if (previousDate is not defined or previousDate != meeting.date) %}
                     {% if loop.index != 1 %}
                         </tbody>
                     {% endif %}
 
                     <thead>
                     <tr>
-                        <th colspan="{{ showHour ? 4:3 }}">
+                        <th colspan="{{ showHour ? 5:4 }}">
                             <span class="is-hidden-touch">
                                 {{ meeting|formattedDate }}
-
-                                {% if meeting.competition_record_slug is defined %}
-                                <em>
-                                    <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}">
-                                    <i class="fas fa-chevron-circle-right"></i> {{ meeting.competition_record_title }}</a>
-                                </em>
-                                {% endif %}
                             </span>
                             <span class="is-hidden-desktop">
                                 {{ meeting|formattedDate(true) }}
-
-                                {% if meeting.competition_record_slug is defined %}
-                                <em><a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}">
-                                    <i class="fas fa-chevron-circle-right"></i> {{ meeting.competition_record_title }}</a>
-                                </em>
-                                {% endif %}
                             </span>
                         </th>
                     </tr>
@@ -63,6 +48,14 @@
                     <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
                     <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                     <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
+                    <td class="has-text-centered">
+                        {% if meeting.competition_record_slug is defined %}
+                            <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}"
+                               title="{{ meeting.championship_name }} : classement et résultats">
+                                <span class="tag is-rounded">{{ meeting.championship_short_name }}</span>
+                            </a>
+                        {% endif %}
+                    </td>
                 </tr>
 
                 {% if lastUpdatedAt == null or lastUpdatedAt < meeting.updated_at %}
