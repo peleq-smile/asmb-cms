@@ -1,5 +1,16 @@
 {% extends 'partials/_master.twig' %}
 
+{% block headincludes %}
+    {# See https://developers.google.com/recaptcha/docs/display #}
+    <script type="text/javascript">
+        var onloadCallback = function() {
+            grecaptcha.render('recaptchaContainer', {
+                'sitekey' : '{{ config.get('general/recaptcha/site_key') }}'
+            });
+        };
+    </script>
+{% endblock headincludes %}
+
 {% set contactForm = contactForm() %}
 
 {% block main %}
@@ -43,7 +54,11 @@
                                     {{ form_widget(contactForm.contactMessage, {'attr': {'class': 'textarea'}}) }}
                                 </div>
                             </div>
-                        {{ form_widget(contactForm.submit, {'attr': {'class': 'button has-background-primary has-text-white has-text-weight-semibold'}}) }}
+
+                            <div id="recaptchaContainer"></div>
+                            <br>
+
+                            {{ form_widget(contactForm.submit, {'attr': {'class': 'button has-background-primary has-text-white has-text-weight-semibold'}}) }}
                         {{ form_end(contactForm) }}
                     </div>
                 </div>
@@ -64,4 +79,7 @@
         </div>
     </section>
 
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+            async defer>
+    </script>
 {% endblock main %}
