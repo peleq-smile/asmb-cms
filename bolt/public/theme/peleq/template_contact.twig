@@ -1,14 +1,9 @@
 {% extends 'partials/_master.twig' %}
 
 {% block headincludes %}
-    {# See https://developers.google.com/recaptcha/docs/display #}
-    <script type="text/javascript">
-        var onloadCallback = function() {
-            grecaptcha.render('recaptchaContainer', {
-                'sitekey' : '{{ config.get('general/recaptcha/site_key') }}'
-            });
-        };
-    </script>
+    {# See https://developers.google.com/recaptcha/docs/v3 #}
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
 {% endblock headincludes %}
 
 {% set contactForm = contactForm() %}
@@ -26,7 +21,7 @@
                     {{ include('partials/_flash_messages.twig') }}
 
                     <div class="section">
-                        {{ form_start(contactForm, {'action': path('contactsubmit') }) }}
+                        {{ form_start(contactForm, {'action': path('contactsubmit'), 'attr': {'id': 'contactForm'}}) }}
                             <div class="field">
                                 {{ form_label(contactForm.contactName, null, {'label_attr': {'class': 'label'}}) }}
                                 <div class="control">
@@ -55,10 +50,13 @@
                                 </div>
                             </div>
 
-                            <div id="recaptchaContainer"></div>
-                            <br>
-
-                            {{ form_widget(contactForm.submit, {'attr': {'class': 'button has-background-primary has-text-white has-text-weight-semibold'}}) }}
+                            {{ form_widget(contactForm.submit, {
+                                'attr': {
+                                    'class': 'g-recaptcha button has-background-primary has-text-white has-text-weight-semibold',
+                                    'data-sitekey': config.get('general/recaptcha/site_key'),
+                                    'data-callback': 'onSubmit',
+                                    'data-action': 'submit'
+                                }}) }}
                         {{ form_end(contactForm) }}
                     </div>
                 </div>
@@ -79,7 +77,10 @@
         </div>
     </section>
 
-    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-            async defer>
+    <script>
+        function onSubmit(token) {
+            document.getElementById('contactForm').submit();
+        }
     </script>
+
 {% endblock main %}

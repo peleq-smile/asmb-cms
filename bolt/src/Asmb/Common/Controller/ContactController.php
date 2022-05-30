@@ -113,7 +113,9 @@ class ContactController extends Base
 
         if (Response::HTTP_OK === $infos['http_code']) {
             $responseAsArray = json_decode($response, true);
-            return $responseAsArray['success'] ?? false;
+            if (isset($responseAsArray['success'], $responseAsArray['score'])) {
+                return $responseAsArray['success'] && $responseAsArray['score'] > 0.5;
+            }
         }
 
         return false;
