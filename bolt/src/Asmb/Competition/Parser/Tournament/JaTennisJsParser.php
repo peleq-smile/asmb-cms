@@ -3,6 +3,7 @@
 namespace Bundle\Asmb\Competition\Parser\Tournament;
 
 use Bolt\Filesystem\Exception\RuntimeException;
+use Bolt\Legacy\Content;
 use Carbon\Carbon;
 
 /**
@@ -52,9 +53,10 @@ class JaTennisJsParser extends AbstractJaTennisParser
      * Parse le JS et extrait les différentes parties pour construire des tableaux PHP exploitables ensuite
      * par un template.
      *
+     * @param Content $competitionRecord
      * @return array
      */
-    public function parse(): array
+    public function parse($competitionRecord): array
     {
         if (null === $this->fileUrl) {
             throw new RuntimeException('Url vers fichier JS manquant.');
@@ -209,7 +211,7 @@ class JaTennisJsParser extends AbstractJaTennisParser
             }
 
             // On a une date : on enregistre des données sur le planning ici
-            if (isset($origBoxData['date'], $boxData['prevBtm'], $boxData['prevTop'])) {
+            if (isset($origBoxData['date'], $prevBtm, $prevTop)) {
                 $this->updatePlanningData($origBoxData, $boxData['prevBtm'], $boxData['prevTop']);
             }
 
@@ -539,15 +541,19 @@ class JaTennisJsParser extends AbstractJaTennisParser
 
             if (substr_count($value, ',') === 4) {
                 // cas avec heure
-                if ($explodedValue[3] < 10 && strlen($explodedValue[3] === 1)) {
+                $explodedValue[3] = intval($explodedValue[3]); // on s'assure d'avoir un chiffre/nombre pour l'heure
+                $explodedValue[4] = intval($explodedValue[4]); // on s'assure d'avoir un chiffre/nombre pour les minutes
+
+                if ($explodedValue[3] < 10 && strlen($explodedValue[3]) === 1) {
                     // cas heure sans zéro initial
                     $explodedValue[3] = '0'. $explodedValue[3];
                 }
-                if ($explodedValue[4] < 10 && strlen($explodedValue[4] === 1)) {
+                if ($explodedValue[4] < 10 && strlen($explodedValue[4]) === 1) {
                     // cas heure sans zéro initial
                     $explodedValue[4] = '0'. $explodedValue[4];
                 }
                 $value = implode(',', $explodedValue);
+                $value = rtrim($value, ')') . ')';
                 $value = Carbon::createFromFormat('(Y,m,d,H,i)', substr($value, strlen('new Date')))
                     ->format('Y-m-d H:i');
             } elseif (substr_count($value, ',') === 3) {

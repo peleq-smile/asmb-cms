@@ -87,7 +87,7 @@ class DbParser extends AbstractParser
      *
      * @return array
      */
-    public function parse()
+    public function parse($competitionRecord)
     {
         try {
             // On extrait les différentes données depuis la base de données pour construire un tableau PHP exploitable

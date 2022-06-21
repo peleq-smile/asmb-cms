@@ -2,6 +2,8 @@
 
 namespace Bundle\Asmb\Competition\Parser\Tournament;
 
+use Bolt\Legacy\Content;
+use Bolt\Storage\Field\Collection\LazyFieldCollection;
 use Carbon\Carbon;
 use JsonSchema\Exception\RuntimeException;
 
@@ -13,17 +15,22 @@ use JsonSchema\Exception\RuntimeException;
  */
 class JaTennisJsonParser extends AbstractJaTennisParser
 {
+    private $drawsToOnlyDisplay;
+
     /**
      * Parse le JSON et extrait les différentes parties pour construire des tableaux PHP exploitables ensuite
      * par un template.
      *
+     * @param Content $competitionRecord
      * @return array
      */
-    public function parse(): array
+    public function parse($competitionRecord): array
     {
         if (null === $this->fileUrl) {
             throw new RuntimeException('Url vers fichier JSON manquant.');
         }
+
+        $this->competitionRecord = $competitionRecord; //TODOpeleq en faire un setter en fait !
 
         try {
             // On récupère le contenu JSON depuis le fichier ou l'url donnée
@@ -96,6 +103,36 @@ class JaTennisJsonParser extends AbstractJaTennisParser
         return $this->infoData;
     }
 
+    private function checkDrawCanBeDisplayed(string $eventNameToCheck, ?string $drawNameToCheck)
+    {
+        if (null === $this->drawsToOnlyDisplay) {
+            $this->drawsToOnlyDisplay = [];
+
+            // On vérifie que le tableau ne doit pas être masqué
+            $drawsToOnlyDisplay = $this->competitionRecord->get('tournament_only_display_draws');
+            $drawsToOnlyDisplay = is_array($drawsToOnlyDisplay) ? $drawsToOnlyDisplay : $drawsToOnlyDisplay->getValues();
+
+            /** @var LazyFieldCollection|array $entry */
+            foreach ($drawsToOnlyDisplay as $element) {
+                $eventName = is_array($element) ? ($element['event'] ?? null) : $element->get('event');
+                $drawName = is_array($element) ? ($element['draw'] ?? null) : $element->get('draw');
+                $title = is_array($element) ? ($element['title'] ?? null) : $element->get('title');
+
+                $this->drawsToOnlyDisplay[$eventName . ' - ' . $drawName] = $title;
+            }
+        }
+
+        if (empty($this->drawsToOnlyDisplay)) {
+            if (!empty($drawNameToCheck)) {
+                return $eventNameToCheck . ' • ' . $drawNameToCheck;
+            } else {
+                return $eventNameToCheck;
+            }
+        }
+
+        return $this->drawsToOnlyDisplay[$eventNameToCheck . ' - ' . $drawNameToCheck] ?? null;
+    }
+
     /**
      * Parse et retourne les données sur les tableaux de tournoi.
      *
@@ -111,25 +148,29 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 foreach ($this->fileData['events'] as $dataEvent) {
                     foreach ($dataEvent['draws'] as $idxDraw => $draw) {
                         $nbOut = $draw['nbOut'];
-                        $name = $dataEvent['name'];
+                        $eventName = $dataEvent['name'];
 
                         // TODOpeleq à retirer -- pour surcharger les noms pas top de l'asmb cup ds JA tennis
-                        if ($name === 'ASMB Cup 2022' || $name === 'ASMB Cup') {
+                        if ($eventName === 'ASMB Cup 2022' || $eventName === 'ASMB Cup') {
                             if ('F' === $dataEvent['sexe']) {
-                                $name = 'ASMB Cup Dames';
+                                $eventName = 'ASMB Cup Dames';
                             } elseif ('H' === $dataEvent['sexe']) {
-                                $name = 'ASMB Cup Messieurs';
+                                $eventName = 'ASMB Cup Messieurs';
                             } else {
-                                $name = 'ASMB Cup 2022';
+                                $eventName = 'ASMB Cup 2022';
                             }
+                        }
+
+                        $drawName = $draw['name'] ?? null;
+
+                        // On vérifie que le tableau ne doit pas être masqué
+                        $name = $this->checkDrawCanBeDisplayed($eventName, $drawName);
+                        if (empty($name)) {
+                            continue;
                         }
 
                         $boxes = $draw['boxes'];
                         $indexesRegister = $this->buildIndexesRegistry($boxes, $nbOut);
-
-                        if (isset($draw['name'])) {
-                            $name .= ' &bull; ' . $draw['name'];
-                        }
 
                         // S'agit-il d'une poule ?
                         $isPool = ($draw['type'] === 2);

@@ -2,6 +2,7 @@
 
 namespace Bundle\Asmb\Competition\Parser\Tournament;
 
+use Bolt\Legacy\Content;
 use Carbon\Carbon;
 
 /**
@@ -16,6 +17,8 @@ abstract class AbstractJaTennisParser extends AbstractParser
     protected $fileUrl;
     /** @var array */
     protected $fileData;
+    /** @var Content */
+    protected $competitionRecord;
 
     public function __construct($fileUrl = null)
     {

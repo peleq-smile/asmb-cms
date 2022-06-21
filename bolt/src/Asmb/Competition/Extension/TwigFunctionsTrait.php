@@ -286,11 +286,11 @@ trait TwigFunctionsTrait
         $jsonFileUrl = $competitionRecord->get('tournament_url_json');
 
         if ($tournamentId) {
-            $tournamentContent = $this->renderTournamentFromDb($tournamentId);
+            $tournamentContent = $this->renderTournamentFromDb($competitionRecord, $tournamentId);
         } elseif ($jsFileUrl) {
-            $tournamentContent = $this->renderTournamentFromJsFile($jsFileUrl);
+            $tournamentContent = $this->renderTournamentFromJsFile($competitionRecord, $jsFileUrl);
         } elseif ($jsonFileUrl) {
-            $tournamentContent = $this->renderTournamentFromJsonFile($jsonFileUrl);
+            $tournamentContent = $this->renderTournamentFromJsonFile($competitionRecord, $jsonFileUrl);
         } else {
             $tournamentContent = '';
         }
@@ -321,7 +321,7 @@ trait TwigFunctionsTrait
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function renderTournamentFromJsFile(string $jsFileUrl): string
+    protected function renderTournamentFromJsFile($competitionRecord, string $jsFileUrl): string
     {
         // Chemin vers le fichier .html dont on veut vérifier l'existence / générer le contenu / récupérer le contenu
         $htmlFilePath = $this->getHtmlFilePath($jsFileUrl);
@@ -335,7 +335,7 @@ trait TwigFunctionsTrait
             /** @var JaTennisJsParser $parser */
             $parser = $this->container['ja_tennis_js_parser'];
             $parser->setFileUrl($jsFileAbsoluteUrl);
-            $parsedData = $parser->parse();
+            $parsedData = $parser->parse($competitionRecord);
 
             $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, true);
 
@@ -365,7 +365,7 @@ trait TwigFunctionsTrait
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function renderTournamentFromJsonFile(string $jsonFileUrl): string
+    protected function renderTournamentFromJsonFile(Content $competitionRecord, string $jsonFileUrl): string
     {
         // Chemin vers le fichier .html dont on veut vérifier l'existence / générer le contenu / récupérer le contenu
         $htmlFilePath = $this->getHtmlFilePath($jsonFileUrl);
@@ -379,7 +379,7 @@ trait TwigFunctionsTrait
             /** @var JaTennisJsonParser $parser */
             $parser = $this->container['ja_tennis_json_parser'];
             $parser->setFileUrl($jsonFileAbsoluteUrl);
-            $parsedData = $parser->parse();
+            $parsedData = $parser->parse($competitionRecord);
 
             $tournamentContent = $this->getRenderedTournamentContent($parser, $parsedData, true);
 
@@ -402,12 +402,12 @@ trait TwigFunctionsTrait
         return $tournamentContent;
     }
 
-    protected function renderTournamentFromDb($tournamentId)
+    protected function renderTournamentFromDb($competitionRecord, $tournamentId)
     {
         /** @var DbParser $parser */
         $parser = $this->container['tournament_db_parser'];
         $parser->setTournamentId($tournamentId);
-        $parsedData = $parser->parse();
+        $parsedData = $parser->parse($competitionRecord);
 
         $tournament = $parser->getTournament();
         $displayTimes = $tournament->getDisplayTimes();
@@ -424,6 +424,7 @@ trait TwigFunctionsTrait
     /**
      * @param AbstractParser $parser
      * @param array $parsedData
+     * @param bool $displayTimes
      * @return string
      * @throws LoaderError
      * @throws RuntimeError

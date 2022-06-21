@@ -40,15 +40,15 @@
                     <a href="{{ app.request.uri }}#res" data-hash="#res" class="button">Résultats</a>
                 </li>
             {% endif %}
-            <li class="column control">
-                <label class="label is-invisible">&nbsp;</label>
-                <a href="{{ app.request.uri }}#jou" data-hash="#jou" class="button">Liste des joueurs</a>
-            </li>
+{#            <li class="column control">#}
+{#                <label class="label is-invisible">&nbsp;</label>#}
+{#                <a href="{{ app.request.uri }}#jou" data-hash="#jou" class="button">Liste des joueurs</a>#}
+{#            </li>#}
         </ul>
     </nav>
 
     {# Liste de joueurs #}
-    {{ _self.playersListView(parsedData.players) }}
+{#    {{ _self.playersListView(parsedData.players, record.tournament_players_list_suffix_title) }}#}
 
     {# Vue individuelle joueur #}
     {% for playerData in parsedData.players %}
@@ -338,10 +338,10 @@
     {% endif %}
 {% endmacro %}
 
-{% macro playersListView(players) %}
+{% macro playersListView(players, suffixTitle) %}
     <div class="box players-container" style="display: none;">
         <div class="container">
-            <h2 class="title">Liste des {{ players|length }} joueurs participants</h2>
+            <h2 class="title">Liste des {{ players|length }} joueurs{% if suffixTitle is not empty %}<span class="is-size-5"> {{ suffixTitle }}</span>{% endif %}</h2>
             <div class="columns is-gapless is-mobile is-multiline">
                 <span class="column is-hidden-mobile">Catégorie</span>
                 <span class="column is-hidden-desktop">Cat.</span>

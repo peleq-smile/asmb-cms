@@ -39,7 +39,7 @@ abstract class AbstractParser
 
     abstract protected function getSortedByNamePlayersData();
 
-    abstract public function parse();
+    abstract public function parse($competitionRecord);
 
     /**
      * Reformate la date donnée en renvoyant la date uniquement

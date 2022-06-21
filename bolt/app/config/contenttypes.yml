@@ -766,15 +766,6 @@ competitions:
         Cet ID peut être trouvé sur la page <a href="/asmbolt/extensions/competition/tournament">Compétition > Tournois</a>.<br>
         À utiliser en cas de saisie manuelle des tableaux et résultats.
 
-    tournament_url_js:
-      label: 'URL vers le JS exporté depuis JA-Tennis'
-      required: false
-      type: text
-      class: large
-      postfix: |
-        À utiliser si le tournoi est géré via JA-Tennis avec export au format JS (<b>à préférer</b> et <b>prioritaire sur le format JSON</b> !)</b>).<br>
-        ATTENTION : si utilisation de dropbox, penser à ajouter <code>?dl=1</code> à la fin.
-
     tournament_url_json:
       label: 'URL vers le JSON exporté depuis JA-Tennis'
       required: false
@@ -784,6 +775,40 @@ competitions:
         À utiliser si le tournoi est géré via JA-Tennis avec export au format JSON.<br>
         ATTENTION : si utilisation de dropbox, penser à ajouter <code>?dl=1</code> à la fin.<br>
         NB: Si le champ "URL vers le JS exporté depuis JA-Tennis" est rempli, celui-ci est alors ignoré.
+
+    tournament_url_js:
+      label: 'URL vers le JS exporté depuis JA-Tennis'
+      required: false
+      type: text
+      class: large
+      postfix: |
+        À utiliser si le tournoi est géré via JA-Tennis avec export au format JS (<b>ne fonctionne pas bien</b> mais <b>prioritaire sur le format JSON</b> !)</b>).<br>
+        ATTENTION : si utilisation de dropbox, penser à ajouter <code>?dl=1</code> à la fin.
+
+    tournament_players_list_suffix_title:
+      label: 'Suffixe du titre "Liste des X joueurs"'
+      required: false
+      type: text
+      class: large
+      postfix: |
+        Texte affiché suite à "Liste des X joueurs". Ex: "(dont liste d'attente)"
+
+    tournament_only_display_draws:
+      label: 'Tableaux à afficher'
+      required: false
+      type: repeater
+      fields:
+        event:
+          label: 'Nom de l''épreuve ("event" au sens JA tennis)'
+          type: text
+        draw:
+          label: 'Nom du tableau ("draw" au sens JA tennis)'
+          type: text
+        title:
+          label: 'Nom final à afficher sur le site'
+          type: text
+      postfix: |
+        Laisser ce champ vide revient à afficher TOUS les tableaux.
 
     # Ajout onglet "SEO"
     meta_title:
