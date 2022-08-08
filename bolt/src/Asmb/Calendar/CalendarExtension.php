@@ -62,7 +62,7 @@ class CalendarExtension extends SimpleExtension
         $calendarStartDate = Carbon::createFromFormat('Y-m-d', "$year-9-1")->setTime(0, 0);
 
         // On y ajoute les journées de championnat avec les données qu'on a
-        $this->handleChampionshipMeetings($calendar);
+        $this->handleChampionshipMeetings($calendar, $year);
 
         // On y ajoute les événements à afficher
         /** @var \Bolt\Storage\Field\Collection\RepeatingFieldCollection|array $events */
@@ -129,9 +129,13 @@ class CalendarExtension extends SimpleExtension
      * Gère l'ajout des journées de rencontres par équipe.
      *
      * @param array $calendar
+     * @param int $year year of calendar start
      */
-    protected function handleChampionshipMeetings(array &$calendar)
+    protected function handleChampionshipMeetings(array &$calendar, int $year)
     {
+        $fromDate = Carbon::createFromDate($year, 9, 1)->format('Y-m-d');
+        $toDate = Carbon::createFromDate($year+1, 8, 31)->format('Y-m-d');
+
         $meetingsByDate = [];
 
         // REPOSITORIES
@@ -156,6 +160,10 @@ class CalendarExtension extends SimpleExtension
                     foreach ($poolMeetings as $poolMeeting) {
                         $day = $poolMeeting->getDay();
                         $meetingDate = $poolMeeting->getFinalDate()->format('Y-m-d');
+                        if ($meetingDate < $fromDate || $meetingDate > $toDate) {
+                            continue;
+                        }
+
                         $clubTeamName = $poolMeeting->getHomeTeamName() ?? $poolMeeting->getVisitorTeamName();
 
                         if (!isset($meetingsByDate[$meetingDate]['title'])) {
