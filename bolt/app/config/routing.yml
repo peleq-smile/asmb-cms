@@ -7,7 +7,7 @@
 
 # Rédirection page "Le Bureau" pour conserver le référencement !
 bureau:
-    path: /page/le-bureau
+    path: /le-club/le-bureau
     defaults:
         _controller: controller.frontend:record
         contenttypeslug: page-bureau
@@ -20,9 +20,41 @@ calendrier:
     defaults:
         _controller: controller.frontend:record
         contenttypeslug: calendrier
-        slug: 2021-2022
-    recordslug: calendrier/2021-2022
+        slug: 2022-2023
+    recordslug: calendrier/2022-2023
 
+# Pages intermédiaires : Le Club / Jouer / Compétitions
+le_club:
+    path: /le-club
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: page
+        slug: edito
+    recordslug: page/edito
+
+le_club_les_chiffres:
+    path: /le-club/les-chiffres
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: statistiques
+        slug: les-chiffres
+    recordslug: statistiques/les-chiffres
+
+le_club_pages:
+    path: /le-club/{slug}
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: page
+    recordslug: page/{slug}
+
+# Example override for a specific contenttype
+
+# pagebinding:
+#     path: /{slug}
+#     defaults:
+#         _controller: controller.frontend:record
+#         contenttypeslug: page
+#     contenttype: pages
 
 # ------------------------------------------------------------------------------
 # These are the routes defining the default behaviour of Bolt's frontend.

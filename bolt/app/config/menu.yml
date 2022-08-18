@@ -1,19 +1,17 @@
 main:
   - label: 'Le Club'
-    path: page/edito
+    path: le-club
     submenu:
-      - label: 'Édito'
-        path: page/edito
       - label: 'Infrastructures'
-        path: page/infrastructures
+        path: le-club/infrastructures
       - label: 'Le bureau'
-        path: page/le-bureau
+        path: le-club/le-bureau
       - label: 'Les chiffres'
-        path: statistiques/les-chiffres
+        path: le-club/les-chiffres
       - label: 'Règlement intérieur'
-        path: page/reglement-interieur
+        path: le-club/reglement-interieur
       - label: 'Nos partenaires'
-        path: page/nos-partenaires
+        path: le-club/nos-partenaires
 
   - label: 'Jouer'
     path: page/inscriptions
