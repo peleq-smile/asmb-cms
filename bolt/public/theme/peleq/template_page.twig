@@ -5,6 +5,7 @@
 <section class="section section-page" data-nosnippet>
     <div class="container">
 
+        {% if record.title is not empty %}
         <div class="embed-block">
             {% if record.block %}
                 {% set block = record.block %}
@@ -20,6 +21,7 @@
                 {% endif %}
             {% endif %}
         </div>
+        {% endif %}
 
         <div class="columns">
             <div class="column">

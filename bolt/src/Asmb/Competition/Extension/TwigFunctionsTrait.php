@@ -168,7 +168,7 @@ trait TwigFunctionsTrait
         if ($categoryIdentifier) {
             /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
             $competitionPage = $app['query']->getContent(
-                'competition',
+                'competitions',
                 [
                     'championship_id' => $meeting->getChampionshipId(),
                     'championship_categories' => '%' . $categoriesMap[$meeting->getCategoryName()] . '%',

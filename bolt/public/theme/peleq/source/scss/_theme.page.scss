@@ -274,6 +274,13 @@
                     }
                 }
             }
+
+            .embed-block {
+                .columns.block .block-content h2.title {
+                    margin-top: -2rem;
+                    padding-bottom: 2rem;
+                }
+            }
         }
     }
 }

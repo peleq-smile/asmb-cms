@@ -20,7 +20,7 @@
 
                     {{ include('partials/_flash_messages.twig') }}
 
-                    <div class="section">
+                    <div class="section box">
                         {{ form_start(contactForm, {'action': path('contactsubmit'), 'attr': {'id': 'contactForm'}}) }}
                             <div class="field">
                                 {{ form_label(contactForm.contactName, null, {'label_attr': {'class': 'label'}}) }}

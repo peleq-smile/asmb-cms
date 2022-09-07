@@ -89,7 +89,7 @@
             {% if homeMeeting.competition_record_slug is defined and homeMeeting.competition_record_slug is not empty %}
                 <em class="is-hidden-mobile">
                     <i class="fas fa-chevron-circle-right"></i>
-                    <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': homeMeeting.competition_record_slug}) }}"
+                    <a href="{{ url('contentlink', {'contenttypeslug': 'competitions', 'slug': homeMeeting.competition_record_slug}) }}"
                        class="text-default underline-hover" target="_blank">
                         {{ homeMeeting.competition_record_title }}
                     </a>

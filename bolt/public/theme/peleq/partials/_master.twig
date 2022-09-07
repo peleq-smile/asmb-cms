@@ -75,6 +75,26 @@
     </header>
 {% endblock header %}
 
+{% block breadcrumbs %}
+    {% if not isHome %}
+        <div class="container">
+        <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="{{ app.request.schemeAndHttpHost }}">Accueil</a></li>
+
+                {% if record.parent_content is defined and record.parent_content is not empty %}
+                    {% setcontent parentPage = 'pages' where { 'id': record.parent_content } returnsingle %}
+                    {% set parentPageTitle = (parentPage.meta_title is not empty) ? parentPage.meta_title : parentPage.title %}
+                    <li><a href="{{ parentPage.link }}">{{ parentPageTitle }}</a></li>
+                {% endif %}
+
+                <li class="is-active"><a href="#" aria-current="page">{{ headTitle }}</a></li>
+            </ul>
+        </nav>
+        </div>
+    {% endif %}
+{% endblock %}
+
 <div id="main-content">
     {{ widgets('main_top') }}
 

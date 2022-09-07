@@ -612,12 +612,20 @@ pages:
     template:
       type: templateselect
       filter: 'template_*.twig'
+
     # Ajout onglet "SEO"
+    parent_content:
+      group: 'SEO'
+      label: 'Page parente (pour fil d''ariane)'
+      required: false
+      type: select
+      values: pages/title
+      sort: title
+
     meta_title:
       label: 'Meta "title"'
       type: text
       required: false
-      group: 'SEO'
       postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
 
     meta_description:
@@ -684,11 +692,18 @@ page_bureau:
           type: html
 
     # Ajout onglet "SEO"
+    parent_content:
+      group: 'SEO'
+      label: 'Page parente (pour fil d''ariane)'
+      required: false
+      type: select
+      values: pages/title
+      sort: title
+
     meta_title:
       label: 'Meta "title"'
       type: text
       required: false
-      group: 'SEO'
       postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
 
     meta_description:
@@ -714,7 +729,7 @@ page_bureau:
 competitions:
   name: Pages compétition
   singular_name: Page compétition
-  singular_slug: competition
+  singular_slug: competitions
   icon_many: "fa:trophy"
   record_template: competitions.twig
   taxonomy: [ tags ]
@@ -811,11 +826,18 @@ competitions:
         Laisser ce champ vide revient à afficher TOUS les tableaux.
 
     # Ajout onglet "SEO"
+    parent_content:
+      group: 'SEO'
+      label: 'Page parente (pour fil d''ariane)'
+      required: false
+      type: select
+      values: pages/title
+      sort: title
+
     meta_title:
       label: 'Meta "title"'
       type: text
       required: false
-      group: 'SEO'
       postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
 
     meta_description:
@@ -939,12 +961,20 @@ statistiques:
           type: integer
           min: 0
           max: 100
+
     # Ajout onglet "SEO"
+    parent_content:
+      group: 'SEO'
+      label: 'Page parente (pour fil d''ariane)'
+      required: false
+      type: select
+      values: pages/title
+      sort: title
+
     meta_title:
       label: 'Meta "title"'
       type: text
       required: false
-      group: 'SEO'
       postfix: 'Donnée mise dans la balise &lt;head&gt; &gt; &lt;title&gt;'
 
     meta_description:

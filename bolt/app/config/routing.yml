@@ -46,6 +46,29 @@ le_club_pages:
         _controller: controller.frontend:record
         contenttypeslug: page
     recordslug: page/{slug}
+    
+jouer:
+    path: /page/jouer
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: page
+        slug: inscriptions
+    recordslug: page/inscriptions
+    
+jouer_pages:
+    path: /jouer/{slug}
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: page
+    recordslug: page/{slug}    
+
+competitions:
+    path: /competitions
+    defaults:
+        _controller: controller.frontend:record
+        contenttypeslug: page
+        slug: competitions
+    recordslug: page/competitions
 
 # Example override for a specific contenttype
 
