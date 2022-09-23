@@ -184,6 +184,17 @@
 
     .matches {
         background-color: $white;
+
+        .container {
+            table {
+                a:hover {
+                    .tag {
+                        background-color: $dark;
+                        color: $white;
+                    }
+                }
+            }
+        }
     }
 
     .hidden-on-home {

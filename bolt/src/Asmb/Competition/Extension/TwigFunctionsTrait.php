@@ -8,6 +8,7 @@ use Bolt\Filesystem\Handler\File;
 use Bolt\Filesystem\Manager;
 use Bolt\Legacy\Content;
 use Bolt\Storage\EntityManagerInterface;
+use Bolt\Storage\Query\QueryResultset;
 use Bundle\Asmb\Competition\Entity\Championship;
 use Bundle\Asmb\Competition\Entity\Championship\Pool;
 use Bundle\Asmb\Competition\Entity\Championship\PoolMeeting;
@@ -167,16 +168,32 @@ trait TwigFunctionsTrait
 
         if ($categoryIdentifier) {
             /** @see https://docs.bolt.cm/3.6/extensions/storage/queries */
-            $competitionPage = $app['query']->getContent(
+            /** @var QueryResultset $competitionPageCandidates */
+            $competitionPageCandidates = $app['query']->getContent(
                 'competitions',
                 [
                     'championship_id' => $meeting->getChampionshipId(),
-                    'championship_categories' => '%' . $categoriesMap[$meeting->getCategoryName()] . '%',
-                    'returnsingle' => true
+                    //'championship_categories' => '%' . $categoriesMap[$meeting->getCategoryName()] . '%',
                 ]
             );
 
-            if ($competitionPage) {
+            /** @var \Bolt\Storage\Entity\Content $competitionPage */
+            foreach ($competitionPageCandidates as $competitionPageCandidate) {
+                $values = $competitionPageCandidate->getValues();
+
+                if (isset($values['championship_categories'])
+                    && in_array($categoriesMap[$meeting->getCategoryName()], $values['championship_categories'])
+                ) {
+                    // la page de compétition a explicitement la catégorie de la rencontre donnée ! c'est la bonne !
+                    $competitionPage = $competitionPageCandidate;
+                    break;
+                } elseif (!isset($values['championship_categories'])) {
+                    // si aucune catégorie n'est associée à la page compétition, alors toutes les catégories sont OK !
+                    $competitionPage = $competitionPageCandidate;
+                }
+            }
+
+            if (isset($competitionPage)) {
                 if ($withShortTitle) {
                     $meeting->setCompetitionRecordTitle($competitionPage->getShortTitle());
                 } else {

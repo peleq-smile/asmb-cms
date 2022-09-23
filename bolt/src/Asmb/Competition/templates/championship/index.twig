@@ -16,7 +16,7 @@
                                 <th>&nbsp;</th>
                                 <th>Équipe</th>
                                 {% for idxDay in 1..nbMaxDaysByChampionship[championshipTitle] %}
-                                    <th>{{ 'J' ~ idxDay }}</th>
+                                    <th colspan="2">{{ 'J' ~ idxDay }}</th>
                                 {% endfor %}
                             </tr>
                             </thead>
@@ -43,7 +43,33 @@
 
                                             <td class="is-size-6{{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
                                                 <span class="is-hidden-desktop has-text-weight-bold">{{ 'J' ~ idxDay }} : </span>
-                                                <span style="white-space: nowrap;">{{ clubMeeting|formattedDate(true) }} {{ time }}</span>
+                                                <span style="white-space: nowrap;">{{ clubMeeting|formattedDate(true) }}</span>
+
+                                                {# Mobile seulement #}
+                                                <span class="is-hidden-desktop is-pulled-right" style="white-space: nowrap;">
+                                                    {{ time }}
+
+                                                    <span class="has-cursor-help has-text-light">
+                                                    {% if clubMeeting.homeTeamIsClub %}
+                                                        <i class="fas fa-home" title="Rencontre à DOMICILE"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-paper-plane" title="Rencontre à L'EXTÉRIEUR"></i>
+                                                    {% endif %}
+                                                    </span>
+                                                </span>
+                                            </td>
+                                            <td class="is-hidden-touch is-size-6 has-text-centered {{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
+                                                <span style="white-space: nowrap;">
+                                                    {{ time }}
+
+                                                    <span class="is-pulled-right has-text-light">
+                                                    {% if clubMeeting.homeTeamIsClub %}
+                                                        <i class="fas fa-home"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-paper-plane"></i>
+                                                    {% endif %}
+                                                    </span>
+                                                </span>
                                             </td>
                                         {% endfor %}
                                     </tr>
@@ -53,6 +79,24 @@
                         </table>
                     </div>
                 {% endfor %}
+
+                <div class="box">
+                    <div>
+                        <i class="has-text-light fas fa-home" style="display: inline-block; width: 25px"></i>
+                        <span>Rencontre à DOMICILE</span>
+                    </div>
+                    <div>
+                        <i class="has-text-light fas fa-paper-plane" style="display: inline-block; width: 25px"></i>
+                        <span>Rencontre à L'EXTÉRIEUR</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-warning has-text-centered">
+                <em class="has-text-danger is-size-6">
+                    Les dates et horaires des matchs sont affichés ici à titre <strong class="has-text-danger">purement indicatif</strong>.<br>
+                    Seules les <strong class="has-text-danger">convocations officielles</strong> font foi.
+                </em>
             </div>
         </div>
     </section>

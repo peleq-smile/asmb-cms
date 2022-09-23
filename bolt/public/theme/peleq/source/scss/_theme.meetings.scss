@@ -2,11 +2,12 @@
     .container {
         h2.title {
             margin-bottom: 3rem;
-            color: $primary;
+            color: $tertiary;
+            font-weight: bold;
         }
 
         .columns {
-            background-color: $dark;
+            background-color: $tertiary;
         }
 
         h3.title {

@@ -36,6 +36,13 @@
                     </li>
                     {% endif %}
                 {% endfor %}
+                {# Un onglet "TOUT" #}
+                <li class="{% if not currentCategory %}is-active{% endif %}">
+                    <a href="{{ app.request.pathinfo }}" title="Voir les poules de toutes les catégories">
+                        <span class="is-hidden-touch">TOUTE CATÉGORIE</span>
+                        <span class="is-hidden-desktop">TOUT</span>
+                    </a>
+                </li>
             </ul>
         </div>
         {% endif %}
