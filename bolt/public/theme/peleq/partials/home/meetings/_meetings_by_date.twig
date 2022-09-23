@@ -50,7 +50,7 @@
                     <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
                     <td class="has-text-centered">
                         {% if meeting.competition_record_slug is defined %}
-                            <a href="{{ url('contentlink', {'contenttypeslug': 'competition', 'slug': meeting.competition_record_slug}) }}"
+                            <a href="{{ url('contentlink', {'contenttypeslug': 'competitions', 'slug': meeting.competition_record_slug}) }}"
                                title="{{ meeting.championship_name }} : classement et résultats">
                                 <span class="tag is-rounded">{{ meeting.championship_short_name }}</span>
                             </a>

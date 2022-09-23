@@ -25,8 +25,6 @@ class PoolClubMeetingController extends Base
     }
 
     /**
-     * Point d'entrée des tests.
-     *
      * @param Request $request
      *
      * @return Response
@@ -70,13 +68,29 @@ class PoolClubMeetingController extends Base
             }
         }
 
+        /** @var \Bolt\Storage\Query\Query $query */
+        $query = $this->app['query'];
+        /** @var \Bolt\Storage\Entity\Content $content */
+        $queryResultSet = $query->getContent(
+            'page',
+            [
+                'slug' => 'competitions',
+            ]
+        );
+        $content = null;
+        /** @var \Bolt\Storage\Entity\Content $content */
+        foreach ($queryResultSet as $content) {
+            break;//TODOpeleq remplacer !!!!!!!!!!!!!!!!!!!
+        }
+
         return $this->render(
             '@AsmbCompetition/championship/index.twig',
             [],
             [
-                'headTitle' => 'Dates des rencontres par équipe',
+                'headTitle' => 'Planning des rencontres par équipe',
                 'clubMeetings' => $clubMeetings,
                 'nbMaxDaysByChampionship' => $nbMaxDaysByChampionship,
+                'parentPage' => $content,
             ]
         );
     }

@@ -82,8 +82,8 @@ class CompetitionExtension extends SimpleExtension
     protected function registerFrontendControllers()
     {
         return [
-            '/competition/dates-des-rencontres-par-equipe' => new Controller\PoolClubMeetingController(),
-            '/competition/feuille-de-match' => new Controller\PoolMatchesSheetController(),
+            '/competitions/planning-des-rencontres-par-equipe' => new Controller\PoolClubMeetingController(),
+            '/competitions/feuille-de-match' => new Controller\PoolMatchesSheetController(),
         ];
     }
 
