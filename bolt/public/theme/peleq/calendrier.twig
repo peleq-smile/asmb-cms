@@ -75,11 +75,21 @@
                                                         style="background: {{ dayData.event.color }}"
                                                     {% endif %}
                                             >
+                                                {% if dayData.event.name is not empty and dayData.event.link is not empty %}
+                                                    <a href="{{ dayData.event.link }}" target="_blank">
+                                                {% endif %}
+
                                                 <div class="flex-column">
                                                     <span {% if dayData.event.duration == 1 and dayData.event.name|length > 19 %}
                                                         class="small"{% endif %}
-                                                    >{{ dayData.event.name }}</span>
+                                                    >
+                                                        {{ dayData.event.name }}
+                                                    </span>
                                                 </div>
+
+                                                {% if dayData.event.name is not empty and dayData.event.link is not empty %}
+                                                    </a>
+                                                {% endif %}
                                             </td>
                                             {% set skipCalEventTd = dayData.event.duration-1 %}
                                         {% elseif skipCalEventTd == 0 %}

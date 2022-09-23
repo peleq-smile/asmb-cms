@@ -460,6 +460,9 @@ calendriers:
         evt_with_lesson:
           label: "Cours collectif durant l'événement"
           type: checkbox
+        evt_link:
+          label: 'URL'
+          type: text
     # Ajout onglet "SEO"
     meta_title:
       label: 'Meta "title"'

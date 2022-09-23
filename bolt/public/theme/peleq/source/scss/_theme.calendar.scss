@@ -44,6 +44,12 @@
                             font-weight: 500;
                         }
                     }
+
+                    a {
+                        color: $dark;
+                        display: block;
+                        height: available;
+                    }
                 }
 
                 tr.no-lessons {

@@ -81,8 +81,9 @@ class CalendarExtension extends SimpleExtension
             $evtTitle = $this->getElementData($event, 'evt_title');
             $evtDuration = $this->getElementData($event, 'evt_duration');
             $evtWithLesson = (bool)($this->getElementData($event, 'evt_with_lesson'));
+            $evtLink = ($this->getElementData($event, 'evt_link'));
             $color = $this->getEventTypeColor($event);
-            $this->addDataToCalendar($calendar, $evtTitle, $evtFromDate, $evtDuration, $evtWithLesson, $color);
+            $this->addDataToCalendar($calendar, $evtTitle, $evtFromDate, $evtDuration, $evtWithLesson, $color, $evtLink);
 
             $this->handleSplitEvent($event, $calendar);
         }
@@ -98,7 +99,8 @@ class CalendarExtension extends SimpleExtension
         Carbon $evtFromDate,
         int    $evtDuration,
         bool   $evtWithLesson,
-        $colors
+        $colors,
+        ?string $evtLink = null
     ) {
         $colors = (is_array($colors) && count($colors) === 1) ? current($colors) : $colors;
 
@@ -108,6 +110,7 @@ class CalendarExtension extends SimpleExtension
             'name' => $evtTitle,
             'color' => $colors, // initialement 1 seule couleur, mais plusieurs possibles en fait !
             'duration' => $evtDuration,
+            'link' => $evtLink
         ];
 
         // S'il s'agit d'un évènement où il n'y a pas cours collectif, on ajoute le marqueur sur chaque jour de
@@ -333,6 +336,7 @@ class CalendarExtension extends SimpleExtension
                     'name' => $this->getElementData($event, 'evt_title'),
                     'color' => $this->getEventTypeColor($event),
                     'duration' => $evtDurationOnNextMonth,
+                    'link' => $this->getElementData($event, 'evt_link'),
                 ];
 
                 // On réduit la durée de l'événement sur le mois initial, pour ne pas que cela dépasse du mois.
