@@ -84,11 +84,14 @@
 
                 {% if record.parent_content is defined and record.parent_content is not empty %}
                     {% setcontent parentPage = 'pages' where { 'id': record.parent_content } returnsingle %}
+                {% endif %}
+
+                {% if parentPage is defined and parentPage is not null %}
                     {% set parentPageTitle = (parentPage.meta_title is not empty) ? parentPage.meta_title : parentPage.title %}
                     <li><a href="{{ parentPage.link }}">{{ parentPageTitle }}</a></li>
                 {% endif %}
 
-                <li class="is-active"><a href="#" aria-current="page">{{ headTitle }}</a></li>
+                <li class="is-active is-hidden-touch"><a href="#" aria-current="page">{{ headTitle }}</a></li>
             </ul>
         </nav>
         </div>
