@@ -20,60 +20,79 @@ main:
         path: page/inscriptions
       - label: 'Formules et tarifs'
         path: page/tarifs
-      - label: 'Tennis Loisir'
+      - label: 'Nos cartes loisirs'
         path: page/tennis-loisir-carte
-        submenu:
-          - label: 'La carte'
-            path: page/tennis-loisir-carte
-          - label: 'Les créneaux'
-            path: page/tennis-loisir-creneaux
-          - label: 'Réservation'
-            path: page/tennis-loisir-reservation
+      - label: 'Réservation'
+        path: page/tennis-loisir-reservation
+      - label: 'Les créneaux'
+        path: page/tennis-loisir-creneaux
+     
 
   - label: 'Compétitions'
-    path: competition/
+    path: competitions/
     submenu:
       - label: 'Championnats & Coupes'
-        path: competition/championnat-d-hiver-2021-2022
+        path: competitions/championnat-regional-2022-2023
         submenu:
-          - label: 'Championnat d''Hiver'
-            path: competition/championnat-d-hiver-2021-2022
-          - label: 'Coupe d''Hiver féminine'
-            path: competition/coupe-d-hiver-feminine-2021-2022
-          - label: 'ASMB Cup'
-            path: competition/asmb-cup-2022#res
+          - label: 'Championnat régional'
+            path: competitions/championnat-regional-2022-2023
+          - label: 'Championnat départemental'
+            path: competitions/championnat-departemental-2022-2023
 
+      - label: 'Planning des rencontres par équipe'
+        path: competitions/planning-des-rencontres-par-equipe
+        
       - label: 'Rencontres à domicile'
-        path: competition/rencontres-a-domicile
+        path: competitions/rencontres-a-domicile
 
-      - label: 'Tournois'
-        path: competition/trophee-philippe-le-gouic-2021
+      #- label: 'Tournois'
+      #  path: competition/tournoi-open-ete-2022
+      #  submenu:   
+        
+      - label: '[Archives] Saison 2021-2022'
         submenu:
-          - label: 'Open février 2022'
-            path: competition/tournoi-open-fevrier-2022
-          - label: 'Trophée Philippe Le Gouic 2021'
-            path: competition/trophee-philippe-le-gouic-2021
+          - label: 'Championnats & Coupes'
+            submenu:
+            - label: 'Championnat d''Hiver'
+              path: competitions/championnat-d-hiver-2021-2022
+            - label: 'Coupe d''Hiver féminine'
+              path: competitions/coupe-d-hiver-feminine-2021-2022
+            - label: 'Championnat découverte'
+              path: competitions/championnat-decouverte-2022          
+            - label: 'Championnat de Printemps'
+              path: competitions/championnat-de-printemps-2022
+          - label: 'Tournois'
+            path: competitions/tournoi-open-ete-2022
+            submenu:
+            - label: 'Trophée Philippe Le Gouic 2021'
+              path: competitions/trophee-philippe-le-gouic-2021          
+            - label: 'Open février 2022'
+              path: competitions/tournoi-open-fevrier-2022
+            - label: 'Open été 2022'
+              path: competitions/tournoi-open-ete-2022
+            - label: 'ASMB Cup'
+              path: competitions/asmb-cup-2022#res
 
       - label: '[Archives] Saison 2020-2021'
-        path: competition/tournoi-open-ete-2021
+        path: competitions/tournoi-open-ete-2021
         submenu:
           - label: 'Tournoi Open été 2021'
-            path: competition/tournoi-open-ete-2021
+            path: competitions/tournoi-open-ete-2021
           - label: 'ASMB Cup 2021'
-            path: competition/asmb-cup-2021
+            path: competitions/asmb-cup-2021
           - label: 'Trophée Philippe Le Gouic 2020'
-            path: competition/trophee-philippe-le-gouic-2020
+            path: competitions/trophee-philippe-le-gouic-2020
           - label: 'Tournoi interne de reprise 2020'
-            path: competition/tournoi-interne-de-reprise-2020
+            path: competitions/tournoi-interne-de-reprise-2020
 
       - label: '[Archives] Saison 2019-2020'
         submenu:
           - label: 'TMC 13/14 ans mars 2020'
-            path: competition/tmc-13-14-ans-2020
+            path: competitions/tmc-13-14-ans-2020
           - label: 'Tournoi Open Messieurs février 2020'
-            path: competition/tournoi-open-messieurs-fevrier-2020
+            path: competitions/tournoi-open-messieurs-fevrier-2020
           - label: 'Trophée Philippe Le Gouic 2019'
-            path: competition/trophee-philippe-le-gouic-2019
+            path: competitions/trophee-philippe-le-gouic-2019
 
   #    - label: 'Actualités'
   #      path: page/evenements
