@@ -13,8 +13,8 @@
                 {% for member in record.members %}
                     <div class="column is-one-third-tablet is-one-third-desktop-desktop is-one-quarter-widescreen is-full-mobile">
                         <div class="member has-background-white">
-                            <img src="{{ member.photo|thumbnail(250, 250, 'r') }}" alt="{{ member.name }}">
-                            <h2 class="title text-center text-primary is-size-3">{{ member.name }}</h2>
+{#                            <img src="{{ member.photo|thumbnail(250, 250, 'r') }}" alt="{{ member.name }}">#}
+                            <h2 class="title text-center text-primary is-size-3">{{ member.name|raw }}</h2>
 
                             {% set functions = member.function|split(',') %}
                             <div class="functions">
