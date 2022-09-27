@@ -67,7 +67,7 @@ class ChampionshipEditType extends AbstractType
                         0 => Trans::__('general.phrase.no'),
                         1 => Trans::__('general.phrase.yes'),
                     ],
-                    'label'      => false,
+                    'label'      =>  Trans::__('general.phrase.is_active'),
                     'empty_data' => 0,
                 ]
             )

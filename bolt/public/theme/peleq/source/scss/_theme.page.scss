@@ -312,6 +312,10 @@
                             margin-top: 1.5rem;
                         }
                     }
+
+                    th + th {
+                        margin-top: 0 !important;
+                    }
                 }
             }
         }

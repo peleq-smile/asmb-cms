@@ -65,6 +65,8 @@
         {% endfor %}
     </table>
 
+    {# TODOpeleq : réparer l'heure de mise à jour ! #}
+    {% set showLastUpdatedAt = false %}
     {% if showLastUpdatedAt %}
         {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': lastUpdatedAt|date('d/m'), '%time%': lastUpdatedAt|date('H\\hi')}) %}
         <span class="last-updated-at">{{ __('general.phrase.last_updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>

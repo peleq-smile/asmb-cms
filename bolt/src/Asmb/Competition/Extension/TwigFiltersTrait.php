@@ -136,6 +136,18 @@ trait TwigFiltersTrait
     }
 
     /**
+     * Formate la date de la rencontre donnée de sorte à avoir une date du type "Dim 31/03".
+     */
+    public function getShorterFormattedDate(PoolMeeting $meeting)
+    {
+        $meetingDate = $meeting->getFinalDate();
+        $localizedDayOfWeek = substr($meetingDate->formatLocalized('%a'), 0, 2); // ex: "lu", "ma", ...
+        $formattedDate = $localizedDayOfWeek . ' ' . $meetingDate->format('d/m');
+
+        return ucfirst($formattedDate);
+    }
+
+    /**
      * Construit et retourne l'url vers la poule du championnat donné, sur la Gestion Sportive.
      */
     public function getChampionshipPoolGsUrl(Pool $pool): ?string
@@ -182,6 +194,7 @@ trait TwigFiltersTrait
             'matchesSheetLink' => 'getMatchesSheetLink',
             'fftMatchesSheetUrl' => 'getFftMatchesSheetUrl',
             'formattedDate' => 'getFormattedDate',
+            'shorterFormattedDate' => 'getShorterFormattedDate',
             'score' => 'extractScoreFromResult',
         ];
     }

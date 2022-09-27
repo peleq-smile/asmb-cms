@@ -13,8 +13,7 @@
                         <table class="table is-bordered is-responsive is-narrow">
                             <thead class="is-hidden-touch">
                             <tr>
-                                <th>&nbsp;</th>
-                                <th>Équipe</th>
+                                <th colspan="2" class="has-text-centered">Équipe</th>
                                 {% for idxDay in 1..nbMaxDaysByChampionship[championshipTitle] %}
                                     <th colspan="2">{{ 'J' ~ idxDay }}</th>
                                 {% endfor %}
@@ -25,11 +24,10 @@
                             {% for categoryName, clubMeetingsOfCategory in clubMeetingsOfChampionship %}
                                 {% set isFirstTeamOfCategory = true %}
 
-                                <tr>
                                 {% for teamName, clubMeetingsOfTeam in clubMeetingsOfCategory %}
                                     <tr>
                                         {% if isFirstTeamOfCategory %}
-                                            <th rowspan="{{ clubMeetingsOfCategory|length }}" class="is-size-4">
+                                            <th rowspan="{{ clubMeetingsOfCategory|length }}" class="is-size-6 is-size-4-touch has-text-nowrap">
                                                 {{ categoryName }}
                                             </th>
                                             {% set isFirstTeamOfCategory = false %}
@@ -39,21 +37,25 @@
                                         {% for idxDay, clubMeeting in clubMeetingsOfTeam %}
                                             {% set isMeetingInPast = clubMeeting.finalDate|date('Y-m-d') < ('now'|date('Y-m-d')) %}
                                             {% set isMeetingToday = clubMeeting.finalDate|date('Y-m-d') == ('now'|date('Y-m-d')) %}
-                                            {% set time = clubMeeting.time ? clubMeeting.time|date('H') ~ 'h' ~ clubMeeting.time|date('i') : '' %}
+                                            {% set time = clubMeeting.time ? (clubMeeting.time|date('H') ~ 'h') : '' %}
+
+                                            {% if time is not empty and clubMeeting.time|date('i') != '00' %}
+                                                {% set time = time ~ clubMeeting.time|date('i') %}
+                                            {% endif %}
 
                                             <td class="is-size-6{{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
                                                 <span class="is-hidden-desktop has-text-weight-bold">{{ 'J' ~ idxDay }} : </span>
-                                                <span style="white-space: nowrap;">{{ clubMeeting|formattedDate(true) }}</span>
+                                                <span style="white-space: nowrap;">{{ clubMeeting|shorterFormattedDate }}</span>
 
                                                 {# Mobile seulement #}
                                                 <span class="is-hidden-desktop is-pulled-right" style="white-space: nowrap;">
                                                     {{ time }}
 
-                                                    <span class="has-cursor-help has-text-light">
+                                                    <span class="has-cursor-help">
                                                     {% if clubMeeting.homeTeamIsClub %}
-                                                        <i class="fas fa-home" title="Rencontre à DOMICILE"></i>
+                                                        <i class="fas fa-home has-text-light"></i>
                                                     {% else %}
-                                                        <i class="fas fa-paper-plane" title="Rencontre à L'EXTÉRIEUR"></i>
+                                                        <i class="fas fa-paper-plane has-text-grey-lighter"></i>
                                                     {% endif %}
                                                     </span>
                                                 </span>
@@ -62,11 +64,11 @@
                                                 <span style="white-space: nowrap;">
                                                     {{ time }}
 
-                                                    <span class="is-pulled-right has-text-light">
+                                                    <span class="is-pulled-right">
                                                     {% if clubMeeting.homeTeamIsClub %}
-                                                        <i class="fas fa-home"></i>
+                                                        <i class="fas fa-home has-text-light"></i>
                                                     {% else %}
-                                                        <i class="fas fa-paper-plane"></i>
+                                                        <i class="fas fa-paper-plane has-text-grey-lighter"></i>
                                                     {% endif %}
                                                     </span>
                                                 </span>
@@ -86,7 +88,7 @@
                         <span>Rencontre à DOMICILE</span>
                     </div>
                     <div>
-                        <i class="has-text-light fas fa-paper-plane" style="display: inline-block; width: 25px"></i>
+                        <i class="has-text-grey-lighter fas fa-paper-plane" style="display: inline-block; width: 25px"></i>
                         <span>Rencontre à L'EXTÉRIEUR</span>
                     </div>
                 </div>
