@@ -43,7 +43,7 @@
                                                 {% set time = time ~ clubMeeting.time|date('i') %}
                                             {% endif %}
 
-                                            <td class="is-size-6{{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
+                                            <td class="is-size-6{{ isMeetingToday ? ' is-today':(isMeetingInPast ? ' is-past':'') }}">
                                                 <span class="is-hidden-desktop has-text-weight-bold">{{ 'J' ~ idxDay }} : </span>
                                                 <span style="white-space: nowrap;">{{ clubMeeting|shorterFormattedDate }}</span>
 
@@ -55,12 +55,12 @@
                                                     {% if clubMeeting.homeTeamIsClub %}
                                                         <i class="fas fa-home has-text-light"></i>
                                                     {% else %}
-                                                        <i class="fas fa-paper-plane has-text-grey-lighter"></i>
+                                                        <i class="fas fa-paper-plane has-text-lighter"></i>
                                                     {% endif %}
                                                     </span>
                                                 </span>
                                             </td>
-                                            <td class="is-hidden-touch is-size-6 has-text-centered {{ isMeetingToday ? ' has-background-warning':(isMeetingInPast ? ' has-background-success':'') }}">
+                                            <td class="is-hidden-touch is-size-6 has-text-centered {{ isMeetingToday ? ' is-today':(isMeetingInPast ? ' is-past':'') }}">
                                                 <span style="white-space: nowrap;">
                                                     {{ time }}
 
@@ -68,7 +68,7 @@
                                                     {% if clubMeeting.homeTeamIsClub %}
                                                         <i class="fas fa-home has-text-light"></i>
                                                     {% else %}
-                                                        <i class="fas fa-paper-plane has-text-grey-lighter"></i>
+                                                        <i class="fas fa-paper-plane has-text-lighter"></i>
                                                     {% endif %}
                                                     </span>
                                                 </span>
@@ -88,7 +88,7 @@
                         <span>Rencontre à DOMICILE</span>
                     </div>
                     <div>
-                        <i class="has-text-grey-lighter fas fa-paper-plane" style="display: inline-block; width: 25px"></i>
+                        <i class="has-text-lighter fas fa-paper-plane" style="display: inline-block; width: 25px"></i>
                         <span>Rencontre à L'EXTÉRIEUR</span>
                     </div>
                 </div>

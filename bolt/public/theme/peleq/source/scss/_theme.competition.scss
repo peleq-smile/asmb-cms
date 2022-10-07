@@ -117,10 +117,22 @@
     }
 
     .has-background-success {
-        background-color: #eef0ee !important;
+        background-color: #6e9c6d !important;
     }
     .has-background-warning {
-        background-color: #f9e7b9 !important;
+        background-color: #d97432 !important;
+    }
+    .has-background-danger {
+        background-color: #ad0000 !important;
+    }
+
+    .is-past {
+        opacity: 0.5;
+    }
+
+    .is-today {
+        border-color: $dark;
+        border-width: 8px;
     }
 }
 

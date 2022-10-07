@@ -87,8 +87,13 @@
                 {% endif %}
             {% endfor %}
 
+            {# TODOpeleq réafficher la date de màj qd réparée ! #}
             {% set updatedAtToDisplay = __('general.phrase.date-and-time', { '%date%': lastUpdatedAt|date('d/m/Y'), '%time%': lastUpdatedAt|date('H\\hi')}) %}
+            <div class="mt-2">
+            {#
             <span class="last-updated-at">{{ __('general.phrase.last_updated_at', {'%updated_at%': updatedAtToDisplay}) }}</span>
+            #}
+            </div>
         </div>
     </div>
 </section>

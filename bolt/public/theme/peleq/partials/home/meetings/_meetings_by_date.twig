@@ -1,4 +1,7 @@
-{% set lastUpdatedAt = null %}
+{% if lastUpdatedAt is not defined %}
+    {% set lastUpdatedAt = null %}
+{% endif %}
+
 {% if showHour is not defined %}
     {% set showHour = true %}
 {% endif %}
