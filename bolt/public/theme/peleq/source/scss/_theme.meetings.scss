@@ -8,6 +8,11 @@
 
         .columns {
             background-color: $tertiary;
+
+            .column {
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
 
         h3.title {
@@ -193,11 +198,10 @@ table {
         .container {
             .columns {
                 position: relative;
-                .column.is-narrow {
+                .column {
                     z-index: 2;
                     position: relative;
-                    margin-left: auto;
-                    margin-right: auto;
+                    max-width: 40%;
                 }
 
                 i.fa-trophy {
@@ -215,6 +219,16 @@ table {
                         right: 15%;
                     }
                 }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $tablet) and (max-width: $desktop) {
+    .matches {
+        .container {
+            .columns {
+                display: block;
             }
         }
     }

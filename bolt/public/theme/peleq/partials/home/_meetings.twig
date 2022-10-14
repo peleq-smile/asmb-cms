@@ -10,7 +10,7 @@
         {% set columnCount = 0 %}
         <div class="columns">
             {% if lastMeetings is not empty %}
-                <div class="column is-one-third is-narrow">
+                <div class="column">
                     {% include 'partials/home/meetings/_meetings_by_date.twig' with {
                             'title': __("home.last-meetings.title"),
                             'meetings': lastMeetings,
@@ -23,7 +23,7 @@
             {% endif %}
 
             {% if nextHomeMeetings is not empty %}
-                <div class="column is-one-third is-narrow">
+                <div class="column">
                     {% include 'partials/home/meetings/_meetings_by_date.twig' with {
                             'title': __("home.next-home-meetings.title"),
                             'meetings': nextHomeMeetings,
@@ -35,7 +35,7 @@
             {% endif %}
 
             {% if nextVisitorMeetings is not empty %}
-                <div class="column is-one-third is-narrow">
+                <div class="column">
                     {% include 'partials/home/meetings/_meetings_by_date.twig' with {
                             'title': __("home.next-visitor-meetings.title"),
                             'meetings': nextVisitorMeetings,
