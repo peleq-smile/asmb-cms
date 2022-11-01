@@ -15,6 +15,21 @@ use Carbon\Carbon;
  */
 trait TwigFiltersTrait
 {
+    public function extractScoreStateClassFromResult(PoolMeeting $meeting): string
+    {
+        $stateClass = '';
+
+        if (PoolMeetingHelper::isClubVictory($meeting)) {
+            $stateClass = 'victory';
+        } elseif (PoolMeetingHelper::isClubDefeat($meeting)) {
+            $stateClass = 'defeat';
+        } elseif (PoolMeetingHelper::isClubDraw($meeting)) {
+            $stateClass = 'draw';
+        }
+
+        return $stateClass;
+    }
+
     /**
      * Extrait et retourne le score à partir de la rencontre donnée.
      */
@@ -24,16 +39,8 @@ trait TwigFiltersTrait
         $score = str_replace('/', ' / ', $score);
 
         if (!empty($score) && $decorated) {
-            $stateClass = '';
             $scoreTitle = '';
-
-            if (PoolMeetingHelper::isClubVictory($meeting)) {
-                $stateClass = ' victory';
-            } elseif (PoolMeetingHelper::isClubDefeat($meeting)) {
-                $stateClass = ' defeat';
-            } elseif (PoolMeetingHelper::isClubDraw($meeting)) {
-                $stateClass = ' draw';
-            }
+            $stateClass = ' '. $this->extractScoreStateClassFromResult($meeting);
 
             // Cas report sans date connue ?
             if ($meeting->getIsReported() && null === $meeting->getReportDate()) {
@@ -196,6 +203,7 @@ trait TwigFiltersTrait
             'formattedDate' => 'getFormattedDate',
             'shorterFormattedDate' => 'getShorterFormattedDate',
             'score' => 'extractScoreFromResult',
+            'scoreStateClass' => 'extractScoreStateClassFromResult',
         ];
     }
 

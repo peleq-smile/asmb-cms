@@ -127,7 +127,23 @@
     }
 
     .is-past {
-        opacity: 0.5;
+        background-color: $dark;
+        color: $white;
+
+        span.victory {
+            color: $win;
+            font-weight: bold;
+        }
+
+        span.defeat {
+            color: $lost;
+            font-weight: bold;
+        }
+
+        span.draw {
+            color: $draw;
+            font-weight: bold;
+        }
     }
 
     .is-today {

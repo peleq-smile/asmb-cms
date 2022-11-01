@@ -54,25 +54,25 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                 'playersById' => $this->getPlayersData(),
                 'players' => $this->getSortedByNamePlayersData(),
             ];
+
+            // On retire les joueurs qui n'ont pas joué, si le tournoi est terminé !
+            $now = Carbon::now()->format('Y-m-d');
+            if ($this->infoData['end'] < $now) {
+                foreach ($parsedData['players'] as $idxPlayer => $playerData) {
+                    if (empty($playerData['matches'])) {
+                        unset($parsedData['players'][$idxPlayer]);
+                    }
+                }
+            }
+
+            // On tri les données de résultat par clé
+            krsort($parsedData['result']);
         } catch (\Exception $e) {
             $parsedData = [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ];
         }
-
-        // On retire les joueurs qui n'ont pas joué, si le tournoi est terminé !
-        $now = Carbon::now()->format('Y-m-d');
-        if ($this->infoData['end'] < $now) {
-            foreach ($parsedData['players'] as $idxPlayer => $playerData) {
-                if (empty($playerData['matches'])) {
-                    unset($parsedData['players'][$idxPlayer]);
-                }
-            }
-        }
-
-        // On tri les données de résultat par clé
-        krsort($parsedData['result']);
 
         return $parsedData;
     }
@@ -293,13 +293,15 @@ class JaTennisJsonParser extends AbstractJaTennisParser
                             $winnerGames = intval($score[0]) + intval($score[4]) + intval($score[8]);
                             $looserGames = intval($score[2]) + intval($score[6]) + intval($score[10]);
                         } else {
-                            // score en 2 sets
+                            // score en 2 sets ou WO
                             $this->resultsData['pool'][$tableName][$winnerPlayerId]['setsDiff'] += 2;
                             $this->resultsData['pool'][$tableName][$looserPlayerId]['setsDiff'] -= 2;
 
-                            // extraction des jeux
-                            $winnerGames = intval($score[0]) + intval($score[4]);
-                            $looserGames = intval($score[2]) + intval($score[6]);
+                            if ('WO' !== strtoupper($score)) {
+                                // extraction des jeux
+                                $winnerGames = intval($score[0]) + intval($score[4]);
+                                $looserGames = intval($score[2]) + intval($score[6]);
+                            }
                         }
                         $this->resultsData['pool'][$tableName][$looserPlayerId]['matchCount'] += 1;
                         $this->resultsData['pool'][$tableName][$winnerPlayerId]['matchCount'] += 1;

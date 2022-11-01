@@ -45,7 +45,7 @@
 
                                             <td class="is-size-6{{ isMeetingToday ? ' is-today':(isMeetingInPast ? ' is-past':'') }}">
                                                 <span class="is-hidden-desktop has-text-weight-bold">{{ 'J' ~ idxDay }} : </span>
-                                                <span style="white-space: nowrap;">{{ clubMeeting|shorterFormattedDate }}</span>
+                                                <span class="has-text-nowrap {{ clubMeeting|scoreStateClass }}">{{ clubMeeting|shorterFormattedDate }}</span>
 
                                                 {# Mobile seulement #}
                                                 <span class="is-hidden-desktop is-pulled-right" style="white-space: nowrap;">
