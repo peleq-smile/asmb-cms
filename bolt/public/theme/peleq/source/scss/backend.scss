@@ -185,6 +185,10 @@ label.required {
     }
 }
 
+.text-default {
+    color: $default !important;
+}
+
 //-- Styles BO pour les statistiques de visites/visiteurs
 .canvasjs-chart-credit {
     display: none;

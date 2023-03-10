@@ -49,12 +49,12 @@
                         {% endif %}
                     {% endif %}
                     <td class="first-team{{ meeting.home_team_is_club ? ' is-club' }}">{{ meeting.home_team_name }}</td>
-                    <td class="score">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
+                    <td class="has-text-centered">{{ matchesSheetLinkHtml ? matchesSheetLinkHtml : scoreHtml }}</td>
                     <td class="second-team{{ meeting.visitor_team_is_club ? ' is-club' }}">{{ meeting.visitor_team_name }}</td>
                     <td class="has-text-centered">
                         {% if meeting.competition_record_slug is defined %}
-                            <a href="{{ url('contentlink', {'contenttypeslug': 'competitions', 'slug': meeting.competition_record_slug}) }}"
-                               title="{{ meeting.championship_name }} : classement et résultats">
+                            <a href="{{ url('contentlink', {'contenttypeslug': 'competitions', 'slug': meeting.competition_record_slug}) }}{{ meeting.category_identifier ? '?cat=' ~ meeting.category_identifier:'' }}"
+                               title="{{ meeting.championship_name }} : classement et résultats{{ meeting.category_name ? ' - Catégorie ' ~ meeting.category_name:'' }}">
                                 <span class="tag is-rounded">{{ meeting.championship_short_name }}</span>
                             </a>
                         {% endif %}

@@ -533,8 +533,6 @@ header {
                                     }
 
                                     a.navbar-link {
-                                        padding-left: 3.5rem;
-
                                         &:hover {
                                             background-color: $navbar-item-hover-background-color-mobile;
                                         }
@@ -545,10 +543,6 @@ header {
 
                                         &.is-active {
                                             background: $navbar-vertical-bg-dropdown-lvl2 !important;
-                                        }
-
-                                        .navbar-item {
-                                            padding-left: 3.5rem;
                                         }
                                     }
 
