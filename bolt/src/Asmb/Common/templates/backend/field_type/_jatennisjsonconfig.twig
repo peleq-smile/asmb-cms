@@ -1,0 +1,54 @@
+{# === OPTIONS ======================================================================================================== #}
+
+{% set option = {
+    label:  ('form-control ' ~ field.class)|trim
+} %}
+
+{# === INIT =========================================================================================================== #}
+
+{% set jsonConfig = context.content.get(contentkey) %}
+
+{% set storage_name = {
+    url:        'url',
+    draws:      'draws',
+} %}
+
+{# === FIELDSET ============================================================================ #}
+
+<hr>
+
+<fieldset class="form-group bolt-field-jatennisjsonconfig">
+    <label class="main control-label col-xs-12">{{ field.label|default(key|humanize) }}</label>
+
+    <label class="control-label col-xs-12 text-default" for="{{ key }}_url">
+        URL vers le JSON exporté depuis JA-Tennis :
+    </label>
+
+    <div class="col-xs-10">
+        <input id="{{ key }}_url" class="form-control" name="{{ name ~ '[' ~ storage_name.url ~ ']' }}"
+               type="text" value="{{ jsonConfig.url|default('') }}">
+    </div>
+    <div class="col-xs-2">
+        <button type="button" id="{{ key }}_loadJson" class="btn-default btn">Analyser</button>
+    </div>
+</fieldset>
+
+
+<hr>
+
+{{ dump(field) }}
+{{ dump(jsonConfig) }}
+
+<script>
+    function analyseJson() {
+        let jsonUrl = $('#{{ key }}_url').val();
+
+        console.log(jsonUrl);
+    }
+
+    $(document).ready(function () {
+        $('#{{ key }}_loadJson').on('click', function () {
+            analyseJson();
+        });
+    });
+</script>

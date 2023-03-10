@@ -8,6 +8,7 @@ use Bundle\Asmb\Common\Extension\TwigBackendTrait;
 use Bundle\Asmb\Common\Extension\TwigFiltersTrait;
 use Bundle\Asmb\Common\Extension\TwigFunctionsTrait;
 use Bundle\Asmb\Common\Service\MailSender;
+use Bundle\Asmb\Common\Storage\Field\Type\JaTennisJsonConfigField;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -22,6 +23,16 @@ class CommonExtension extends SimpleExtension
     use TwigBackendTrait;
     use TwigFunctionsTrait;
     use TwigFiltersTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerFields()
+    {
+        return [
+            new JaTennisJsonConfigField(),
+        ];
+    }
 
     /**
      * {@inheritdoc}
