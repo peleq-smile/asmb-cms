@@ -27,7 +27,7 @@
     </div>
 {% endblock %}
 
-{# Sub-block for 'imagelist' fields #}
+{# Sub-block for 'filelist' fields #}
 {% block filelist_field %}
     <div class="filelist columns is-multiline is-desktop">
         {% for file in value %}
@@ -103,7 +103,7 @@
         {{ block('imagelist_field') }}
     {% endif %}
 
-    {# Imagelist fields #}
+    {# Filelist fields #}
     {% if fieldtype == "filelist" and value is not empty %}
         {{ block('filelist_field') }}
     {% endif %}

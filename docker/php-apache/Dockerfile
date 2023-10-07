@@ -10,10 +10,11 @@ RUN apt-get update && apt-get install -y vim libmemcached-dev zlib1g-dev ssl-cer
 
 RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql gd exif zip calendar intl
 
-RUN pecl install redis-3.1.2 \
-    && pecl install xdebug \
+#RUN pecl install redis-3.1.2 \ &&  \
+RUN pecl install xdebug-2.9.0 \
     && pecl install apcu \
-    && docker-php-ext-enable redis xdebug apcu
+    #&& docker-php-ext-enable redis xdebug apcu
+    && docker-php-ext-enable xdebug apcu
 
 COPY ./docker/php-apache/php.ini-development /usr/local/etc/php/conf.d/php.ini
 COPY ./docker/php-apache/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
